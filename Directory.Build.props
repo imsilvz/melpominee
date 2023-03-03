@@ -1,0 +1,6 @@
+<Project>
+    <PropertyGroup>
+        <BaseOutputPath>backend\bin\</BaseOutputPath>
+        <BaseIntermediateOutputPath>backend\obj\</BaseIntermediateOutputPath>
+    </PropertyGroup>
+</Project>

@@ -25,9 +25,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Docker Build
-        run: docker build . --tag $IMAGE_NAME
-
       - name: Authenticate with Container Registry
         uses: docker/login-action@v2
         with:

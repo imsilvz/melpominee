@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: ghcr.io/imsilvz/melpominee-frontend:latest
+    image: ghcr.io/imsilvz/melpominee-frontend:master
     ports:
       - target: 8011
         published: 8011
@@ -10,7 +10,7 @@ services:
       - frontend-network
 
   backend:
-    image: ghcr.io/imsilvz/melpominee-backend:latest
+    image: ghcr.io/imsilvz/melpominee-backend:master
     ports:
       - target: 80
         published: 8012

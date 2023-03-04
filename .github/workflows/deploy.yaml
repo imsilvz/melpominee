@@ -52,3 +52,12 @@ jobs:
           file: ./backend/Dockerfile
           tags: ${{ steps.meta-backend.outputs.tags }}
           labels: ${{ steps.meta-backend.outputs.labels }}
+          
+      - name: Build & Push Frontend
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          file: ./frontend/Dockerfile
+          tags: ${{ steps.meta-frontend.outputs.tags }}
+          labels: ${{ steps.meta-frontend.outputs.labels }}

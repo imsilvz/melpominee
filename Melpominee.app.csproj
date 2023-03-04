@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="*" />
     <Content Remove="backend\obj\Debug\**\*" />
     <Compile Remove="backend\obj\Debug\**\*" />
   </ItemGroup>
@@ -13,5 +14,4 @@
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
-
 </Project>

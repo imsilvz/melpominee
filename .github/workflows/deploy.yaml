@@ -1,0 +1,28 @@
+name: Melpominee.app Deployment
+on:
+  push:
+    branches:
+      - master
+
+env:
+  IMAGE_NAME: melpominee-app
+
+jobs:
+  docker-build-push:
+    name: Melpominee.app Build & Push
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Docker Build
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}
+
+      - name: Authenticate with Container Registry
+        # This is where you will update the personal access token to GITHUB_TOKEN
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin

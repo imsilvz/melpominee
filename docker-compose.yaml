@@ -2,9 +2,9 @@ services:
   frontend:
     image: ghcr.io/imsilvz/melpominee-frontend:master
     ports:
-      "8004:80"
+      - "8004:80"
 
   backend:
     image: ghcr.io/imsilvz/melpominee-backend:master
     ports:
-      "8005:5000"
+      - "8005:5000"

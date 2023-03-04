@@ -15,4 +15,4 @@ services:
 
 networks:
   melpominee:
-    driver: bridge
+    driver: host

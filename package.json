@@ -23,14 +23,20 @@
   },
   "homepage": "https://github.com/slivz/melpominee#readme",
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.8.2"
+    "react-redux": "^8.0.5",
+    "react-router-dom": "^6.8.2",
+    "redux": "^4.2.1",
+    "redux-thunk": "^2.4.2"
   },
   "devDependencies": {
     "@types/node": "^18.14.6",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
+    "@types/react-redux": "^7.1.25",
+    "@types/react-router-dom": "^5.3.3",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
     "@vitejs/plugin-react": "^3.1.0",

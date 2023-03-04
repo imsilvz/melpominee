@@ -8,4 +8,14 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   root: path.resolve(__dirname, 'frontend'),
   plugins: [react()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (subdir) => subdir.replace(/^\/api/, ''),
+      },
+    },
+  },
 });

@@ -1,5 +1,47 @@
+@font-face {
+  font-family: caslonAntique;
+  src: url('./assets/fonts/CaslonAntique.ttf');
+}
+
+@font-face {
+  font-family: caslonAntique;
+  src: url('./assets/fonts/CaslonAntique-Bold.ttf');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: caslonAntique;
+  src: url('./assets/fonts/CaslonAntique-Italic.ttf');
+  font-style: italic;
+}
+
+@font-face {
+  font-family: caslonAntique;
+  src: url('./assets/fonts/CaslonAntique-BoldItalic.ttf');
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: goudyOldStyle;
+  src: url('./assets/fonts/Goudy.ttf');
+}
+
+@font-face {
+  font-family: goudyOldStyle;
+  src: url('./assets/fonts/Goudy-Bold.ttf');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: goudyOldStyle;
+  src: url('./assets/fonts/Goudy-Italic.ttf');
+  font-style: italic;
+}
+
 * {
   box-sizing: border-box;
+  font-family: caslonAntique;
 }
 
 html {

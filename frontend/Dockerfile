@@ -1,5 +1,12 @@
-FROM nginx
+FROM nginx AS base
 WORKDIR /app
-COPY . /src
 
-npm run build
+FROM node:lts AS build
+COPY . /src
+WORKDIR /src
+RUN ls
+RUN npm run build
+
+FROM base AS final
+WORKDIR /usr/share/nginx/html/
+COPY --from=build /src/frontend/dist .

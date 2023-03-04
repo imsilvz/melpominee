@@ -1,0 +1,6 @@
+services:
+  frontend:
+    image: ghcr.io/imsilvz/melpominee-frontend:master
+
+  backend:
+    image: ghcr.io/imsilvz/melpominee-backend:master

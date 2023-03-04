@@ -9,5 +9,6 @@ RUN npm run build
 
 FROM base AS final
 WORKDIR /usr/share/nginx/html/
+COPY --from=build /src/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /src/frontend/dist .
 RUN ls

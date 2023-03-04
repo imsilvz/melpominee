@@ -4,14 +4,15 @@ services:
     ports:
       - "8004:80"
     networks:
-      - melpominee-network
+      - melpominee
 
   backend:
     image: ghcr.io/imsilvz/melpominee-backend:master
     ports:
       - "8005:5000"
     networks:
-      - melpominee-network
+      - melpominee
 
 networks:
-  melpominee-network: {}
+  melpominee:
+    driver: bridge

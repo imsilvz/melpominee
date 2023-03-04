@@ -13,8 +13,8 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  docker-build-push:
-    name: Melpominee.app Build & Push
+  docker-build-push-backend:
+    name: Melpominee.app Backend Build & Push
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -41,7 +41,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: backend/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

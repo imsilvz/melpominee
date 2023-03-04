@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+      "sourceMap": true,
+      "outDir": "./frontend/dist/",
+      "lib": ["DOM", "DOM.Iterable", "ESNext"],
+      "strict": true,
+      "strictNullChecks": true,
+      "noImplicitAny": true,
+      "allowJs": false,
+      "skipLibCheck": true,
+      "esModuleInterop": false,
+      "allowSyntheticDefaultImports": true,
+      "module": "ESNext",
+      "target": "ESNext",
+      "moduleResolution": "node",
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "noEmit": true,
+      "jsx": "react-jsx",
+    },
+    "include": [
+      "./frontend/src/**/*",
+      "vite.config.ts"
+    ],
+    "exclude": [
+      "./node_modules/",
+      "./backend/"
+    ]
+  }

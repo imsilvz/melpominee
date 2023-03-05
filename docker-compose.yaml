@@ -22,7 +22,7 @@ services:
     networks:
       - backend-network
     volumes:
-      /srv/melpominee.app:/app/data:rw
+      - /srv/melpominee.app:/app/data:rw
     restart: always
 
 secrets:

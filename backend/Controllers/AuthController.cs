@@ -40,12 +40,39 @@ public class AuthController : ControllerBase
     [HttpPost(Name = "Login")]
     public LoginResponse Login([FromBody] LoginPayload payload)
     {
+        Console.WriteLine(HttpContext.Connection.RemoteIpAddress);
+        Console.WriteLine(HttpContext.GetServerVariable("X-Real-IP"));
+        Console.WriteLine(HttpContext.GetServerVariable("X-Forwarded-For"));
         // perform login
         if ((!string.IsNullOrEmpty(payload.Email)) && (!string.IsNullOrEmpty(payload.Password)))
         {
             MelpomineeUser user = new MelpomineeUser(payload.Email);
             if (user.Login(payload.Password))
             {
+                // log it
+                using (var connection = new SqliteConnection("Data Source=data/melpominee.db"))
+                {
+                    connection.Open();
+                    var command = connection.CreateCommand();
+                    command.CommandText = 
+                    @"
+                        INSERT INTO melpominee_logins
+                            (user_email)
+                        VALUES
+                            ($email)
+                    ";
+                    command.Parameters.AddWithValue("$email", payload.Email);
+
+                    if(command.ExecuteNonQuery() < 1) 
+                    {
+                        return new LoginResponse
+                        {
+                            Success = false,
+                        };
+                    }
+                }
+
+                // store it in the session
                 HttpContext.Session.SetString(UserKey, JsonSerializer.Serialize(user));
                 return new LoginResponse
                 {

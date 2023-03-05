@@ -15,11 +15,16 @@ using (var connection = new SqliteConnection("Data Source=data/melpominee.db"))
     command.CommandText =
     @"
         CREATE TABLE IF NOT EXISTS melpominee_users (
-            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            email TEXT NOT NULL UNIQUE,
+            email TEXT NOT NULL PRIMARY KEY,
             password TEXT NOT NULL,
             activation_key TEXT,
             active BOOL DEFAULT false
+        );
+        CREATE TABLE IF NOT EXISTS melpominee_logins (
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            user_email TEXT NOT NULL,
+            timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_email) REFERENCES melpominee_users(email)
         );
     ";
     command.ExecuteNonQuery();

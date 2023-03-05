@@ -166,8 +166,6 @@ public class MelpomineeUser {
                 return false;
             }
 
-            Console.WriteLine($"Activation Key : {key} : {dbKey} : {key == dbKey}");
-
             // compare
             if(key != dbKey)
             {

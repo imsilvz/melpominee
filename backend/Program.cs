@@ -1,3 +1,23 @@
+using Microsoft.Data.Sqlite;
+
+// Create Initial Data Schema
+using (var connection = new SqliteConnection("Data Source=melpominee.db"))
+{
+    connection.Open();
+
+    var command = connection.CreateCommand();
+    command.CommandText =
+    @"
+        CREATE TABLE IF NOT EXISTS melpominee_users (
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL
+        );
+    ";
+    command.ExecuteNonQuery();
+}
+
+// API Application Builder
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

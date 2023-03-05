@@ -458,3 +458,8 @@ $RECYCLE.BIN/
 ## Frontend Output
 ##
 frontend/dist/**/*
+
+##
+## Backend Output
+##
+*.db

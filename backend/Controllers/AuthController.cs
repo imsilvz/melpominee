@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Mvc;
 using Melpominee.app.Models.Auth;
 
@@ -20,20 +21,15 @@ public class AuthController : ControllerBase
     [HttpGet(Name = "Index")]
     public MelpomineeUser Get()
     {
+        // Get Active User Data
         MelpomineeUser? user;
         var userString = HttpContext.Session.GetString(UserKey);
         if (string.IsNullOrEmpty(userString)) {
-            return new MelpomineeUser
-            {
-                Email = "",
-            };
+            return new MelpomineeUser();
         } else {
             user = JsonSerializer.Deserialize<MelpomineeUser>(userString);
             if (user is null) {
-                return new MelpomineeUser
-                {
-                    Email = "",
-                };
+                return new MelpomineeUser();
             }
             return user;
         }
@@ -43,21 +39,19 @@ public class AuthController : ControllerBase
     [HttpPost(Name = "Login")]
     public LoginResponse Login([FromBody] LoginPayload payload)
     {
-        Console.WriteLine(payload.Email);
-        Console.WriteLine(payload.Password);
+        // perform login
         if ((!string.IsNullOrEmpty(payload.Email)) && (!string.IsNullOrEmpty(payload.Password)))
         {
-            MelpomineeUser user = new MelpomineeUser
+            MelpomineeUser user = new MelpomineeUser(payload.Email);
+            if (user.Login(payload.Password))
             {
-                Email = payload.Email
-            };
-
-            HttpContext.Session.SetString(UserKey, JsonSerializer.Serialize(user));
-            return new LoginResponse
-            {
-                Success = true,
-                User = user,
-            };
+                HttpContext.Session.SetString(UserKey, JsonSerializer.Serialize(user));
+                return new LoginResponse
+                {
+                    Success = true,
+                    User = user,
+                };
+            }
         }
         return new LoginResponse
         {

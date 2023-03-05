@@ -60,8 +60,21 @@
                 border: none;
                 border-radius: 0.5rem;
                 background-color: #aa2e25;
+                font-size: 1rem;
                 color: white;
                 cursor: pointer;
+            }
+            .forgot-link {
+                margin-top: 0.5rem;
+                text-align: right;
+                > a {
+                    color: rgba(255, 255, 255, 0.9);
+                    text-decoration: none;
+                    &:hover {
+                        cursor: pointer;
+                        text-decoration: underline;
+                    }
+                }
             }
             .register-link {
                 margin-top: 0.5rem;

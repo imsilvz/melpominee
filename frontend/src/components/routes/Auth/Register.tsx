@@ -18,6 +18,7 @@ const Register = () => {
   const passwordRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [registered, setRegistered] = useState<string>('');
+  const [registrationError, setRegistrationError] = useState<string>('');
   const navigate = useNavigate();
 
   return (
@@ -51,6 +52,10 @@ const Register = () => {
               if (registerJson.success) {
                 // we have registered successfully!
                 setRegistered(registerPayload.email);
+              } else {
+                setRegistrationError(
+                  'An error has occurred: a user with this email already exists.'
+                );
               }
             }
           }}
@@ -59,6 +64,11 @@ const Register = () => {
             <h1>Register Account</h1>
           </div>
           <div className="input-item">
+            {registrationError !== '' && (
+              <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
+                <span style={{ color: '#CF6679' }}>{registrationError}</span>
+              </div>
+            )}
             <span className="subtitle">Email</span>
             <input ref={userRef} type="email" name="email" disabled={loading} />
           </div>
@@ -113,7 +123,9 @@ const Register = () => {
           <div className="input-item">
             <button
               type="submit"
-              onClick={() => navigate('/login', { replace: true })}
+              onClick={() =>
+                navigate(`/login?email=${registered}`, { replace: true })
+              }
             >
               Return to Login Screen
             </button>

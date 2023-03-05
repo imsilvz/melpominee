@@ -114,6 +114,12 @@ const Login = () => {
             disabled={loading}
             onBlur={() => setLoginError('')}
           />
+          <div className="forgot-link">
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
+            <a onClick={() => navigate('/password-reset')}>
+              I forgot my password.
+            </a>
+          </div>
         </div>
         <div className="input-item">
           <button type="submit" disabled={loading}>

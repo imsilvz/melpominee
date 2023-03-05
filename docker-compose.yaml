@@ -17,9 +17,15 @@ services:
         published: 8012
         protocol: tcp
         mode: host
+    secrets:
+      - mail-secrets
     networks:
       - backend-network
     restart: always
+
+secrets:
+  mail-secrets:
+    file: /secrets/mail-secrets.json
 
 networks:
   frontend-network:

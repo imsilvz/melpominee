@@ -43,6 +43,8 @@ public class AuthController : ControllerBase
         Console.WriteLine(HttpContext.Connection.RemoteIpAddress);
         Console.WriteLine(HttpContext.GetServerVariable("X-Real-IP"));
         Console.WriteLine(HttpContext.GetServerVariable("X-Forwarded-For"));
+        Console.WriteLine(HttpContext.Request.Headers["X-Real-IP"]);
+        Console.WriteLine(HttpContext.Request.Headers["X-Forwarded-For"]);
         // perform login
         if ((!string.IsNullOrEmpty(payload.Email)) && (!string.IsNullOrEmpty(payload.Password)))
         {

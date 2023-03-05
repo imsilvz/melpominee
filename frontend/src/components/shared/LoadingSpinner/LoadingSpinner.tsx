@@ -1,9 +1,17 @@
 import React from 'react';
 import './LoadingSpinner.scss';
 
-const LoadingSpinner: React.FunctionComponent = () => {
+interface SpinnerWithClass {
+  className?: string;
+}
+
+const LoadingSpinner = ({ className }: SpinnerWithClass) => {
+  let trueClassName = 'lds-spinner';
+  if (className) {
+    trueClassName = `${trueClassName} ${className}`;
+  }
   return (
-    <div className="lds-spinner">
+    <div className={trueClassName}>
       <div />
       <div />
       <div />

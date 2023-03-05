@@ -9,6 +9,7 @@ import { selectUserReady } from '../redux/reducers/userReducer';
 // local files
 import Layout from './shared/Layout';
 import Login from './routes/Auth/Login';
+import ForgotPassword from './routes/Auth/ForgotPassword';
 import Register from './routes/Auth/Register';
 import RequireAuth from './shared/Auth/RequireAuth';
 import LoadingSpinner from './shared/LoadingSpinner/LoadingSpinner';
@@ -37,6 +38,7 @@ const App = () => {
               }
             />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/register" element={<Register />} />
           </Route>
         </Routes>

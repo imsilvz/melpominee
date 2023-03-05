@@ -133,17 +133,7 @@ const Login = () => {
           </div>
         </div>
         {loading && (
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              width: '100%',
-              height: '100%',
-              borderRadius: '0.5rem',
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            }}
-          >
+          <div className="loading-overlay">
             <LoadingSpinner />
           </div>
         )}

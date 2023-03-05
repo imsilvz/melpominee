@@ -66,6 +66,7 @@ public class AuthController : ControllerBase
     }
 
     [ActionName("Logout")]
+    [HttpGet(Name = "Logout")]
     [HttpPost(Name = "Logout")]
     public bool Logout()
     {

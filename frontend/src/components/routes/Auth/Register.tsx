@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
 import './Register.scss';

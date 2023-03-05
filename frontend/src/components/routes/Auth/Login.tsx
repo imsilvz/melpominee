@@ -6,6 +6,7 @@ import { useAppDispatch } from '../../../redux/hooks';
 import { setUserdata, UserState } from '../../../redux/reducers/userReducer';
 
 // local files
+import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
 import './Login.scss';
 
 interface LoginPayload {
@@ -22,11 +23,11 @@ const Login = () => {
   const userRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [loginError, setLoginError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-
-  console.log(searchParams);
 
   return (
     <div className="login-container">
@@ -36,6 +37,7 @@ const Login = () => {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={async (event) => {
           event.preventDefault();
+          setLoading(true);
 
           const loginPayload: LoginPayload = {
             email: userRef.current?.value as string,
@@ -50,6 +52,7 @@ const Login = () => {
             body: JSON.stringify(loginPayload),
           });
 
+          setLoading(false);
           if (loginRequest.ok) {
             const loginJson: LoginResponse =
               await (loginRequest.json() as Promise<LoginResponse>);
@@ -61,6 +64,12 @@ const Login = () => {
                 const from = (location.state?.from?.pathname || '/') as string;
                 navigate(from, { replace: true });
               }
+            } else {
+              searchParams.delete('confirmed');
+              setSearchParams(searchParams);
+              setLoginError(
+                'Unable to login, please check your email and password!'
+              );
             }
           }
         }}
@@ -77,24 +86,39 @@ const Login = () => {
               </span>
             </div>
           )}
+          {loginError !== '' && (
+            <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
+              <span style={{ color: '#CF6679' }}>{loginError}</span>
+            </div>
+          )}
           <span className="subtitle">Email</span>
           <input
             ref={userRef}
             type="email"
             name="email"
+            disabled={loading}
             defaultValue={
               searchParams.has('email')
                 ? (searchParams.get('email') as string)
                 : undefined
             }
+            onBlur={() => setLoginError('')}
           />
         </div>
         <div className="input-item">
           <span className="subtitle">Password</span>
-          <input ref={passwordRef} type="password" name="password" />
+          <input
+            ref={passwordRef}
+            type="password"
+            name="password"
+            disabled={loading}
+            onBlur={() => setLoginError('')}
+          />
         </div>
         <div className="input-item">
-          <button type="submit">Continue to App</button>
+          <button type="submit" disabled={loading}>
+            Continue to App
+          </button>
           <div className="register-link">
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
             <a onClick={() => navigate('/register')}>
@@ -102,6 +126,21 @@ const Login = () => {
             </a>
           </div>
         </div>
+        {loading && (
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: '100%',
+              height: '100%',
+              borderRadius: '0.5rem',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            }}
+          >
+            <LoadingSpinner />
+          </div>
+        )}
       </form>
     </div>
   );

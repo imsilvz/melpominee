@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
 
+import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
 import './Register.scss';
 
 interface RegisterPayload {
@@ -44,10 +44,10 @@ const Register = () => {
               body: JSON.stringify(registerPayload),
             });
 
+            setLoading(false);
             if (registerRequest.ok) {
               const registerJson: RegisterResponse =
                 await (registerRequest.json() as Promise<RegisterResponse>);
-              setLoading(false);
               if (registerJson.success) {
                 // we have registered successfully!
                 setRegistered(registerPayload.email);

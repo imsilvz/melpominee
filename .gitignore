@@ -467,4 +467,4 @@ frontend/dist/**/*
 ##
 ## Backend Output
 ##
-*.db
+data/**/*

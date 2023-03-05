@@ -21,6 +21,8 @@ services:
       - mail-secrets
     networks:
       - backend-network
+    volumes:
+      /srv/melpominee.app:/app/data:rw
     restart: always
 
 secrets:

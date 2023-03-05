@@ -36,7 +36,7 @@ public class MelpomineeUser {
         // check database
         string? dbEmail = null;
         string? dbPassword = null;
-        using (var connection = new SqliteConnection("Data Source=melpominee.db"))
+        using (var connection = new SqliteConnection("Data Source=data/melpominee.db"))
         {
             connection.Open();
             var command = connection.CreateCommand();
@@ -79,7 +79,7 @@ public class MelpomineeUser {
         string activationKey = Convert.ToBase64String(confirmKeyBytes);
 
         // create new entry
-        using (var connection = new SqliteConnection("Data Source=melpominee.db"))
+        using (var connection = new SqliteConnection("Data Source=data/melpominee.db"))
         {
             connection.Open();
             var command = connection.CreateCommand();
@@ -135,7 +135,7 @@ public class MelpomineeUser {
         }
         
         // make db connection
-        using (var connection = new SqliteConnection("Data Source=melpominee.db"))
+        using (var connection = new SqliteConnection("Data Source=data/melpominee.db"))
         {
             connection.Open();
 

@@ -1,3 +1,4 @@
+using System.IO;
 using Microsoft.Data.Sqlite;
 using Melpominee.app.Utilities;
 
@@ -5,7 +6,8 @@ using Melpominee.app.Utilities;
 SecretManager.Instance.LoadSecret("mail-secrets");
 
 // Create Initial Data Schema
-using (var connection = new SqliteConnection("Data Source=melpominee.db"))
+Directory.CreateDirectory("data");
+using (var connection = new SqliteConnection("Data Source=data/melpominee.db"))
 {
     connection.Open();
 

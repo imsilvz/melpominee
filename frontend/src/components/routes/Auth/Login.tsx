@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAppDispatch } from '../../../redux/hooks';
 
 // redux
@@ -21,9 +21,12 @@ interface LoginResponse {
 const Login = () => {
   const userRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useAppDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+
+  console.log(searchParams);
 
   return (
     <div className="login-container">
@@ -62,10 +65,29 @@ const Login = () => {
           }
         }}
       >
-        <h1>Sign in.</h1>
         <div className="input-item">
+          <h1>Sign in.</h1>
+        </div>
+        <div className="input-item">
+          {searchParams.has('confirmed') && (
+            <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
+              <span style={{ color: 'lightgreen' }}>
+                Your account has been activated successfully, and you may now
+                log in!
+              </span>
+            </div>
+          )}
           <span className="subtitle">Email</span>
-          <input ref={userRef} type="email" name="email" />
+          <input
+            ref={userRef}
+            type="email"
+            name="email"
+            defaultValue={
+              searchParams.has('email')
+                ? (searchParams.get('email') as string)
+                : undefined
+            }
+          />
         </div>
         <div className="input-item">
           <span className="subtitle">Password</span>
@@ -73,6 +95,12 @@ const Login = () => {
         </div>
         <div className="input-item">
           <button type="submit">Continue to App</button>
+          <div className="register-link">
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
+            <a onClick={() => navigate('/register')}>
+              I don&#39;t have an account.
+            </a>
+          </div>
         </div>
       </form>
     </div>

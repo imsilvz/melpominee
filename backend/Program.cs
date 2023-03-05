@@ -1,4 +1,8 @@
 using Microsoft.Data.Sqlite;
+using Melpominee.app.Utilities;
+
+// Load Secrets
+SecretManager.Instance.LoadSecret("mail-secrets");
 
 // Create Initial Data Schema
 using (var connection = new SqliteConnection("Data Source=melpominee.db"))
@@ -11,7 +15,9 @@ using (var connection = new SqliteConnection("Data Source=melpominee.db"))
         CREATE TABLE IF NOT EXISTS melpominee_users (
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             email TEXT NOT NULL UNIQUE,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            activation_key TEXT,
+            active BOOL DEFAULT false
         );
     ";
     command.ExecuteNonQuery();

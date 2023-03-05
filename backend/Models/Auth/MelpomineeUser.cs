@@ -1,3 +1,4 @@
+using System.Web;
 using Microsoft.Data.Sqlite;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
@@ -65,8 +66,19 @@ public class MelpomineeUser {
         return MelpomineeUser.VerifyPassword(dbPassword, password);
     }
 
-    public bool Register(string password)
+    public bool Register(string origin, string password)
     {
+        // quick check validity of object
+        if(string.IsNullOrEmpty(Email)) 
+        { 
+            return false; 
+        }
+        
+        // generate confirmation key
+        byte[] confirmKeyBytes = RandomNumberGenerator.GetBytes(64);
+        string activationKey = Convert.ToBase64String(confirmKeyBytes);
+
+        // create new entry
         using (var connection = new SqliteConnection("Data Source=melpominee.db"))
         {
             connection.Open();
@@ -74,14 +86,105 @@ public class MelpomineeUser {
             command.CommandText = 
             @"
                 INSERT OR IGNORE INTO melpominee_users
-                    (email, password)
+                    (email, password, activation_key)
                 VALUES
-                    ($email, $password)
+                    ($email, $password, $activationkey)
             ";
             command.Parameters.AddWithValue("$email", Email);
             command.Parameters.AddWithValue("$password", HashPassword(password));
+            command.Parameters.AddWithValue("$activationkey", activationKey);
 
             if(command.ExecuteNonQuery() < 1) 
+            {
+                return false;
+            }
+        }
+        
+        // send email
+        Utilities.MailManager.Instance.SendMail(
+            Email,
+            "Melpominee.app Account Activation",
+            $@"
+            <html style='width:100%;height:100%;padding:2rem;'>
+                <body style='width:100%;height:100%;padding:4rem 0 4rem 0;display:flex;justify-content:center;align-items:center;background-color:#121212;'>
+                    <div style='box-sizing:border-box;width:600px;padding:3rem;background-color:#1f1f1f;'>
+                        <h2 style='color:white;text-align:center;font-size:1.625rem;margin-top:0;'>Hey there!</h2>
+                        <p style='color:white;text-align:center;font-size:1rem;'>Welcome to Melpominee.app. We're almost ready for you.</p>
+                        <p style='color:white;text-align:center;font-size:1rem;'>Before you can log in, your account needs to be activated. In order to activate your account, please click on the button below.</p>
+                        <p style='width:100%;height:2.5rem;border:none;border-radius:0.5rem;background-color:#aa2e25;'>
+                            <a href='{origin}/api/auth/confirmation?email={Email}&activationkey={HttpUtility.UrlEncode(activationKey)}' style='width:100%;height:100%;color:white;text-decoration:none;display:flex;justify-content:center;align-items:center;'>
+                                Activate my Account!
+                            </a>
+                        </p>
+                        <p style='color:rgba(255, 255, 255, 0.7);font-size:0.875rem;margin:0;margin-top:1rem;text-align:center;'>This email was sent by Melpominee.app. If you didn't sign up with Melpominee.app, don't worry! You can just ignore this.</p>
+                    </div>
+                </body>
+            </html>
+            "
+        );
+
+        return true;
+    }
+
+    public bool RegistrationFinish(string key)
+    {
+        // quick check validity of object
+        if(string.IsNullOrEmpty(Email)) 
+        { 
+            return false; 
+        }
+        
+        // make db connection
+        using (var connection = new SqliteConnection("Data Source=melpominee.db"))
+        {
+            connection.Open();
+
+            // get key
+            var getCommand = connection.CreateCommand();
+            getCommand.CommandText = 
+            @"
+                SELECT email, activation_key
+                FROM melpominee_users
+                WHERE email = $email
+            ";
+            getCommand.Parameters.AddWithValue("$email", Email);
+
+            string? dbEmail = null;
+            string? dbKey = null;
+            using (var reader = getCommand.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    dbEmail = reader.GetString(0);
+                    dbKey = reader.GetString(1);
+                }
+            }
+
+            // break out early if either value is bad
+            if (string.IsNullOrEmpty(dbEmail) || string.IsNullOrEmpty(dbKey))
+            {
+                return false;
+            }
+
+            Console.WriteLine($"Activation Key : {key} : {dbKey} : {key == dbKey}");
+
+            // compare
+            if(key != dbKey)
+            {
+                return false;
+            }
+
+            var setCommand = connection.CreateCommand();
+            setCommand.CommandText =
+            @"
+                UPDATE melpominee_users
+                SET activation_key = null,
+                    active = true
+                WHERE email = $email
+            ";
+            setCommand.Parameters.AddWithValue("$email", Email);
+
+            if(setCommand.ExecuteNonQuery() < 1) 
             {
                 return false;
             }

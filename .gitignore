@@ -455,6 +455,11 @@ $RECYCLE.BIN/
 *.code-workspace
 
 ##
+## General
+##
+secrets/**/*
+
+##
 ## Frontend Output
 ##
 frontend/dist/**/*

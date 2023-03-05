@@ -2,11 +2,12 @@ using System.Text.Json;
 using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Mvc;
 using Melpominee.app.Models.Auth;
-
+using System.Diagnostics;
 namespace Melpominee.app.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class AuthController : ControllerBase
 {
     private const string UserKey = "_UserData";
@@ -66,5 +67,43 @@ public class AuthController : ControllerBase
     {
         HttpContext.Session.Clear();
         return true;
+    }
+
+    [ActionName("Register")]
+    [HttpPost(Name = "Register")]
+    public RegisterResponse Register([FromBody] RegisterPayload payload)
+    {
+        // Check Parameters
+        if (string.IsNullOrEmpty(payload.Email) || string.IsNullOrEmpty(payload.Password))
+        {
+            return new RegisterResponse
+            {
+                Success = false
+            };
+        }
+
+        MelpomineeUser user = new MelpomineeUser(payload.Email);
+        if (user.Register($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}", payload.Password)) {
+            return new RegisterResponse
+            {
+                Success = true
+            };
+        }
+        return new RegisterResponse
+        {
+            Success = false
+        };
+    }
+
+    [ActionName("Confirmation")]
+    [HttpGet(Name = "Register_Confirmation")]
+    public RedirectResult RegisterConfirmation([FromQuery] string email, [FromQuery] string activationKey)
+    {
+        MelpomineeUser user = new MelpomineeUser(email);
+        if (user.RegistrationFinish(activationKey))
+        {
+            return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/login?confirmed=true&email={user.Email}");
+        }
+        return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/error?message=help");
     }
 }

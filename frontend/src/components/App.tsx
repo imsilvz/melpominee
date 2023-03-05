@@ -8,7 +8,8 @@ import { selectUserReady } from '../redux/reducers/userReducer';
 
 // local files
 import Layout from './shared/Layout';
-import Login from './routes/Login/Login';
+import Login from './routes/Auth/Login';
+import Register from './routes/Auth/Register';
 import RequireAuth from './shared/Auth/RequireAuth';
 import LoadingSpinner from './shared/LoadingSpinner/LoadingSpinner';
 import GameList from './routes/Games/GameList/GameList';
@@ -36,6 +37,7 @@ const App = () => {
               }
             />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </Route>
         </Routes>
       </BrowserRouter>

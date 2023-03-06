@@ -131,7 +131,7 @@ public class AuthController : ControllerBase
         MelpomineeUser user = new MelpomineeUser(email);
         if (user.RegistrationFinish(activationKey))
         {
-            return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/login?confirmed=true&email={user.Email}");
+            return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/login?notice=confirmed&email={user.Email}");
         }
         return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/error?message=help");
     }

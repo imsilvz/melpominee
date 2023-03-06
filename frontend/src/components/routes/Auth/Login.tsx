@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAppDispatch } from '../../../redux/hooks';
 
@@ -23,11 +23,23 @@ const Login = () => {
   const userRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [loginNotice, setLoginNotice] = useState<string>('');
   const [loginError, setLoginError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const messageType = searchParams.get('notice');
+    if (messageType === 'confirmed') {
+      setLoginNotice(
+        'Your account has been activated successfully and you may now log in!'
+      );
+    } else {
+      setLoginNotice('');
+    }
+  }, [searchParams]);
 
   return (
     <div className="login-container">
@@ -65,7 +77,7 @@ const Login = () => {
                 navigate(from, { replace: true });
               }
             } else {
-              searchParams.delete('confirmed');
+              searchParams.delete('message');
               setSearchParams(searchParams);
               setLoginError(
                 'Unable to login, please check your email and password!'
@@ -78,12 +90,9 @@ const Login = () => {
           <h1>Sign in.</h1>
         </div>
         <div className="input-item">
-          {searchParams.has('confirmed') && (
+          {loginNotice !== '' && (
             <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
-              <span style={{ color: 'lightgreen' }}>
-                Your account has been activated successfully, and you may now
-                log in!
-              </span>
+              <span style={{ color: 'lightgreen' }}>{loginNotice}</span>
             </div>
           )}
           {loginError !== '' && (
@@ -116,7 +125,7 @@ const Login = () => {
           />
           <div className="forgot-link">
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-            <a onClick={() => navigate('/forgot-password')}>
+            <a onClick={() => navigate('/forgot-password', { replace: true })}>
               I forgot my password.
             </a>
           </div>
@@ -127,7 +136,7 @@ const Login = () => {
           </button>
           <div className="register-link">
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-            <a onClick={() => navigate('/register')}>
+            <a onClick={() => navigate('/register', { replace: true })}>
               I don&#39;t have an account.
             </a>
           </div>

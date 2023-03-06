@@ -82,7 +82,7 @@ const Register = () => {
                 setRegistered(registerPayload.email);
               } else {
                 setRegistrationError(
-                  'An error has occurred: a user with this email already exists.'
+                  'An account is already associated with this email address.'
                 );
               }
             }

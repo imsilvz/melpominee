@@ -16,6 +16,7 @@ interface RegisterResponse {
 const Register = () => {
   const userRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [registered, setRegistered] = useState<string>('');
   const [registrationError, setRegistrationError] = useState<string>('');
@@ -32,9 +33,36 @@ const Register = () => {
             event.preventDefault();
             setLoading(true);
 
+            // check for empty inputs
+            if (
+              !userRef.current?.value ||
+              userRef.current.value === '' ||
+              !passwordRef.current?.value ||
+              passwordRef.current.value === '' ||
+              !confirmPasswordRef.current?.value ||
+              confirmPasswordRef.current.value === ''
+            ) {
+              setLoading(false);
+              setRegistrationError(
+                'All fields on this page are required. Please do not leave any blank!'
+              );
+              return;
+            }
+
+            // check password and confirm password match
+            if (
+              passwordRef.current?.value !== confirmPasswordRef.current?.value
+            ) {
+              setLoading(false);
+              setRegistrationError(
+                'Your password does not match your confirm password!'
+              );
+              return;
+            }
+
             const registerPayload: RegisterPayload = {
-              email: userRef.current?.value as string,
-              password: passwordRef.current?.value as string,
+              email: userRef.current?.value,
+              password: passwordRef.current?.value,
             };
             const registerRequest = await fetch(`/api/auth/register/`, {
               method: 'POST',
@@ -78,6 +106,15 @@ const Register = () => {
               ref={passwordRef}
               type="password"
               name="password"
+              disabled={loading}
+            />
+          </div>
+          <div className="input-item">
+            <span className="subtitle">Confirm Password</span>
+            <input
+              ref={confirmPasswordRef}
+              type="password"
+              name="confirm_password"
               disabled={loading}
             />
           </div>

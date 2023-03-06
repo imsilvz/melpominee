@@ -116,7 +116,7 @@ const Login = () => {
           />
           <div className="forgot-link">
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-            <a onClick={() => navigate('/password-reset')}>
+            <a onClick={() => navigate('/forgot-password')}>
               I forgot my password.
             </a>
           </div>

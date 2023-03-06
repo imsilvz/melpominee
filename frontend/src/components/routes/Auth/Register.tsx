@@ -85,6 +85,12 @@ const Register = () => {
             <button type="submit" disabled={loading}>
               Register
             </button>
+            <div className="register-link">
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
+              <a onClick={() => navigate('/login', { replace: true })}>
+                Return to Login Page
+              </a>
+            </div>
           </div>
           {loading && (
             <div className="loading-overlay">
@@ -117,7 +123,7 @@ const Register = () => {
                 navigate(`/login?email=${registered}`, { replace: true })
               }
             >
-              Return to Login Screen
+              Return to Login Page
             </button>
           </div>
         </div>

@@ -26,9 +26,19 @@ using (var connection = new SqliteConnection("Data Source=data/melpominee.db"))
             timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY(user_email) REFERENCES melpominee_users(email)
         );
+        CREATE TABLE IF NOT EXISTS melpominee_users_rescue (
+            user_email TEXT NOT NULL PRIMARY KEY,
+            rescue_key TEXT,
+            requested_timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            completed_timestamp DATETIME,
+            FOREIGN KEY(user_email) REFERENCES melpominee_users(email)
+        );
     ";
     command.ExecuteNonQuery();
 }
+
+var user = new Melpominee.app.Models.Auth.MelpomineeUser("rjyawger@me.com");
+user.BeginResetPassword("http://localhost:5173");
 
 // API Application Builder
 var builder = WebApplication.CreateBuilder(args);

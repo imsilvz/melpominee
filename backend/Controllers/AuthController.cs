@@ -36,7 +36,7 @@ public class AuthController : ControllerBase
         }
     }
 
-    [ActionName("Login")]
+    [ActionName("login")]
     [HttpPost(Name = "Login")]
     public LoginResponse Login([FromBody] LoginPayload payload)
     {
@@ -89,7 +89,7 @@ public class AuthController : ControllerBase
         };
     }
 
-    [ActionName("Logout")]
+    [ActionName("logout")]
     [HttpGet(Name = "Logout")]
     [HttpPost(Name = "Logout")]
     public bool Logout()
@@ -98,7 +98,64 @@ public class AuthController : ControllerBase
         return true;
     }
 
-    [ActionName("Register")]
+    [ActionName("reset-password")]
+    [HttpPost(Name = "Reset_Password")]
+    public ResetResponse ResetPassword([FromBody] ResetPayload payload)
+    {
+        if (string.IsNullOrEmpty(payload.Email))
+        {
+            return new ResetResponse
+            {
+                Success = false,
+                Error = "missing_email"
+            };
+        }
+
+        MelpomineeUser user = new MelpomineeUser(payload.Email);
+        if (!user.BeginResetPassword($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}"))
+        {
+            return new ResetResponse
+            {
+                Success = false,
+                Error = "not_found"
+            };
+        }
+
+        return new ResetResponse
+        {
+            Success = true
+        };
+    }
+
+    [ActionName("reset-password/confirmation")]
+    [HttpPost(Name = "Reset_Password_Confirm")]
+    public ResetResponse ResetPasswordConfirm()
+    {
+        if (string.IsNullOrEmpty("email"))
+        {
+            return new ResetResponse
+            {
+                Success = false,
+                Error = "missing_email"
+            };
+        }
+
+        MelpomineeUser user = new MelpomineeUser("email");
+        if (!user.FinishResetPassword("key", "password"))
+        {
+            return new ResetResponse
+            {
+                Success = false,
+                Error = "generic"
+            };
+        }
+        return new ResetResponse
+        {
+            Success = true
+        };
+    }
+
+    [ActionName("register")]
     [HttpPost(Name = "Register")]
     public RegisterResponse Register([FromBody] RegisterPayload payload)
     {
@@ -124,7 +181,7 @@ public class AuthController : ControllerBase
         };
     }
 
-    [ActionName("Confirmation")]
+    [ActionName("register/confirmation")]
     [HttpGet(Name = "Register_Confirmation")]
     public RedirectResult RegisterConfirmation([FromQuery] string email, [FromQuery] string activationKey)
     {

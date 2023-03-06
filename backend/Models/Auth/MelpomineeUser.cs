@@ -66,6 +66,79 @@ public class MelpomineeUser {
         return MelpomineeUser.VerifyPassword(dbPassword, password);
     }
 
+    public bool BeginResetPassword(string origin)
+    {
+        // quick check validity of object
+        if(string.IsNullOrEmpty(Email)) 
+        { 
+            return false; 
+        }
+        
+        // generate confirmation key
+        byte[] confirmKeyBytes = RandomNumberGenerator.GetBytes(64);
+        string rescueKey = Convert.ToBase64String(confirmKeyBytes);
+
+        // create new entry
+        using (var connection = new SqliteConnection("Data Source=data/melpominee.db"))
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = 
+            @"
+                INSERT OR REPLACE INTO melpominee_users_rescue
+                    (user_email, rescue_key, requested_timestamp, completed_timestamp)
+                VALUES
+                    ($email, $rescuekey, CURRENT_TIMESTAMP, null)
+            ";
+            command.Parameters.AddWithValue("$email", Email);
+            command.Parameters.AddWithValue("$rescuekey", HashPassword(rescueKey));
+
+            try
+            {
+                if(command.ExecuteNonQuery() < 1) 
+                {
+                    // 
+                    return false;
+                }
+            }
+            catch(SqliteException)
+            {
+                // catch foreign key failed
+                return false;
+            }
+        }
+
+        // send email
+        Utilities.MailManager.Instance.SendMail(
+            Email,
+            "Melpominee.app: Reset Password",
+            $@"
+            <html style='width:100%;height:100%;padding:2rem;'>
+                <body style='width:100%;height:100%;padding:4rem 0 4rem 0;display:flex;justify-content:center;align-items:center;background-color:#121212;'>
+                    <div style='box-sizing:border-box;width:600px;padding:3rem;background-color:#1f1f1f;'>
+                        <h2 style='color:white;text-align:center;font-size:1.625rem;margin-top:0;'>Password Reset Instructions</h2>
+                        <p style='color:white;text-align:center;font-size:1rem;'>Hello from the Melpominee team! We have received a request to reset your password at Melpominee.app.</p>
+                        <p style='color:white;text-align:center;font-size:1rem;'>To continue, please hit the button below.</p>
+                        <p style='width:100%;height:2.5rem;border:none;border-radius:0.5rem;background-color:#aa2e25;'>
+                            <a href='{origin}/forgot-password?email={Email}&key={HttpUtility.UrlEncode(rescueKey)}' style='width:100%;height:100%;color:white;text-decoration:none;display:flex;justify-content:center;align-items:center;'>
+                                Reset Password
+                            </a>
+                        </p>
+                        <p style='color:rgba(255, 255, 255, 0.7);font-size:0.875rem;margin:0;margin-top:1rem;text-align:center;'>If you did not request this password reset, you can safely ignore this email.</p>
+                    </div>
+                </body>
+            </html>
+            "
+        );
+
+        return true;
+    }
+
+    public bool FinishResetPassword(string key, string password)
+    {
+        return true;
+    }
+
     public bool Register(string origin, string password)
     {
         // quick check validity of object
@@ -103,7 +176,7 @@ public class MelpomineeUser {
         // send email
         Utilities.MailManager.Instance.SendMail(
             Email,
-            "Melpominee.app Account Activation",
+            "Melpominee.app: Account Activation",
             $@"
             <html style='width:100%;height:100%;padding:2rem;'>
                 <body style='width:100%;height:100%;padding:4rem 0 4rem 0;display:flex;justify-content:center;align-items:center;background-color:#121212;'>
@@ -112,7 +185,7 @@ public class MelpomineeUser {
                         <p style='color:white;text-align:center;font-size:1rem;'>Welcome to Melpominee.app. We're almost ready for you.</p>
                         <p style='color:white;text-align:center;font-size:1rem;'>Before you can log in, your account needs to be activated. In order to activate your account, please click on the button below.</p>
                         <p style='width:100%;height:2.5rem;border:none;border-radius:0.5rem;background-color:#aa2e25;'>
-                            <a href='{origin}/api/auth/confirmation?email={Email}&activationkey={HttpUtility.UrlEncode(activationKey)}' style='width:100%;height:100%;color:white;text-decoration:none;display:flex;justify-content:center;align-items:center;'>
+                            <a href='{origin}/api/auth/register/confirmation?email={Email}&activationkey={HttpUtility.UrlEncode(activationKey)}' style='width:100%;height:100%;color:white;text-decoration:none;display:flex;justify-content:center;align-items:center;'>
                                 Activate my Account!
                             </a>
                         </p>

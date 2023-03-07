@@ -49,7 +49,45 @@ var sheet = new Melpominee.app.Models.CharacterSheets.VTMV5.VampireV5Sheet()
     Sire = "Alfred von Halstatt, M.D.",
     Generation = 12,
     Clan = Melpominee.app.Models.CharacterSheets.VTMV5.VampireClan.GetClan("malkavian"),
-    PredatorType = Melpominee.app.Models.CharacterSheets.VTMV5.VampirePredatorType.GetPredatorType("sandman")
+    PredatorType = Melpominee.app.Models.CharacterSheets.VTMV5.VampirePredatorType.GetPredatorType("sandman"),
+    Attributes = {
+        Strength = 2,
+        Dexterity = 1,
+        Stamina = 2,
+        Charisma = 3,
+        Manipulation = 3,
+        Composure = 2,
+        Intelligence = 2,
+        Wits = 3,
+        Resolve = 4
+    },
+    Skills = {
+        Athletics = { Score = 2 },
+        Brawl = { Score = 1 },
+        Firearms = { Speciality = ".45 Pistol", Score = 3 },
+        Stealth = { Score = 2 },
+        Insight = { Score = 2 },
+        Performance = { Speciality = "Piano", Score = 1 },
+        Persuasion = { Score = 3 },
+        Streetwise = { Score = 1 },
+        Subterfuge = { Score = 2 },
+        Awareness = { Score = 3 },
+        Finance = { Score = 1 },
+        Investigation = { Score = 2 },
+        Medicine = { Speciality = "Anasthetics", Score = 1 },
+        Occult = { Score = 1 },
+        Politics = { Score = 1 },
+    },
+    Disciplines = new List<Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline>()
+    {
+        Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline.GetDiscipline("heightened_senses"),
+        Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline.GetDiscipline("premonition"),
+        Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline.GetDiscipline("scry_the_soul"),
+        Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline.GetDiscipline("cloud_memory"),
+        Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline.GetDiscipline("mesmerize"),
+        Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline.GetDiscipline("cloak_of_shadows"),
+        Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline.GetDiscipline("unseen_passage"),
+    }
 };
 Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sheet));
 

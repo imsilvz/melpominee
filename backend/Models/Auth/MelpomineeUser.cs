@@ -136,6 +136,70 @@ public class MelpomineeUser {
 
     public bool FinishResetPassword(string key, string password)
     {
+        // quick check validity of object
+        if(string.IsNullOrEmpty(Email)) 
+        { 
+            return false; 
+        }
+
+        // check database
+        string? dbEmail = null;
+        string? dbRescue = null;
+        using (var connection = new SqliteConnection("Data Source=data/melpominee.db"))
+        {
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = 
+            @"
+                SELECT user_email, rescue_key
+                FROM melpominee_users_rescue
+                WHERE user_email = $email
+                  AND completed_timestamp is null;
+            ";
+            command.Parameters.AddWithValue("$email", Email);
+
+            using (var reader = command.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    dbEmail = reader.GetString(0);
+                    dbRescue = reader.GetString(1);
+                }
+            }
+
+            // no pending reset
+            if (dbRescue is null)
+            {
+                return false;
+            }
+
+            // check for hashed password
+            if (!VerifyPassword(dbRescue, key)) 
+            {
+                return false;
+            }
+
+            // update timestamp
+            var updateCommand = connection.CreateCommand();
+            updateCommand.CommandText =
+            @"
+                UPDATE melpominee_users_rescue
+                SET completed_timestamp = CURRENT_TIMESTAMP
+                WHERE user_email = $email;
+                UPDATE melpominee_users
+                SET password = $password
+                WHERE email = $email;
+            ";
+            updateCommand.Parameters.AddWithValue("$email", Email);
+            updateCommand.Parameters.AddWithValue("$password", HashPassword(password));
+            
+            var num = updateCommand.ExecuteNonQuery();
+            if(num < 2) 
+            {
+                // something went wrong!
+                return false;
+            }
+        }
         return true;
     }
 

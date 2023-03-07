@@ -36,6 +36,8 @@ const Login = () => {
       setLoginNotice(
         'Your account has been activated successfully and you may now log in!'
       );
+    } else if (messageType === 'reset') {
+      setLoginNotice('Your password has been changed successfully.');
     } else {
       setLoginNotice('');
     }

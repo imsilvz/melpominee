@@ -37,8 +37,8 @@ using (var connection = new SqliteConnection("Data Source=data/melpominee.db"))
     command.ExecuteNonQuery();
 }
 
-var user = new Melpominee.app.Models.Auth.MelpomineeUser("rjyawger@me.com");
-user.BeginResetPassword("http://localhost:5173");
+//var user = new Melpominee.app.Models.Auth.MelpomineeUser("rjyawger@me.com");
+//user.BeginResetPassword("http://localhost:5173");
 
 // API Application Builder
 var builder = WebApplication.CreateBuilder(args);

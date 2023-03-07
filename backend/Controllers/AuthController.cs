@@ -25,11 +25,15 @@ public class AuthController : ControllerBase
         // Get Active User Data
         MelpomineeUser? user;
         var userString = HttpContext.Session.GetString(UserKey);
-        if (string.IsNullOrEmpty(userString)) {
+        if (string.IsNullOrEmpty(userString))
+        {
             return new MelpomineeUser();
-        } else {
+        }
+        else
+        {
             user = JsonSerializer.Deserialize<MelpomineeUser>(userString);
-            if (user is null) {
+            if (user is null)
+            {
                 return new MelpomineeUser();
             }
             return user;
@@ -40,11 +44,6 @@ public class AuthController : ControllerBase
     [HttpPost(Name = "Login")]
     public LoginResponse Login([FromBody] LoginPayload payload)
     {
-        Console.WriteLine(HttpContext.Connection.RemoteIpAddress);
-        Console.WriteLine(HttpContext.GetServerVariable("X-Real-IP"));
-        Console.WriteLine(HttpContext.GetServerVariable("X-Forwarded-For"));
-        Console.WriteLine(HttpContext.Request.Headers["X-Real-IP"]);
-        Console.WriteLine(HttpContext.Request.Headers["X-Forwarded-For"]);
         // perform login
         if ((!string.IsNullOrEmpty(payload.Email)) && (!string.IsNullOrEmpty(payload.Password)))
         {
@@ -56,7 +55,7 @@ public class AuthController : ControllerBase
                 {
                     connection.Open();
                     var command = connection.CreateCommand();
-                    command.CommandText = 
+                    command.CommandText =
                     @"
                         INSERT INTO melpominee_logins
                             (user_email)
@@ -65,7 +64,7 @@ public class AuthController : ControllerBase
                     ";
                     command.Parameters.AddWithValue("$email", payload.Email);
 
-                    if(command.ExecuteNonQuery() < 1) 
+                    if (command.ExecuteNonQuery() < 1)
                     {
                         return new LoginResponse
                         {
@@ -129,19 +128,21 @@ public class AuthController : ControllerBase
 
     [ActionName("reset-password/confirmation")]
     [HttpPost(Name = "Reset_Password_Confirm")]
-    public ResetResponse ResetPasswordConfirm()
+    public ResetResponse ResetPasswordConfirm([FromBody] ConfirmResetPayload payload)
     {
-        if (string.IsNullOrEmpty("email"))
+        if (string.IsNullOrEmpty(payload.Key)
+            || string.IsNullOrEmpty(payload.Email)
+            || string.IsNullOrEmpty(payload.Password))
         {
             return new ResetResponse
             {
                 Success = false,
-                Error = "missing_email"
+                Error = "missing_params"
             };
         }
 
-        MelpomineeUser user = new MelpomineeUser("email");
-        if (!user.FinishResetPassword("key", "password"))
+        MelpomineeUser user = new MelpomineeUser(payload.Email);
+        if (!user.FinishResetPassword(payload.Key, payload.Password))
         {
             return new ResetResponse
             {
@@ -169,7 +170,8 @@ public class AuthController : ControllerBase
         }
 
         MelpomineeUser user = new MelpomineeUser(payload.Email);
-        if (user.Register($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}", payload.Password)) {
+        if (user.Register($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}", payload.Password))
+        {
             return new RegisterResponse
             {
                 Success = true

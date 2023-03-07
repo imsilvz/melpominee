@@ -20,6 +20,11 @@ interface ConfirmResetPasswordPayload {
   password: string;
 }
 
+interface ConfirmResetPasswordResponse {
+  success: boolean;
+  error: string;
+}
+
 interface ConfirmPasswordProps {
   email: string;
   resetKey: string;
@@ -87,7 +92,21 @@ const ConfirmForgotPassword = ({ email, resetKey }: ConfirmPasswordProps) => {
               body: JSON.stringify(resetPayload),
             }
           );
-          console.log(resetRequest.json());
+
+          setLoading(false);
+          if (resetRequest.ok) {
+            const resetJson: ConfirmResetPasswordResponse =
+              await (resetRequest.json() as Promise<ConfirmResetPasswordResponse>);
+            if (resetJson.success) {
+              // success
+              navigate(`/login?notice=reset&email=${email}`, { replace: true });
+            } else {
+              // failure
+              setForgotError(
+                'An error has occurred during the password reset.'
+              );
+            }
+          }
         }}
       >
         <div className="input-item">

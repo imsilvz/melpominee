@@ -55,7 +55,7 @@ const Register = () => {
             ) {
               setLoading(false);
               setRegistrationError(
-                'Your password does not match your confirm password!'
+                'Your password must match your confirm password!'
               );
               return;
             }

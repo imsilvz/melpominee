@@ -11,11 +11,6 @@ public class MelpomineeUser {
     private static int _passwordBytes = 512 / 8;
     public string? Email { get; set; }
 
-    public MelpomineeUser()
-    {
-        Email = "";
-    }
-
     public MelpomineeUser(string email)
     {
         Email = email;

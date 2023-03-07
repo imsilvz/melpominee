@@ -39,6 +39,19 @@ using (var connection = new SqliteConnection("Data Source=data/melpominee.db"))
 
 //var user = new Melpominee.app.Models.Auth.MelpomineeUser("rjyawger@me.com");
 //user.BeginResetPassword("http://localhost:5173");
+var sheet = new Melpominee.app.Models.CharacterSheets.VTMV5.VampireV5Sheet()
+{
+    Name = "Logan Bessett",
+    Concept = "Schizo WWII Vet, also Therapist",
+    Chronicle = "Gehenna Lost",
+    Ambition = "Grant Sire True Death",
+    Desire = "I forgot",
+    Sire = "Alfred von Halstatt, M.D.",
+    Generation = 12,
+    Clan = Melpominee.app.Models.CharacterSheets.VTMV5.VampireClan.GetClan("malkavian"),
+    PredatorType = "Sandman"
+};
+Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sheet));
 
 // API Application Builder
 var builder = WebApplication.CreateBuilder(args);

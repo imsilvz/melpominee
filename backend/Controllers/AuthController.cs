@@ -27,14 +27,14 @@ public class AuthController : ControllerBase
         var userString = HttpContext.Session.GetString(UserKey);
         if (string.IsNullOrEmpty(userString))
         {
-            return new MelpomineeUser();
+            return new MelpomineeUser("");
         }
         else
         {
             user = JsonSerializer.Deserialize<MelpomineeUser>(userString);
             if (user is null)
             {
-                return new MelpomineeUser();
+                return new MelpomineeUser("");
             }
             return user;
         }

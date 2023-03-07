@@ -1,0 +1,71 @@
+.dicesheet-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    > .dicesheet-panel {
+        position: relative;
+        width: 800px;
+        > .dicesheet-statblock {
+            color: rgba(255, 255, 255, 0.85);
+            > .dicesheet-statblock-header {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: center;
+                .dicesheet-statblock-header-title {
+                    > h2 {
+                        margin: 0;
+                    }
+                }
+                > .dicesheet-statblock-header-divider {
+                    width: 100%;
+                    height: 2px;
+                    background-color: rgba(255, 255, 255, 0.85);
+                }
+            }
+            > .dicesheet-statblock-inner {
+                display: flex;
+                justify-content: space-around;
+                gap: 1rem;
+                > .dicesheet-statblock-section {
+                    display: flex;
+                    flex-direction: column;
+                    width: calc(33% - 1rem);
+                    > .dicesheet-statblock-item {
+                        display: flex;
+                        > h3 {
+                            margin: 0;
+                            text-align: center;
+                            width: 100%;
+                        }
+                        .dicesheet-statblock-item-info {
+                            flex: 1;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                        }
+                        > .dicesheet-statblock-item-score {
+                            text-align: center;
+                        }
+                    }
+                }
+                > .dicesheet-statblock-divider {
+                    position: relative;
+                    bottom: 0;
+                    top: 0;
+                    width: 1px;
+                    > .dicesheet-statblock-divider-inner {
+                        position: absolute;
+                        height: calc(100% - 25px);
+                        width: 100%;
+                        bottom: 0;
+                        background-color: rgba(255, 255, 255, 0.85);
+                    }
+                }
+            }
+        }
+    }
+}

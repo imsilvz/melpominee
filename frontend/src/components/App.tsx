@@ -15,6 +15,7 @@ import RequireAuth from './shared/Auth/RequireAuth';
 import LoadingSpinner from './shared/LoadingSpinner/LoadingSpinner';
 import GameList from './routes/Games/GameList/GameList';
 import './App.scss';
+import DiceSheet from './routes/DiceSheets/DiceSheet';
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -33,7 +34,7 @@ const App = () => {
               index
               element={
                 <RequireAuth>
-                  <GameList />
+                  <DiceSheet />
                 </RequireAuth>
               }
             />

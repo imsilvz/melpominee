@@ -1,4 +1,3 @@
-using Melpominee.app.Models.CharacterSheets;
 namespace Melpominee.app.Models.CharacterSheets.VTMV5;
 
 public class VampireV5Sheet : BaseCharacterSheet
@@ -12,7 +11,7 @@ public class VampireV5Sheet : BaseCharacterSheet
     public string Sire { get; set; } = "";
     public int Generation { get; set; } = 13;
     public VampireClan? Clan { get; set; }
-    public string PredatorType { get; set; } = "";
+    public VampirePredatorType? PredatorType { get; set; }
 
     public VampireV5Sheet() : base()
     {

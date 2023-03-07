@@ -32,6 +32,6 @@ public abstract class VampireClan
         {
             return clan;
         }
-        throw new ArgumentException($"'{name}' is not a valid VampireClan identifier");
+        throw new ArgumentException($"'{name}' is not a valid VampireClan identifier.");
     }
 }

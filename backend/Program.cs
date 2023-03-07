@@ -49,7 +49,7 @@ var sheet = new Melpominee.app.Models.CharacterSheets.VTMV5.VampireV5Sheet()
     Sire = "Alfred von Halstatt, M.D.",
     Generation = 12,
     Clan = Melpominee.app.Models.CharacterSheets.VTMV5.VampireClan.GetClan("malkavian"),
-    PredatorType = "Sandman"
+    PredatorType = Melpominee.app.Models.CharacterSheets.VTMV5.VampirePredatorType.GetPredatorType("sandman")
 };
 Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sheet));
 

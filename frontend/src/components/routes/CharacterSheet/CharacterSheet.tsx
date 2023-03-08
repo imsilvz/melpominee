@@ -8,6 +8,7 @@ import {
   CharacterSkills,
 } from '../../../types/Character';
 import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
+import HeaderBrand from './HeaderBrand';
 import StatDots from './StatDots';
 import './CharacterSheet.scss';
 
@@ -25,6 +26,49 @@ const toTitleCase = (str: string) => {
     .split(' ')
     .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
     .join(' ');
+};
+
+const HeaderBlock = ({ character }: { character: Character }) => {
+  return (
+    <div className="charactersheet-header">
+      <HeaderBrand clan={character.clan} />
+      <div className="charactersheet-header-inner">
+        <div className="charactersheet-header-column">
+          <div className="charactersheet-header-row">
+            <span>Name:</span>
+          </div>
+          <div className="charactersheet-header-row">
+            <span>Concept:</span>
+          </div>
+          <div className="charactersheet-header-row">
+            <span>Chronicle:</span>
+          </div>
+        </div>
+        <div className="charactersheet-header-column">
+          <div className="charactersheet-header-row">
+            <span>Ambition:</span>
+          </div>
+          <div className="charactersheet-header-row">
+            <span>Desire:</span>
+          </div>
+          <div className="charactersheet-header-row">
+            <span>Predator Type:</span>
+          </div>
+        </div>
+        <div className="charactersheet-header-column">
+          <div className="charactersheet-header-row">
+            <span>Clan:</span>
+          </div>
+          <div className="charactersheet-header-row">
+            <span>Generation:</span>
+          </div>
+          <div className="charactersheet-header-row">
+            <span>Sire:</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const AttributeBlock = ({
@@ -230,9 +274,7 @@ const CharacterSheet = () => {
         <LoadingSpinner />
       ) : (
         <div className="charactersheet-panel">
-          <h1 style={{ color: 'white', textAlign: 'center' }}>
-            Under Construction 😊
-          </h1>
+          <HeaderBlock character={character} />
           <AttributeBlock attributes={character.attributes} />
           <SkillBlock skills={character.skills} />
         </div>

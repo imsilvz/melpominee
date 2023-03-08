@@ -1,0 +1,37 @@
+.healthtracker-container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > .healthtracker-dot {
+        display: grid;
+        place-content: center;
+
+        // disable default styles
+        -webkit-appearance: none;
+        appearance: none;
+        background-color: transparent;
+        margin: 2px;
+        
+        // custom styles
+        font: inherit;
+        color: rgba(255, 255, 255, 0.7);
+        //border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        width: 0.6em;
+        height: 0.6em;
+        
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.12);
+        }
+
+        &:checked {
+            border: 1px solid rgba(0, 0, 0, 0.4);
+            background-color: rgba(255, 255, 255, 0.7);
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.82);
+            }
+        }
+    }
+}

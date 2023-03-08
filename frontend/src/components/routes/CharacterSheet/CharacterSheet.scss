@@ -14,6 +14,7 @@
         box-shadow: 5px 5px 10px #0003;
         padding: 1rem 2rem 2rem 2rem;
         width: 1024px;
+        min-width: 1024px;
         > .charactersheet-header {
             position: relative;
             width: 100%;
@@ -34,6 +35,7 @@
                 }
             }
             > .charactersheet-header-inner {
+                margin-top: 1rem;
                 position: relative;
                 width: 100%;
                 display: flex;
@@ -57,6 +59,7 @@
 
                                 color: rgba(255, 255, 255, 0.85);
                                 padding: 0 0.25rem 0 0.25rem;
+                                font-size: 0.75rem;
                             }
                         }
                     }
@@ -65,6 +68,7 @@
         }
         > .charactersheet-statblock {
             > .charactersheet-statblock-header {
+                margin-top: 1rem;
                 display: flex;
                 flex-wrap: wrap;
                 align-items: center;
@@ -72,6 +76,7 @@
                 .charactersheet-statblock-header-title {
                     > h2 {
                         margin: 0;
+                        //text-transform: uppercase;
                     }
                 }
                 > .charactersheet-statblock-header-divider {
@@ -113,6 +118,7 @@
 
                                 color: rgba(255, 255, 255, 0.85);
                                 padding: 0 0.25rem 0 0.25rem;
+                                font-size: 0.75rem;
                             }
                         }
                     }
@@ -145,6 +151,36 @@
                         width: 100%;
                         bottom: 0;
                         background-color: rgba(255, 255, 255, 0.85);
+                    }
+                }
+            }
+        }
+        > .charactersheet-secondary {
+            margin-top: 1.5rem;
+            > .charactersheet-secondary-col {
+                display: flex;
+                justify-content: center;
+                margin-top: 0.5rem;
+                > .charactersheet-secondary-healthrow-item {
+                    display: flex;
+                    width: 33.33%;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    > h4 {
+                        margin: 0;
+                        //text-transform: uppercase;
+                    }
+                }
+                > .charactersheet-secondary-hungerrow-item {
+                    display: flex;
+                    width: calc(33.33% + 0.5rem);
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    > h4 {
+                        margin: 0;
+                        //text-transform: uppercase;
                     }
                 }
             }

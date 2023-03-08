@@ -1,0 +1,33 @@
+.statdots-container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > .statdots-dot {
+        display: grid;
+        place-content: center;
+
+        // disable default styles
+        -webkit-appearance: none;
+        appearance: none;
+        background-color: transparent;
+        margin: 0;
+        
+        // custom styles
+        font: inherit;
+        color: rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
+        border: 0.15em solid rgba(255, 255, 255, 0.7);
+        width: 0.825em;
+        height: 0.825em;
+        
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.12);
+        }
+
+        &:checked {
+            border: none;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+    }
+}

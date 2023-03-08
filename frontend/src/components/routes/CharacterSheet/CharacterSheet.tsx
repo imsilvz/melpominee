@@ -2,8 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 // local files
-import { Character } from '../../../types/Character';
-import './charactersheet.scss';
+import {
+  Character,
+  CharacterAttributes,
+  CharacterSkills,
+} from '../../../types/Character';
+import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
+import StatDots from './StatDots';
+import './CharacterSheet.scss';
 
 // import { ReactComponent as Logo } from '../../../assets/VampireLogo.svg';
 
@@ -13,22 +19,19 @@ interface APICharacterSheetResponse {
   character?: Character;
 }
 
-interface StatItem {
-  name: string;
-  speciality?: string;
-  score: number;
-}
-
-interface StatGroup {
-  category?: string;
-  allowSpecialities?: boolean;
-  items: StatItem[];
-}
-
 interface StatBlock {
   title?: string;
   dividers?: boolean;
   groups: StatGroup[];
+}
+
+interface StatGroup {
+  groupName?: string;
+  items: StatItem[];
+}
+
+interface StatItem {
+  name: string;
 }
 
 const StatPanel = ({ stats }: { stats: StatBlock }) => {
@@ -45,27 +48,23 @@ const StatPanel = ({ stats }: { stats: StatBlock }) => {
       <div className="charactersheet-statblock-inner">
         {stats.groups.map((group, groupIdx) => (
           <>
-            <div className="charactersheet-statblock-section">
-              {group.category && (
+            <div
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${groupIdx}_section`}
+              className="charactersheet-statblock-section"
+            >
+              {group.groupName && (
                 <div className="charactersheet-statblock-item">
-                  <h3>{group.category}</h3>
+                  <h3>{group.groupName}</h3>
                 </div>
               )}
-              {group.items.map((item, itemIdx) => (
+              {group.items.map((item) => (
                 <div
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${groupIdx}_item_${item.name}`}
                   className="charactersheet-statblock-item"
-                  style={{
-                    justifyContent: group.allowSpecialities
-                      ? 'space-between'
-                      : undefined,
-                  }}
                 >
-                  <div
-                    className="charactersheet-statblock-item-info"
-                    style={{
-                      flex: group.allowSpecialities ? 'unset' : '1',
-                    }}
-                  >
+                  <div className="charactersheet-statblock-item-info">
                     <span>{item.name}</span>
                   </div>
                   <div className="charactersheet-statblock-item-score">
@@ -75,11 +74,193 @@ const StatPanel = ({ stats }: { stats: StatBlock }) => {
               ))}
             </div>
             {stats.dividers && groupIdx !== stats.groups.length - 1 && (
-              <div className="charactersheet-statblock-divider">
+              <div
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${groupIdx}_divider`}
+                className="charactersheet-statblock-divider"
+              >
                 <div className="charactersheet-statblock-divider-inner" />
               </div>
             )}
           </>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const toTitleCase = (str: string) => {
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+    .join(' ');
+};
+
+const AttributeBlock = ({
+  attributes,
+}: {
+  attributes: CharacterAttributes;
+}) => {
+  const physicalAttributes = ['strength', 'dexterity', 'stamina'];
+  const socialAttributes = ['charisma', 'manipulation', 'composure'];
+  const mentalAttributes = ['intelligence', 'wits', 'resolve'];
+  return (
+    <div className="charactersheet-statblock">
+      <div className="charactersheet-statblock-header">
+        <div className="charactersheet-statblock-header-title">
+          <h2>Attributes</h2>
+        </div>
+        <div className="charactersheet-statblock-header-divider" />
+      </div>
+      <div className="charactersheet-statblock-inner">
+        {/* Physical Attributes */}
+        <div className="charactersheet-statblock-section">
+          <div className="charactersheet-statblock-item">
+            <h3>Physical</h3>
+          </div>
+          {physicalAttributes.map((attr) => (
+            <div
+              key={`attributes_physical_${attr}`}
+              className="charactersheet-attribute-item"
+            >
+              <div className="charactersheet-statblock-item-info">
+                <span>{toTitleCase(attr)}</span>
+              </div>
+              <div className="charactersheet-statblock-item-score">
+                <StatDots
+                  key={`attributes_physical_${attr}`}
+                  initialValue={attributes[attr as keyof CharacterAttributes]}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="charactersheet-statblock-divider">
+          <div className="charactersheet-statblock-divider-inner" />
+        </div>
+        {/* Social Attributes */}
+        <div className="charactersheet-statblock-section">
+          <div className="charactersheet-statblock-item">
+            <h3>Social</h3>
+          </div>
+          {socialAttributes.map((attr) => (
+            <div
+              key={`attributes_social_${attr}`}
+              className="charactersheet-attribute-item"
+            >
+              <div className="charactersheet-statblock-item-info">
+                <span>{toTitleCase(attr)}</span>
+              </div>
+              <div className="charactersheet-statblock-item-score">
+                <StatDots
+                  key={`attributes_social_${attr}`}
+                  initialValue={attributes[attr as keyof CharacterAttributes]}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="charactersheet-statblock-divider">
+          <div className="charactersheet-statblock-divider-inner" />
+        </div>
+        {/* Mental Attributes */}
+        <div className="charactersheet-statblock-section">
+          <div className="charactersheet-statblock-item">
+            <h3>Mental</h3>
+          </div>
+          {mentalAttributes.map((attr) => (
+            <div
+              key={`attributes_mental_${attr}`}
+              className="charactersheet-attribute-item"
+            >
+              <div className="charactersheet-statblock-item-info">
+                <span>{toTitleCase(attr)}</span>
+              </div>
+              <div className="charactersheet-statblock-item-score">
+                <StatDots
+                  key={`attributes_mental_${attr}`}
+                  initialValue={attributes[attr as keyof CharacterAttributes]}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const CharacterSkillsList = [
+  'athletics',
+  'brawl',
+  'craft',
+  'drive',
+  'firearms',
+  'melee',
+  'larceny',
+  'stealth',
+  'survival',
+  'animalKen',
+  'ettiquette',
+  'insight',
+  'intimidation',
+  'leadership',
+  'performance',
+  'persuasion',
+  'streetwise',
+  'subterfuge',
+  'academics',
+  'awareness',
+  'finance',
+  'investigation',
+  'medicine',
+  'occult',
+  'politics',
+  'science',
+  'technology',
+];
+const SkillBlock = ({ skills }: { skills: CharacterSkills }) => {
+  // break into columns
+  let skillColumnIndex = -1;
+  const skillColumns: string[][] = [];
+  for (let i = 0; i < CharacterSkillsList.length; i++) {
+    if (i % (CharacterSkillsList.length / 3) === 0) {
+      skillColumnIndex += 1;
+      skillColumns.push([]);
+    }
+    skillColumns[skillColumnIndex].push(CharacterSkillsList[i]);
+  }
+
+  return (
+    <div className="charactersheet-statblock">
+      <div className="charactersheet-statblock-header">
+        <div className="charactersheet-statblock-header-title">
+          <h2>Skills</h2>
+        </div>
+        <div className="charactersheet-statblock-header-divider" />
+      </div>
+      <div className="charactersheet-statblock-inner">
+        {skillColumns.map((column, columnIdx) => (
+          <div className="charactersheet-statblock-section">
+            {column.map((skill, skillIdx) => (
+              <div
+                key={`attributes_social_${skill}`}
+                className="charactersheet-skill-item"
+              >
+                <div className="charactersheet-statblock-item-info">
+                  <span>{toTitleCase(skill)}</span>
+                </div>
+                <div className="charactersheet-skillblock-speciality" />
+                <div className="charactersheet-statblock-item-score">
+                  <StatDots
+                    key={`attributes_social_${skill}`}
+                    initialValue={skills[skill as keyof CharacterSkills].score}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         ))}
       </div>
     </div>
@@ -110,93 +291,17 @@ const CharacterSheet = () => {
 
   return (
     <div className="charactersheet-container">
-      <div className="charactersheet-panel">
-        <h1 style={{ color: 'white', textAlign: 'center' }}>
-          Under Construction 😊
-        </h1>
-        <StatPanel
-          stats={{
-            title: 'Attributes',
-            dividers: true,
-            groups: [
-              {
-                category: 'Physical',
-                items: [
-                  { name: 'Strength', score: 1 },
-                  { name: 'Dexterity', score: 1 },
-                  { name: 'Stamina', score: 1 },
-                ],
-              },
-              {
-                category: 'Social',
-                items: [
-                  { name: 'Charisma', score: 1 },
-                  { name: 'Manipulation', score: 1 },
-                  { name: 'Composure', score: 1 },
-                ],
-              },
-              {
-                category: 'Mental',
-                items: [
-                  { name: 'Intelligence', score: 1 },
-                  { name: 'Wits', score: 1 },
-                  { name: 'Resolve', score: 1 },
-                ],
-              },
-            ],
-          }}
-        />
-        <StatPanel
-          stats={{
-            title: 'Skills',
-            dividers: false,
-            groups: [
-              {
-                allowSpecialities: true,
-                items: [
-                  { name: 'Athletics', score: 1 },
-                  { name: 'Brawl', score: 1 },
-                  { name: 'Craft', score: 1 },
-                  { name: 'Drive', score: 1 },
-                  { name: 'Firearms', score: 1 },
-                  { name: 'Melee', score: 1 },
-                  { name: 'Larceny', score: 1 },
-                  { name: 'Stealth', score: 1 },
-                  { name: 'Survival', score: 1 },
-                ],
-              },
-              {
-                allowSpecialities: true,
-                items: [
-                  { name: 'Animal Ken', score: 1 },
-                  { name: 'Etiquette', score: 1 },
-                  { name: 'Insight', score: 1 },
-                  { name: 'Intimidation', score: 1 },
-                  { name: 'Leadership', score: 1 },
-                  { name: 'Performance', score: 1 },
-                  { name: 'Persuasion', score: 1 },
-                  { name: 'Streetwise', score: 1 },
-                  { name: 'Subterfuge', score: 1 },
-                ],
-              },
-              {
-                allowSpecialities: true,
-                items: [
-                  { name: 'Academics', score: 1 },
-                  { name: 'Awareness', score: 1 },
-                  { name: 'Finance', score: 1 },
-                  { name: 'Investigation', score: 1 },
-                  { name: 'Medicine', score: 1 },
-                  { name: 'Occult', score: 1 },
-                  { name: 'Politics', score: 1 },
-                  { name: 'Science', score: 1 },
-                  { name: 'Technology', score: 1 },
-                ],
-              },
-            ],
-          }}
-        />
-      </div>
+      {!character ? (
+        <LoadingSpinner />
+      ) : (
+        <div className="charactersheet-panel">
+          <h1 style={{ color: 'white', textAlign: 'center' }}>
+            Under Construction 😊
+          </h1>
+          <AttributeBlock attributes={character.attributes} />
+          <SkillBlock skills={character.skills} />
+        </div>
+      )}
     </div>
   );
 };

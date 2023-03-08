@@ -7,6 +7,10 @@
     height: 100%;
     > .charactersheet-panel {
         position: relative;
+        border-radius: 0.5rem;
+        background: #1f1f1f;
+        box-shadow: 5px 5px 10px #0003;
+        padding: 2rem;
         width: 800px;
         > .charactersheet-statblock {
             color: rgba(255, 255, 255, 0.85);
@@ -34,6 +38,22 @@
                     display: flex;
                     flex-direction: column;
                     width: calc(33% - 1rem);
+                    > .charactersheet-attribute-item {
+                        display: flex;
+                        padding: 0 2rem 0 2rem;
+                        > .charactersheet-statblock-item-info {
+                            flex: 1;
+                            display: flex;
+                            justify-content: flex-start;
+                            align-items: center;
+                        }
+                    }
+                    > .charactersheet-skill-item {
+                        display: flex;
+                        > .charactersheet-skillblock-speciality {
+                            flex: 1;
+                        }
+                    }
                     > .charactersheet-statblock-item {
                         display: flex;
                         > h3 {
@@ -41,7 +61,7 @@
                             text-align: center;
                             width: 100%;
                         }
-                        .charactersheet-statblock-item-info {
+                        > .charactersheet-statblock-item-info {
                             flex: 1;
                             display: flex;
                             justify-content: center;

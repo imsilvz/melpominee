@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+// redux
+import { useAppSelector } from '../../../redux/hooks';
+import {
+  selectClans,
+  selectPredatorTypes,
+} from '../../../redux/reducers/masterdataReducer';
+
 // local files
 import {
   Character,
@@ -11,8 +18,6 @@ import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
 import HeaderBrand from './HeaderBrand';
 import StatDots from './StatDots';
 import './CharacterSheet.scss';
-
-// import { ReactComponent as Logo } from '../../../assets/VampireLogo.svg';
 
 interface APICharacterSheetResponse {
   success: boolean;
@@ -29,6 +34,8 @@ const toTitleCase = (str: string) => {
 };
 
 const HeaderBlock = ({ character }: { character: Character }) => {
+  const clanData = useAppSelector(selectClans);
+  const predatorData = useAppSelector(selectPredatorTypes);
   let generationText = '';
   const ordinalRules = new Intl.PluralRules('en', { type: 'ordinal' });
   const suffixes: { [key: string]: string } = {
@@ -105,7 +112,17 @@ const HeaderBlock = ({ character }: { character: Character }) => {
             <span className="charactersheet-header-row-field">
               <input
                 type="text"
-                value={character.predatorType}
+                value={
+                  character.predatorType &&
+                  character.predatorType !== '' &&
+                  predatorData &&
+                  Object.prototype.hasOwnProperty.call(
+                    predatorData,
+                    character.predatorType
+                  )
+                    ? predatorData[character.predatorType].name
+                    : ''
+                }
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
               />
             </span>
@@ -117,7 +134,14 @@ const HeaderBlock = ({ character }: { character: Character }) => {
             <span className="charactersheet-header-row-field">
               <input
                 type="text"
-                value={character.clan}
+                value={
+                  character.clan &&
+                  character.clan !== '' &&
+                  clanData &&
+                  Object.prototype.hasOwnProperty.call(clanData, character.clan)
+                    ? clanData[character.clan].name
+                    : ''
+                }
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
               />
             </span>
@@ -310,6 +334,9 @@ const SkillBlock = ({ skills }: { skills: CharacterSkills }) => {
                   <input
                     type="text"
                     value={skills[skill as keyof CharacterSkills].speciality}
+                    onChange={(
+                      event: React.ChangeEvent<HTMLInputElement>
+                    ) => {}}
                   />
                 </div>
                 <div className="charactersheet-statblock-item-score">
@@ -323,6 +350,22 @@ const SkillBlock = ({ skills }: { skills: CharacterSkills }) => {
           </div>
         ))}
       </div>
+    </div>
+  );
+};
+
+const SecondaryBlock = () => {
+  return (
+    <div>
+      <h1>Secondary Stats</h1>
+    </div>
+  );
+};
+
+const DisciplineBlock = () => {
+  return (
+    <div>
+      <h1>Disciplines</h1>
     </div>
   );
 };
@@ -357,6 +400,7 @@ const CharacterSheet = () => {
           <HeaderBlock character={character} />
           <AttributeBlock attributes={character.attributes} />
           <SkillBlock skills={character.skills} />
+          <SecondaryBlock />
         </div>
       )}
     </div>

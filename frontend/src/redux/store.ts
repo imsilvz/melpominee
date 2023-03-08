@@ -5,10 +5,12 @@ import {
   ThunkAction,
 } from '@reduxjs/toolkit';
 
+import masterdata from './reducers/masterdataReducer';
 import user from './reducers/userReducer';
 
 const store = configureStore({
   reducer: combineReducers({
+    masterdata,
     user,
   }),
 });

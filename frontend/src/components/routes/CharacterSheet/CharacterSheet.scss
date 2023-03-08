@@ -11,7 +11,7 @@
         background: #1f1f1f;
         box-shadow: 5px 5px 10px #0003;
         padding: 2rem;
-        width: 800px;
+        width: 1024px;
         > .charactersheet-statblock {
             color: rgba(255, 255, 255, 0.85);
             > .charactersheet-statblock-header {
@@ -52,6 +52,18 @@
                         display: flex;
                         > .charactersheet-skillblock-speciality {
                             flex: 1;
+                            height: 1.2em;
+                            > input {
+                                width: 100%;
+                                height: 100%;
+                                border: none;
+                                outline: none;
+                                border-bottom: 1px solid white;
+                                background-color: transparent;
+
+                                color: rgba(255, 255, 255, 0.85);
+                                padding: 0 0.25rem 0 0.25rem;
+                            }
                         }
                     }
                     > .charactersheet-statblock-item {

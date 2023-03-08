@@ -251,7 +251,9 @@ const SkillBlock = ({ skills }: { skills: CharacterSkills }) => {
                 <div className="charactersheet-statblock-item-info">
                   <span>{toTitleCase(skill)}</span>
                 </div>
-                <div className="charactersheet-skillblock-speciality" />
+                <div className="charactersheet-skillblock-speciality">
+                  <input type="text" />
+                </div>
                 <div className="charactersheet-statblock-item-score">
                   <StatDots
                     key={`attributes_social_${skill}`}

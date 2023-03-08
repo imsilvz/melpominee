@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { Navigate } from 'react-router-dom';
 
 const GamesList = () => {
-  return (
+  return <Navigate to="/character/1/" />;
+  /* return (
     <div
       style={{
         width: '100%',
@@ -13,6 +15,6 @@ const GamesList = () => {
     >
       <h1 style={{ color: 'white' }}>Under Construction 😊</h1>
     </div>
-  );
+  ); */
 };
 export default GamesList;

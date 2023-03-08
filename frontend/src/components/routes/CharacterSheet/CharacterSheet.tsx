@@ -19,76 +19,6 @@ interface APICharacterSheetResponse {
   character?: Character;
 }
 
-interface StatBlock {
-  title?: string;
-  dividers?: boolean;
-  groups: StatGroup[];
-}
-
-interface StatGroup {
-  groupName?: string;
-  items: StatItem[];
-}
-
-interface StatItem {
-  name: string;
-}
-
-const StatPanel = ({ stats }: { stats: StatBlock }) => {
-  return (
-    <div className="charactersheet-statblock">
-      {stats.title && (
-        <div className="charactersheet-statblock-header">
-          <div className="charactersheet-statblock-header-title">
-            <h2>{stats.title}</h2>
-          </div>
-          <div className="charactersheet-statblock-header-divider" />
-        </div>
-      )}
-      <div className="charactersheet-statblock-inner">
-        {stats.groups.map((group, groupIdx) => (
-          <>
-            <div
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${groupIdx}_section`}
-              className="charactersheet-statblock-section"
-            >
-              {group.groupName && (
-                <div className="charactersheet-statblock-item">
-                  <h3>{group.groupName}</h3>
-                </div>
-              )}
-              {group.items.map((item) => (
-                <div
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`${groupIdx}_item_${item.name}`}
-                  className="charactersheet-statblock-item"
-                >
-                  <div className="charactersheet-statblock-item-info">
-                    <span>{item.name}</span>
-                  </div>
-                  <div className="charactersheet-statblock-item-score">
-                    <span>dot dot dot dot dot</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            {stats.dividers && groupIdx !== stats.groups.length - 1 && (
-              <div
-                // eslint-disable-next-line react/no-array-index-key
-                key={`${groupIdx}_divider`}
-                className="charactersheet-statblock-divider"
-              >
-                <div className="charactersheet-statblock-divider-inner" />
-              </div>
-            )}
-          </>
-        ))}
-      </div>
-    </div>
-  );
-};
-
 const toTitleCase = (str: string) => {
   return str
     .toLowerCase()
@@ -129,7 +59,7 @@ const AttributeBlock = ({
               </div>
               <div className="charactersheet-statblock-item-score">
                 <StatDots
-                  key={`attributes_physical_${attr}`}
+                  rootKey={`attributes_physical_${attr}`}
                   initialValue={attributes[attr as keyof CharacterAttributes]}
                 />
               </div>
@@ -154,7 +84,7 @@ const AttributeBlock = ({
               </div>
               <div className="charactersheet-statblock-item-score">
                 <StatDots
-                  key={`attributes_social_${attr}`}
+                  rootKey={`attributes_social_${attr}`}
                   initialValue={attributes[attr as keyof CharacterAttributes]}
                 />
               </div>
@@ -179,7 +109,7 @@ const AttributeBlock = ({
               </div>
               <div className="charactersheet-statblock-item-score">
                 <StatDots
-                  key={`attributes_mental_${attr}`}
+                  rootKey={`attributes_mental_${attr}`}
                   initialValue={attributes[attr as keyof CharacterAttributes]}
                 />
               </div>
@@ -242,10 +172,14 @@ const SkillBlock = ({ skills }: { skills: CharacterSkills }) => {
       </div>
       <div className="charactersheet-statblock-inner">
         {skillColumns.map((column, columnIdx) => (
-          <div className="charactersheet-statblock-section">
-            {column.map((skill, skillIdx) => (
+          <div
+            // eslint-disable-next-line react/no-array-index-key
+            key={`skills_column${columnIdx}`}
+            className="charactersheet-statblock-section"
+          >
+            {column.map((skill) => (
               <div
-                key={`attributes_social_${skill}`}
+                key={`skills_item_${skill}`}
                 className="charactersheet-skill-item"
               >
                 <div className="charactersheet-statblock-item-info">
@@ -256,7 +190,7 @@ const SkillBlock = ({ skills }: { skills: CharacterSkills }) => {
                 </div>
                 <div className="charactersheet-statblock-item-score">
                   <StatDots
-                    key={`attributes_social_${skill}`}
+                    rootKey={`skills_item_${skill}_dots`}
                     initialValue={skills[skill as keyof CharacterSkills].score}
                   />
                 </div>
@@ -281,7 +215,6 @@ const CharacterSheet = () => {
           const characterJson: APICharacterSheetResponse =
             await (characterRequest.json() as Promise<APICharacterSheetResponse>);
           if (characterJson.character) {
-            console.log(characterJson.character);
             setCharacter(characterJson.character);
           }
         }

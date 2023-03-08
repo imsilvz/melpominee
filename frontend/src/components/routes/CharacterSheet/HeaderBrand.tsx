@@ -27,15 +27,7 @@ const ClanList = [
 ];
 const ClanImages = new Map<string, string>();
 ClanList.forEach((clan) => {
-  (async () => {
-    const clanImage = (
-      await (import(
-        `../../../assets/clans/${clan}.svg`
-      ) as Promise<ImportedItem>)
-    ).default;
-    ClanImages.set(clan, clanImage);
-    // eslint-disable-next-line no-console
-  })().catch(console.error);
+  ClanImages.set(clan, `/images/clan/${clan}.svg`);
 });
 
 const HeaderBrand = ({ clan }: HeaderBrandProps) => {
@@ -46,7 +38,7 @@ const HeaderBrand = ({ clan }: HeaderBrandProps) => {
   return (
     <div className="charactersheet-header-brand">
       <div className="charactersheet-header-brand-container">
-        <img src={clanImage} alt="" />
+        <img loading="lazy" src={clanImage} alt="" />
       </div>
     </div>
   );

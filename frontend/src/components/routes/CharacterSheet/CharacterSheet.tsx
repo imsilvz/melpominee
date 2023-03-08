@@ -1,7 +1,17 @@
-import React from 'react';
-import './DiceSheet.scss';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
+// local files
+import { Character } from '../../../types/Character';
+import './charactersheet.scss';
 
 // import { ReactComponent as Logo } from '../../../assets/VampireLogo.svg';
+
+interface APICharacterSheetResponse {
+  success: boolean;
+  error?: string;
+  character?: Character;
+}
 
 interface StatItem {
   name: string;
@@ -23,27 +33,27 @@ interface StatBlock {
 
 const StatPanel = ({ stats }: { stats: StatBlock }) => {
   return (
-    <div className="dicesheet-statblock">
+    <div className="charactersheet-statblock">
       {stats.title && (
-        <div className="dicesheet-statblock-header">
-          <div className="dicesheet-statblock-header-title">
+        <div className="charactersheet-statblock-header">
+          <div className="charactersheet-statblock-header-title">
             <h2>{stats.title}</h2>
           </div>
-          <div className="dicesheet-statblock-header-divider" />
+          <div className="charactersheet-statblock-header-divider" />
         </div>
       )}
-      <div className="dicesheet-statblock-inner">
+      <div className="charactersheet-statblock-inner">
         {stats.groups.map((group, groupIdx) => (
           <>
-            <div className="dicesheet-statblock-section">
+            <div className="charactersheet-statblock-section">
               {group.category && (
-                <div className="dicesheet-statblock-item">
+                <div className="charactersheet-statblock-item">
                   <h3>{group.category}</h3>
                 </div>
               )}
               {group.items.map((item, itemIdx) => (
                 <div
-                  className="dicesheet-statblock-item"
+                  className="charactersheet-statblock-item"
                   style={{
                     justifyContent: group.allowSpecialities
                       ? 'space-between'
@@ -51,22 +61,22 @@ const StatPanel = ({ stats }: { stats: StatBlock }) => {
                   }}
                 >
                   <div
-                    className="dicesheet-statblock-item-info"
+                    className="charactersheet-statblock-item-info"
                     style={{
                       flex: group.allowSpecialities ? 'unset' : '1',
                     }}
                   >
                     <span>{item.name}</span>
                   </div>
-                  <div className="dicesheet-statblock-item-score">
+                  <div className="charactersheet-statblock-item-score">
                     <span>dot dot dot dot dot</span>
                   </div>
                 </div>
               ))}
             </div>
             {stats.dividers && groupIdx !== stats.groups.length - 1 && (
-              <div className="dicesheet-statblock-divider">
-                <div className="dicesheet-statblock-divider-inner" />
+              <div className="charactersheet-statblock-divider">
+                <div className="charactersheet-statblock-divider-inner" />
               </div>
             )}
           </>
@@ -76,10 +86,31 @@ const StatPanel = ({ stats }: { stats: StatBlock }) => {
   );
 };
 
-const DiceSheet = () => {
+const CharacterSheet = () => {
+  const { id } = useParams();
+  const [character, setCharacter] = useState<Character | null>(null);
+
+  useEffect(() => {
+    const fetchCharacter = async () => {
+      if (id) {
+        const characterRequest = await fetch(`/api/vtmv5/character/${id}/`);
+        if (characterRequest.ok) {
+          const characterJson: APICharacterSheetResponse =
+            await (characterRequest.json() as Promise<APICharacterSheetResponse>);
+          if (characterJson.character) {
+            console.log(characterJson.character);
+            setCharacter(characterJson.character);
+          }
+        }
+      }
+    };
+    // eslint-disable-next-line no-console
+    fetchCharacter().catch(console.error);
+  }, [id]);
+
   return (
-    <div className="dicesheet-container">
-      <div className="dicesheet-panel">
+    <div className="charactersheet-container">
+      <div className="charactersheet-panel">
         <h1 style={{ color: 'white', textAlign: 'center' }}>
           Under Construction 😊
         </h1>
@@ -169,4 +200,4 @@ const DiceSheet = () => {
     </div>
   );
 };
-export default DiceSheet;
+export default CharacterSheet;

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using Melpominee.app.Models.Web.VTMV5;
 using Melpominee.app.Models.CharacterSheets.VTMV5;
 namespace Melpominee.app.Controllers;
 
@@ -17,7 +18,7 @@ public class CharacterController : ControllerBase
     [ActionName("")]
     [Route("{charId}")]
     [HttpGet(Name = "Get Character")]
-    public VampireV5Sheet? GetCharacter(int charId)
+    public CharacterSheetResponse GetCharacter(int charId)
     {
         VampireV5Sheet sheet;
         if(charId > 0)
@@ -25,9 +26,17 @@ public class CharacterController : ControllerBase
             sheet = new VampireV5Sheet(charId); 
             if(sheet.Loaded)
             {
-                return sheet;
+                return new CharacterSheetResponse
+                {
+                    Success = true,
+                    Character = sheet
+                };
             }
         }
-        return null;
+        return new CharacterSheetResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
     }
 }

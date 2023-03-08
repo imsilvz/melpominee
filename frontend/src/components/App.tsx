@@ -12,10 +12,10 @@ import Login from './routes/Auth/Login';
 import ForgotPassword from './routes/Auth/ForgotPassword';
 import Register from './routes/Auth/Register';
 import RequireAuth from './shared/Auth/RequireAuth';
-import LoadingSpinner from './shared/LoadingSpinner/LoadingSpinner';
 import GameList from './routes/Games/GameList/GameList';
+import CharacterSheet from './routes/CharacterSheet/CharacterSheet';
+import LoadingSpinner from './shared/LoadingSpinner/LoadingSpinner';
 import './App.scss';
-import DiceSheet from './routes/DiceSheets/DiceSheet';
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -34,7 +34,15 @@ const App = () => {
               index
               element={
                 <RequireAuth>
-                  <DiceSheet />
+                  <GameList />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/character/:id"
+              element={
+                <RequireAuth>
+                  <CharacterSheet />
                 </RequireAuth>
               }
             />

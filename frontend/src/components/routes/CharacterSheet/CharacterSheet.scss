@@ -43,7 +43,22 @@
                     // 33% - 2x gap
                     width: calc(33.3% - 1rem);
                     > .charactersheet-header-row {
-                        // font-family: Goudy;
+                        display: flex;
+                        > .charactersheet-header-row-field {
+                            flex: 1;
+                            height: 1.2em;
+                            > input {
+                                width: 100%;
+                                height: 100%;
+                                border: none;
+                                outline: none;
+                                border-bottom: 1px solid white;
+                                background-color: transparent;
+
+                                color: rgba(255, 255, 255, 0.85);
+                                padding: 0 0.25rem 0 0.25rem;
+                            }
+                        }
                     }
                 }
             }

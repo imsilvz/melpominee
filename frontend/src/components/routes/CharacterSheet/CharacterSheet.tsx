@@ -29,41 +29,118 @@ const toTitleCase = (str: string) => {
 };
 
 const HeaderBlock = ({ character }: { character: Character }) => {
+  let generationText = '';
+  const ordinalRules = new Intl.PluralRules('en', { type: 'ordinal' });
+  const suffixes: { [key: string]: string } = {
+    one: 'st',
+    two: 'nd',
+    few: 'rd',
+    other: 'th',
+  };
+  if (character.generation && character.generation >= 3) {
+    const rule = ordinalRules.select(character.generation);
+    generationText = `${character.generation}${suffixes[rule as string]}`;
+  }
   return (
     <div className="charactersheet-header">
       <HeaderBrand clan={character.clan} />
       <div className="charactersheet-header-inner">
         <div className="charactersheet-header-column">
           <div className="charactersheet-header-row">
-            <span>Name:</span>
+            <span className="charactersheet-header-row-label">Name:</span>
+            <span className="charactersheet-header-row-field">
+              <input
+                type="text"
+                value={character.name}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              />
+            </span>
           </div>
           <div className="charactersheet-header-row">
-            <span>Concept:</span>
+            <span className="charactersheet-header-row-label">Concept:</span>
+            <span className="charactersheet-header-row-field">
+              <input
+                type="text"
+                value={character.concept}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              />
+            </span>
           </div>
           <div className="charactersheet-header-row">
-            <span>Chronicle:</span>
+            <span className="charactersheet-header-row-label">Chronicle:</span>
+            <span className="charactersheet-header-row-field">
+              <input
+                type="text"
+                value={character.chronicle}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              />
+            </span>
           </div>
         </div>
         <div className="charactersheet-header-column">
           <div className="charactersheet-header-row">
-            <span>Ambition:</span>
+            <span className="charactersheet-header-row-label">Ambition:</span>
+            <span className="charactersheet-header-row-field">
+              <input
+                type="text"
+                value={character.ambition}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              />
+            </span>
           </div>
           <div className="charactersheet-header-row">
-            <span>Desire:</span>
+            <span className="charactersheet-header-row-label">Desire:</span>
+            <span className="charactersheet-header-row-field">
+              <input
+                type="text"
+                value={character.desire}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              />
+            </span>
           </div>
           <div className="charactersheet-header-row">
-            <span>Predator Type:</span>
+            <span className="charactersheet-header-row-label">
+              Predator Type:
+            </span>
+            <span className="charactersheet-header-row-field">
+              <input
+                type="text"
+                value={character.predatorType}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              />
+            </span>
           </div>
         </div>
         <div className="charactersheet-header-column">
           <div className="charactersheet-header-row">
-            <span>Clan:</span>
+            <span className="charactersheet-header-row-label">Clan:</span>
+            <span className="charactersheet-header-row-field">
+              <input
+                type="text"
+                value={character.clan}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              />
+            </span>
           </div>
           <div className="charactersheet-header-row">
-            <span>Generation:</span>
+            <span className="charactersheet-header-row-label">Generation:</span>
+            <span className="charactersheet-header-row-field">
+              <input
+                type="text"
+                value={generationText}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              />
+            </span>
           </div>
           <div className="charactersheet-header-row">
-            <span>Sire:</span>
+            <span className="charactersheet-header-row-label">Sire:</span>
+            <span className="charactersheet-header-row-field">
+              <input
+                type="text"
+                value={character.sire}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              />
+            </span>
           </div>
         </div>
       </div>
@@ -230,7 +307,10 @@ const SkillBlock = ({ skills }: { skills: CharacterSkills }) => {
                   <span>{toTitleCase(skill)}</span>
                 </div>
                 <div className="charactersheet-skillblock-speciality">
-                  <input type="text" />
+                  <input
+                    type="text"
+                    value={skills[skill as keyof CharacterSkills].speciality}
+                  />
                 </div>
                 <div className="charactersheet-statblock-item-score">
                   <StatDots

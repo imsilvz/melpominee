@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // redux
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import initialThunk from '../redux/thunk/initial';
+import masterdataThunk from '../redux/thunk/masterdata';
 import { selectUserReady } from '../redux/reducers/userReducer';
 
 // local files
@@ -24,6 +25,12 @@ const App = () => {
   useEffect(() => {
     dispatch(initialThunk());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (userReady) {
+      dispatch(masterdataThunk());
+    }
+  }, [dispatch, userReady]);
 
   return userReady ? (
     <div className="app">

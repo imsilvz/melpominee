@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Presence;
 
-public class DreadGaze : VampireDiscipline
+public class DreadGaze : VampirePower
 {
     public override string Id { get; } = "dread_gaze";
     public override string Name { get; } = "Dread Gaze";

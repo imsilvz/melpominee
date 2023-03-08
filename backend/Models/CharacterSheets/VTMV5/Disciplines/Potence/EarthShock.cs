@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Potence;
 
-public class EarthShock : VampireDiscipline
+public class EarthShock : VampirePower
 {
     public override string Id { get; } = "earth_shock";
     public override string Name { get; } = "Earth Shock";

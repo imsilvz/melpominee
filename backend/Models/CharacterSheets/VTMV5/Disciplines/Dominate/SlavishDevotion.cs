@@ -1,13 +1,13 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Dominate;
 
-public class SlavishDevotion : VampireDiscipline
+public class SlavishDevotion : VampirePower
 {
     public override string Id { get; } = "slavish_devotion";
     public override string Name { get; } = "Slavish Devotion";
     public override string School { get; } = "Dominate";
     public override int Level { get; } = 2;
     public override string? Prerequisite { get; } = "Mithras";
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 1,
         School = "Presence",

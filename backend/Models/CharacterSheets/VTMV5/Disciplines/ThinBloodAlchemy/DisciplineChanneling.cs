@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.ThinBloodAlchemy;
 
-public class DisciplineChanneling : VampireDiscipline
+public class DisciplineChanneling : VampirePower
 {
     public override string Id { get; } = "discipline_channeling";
     public override string Name { get; } = "Discipline Channeling";

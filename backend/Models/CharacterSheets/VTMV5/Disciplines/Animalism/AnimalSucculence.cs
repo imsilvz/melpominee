@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Animalism;
 
-public class AnimalSucculence : VampireDiscipline
+public class AnimalSucculence : VampirePower
 {
     public override string Id { get; } = "animal_succulence";
     public override string Name { get; } = "Animal Succulence";

@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Auspex;
 
-public class SenseTheUnseen : VampireDiscipline
+public class SenseTheUnseen : VampirePower
 {
     public override string Id { get; } = "sense_the_unseen";
     public override string Name { get; } = "Sense the Unseen";

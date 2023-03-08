@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class FatalPrecognition : VampireDiscipline
+public class FatalPrecognition : VampirePower
 {
     public override string Id { get; } = "fatal_precognition";
     public override string Name { get; } = "Fatal Precognition";
     public override string School { get; } = "Oblivion";
     public override int Level { get; } = 2;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 2,
         School = "Auspex",

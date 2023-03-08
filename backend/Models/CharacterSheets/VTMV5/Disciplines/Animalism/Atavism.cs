@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Animalism;
 
-public class Atavism : VampireDiscipline
+public class Atavism : VampirePower
 {
     public override string Id { get; } = "atavism";
     public override string Name { get; } = "Atavism";

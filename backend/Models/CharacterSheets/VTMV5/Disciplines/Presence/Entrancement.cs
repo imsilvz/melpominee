@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Presence;
 
-public class Entrancement : VampireDiscipline
+public class Entrancement : VampirePower
 {
     public override string Id { get; } = "entrancement";
     public override string Name { get; } = "Entrancement";

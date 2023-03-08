@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Dominate;
 
-public class Mesmerize : VampireDiscipline
+public class Mesmerize : VampirePower
 {
     public override string Id { get; } = "mesmerize";
     public override string Name { get; } = "Mesmerize";

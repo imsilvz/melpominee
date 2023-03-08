@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.ThinBloodAlchemy;
 
-public class ChemicallyInducedFlashback : VampireDiscipline
+public class ChemicallyInducedFlashback : VampirePower
 {
     public override string Id { get; } = "chemicallyinduced_flashback";
     public override string Name { get; } = "Chemically-Induced Flashback";

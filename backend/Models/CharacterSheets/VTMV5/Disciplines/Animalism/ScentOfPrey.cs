@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Animalism;
 
-public class ScentOfPrey : VampireDiscipline
+public class ScentOfPrey : VampirePower
 {
     public override string Id { get; } = "scent_of_prey";
     public override string Name { get; } = "Scent of Prey";

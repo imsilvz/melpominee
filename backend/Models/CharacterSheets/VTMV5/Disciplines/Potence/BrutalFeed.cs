@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Potence;
 
-public class BrutalFeed : VampireDiscipline
+public class BrutalFeed : VampirePower
 {
     public override string Id { get; } = "brutal_feed";
     public override string Name { get; } = "Brutal Feed";

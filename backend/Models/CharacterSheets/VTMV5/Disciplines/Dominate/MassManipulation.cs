@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Dominate;
 
-public class MassManipulation : VampireDiscipline
+public class MassManipulation : VampirePower
 {
     public override string Id { get; } = "mass_manipulation";
     public override string Name { get; } = "Mass Manipulation";

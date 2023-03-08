@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class SkuldFulfilled : VampireDiscipline
+public class SkuldFulfilled : VampirePower
 {
     public override string Id { get; } = "skuld_fulfilled";
     public override string Name { get; } = "Skuld Fulfilled";

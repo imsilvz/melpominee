@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class AuraOfDecay : VampireDiscipline
+public class AuraOfDecay : VampirePower
 {
     public override string Id { get; } = "aura_of_decay";
     public override string Name { get; } = "Aura of Decay";

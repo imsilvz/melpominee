@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class WhereTheShroudThins : VampireDiscipline
+public class WhereTheShroudThins : VampirePower
 {
     public override string Id { get; } = "where_the_shroud_thins";
     public override string Name { get; } = "Where the Shroud Thins";

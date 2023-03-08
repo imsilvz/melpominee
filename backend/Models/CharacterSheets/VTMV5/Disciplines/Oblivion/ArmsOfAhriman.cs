@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class ArmsOfAhriman : VampireDiscipline
+public class ArmsOfAhriman : VampirePower
 {
     public override string Id { get; } = "arms_of_ahriman";
     public override string Name { get; } = "Arms of Ahriman";
     public override string School { get; } = "Oblivion";
     public override int Level { get; } = 2;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 2,
         School = "Potence",

@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Animalism;
 
-public class UnlivingHive : VampireDiscipline
+public class UnlivingHive : VampirePower
 {
     public override string Id { get; } = "unliving_hive";
     public override string Name { get; } = "Unliving Hive";
     public override string School { get; } = "Animalism";
     public override int Level { get; } = 3;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 2,
         School = "Obfuscate",

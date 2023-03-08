@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Animalism;
 
-public class DrawingOutTheBeast : VampireDiscipline
+public class DrawingOutTheBeast : VampirePower
 {
     public override string Id { get; } = "drawing_out_the_beast";
     public override string Name { get; } = "Drawing Out the Beast";

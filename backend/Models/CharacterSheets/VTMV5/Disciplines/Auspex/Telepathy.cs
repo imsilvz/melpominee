@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Auspex;
 
-public class Telepathy : VampireDiscipline
+public class Telepathy : VampirePower
 {
     public override string Id { get; } = "telepathy";
     public override string Name { get; } = "Telepathy";

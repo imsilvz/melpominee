@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Dominate;
 
-public class Dementation : VampireDiscipline
+public class Dementation : VampirePower
 {
     public override string Id { get; } = "dementation";
     public override string Name { get; } = "Dementation";
     public override string School { get; } = "Dominate";
     public override int Level { get; } = 2;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 2,
         School = "Obfuscate",

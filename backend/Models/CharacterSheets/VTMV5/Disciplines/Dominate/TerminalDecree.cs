@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Dominate;
 
-public class TerminalDecree : VampireDiscipline
+public class TerminalDecree : VampirePower
 {
     public override string Id { get; } = "terminal_decree";
     public override string Name { get; } = "Terminal Decree";

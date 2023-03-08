@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Animalism;
 
-public class SenseTheBeast : VampireDiscipline
+public class SenseTheBeast : VampirePower
 {
     public override string Id { get; } = "sense_the_beast";
     public override string Name { get; } = "Sense the Beast";

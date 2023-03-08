@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class WitheringSpirit : VampireDiscipline
+public class WitheringSpirit : VampirePower
 {
     public override string Id { get; } = "withering_spirit";
     public override string Name { get; } = "Withering Spirit";

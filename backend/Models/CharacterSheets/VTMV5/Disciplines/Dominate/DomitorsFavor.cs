@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Dominate;
 
-public class DomitorsFavor : VampireDiscipline
+public class DomitorsFavor : VampirePower
 {
     public override string Id { get; } = "domitors_favor";
     public override string Name { get; } = "Domitor's Favor";

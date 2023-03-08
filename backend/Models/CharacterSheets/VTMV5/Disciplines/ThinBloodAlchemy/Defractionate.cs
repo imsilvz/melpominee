@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.ThinBloodAlchemy;
 
-public class Defractionate : VampireDiscipline
+public class Defractionate : VampirePower
 {
     public override string Id { get; } = "defractionate";
     public override string Name { get; } = "Defractionate";
     public override string School { get; } = "Thin-Blood Alchemy";
     public override int Level { get; } = 3;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = null,
         School = "Melancholic, Sanguine",

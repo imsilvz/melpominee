@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Obfuscate;
 
-public class CloakOfShadows : VampireDiscipline
+public class CloakOfShadows : VampirePower
 {
     public override string Id { get; } = "cloak_of_shadows";
     public override string Name { get; } = "Cloak of Shadows";

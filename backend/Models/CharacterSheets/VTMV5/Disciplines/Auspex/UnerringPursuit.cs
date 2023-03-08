@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Auspex;
 
-public class UnerringPursuit : VampireDiscipline
+public class UnerringPursuit : VampirePower
 {
     public override string Id { get; } = "unerring_pursuit";
     public override string Name { get; } = "Unerring Pursuit";
     public override string School { get; } = "Auspex";
     public override int Level { get; } = 2;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 1,
         School = "Dominate",

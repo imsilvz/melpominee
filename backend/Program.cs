@@ -1,4 +1,5 @@
 using System.IO;
+using System.Diagnostics;
 using Microsoft.Data.Sqlite;
 using Melpominee.app.Utilities;
 
@@ -33,13 +34,70 @@ using (var connection = new SqliteConnection("Data Source=data/melpominee.db"))
             completed_timestamp DATETIME,
             FOREIGN KEY(user_email) REFERENCES melpominee_users(email)
         );
+        CREATE TABLE IF NOT EXISTS melpominee_characters (
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            concept TEXT NOT NULL,
+            chronicle TEXT NOT NULL,
+            ambition TEXT NOT NULL,
+            desire TEXT NOT NULL,
+            sire TEXT NOT NULL,
+            generation INTEGER NOT NULL,
+            clan TEXT NOT NULL,
+            predator_type TEXT NOT NULL,
+            hunger INTEGER NOT NULL,
+            resonance TEXT NOT NULL,
+            blood_potency INTEGER NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS melpominee_character_attributes (
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            sheet_id INTEGER NOT NULL,
+            attribute TEXT NOT NULL,
+            score INTEGER NOT NULL,
+            UNIQUE(sheet_id, attribute),
+            FOREIGN KEY(sheet_id) REFERENCES melpominee_characters(id)
+        );
+        CREATE TABLE IF NOT EXISTS melpominee_character_skills (
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            sheet_id INTEGER NOT NULL,
+            skill TEXT NOT NULL,
+            speciality TEXT NOT NULL,
+            score INTEGER NOT NULL,
+            UNIQUE(sheet_id, skill),
+            FOREIGN KEY(sheet_id) REFERENCES melpominee_characters(id)
+        );
+        CREATE TABLE IF NOT EXISTS melpominee_character_secondary (
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            sheet_id INTEGER NOT NULL,
+            stat_name TEXT NOT NULL,
+            base_value INTEGER NOT NULL,
+            superficial_damage INTEGER NOT NULL,
+            aggravated_damage INTEGER NOT NULL,
+            UNIQUE(sheet_id, stat_name),
+            FOREIGN KEY(sheet_id) REFERENCES melpominee_characters(id)
+        );
+        CREATE TABLE IF NOT EXISTS melpominee_character_disciplines (
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            sheet_id INTEGER NOT NULL,
+            discipline TEXT NOT NULL,
+            score INTEGER NOT NULL,
+            UNIQUE(sheet_id, discipline),
+            FOREIGN KEY(sheet_id) REFERENCES melpominee_characters(id)
+        );
+        CREATE TABLE IF NOT EXISTS melpominee_character_discipline_powers (
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            sheet_id INTEGER NOT NULL,
+            power_name TEXT NOT NULL,
+            UNIQUE(sheet_id, power_name),
+            FOREIGN KEY(sheet_id) REFERENCES melpominee_characters(id)
+        );
     ";
     command.ExecuteNonQuery();
 }
 
 //var user = new Melpominee.app.Models.Auth.MelpomineeUser("rjyawger@me.com");
 //user.BeginResetPassword("http://localhost:5173");
-var sheet = new Melpominee.app.Models.CharacterSheets.VTMV5.VampireV5Sheet()
+var sheet = new Melpominee.app.Models.CharacterSheets.VTMV5.VampireV5Sheet()//(1);
 {
     Name = "Logan Bessett",
     Concept = "Schizo WWII Vet, also Therapist",
@@ -78,18 +136,28 @@ var sheet = new Melpominee.app.Models.CharacterSheets.VTMV5.VampireV5Sheet()
         Occult = { Score = 1 },
         Politics = { Score = 1 },
     },
-    Disciplines = new List<Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline>()
+    Disciplines = new Dictionary<string, int>()
     {
-        Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline.GetDiscipline("heightened_senses"),
-        Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline.GetDiscipline("premonition"),
-        Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline.GetDiscipline("scry_the_soul"),
-        Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline.GetDiscipline("cloud_memory"),
-        Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline.GetDiscipline("mesmerize"),
-        Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline.GetDiscipline("cloak_of_shadows"),
-        Melpominee.app.Models.CharacterSheets.VTMV5.VampireDiscipline.GetDiscipline("unseen_passage"),
-    }
+        ["Auspex"] = 3,
+        ["Dominate"] = 2,
+        ["Obfuscate"] = 2,
+    },
+    DisciplinePowers = new List<Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower>()
+    {
+        Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower.GetDisciplinePower("heightened_senses"),
+        Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower.GetDisciplinePower("premonition"),
+        Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower.GetDisciplinePower("scry_the_soul"),
+        Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower.GetDisciplinePower("cloud_memory"),
+        Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower.GetDisciplinePower("mesmerize"),
+        Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower.GetDisciplinePower("cloak_of_shadows"),
+        Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower.GetDisciplinePower("unseen_passage"),
+    },
+    Hunger = 1,
+    Resonance = "Melancholic",
+    BloodPotency = 1,
 };
-Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sheet));
+sheet.Save();
+//Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sheet));
 
 // API Application Builder
 var builder = WebApplication.CreateBuilder(args);

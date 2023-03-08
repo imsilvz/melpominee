@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Obfuscate;
 
-public class SilenceOfDeath : VampireDiscipline
+public class SilenceOfDeath : VampirePower
 {
     public override string Id { get; } = "silence_of_death";
     public override string Name { get; } = "Silence of Death";

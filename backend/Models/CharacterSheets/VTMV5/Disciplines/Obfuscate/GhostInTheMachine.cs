@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Obfuscate;
 
-public class GhostInTheMachine : VampireDiscipline
+public class GhostInTheMachine : VampirePower
 {
     public override string Id { get; } = "ghost_in_the_machine";
     public override string Name { get; } = "Ghost in the Machine";

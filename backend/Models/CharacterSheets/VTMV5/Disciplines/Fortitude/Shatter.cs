@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Fortitude;
 
-public class Shatter : VampireDiscipline
+public class Shatter : VampirePower
 {
     public override string Id { get; } = "shatter";
     public override string Name { get; } = "Shatter";

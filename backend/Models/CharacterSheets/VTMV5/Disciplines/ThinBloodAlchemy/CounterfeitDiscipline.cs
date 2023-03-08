@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.ThinBloodAlchemy;
 
-public class CounterfeitDiscipline : VampireDiscipline
+public class CounterfeitDiscipline : VampirePower
 {
     public override string Id { get; } = "counterfeit_discipline";
     public override string Name { get; } = "Counterfeit Discipline";

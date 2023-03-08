@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Auspex;
 
-public class ScryTheSoul : VampireDiscipline
+public class ScryTheSoul : VampirePower
 {
     public override string Id { get; } = "scry_the_soul";
     public override string Name { get; } = "Scry the Soul";

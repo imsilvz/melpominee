@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Presence;
 
-public class Awe : VampireDiscipline
+public class Awe : VampirePower
 {
     public override string Id { get; } = "awe";
     public override string Name { get; } = "Awe";

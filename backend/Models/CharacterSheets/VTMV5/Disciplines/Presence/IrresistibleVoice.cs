@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Presence;
 
-public class IrresistibleVoice : VampireDiscipline
+public class IrresistibleVoice : VampirePower
 {
     public override string Id { get; } = "irresistible_voice";
     public override string Name { get; } = "Irresistible Voice";
     public override string School { get; } = "Presence";
     public override int Level { get; } = 4;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 1,
         School = "Dominate",

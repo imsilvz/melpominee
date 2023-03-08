@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Celerity;
 
-public class Blink : VampireDiscipline
+public class Blink : VampirePower
 {
     public override string Id { get; } = "blink";
     public override string Name { get; } = "Blink";

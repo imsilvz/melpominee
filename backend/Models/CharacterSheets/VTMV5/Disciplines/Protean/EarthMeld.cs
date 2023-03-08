@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Protean;
 
-public class EarthMeld : VampireDiscipline
+public class EarthMeld : VampirePower
 {
     public override string Id { get; } = "earth_meld";
     public override string Name { get; } = "Earth Meld";

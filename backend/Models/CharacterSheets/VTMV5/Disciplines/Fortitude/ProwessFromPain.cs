@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Fortitude;
 
-public class ProwessFromPain : VampireDiscipline
+public class ProwessFromPain : VampirePower
 {
     public override string Id { get; } = "prowess_from_pain";
     public override string Name { get; } = "Prowess from Pain";

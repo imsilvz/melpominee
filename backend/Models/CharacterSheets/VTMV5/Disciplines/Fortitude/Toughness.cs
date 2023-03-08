@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Fortitude;
 
-public class Toughness : VampireDiscipline
+public class Toughness : VampirePower
 {
     public override string Id { get; } = "toughness";
     public override string Name { get; } = "Toughness";

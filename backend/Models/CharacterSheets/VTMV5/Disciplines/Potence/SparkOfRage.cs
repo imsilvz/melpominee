@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Potence;
 
-public class SparkOfRage : VampireDiscipline
+public class SparkOfRage : VampirePower
 {
     public override string Id { get; } = "spark_of_rage";
     public override string Name { get; } = "Spark of Rage";
     public override string School { get; } = "Potence";
     public override int Level { get; } = 3;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 3,
         School = "Presence",

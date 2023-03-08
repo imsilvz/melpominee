@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Potence;
 
-public class Prowess : VampireDiscipline
+public class Prowess : VampirePower
 {
     public override string Id { get; } = "prowess";
     public override string Name { get; } = "Prowess";

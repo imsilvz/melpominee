@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Protean;
 
-public class Shapechange : VampireDiscipline
+public class Shapechange : VampirePower
 {
     public override string Id { get; } = "shapechange";
     public override string Name { get; } = "Shapechange";

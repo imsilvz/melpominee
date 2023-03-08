@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class UmbrousClutch : VampireDiscipline
+public class UmbrousClutch : VampirePower
 {
     public override string Id { get; } = "umbrous_clutch";
     public override string Name { get; } = "Umbrous Clutch";

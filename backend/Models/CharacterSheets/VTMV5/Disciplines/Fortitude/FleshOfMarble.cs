@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Fortitude;
 
-public class FleshOfMarble : VampireDiscipline
+public class FleshOfMarble : VampirePower
 {
     public override string Id { get; } = "flesh_of_marble";
     public override string Name { get; } = "Flesh of Marble";

@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.BloodSorcery;
 
-public class ScorpionsTouch : VampireDiscipline
+public class ScorpionsTouch : VampirePower
 {
     public override string Id { get; } = "scorpions_touch";
     public override string Name { get; } = "Scorpion’s Touch";

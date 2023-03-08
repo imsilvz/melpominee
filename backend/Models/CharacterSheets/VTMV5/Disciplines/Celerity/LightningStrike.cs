@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Celerity;
 
-public class LightningStrike : VampireDiscipline
+public class LightningStrike : VampirePower
 {
     public override string Id { get; } = "lightning_strike";
     public override string Name { get; } = "Lightning Strike";

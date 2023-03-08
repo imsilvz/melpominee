@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Protean;
 
-public class WeightOfTheFeather : VampireDiscipline
+public class WeightOfTheFeather : VampirePower
 {
     public override string Id { get; } = "weight_of_the_feather";
     public override string Name { get; } = "Weight of the Feather";

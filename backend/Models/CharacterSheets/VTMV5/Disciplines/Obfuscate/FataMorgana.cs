@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Obfuscate;
 
-public class FataMorgana : VampireDiscipline
+public class FataMorgana : VampirePower
 {
     public override string Id { get; } = "fata_morgana";
     public override string Name { get; } = "Fata Morgana";
     public override string School { get; } = "Obfuscate";
     public override int Level { get; } = 3;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 2,
         School = "Presence",

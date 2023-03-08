@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.ThinBloodAlchemy;
 
-public class ConcoctAshe : VampireDiscipline
+public class ConcoctAshe : VampirePower
 {
     public override string Id { get; } = "concoct_ashe";
     public override string Name { get; } = "Concoct Ashe";

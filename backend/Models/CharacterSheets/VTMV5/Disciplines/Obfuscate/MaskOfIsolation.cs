@@ -1,13 +1,13 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Obfuscate;
 
-public class MaskOfIsolation : VampireDiscipline
+public class MaskOfIsolation : VampirePower
 {
     public override string Id { get; } = "mask_of_isolation";
     public override string Name { get; } = "Mask of Isolation";
     public override string School { get; } = "Obfuscate";
     public override int Level { get; } = 3;
     public override string? Prerequisite { get; } = "Mask of a Thousand Faces";
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 1,
         School = "Dominate",

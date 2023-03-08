@@ -1,13 +1,13 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.ThinBloodAlchemy;
 
-public class PortableShade : VampireDiscipline
+public class PortableShade : VampirePower
 {
     public override string Id { get; } = "portable_shade";
     public override string Name { get; } = "Portable Shade";
     public override string School { get; } = "Thin-Blood Alchemy";
     public override int Level { get; } = 1;
     public override string? Prerequisite { get; } = "Sabbat";
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = null,
         School = "Sanguine",

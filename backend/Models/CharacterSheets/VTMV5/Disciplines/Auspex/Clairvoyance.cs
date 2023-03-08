@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Auspex;
 
-public class Clairvoyance : VampireDiscipline
+public class Clairvoyance : VampirePower
 {
     public override string Id { get; } = "clairvoyance";
     public override string Name { get; } = "Clairvoyance";

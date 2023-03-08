@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Potence;
 
-public class UncannyGrip : VampireDiscipline
+public class UncannyGrip : VampirePower
 {
     public override string Id { get; } = "uncanny_grip";
     public override string Name { get; } = "Uncanny Grip";

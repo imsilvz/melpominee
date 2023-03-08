@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Protean;
 
-public class TheUnfetteredHeart : VampireDiscipline
+public class TheUnfetteredHeart : VampirePower
 {
     public override string Id { get; } = "the_unfettered_heart";
     public override string Name { get; } = "The Unfettered Heart";

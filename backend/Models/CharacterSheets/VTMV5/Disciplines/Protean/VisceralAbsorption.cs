@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Protean;
 
-public class VisceralAbsorption : VampireDiscipline
+public class VisceralAbsorption : VampirePower
 {
     public override string Id { get; } = "visceral_absorption";
     public override string Name { get; } = "Visceral Absorption";
     public override string School { get; } = "Protean";
     public override int Level { get; } = 3;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = null,
         School = "Blood Sorcery ●●",

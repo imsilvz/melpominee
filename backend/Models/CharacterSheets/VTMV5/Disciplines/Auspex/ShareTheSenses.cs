@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Auspex;
 
-public class ShareTheSenses : VampireDiscipline
+public class ShareTheSenses : VampirePower
 {
     public override string Id { get; } = "share_the_senses";
     public override string Name { get; } = "Share the Senses";

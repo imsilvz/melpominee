@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.BloodSorcery;
 
-public class BaalsCaress : VampireDiscipline
+public class BaalsCaress : VampirePower
 {
     public override string Id { get; } = "baals_caress";
     public override string Name { get; } = "Baal’s Caress";

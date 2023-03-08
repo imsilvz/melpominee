@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Animalism;
 
-public class BondFamulus : VampireDiscipline
+public class BondFamulus : VampirePower
 {
     public override string Id { get; } = "bond_famulus";
     public override string Name { get; } = "Bond Famulus";

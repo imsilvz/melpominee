@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Auspex;
 
-public class Possession : VampireDiscipline
+public class Possession : VampirePower
 {
     public override string Id { get; } = "possession";
     public override string Name { get; } = "Possession";
     public override string School { get; } = "Auspex";
     public override int Level { get; } = 5;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 3,
         School = "Dominate",

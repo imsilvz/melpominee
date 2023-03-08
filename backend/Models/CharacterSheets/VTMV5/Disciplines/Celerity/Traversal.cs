@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Celerity;
 
-public class Traversal : VampireDiscipline
+public class Traversal : VampirePower
 {
     public override string Id { get; } = "traversal";
     public override string Name { get; } = "Traversal";

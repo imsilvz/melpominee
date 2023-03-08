@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.ThinBloodAlchemy;
 
-public class Haze : VampireDiscipline
+public class Haze : VampirePower
 {
     public override string Id { get; } = "haze";
     public override string Name { get; } = "Haze";
     public override string School { get; } = "Thin-Blood Alchemy";
     public override int Level { get; } = 1;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = null,
         School = "Phlegmatic",

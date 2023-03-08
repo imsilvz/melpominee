@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Dominate;
 
-public class Compel : VampireDiscipline
+public class Compel : VampirePower
 {
     public override string Id { get; } = "compel";
     public override string Name { get; } = "Compel";

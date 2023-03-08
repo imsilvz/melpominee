@@ -1,13 +1,13 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.ThinBloodAlchemy;
 
-public class FangStinger : VampireDiscipline
+public class FangStinger : VampirePower
 {
     public override string Id { get; } = "fangstinger";
     public override string Name { get; } = "Fang-Stinger";
     public override string School { get; } = "Thin-Blood Alchemy";
     public override int Level { get; } = 3;
     public override string? Prerequisite { get; } = "Second Inquisition";
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = null,
         School = "Choleric",

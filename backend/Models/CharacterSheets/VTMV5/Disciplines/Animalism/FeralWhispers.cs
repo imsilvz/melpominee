@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Animalism;
 
-public class FeralWhispers : VampireDiscipline
+public class FeralWhispers : VampirePower
 {
     public override string Id { get; } = "feral_whispers";
     public override string Name { get; } = "Feral Whispers";

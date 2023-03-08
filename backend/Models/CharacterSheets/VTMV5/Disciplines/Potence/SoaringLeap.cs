@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Potence;
 
-public class SoaringLeap : VampireDiscipline
+public class SoaringLeap : VampirePower
 {
     public override string Id { get; } = "soaring_leap";
     public override string Name { get; } = "Soaring Leap";

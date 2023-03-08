@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Celerity;
 
-public class DraughtOfElegance : VampireDiscipline
+public class DraughtOfElegance : VampirePower
 {
     public override string Id { get; } = "draught_of_elegance";
     public override string Name { get; } = "Draught of Elegance";

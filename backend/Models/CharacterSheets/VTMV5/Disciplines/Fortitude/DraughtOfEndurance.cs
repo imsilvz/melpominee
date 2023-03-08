@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Fortitude;
 
-public class DraughtOfEndurance : VampireDiscipline
+public class DraughtOfEndurance : VampirePower
 {
     public override string Id { get; } = "draught_of_endurance";
     public override string Name { get; } = "Draught of Endurance";

@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Presence;
 
-public class ClearTheField : VampireDiscipline
+public class ClearTheField : VampirePower
 {
     public override string Id { get; } = "clear_the_field";
     public override string Name { get; } = "Clear the Field";
     public override string School { get; } = "Presence";
     public override int Level { get; } = 3;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 3,
         School = "Dominate",

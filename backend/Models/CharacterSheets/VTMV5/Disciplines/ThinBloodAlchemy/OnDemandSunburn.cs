@@ -1,13 +1,13 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.ThinBloodAlchemy;
 
-public class OnDemandSunburn : VampireDiscipline
+public class OnDemandSunburn : VampirePower
 {
     public override string Id { get; } = "ondemand_sunburn";
     public override string Name { get; } = "On-Demand Sunburn";
     public override string School { get; } = "Thin-Blood Alchemy";
     public override int Level { get; } = 3;
     public override string? Prerequisite { get; } = "Sabbat";
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = null,
         School = "Choleric",

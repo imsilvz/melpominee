@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class StygianShroud : VampireDiscipline
+public class StygianShroud : VampirePower
 {
     public override string Id { get; } = "stygian_shroud";
     public override string Name { get; } = "Stygian Shroud";

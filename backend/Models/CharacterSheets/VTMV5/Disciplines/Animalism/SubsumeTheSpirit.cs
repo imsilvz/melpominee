@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Animalism;
 
-public class SubsumeTheSpirit : VampireDiscipline
+public class SubsumeTheSpirit : VampirePower
 {
     public override string Id { get; } = "subsume_the_spirit";
     public override string Name { get; } = "Subsume the Spirit";

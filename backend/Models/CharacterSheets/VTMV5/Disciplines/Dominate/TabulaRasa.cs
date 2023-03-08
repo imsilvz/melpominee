@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Dominate;
 
-public class TabulaRasa : VampireDiscipline
+public class TabulaRasa : VampirePower
 {
     public override string Id { get; } = "tabula_rasa";
     public override string Name { get; } = "Tabula Rasa";

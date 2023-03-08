@@ -1,13 +1,13 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Presence;
 
-public class TrueLovesFace : VampireDiscipline
+public class TrueLovesFace : VampirePower
 {
     public override string Id { get; } = "true_loves_face";
     public override string Name { get; } = "True Love's Face";
     public override string School { get; } = "Presence";
     public override int Level { get; } = 3;
     public override string? Prerequisite { get; } = "Church of Set";
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 3,
         School = "Obfuscate",

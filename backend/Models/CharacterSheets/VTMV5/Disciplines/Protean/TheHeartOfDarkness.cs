@@ -1,13 +1,13 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Protean;
 
-public class TheHeartOfDarkness : VampireDiscipline
+public class TheHeartOfDarkness : VampirePower
 {
     public override string Id { get; } = "the_heart_of_darkness";
     public override string Name { get; } = "The Heart of Darkness";
     public override string School { get; } = "Protean";
     public override int Level { get; } = 5;
     public override string? Prerequisite { get; } = "Church of Set";
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 2,
         School = "Fortitude",

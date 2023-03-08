@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class TenebrousAvatar : VampireDiscipline
+public class TenebrousAvatar : VampirePower
 {
     public override string Id { get; } = "tenebrous_avatar";
     public override string Name { get; } = "Tenebrous Avatar";

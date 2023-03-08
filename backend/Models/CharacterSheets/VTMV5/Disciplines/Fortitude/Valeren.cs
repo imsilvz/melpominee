@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Fortitude;
 
-public class Valeren : VampireDiscipline
+public class Valeren : VampirePower
 {
     public override string Id { get; } = "valeren";
     public override string Name { get; } = "Valeren";
     public override string School { get; } = "Fortitude";
     public override int Level { get; } = 2;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 1,
         School = "Auspex",

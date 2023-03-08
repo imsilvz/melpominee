@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Fortitude;
 
-public class UnswayableMind : VampireDiscipline
+public class UnswayableMind : VampirePower
 {
     public override string Id { get; } = "unswayable_mind";
     public override string Name { get; } = "Unswayable Mind";

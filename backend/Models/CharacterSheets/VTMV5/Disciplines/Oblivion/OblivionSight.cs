@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class OblivionSight : VampireDiscipline
+public class OblivionSight : VampirePower
 {
     public override string Id { get; } = "oblivion_sight";
     public override string Name { get; } = "Oblivion Sight";

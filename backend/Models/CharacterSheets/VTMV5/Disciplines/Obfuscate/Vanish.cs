@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Obfuscate;
 
-public class Vanish : VampireDiscipline
+public class Vanish : VampirePower
 {
     public override string Id { get; } = "vanish";
     public override string Name { get; } = "Vanish";

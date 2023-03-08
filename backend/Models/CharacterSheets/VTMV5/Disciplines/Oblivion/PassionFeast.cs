@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class PassionFeast : VampireDiscipline
+public class PassionFeast : VampirePower
 {
     public override string Id { get; } = "passion_feast";
     public override string Name { get; } = "Passion Feast";
     public override string School { get; } = "Oblivion";
     public override int Level { get; } = 3;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 2,
         School = "Fortitude",

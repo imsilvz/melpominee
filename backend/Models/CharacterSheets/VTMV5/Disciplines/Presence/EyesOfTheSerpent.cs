@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Presence;
 
-public class EyesOfTheSerpent : VampireDiscipline
+public class EyesOfTheSerpent : VampirePower
 {
     public override string Id { get; } = "eyes_of_the_serpent";
     public override string Name { get; } = "Eyes of the Serpent";
     public override string School { get; } = "Presence";
     public override int Level { get; } = 1;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 1,
         School = "Protean",

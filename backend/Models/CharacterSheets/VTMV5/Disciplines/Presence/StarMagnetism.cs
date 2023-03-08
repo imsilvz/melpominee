@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Presence;
 
-public class StarMagnetism : VampireDiscipline
+public class StarMagnetism : VampirePower
 {
     public override string Id { get; } = "star_magnetism";
     public override string Name { get; } = "Star Magnetism";

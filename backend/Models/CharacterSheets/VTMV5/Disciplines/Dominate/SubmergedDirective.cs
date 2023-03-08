@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Dominate;
 
-public class SubmergedDirective : VampireDiscipline
+public class SubmergedDirective : VampirePower
 {
     public override string Id { get; } = "submerged_directive";
     public override string Name { get; } = "Submerged Directive";

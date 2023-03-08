@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Presence;
 
-public class MagnumOpus : VampireDiscipline
+public class MagnumOpus : VampirePower
 {
     public override string Id { get; } = "magnum_opus";
     public override string Name { get; } = "Magnum Opus";
     public override string School { get; } = "Presence";
     public override int Level { get; } = 4;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 3,
         School = "Auspex",

@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Celerity;
 
-public class RapidReflexes : VampireDiscipline
+public class RapidReflexes : VampirePower
 {
     public override string Id { get; } = "rapid_reflexes";
     public override string Name { get; } = "Rapid Reflexes";

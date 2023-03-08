@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class AshesToAshes : VampireDiscipline
+public class AshesToAshes : VampirePower
 {
     public override string Id { get; } = "ashes_to_ashes";
     public override string Name { get; } = "Ashes to Ashes";

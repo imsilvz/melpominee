@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.BloodSorcery;
 
-public class ATasteForBlood : VampireDiscipline
+public class ATasteForBlood : VampirePower
 {
     public override string Id { get; } = "a_taste_for_blood";
     public override string Name { get; } = "A Taste for Blood";

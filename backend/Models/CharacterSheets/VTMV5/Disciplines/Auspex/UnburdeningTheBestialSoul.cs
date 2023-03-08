@@ -1,13 +1,13 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Auspex;
 
-public class UnburdeningTheBestialSoul : VampireDiscipline
+public class UnburdeningTheBestialSoul : VampirePower
 {
     public override string Id { get; } = "unburdening_the_bestial_soul";
     public override string Name { get; } = "Unburdening the Bestial Soul";
     public override string School { get; } = "Auspex";
     public override int Level { get; } = 5;
     public override string? Prerequisite { get; } = "Obeah";
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 3,
         School = "Dominate",

@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Obfuscate;
 
-public class GhostsPassing : VampireDiscipline
+public class GhostsPassing : VampirePower
 {
     public override string Id { get; } = "ghosts_passing";
     public override string Name { get; } = "Ghost's Passing";
     public override string School { get; } = "Obfuscate";
     public override int Level { get; } = 2;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 1,
         School = "Animalism",

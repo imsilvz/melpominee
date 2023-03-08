@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Auspex;
 
-public class EyesOfBeasts : VampireDiscipline
+public class EyesOfBeasts : VampirePower
 {
     public override string Id { get; } = "eyes_of_beasts";
     public override string Name { get; } = "Eyes of Beasts";
     public override string School { get; } = "Auspex";
     public override int Level { get; } = 3;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 2,
         School = "Animalism",

@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Obfuscate;
 
-public class MentalMaze : VampireDiscipline
+public class MentalMaze : VampirePower
 {
     public override string Id { get; } = "mental_maze";
     public override string Name { get; } = "Mental Maze";
     public override string School { get; } = "Obfuscate";
     public override int Level { get; } = 3;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 1,
         School = "Dominate",

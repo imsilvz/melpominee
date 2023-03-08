@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Potence;
 
-public class FistOfCaine : VampireDiscipline
+public class FistOfCaine : VampirePower
 {
     public override string Id { get; } = "fist_of_caine";
     public override string Name { get; } = "Fist of Caine";

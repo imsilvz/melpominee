@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Presence;
 
-public class LingeringKiss : VampireDiscipline
+public class LingeringKiss : VampirePower
 {
     public override string Id { get; } = "lingering_kiss";
     public override string Name { get; } = "Lingering Kiss";

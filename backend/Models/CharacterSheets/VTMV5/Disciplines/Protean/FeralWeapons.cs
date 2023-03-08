@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Protean;
 
-public class FeralWeapons : VampireDiscipline
+public class FeralWeapons : VampirePower
 {
     public override string Id { get; } = "feral_weapons";
     public override string Name { get; } = "Feral Weapons";

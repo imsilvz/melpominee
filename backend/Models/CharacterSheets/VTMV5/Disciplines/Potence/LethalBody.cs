@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Potence;
 
-public class LethalBody : VampireDiscipline
+public class LethalBody : VampirePower
 {
     public override string Id { get; } = "lethal_body";
     public override string Name { get; } = "Lethal Body";

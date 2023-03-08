@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Protean;
 
-public class MistForm : VampireDiscipline
+public class MistForm : VampirePower
 {
     public override string Id { get; } = "mist_form";
     public override string Name { get; } = "Mist Form";

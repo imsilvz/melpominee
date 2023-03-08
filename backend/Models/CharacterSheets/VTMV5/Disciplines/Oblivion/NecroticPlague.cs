@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class NecroticPlague : VampireDiscipline
+public class NecroticPlague : VampirePower
 {
     public override string Id { get; } = "necrotic_plague";
     public override string Name { get; } = "Necrotic Plague";

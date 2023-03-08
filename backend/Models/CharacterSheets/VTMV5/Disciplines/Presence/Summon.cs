@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Presence;
 
-public class Summon : VampireDiscipline
+public class Summon : VampirePower
 {
     public override string Id { get; } = "summon";
     public override string Name { get; } = "Summon";

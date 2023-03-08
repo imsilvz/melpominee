@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Protean;
 
-public class Vicissitude : VampireDiscipline
+public class Vicissitude : VampirePower
 {
     public override string Id { get; } = "vicissitude";
     public override string Name { get; } = "Vicissitude";
     public override string School { get; } = "Protean";
     public override int Level { get; } = 2;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 2,
         School = "Dominate",

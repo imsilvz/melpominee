@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.BloodSorcery;
 
-public class TransitiveBond : VampireDiscipline
+public class TransitiveBond : VampirePower
 {
     public override string Id { get; } = "transitive_bond";
     public override string Name { get; } = "Transitive Bond";

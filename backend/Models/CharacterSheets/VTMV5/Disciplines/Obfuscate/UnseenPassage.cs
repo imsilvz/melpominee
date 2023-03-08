@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Obfuscate;
 
-public class UnseenPassage : VampireDiscipline
+public class UnseenPassage : VampirePower
 {
     public override string Id { get; } = "unseen_passage";
     public override string Name { get; } = "Unseen Passage";

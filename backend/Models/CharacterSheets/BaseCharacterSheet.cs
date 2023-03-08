@@ -2,9 +2,9 @@ namespace Melpominee.app.Models.CharacterSheets;
 
 public abstract class BaseCharacterSheet
 {
-    protected int Id = -1;
+    public int? Id = null;
     protected string GameType = "base";
-    public string GameId { get; set; } = "";
+    protected string GameId { get; set; } = "";
     protected string PlayerId { get; set; } = "";
 
     public BaseCharacterSheet() 
@@ -17,4 +17,5 @@ public abstract class BaseCharacterSheet
     }
 
     public abstract bool Load();
+    public abstract bool Save();
 }

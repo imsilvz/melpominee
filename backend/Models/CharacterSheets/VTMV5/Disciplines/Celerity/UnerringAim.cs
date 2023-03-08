@@ -1,12 +1,12 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Celerity;
 
-public class UnerringAim : VampireDiscipline
+public class UnerringAim : VampirePower
 {
     public override string Id { get; } = "unerring_aim";
     public override string Name { get; } = "Unerring Aim";
     public override string School { get; } = "Celerity";
     public override int Level { get; } = 4;
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 2,
         School = "Auspex",

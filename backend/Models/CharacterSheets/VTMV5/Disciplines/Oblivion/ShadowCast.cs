@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class ShadowCast : VampireDiscipline
+public class ShadowCast : VampirePower
 {
     public override string Id { get; } = "shadow_cast";
     public override string Name { get; } = "Shadow Cast";

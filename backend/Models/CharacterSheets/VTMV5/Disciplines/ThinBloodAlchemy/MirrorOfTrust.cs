@@ -1,13 +1,13 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.ThinBloodAlchemy;
 
-public class MirrorOfTrust : VampireDiscipline
+public class MirrorOfTrust : VampirePower
 {
     public override string Id { get; } = "mirror_of_trust";
     public override string Name { get; } = "Mirror of Trust";
     public override string School { get; } = "Thin-Blood Alchemy";
     public override int Level { get; } = 2;
     public override string? Prerequisite { get; } = "Second Inquisition";
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = null,
         School = "Sanguine",

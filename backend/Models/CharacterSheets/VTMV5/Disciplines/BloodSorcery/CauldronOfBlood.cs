@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.BloodSorcery;
 
-public class CauldronOfBlood : VampireDiscipline
+public class CauldronOfBlood : VampirePower
 {
     public override string Id { get; } = "cauldron_of_blood";
     public override string Name { get; } = "Cauldron of Blood";

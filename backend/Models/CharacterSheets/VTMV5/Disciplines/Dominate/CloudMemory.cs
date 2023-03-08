@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Dominate;
 
-public class CloudMemory : VampireDiscipline
+public class CloudMemory : VampirePower
 {
     public override string Id { get; } = "cloud_memory";
     public override string Name { get; } = "Cloud Memory";

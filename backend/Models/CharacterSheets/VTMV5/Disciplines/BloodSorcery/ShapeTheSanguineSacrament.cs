@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.BloodSorcery;
 
-public class ShapeTheSanguineSacrament : VampireDiscipline
+public class ShapeTheSanguineSacrament : VampirePower
 {
     public override string Id { get; } = "shape_the_sanguine_sacrament";
     public override string Name { get; } = "Shape the Sanguine Sacrament";

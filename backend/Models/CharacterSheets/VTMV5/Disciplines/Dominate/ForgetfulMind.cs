@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Dominate;
 
-public class ForgetfulMind : VampireDiscipline
+public class ForgetfulMind : VampirePower
 {
     public override string Id { get; } = "forgetful_mind";
     public override string Name { get; } = "Forgetful Mind";

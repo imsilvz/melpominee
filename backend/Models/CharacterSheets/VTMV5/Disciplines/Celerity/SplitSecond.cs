@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Celerity;
 
-public class SplitSecond : VampireDiscipline
+public class SplitSecond : VampirePower
 {
     public override string Id { get; } = "split_second";
     public override string Name { get; } = "Split Second";

@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Fortitude;
 
-public class DefyBane : VampireDiscipline
+public class DefyBane : VampirePower
 {
     public override string Id { get; } = "defy_bane";
     public override string Name { get; } = "Defy Bane";

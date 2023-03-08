@@ -1,13 +1,13 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Protean;
 
-public class OneWithTheLand : VampireDiscipline
+public class OneWithTheLand : VampirePower
 {
     public override string Id { get; } = "one_with_the_land";
     public override string Name { get; } = "One with the Land";
     public override string School { get; } = "Protean";
     public override int Level { get; } = 5;
     public override string? Prerequisite { get; } = "Earth Meld";
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 2,
         School = "Animalism",

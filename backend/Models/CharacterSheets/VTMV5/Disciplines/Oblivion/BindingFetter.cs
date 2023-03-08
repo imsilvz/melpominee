@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Oblivion;
 
-public class BindingFetter : VampireDiscipline
+public class BindingFetter : VampirePower
 {
     public override string Id { get; } = "binding_fetter";
     public override string Name { get; } = "Binding Fetter";

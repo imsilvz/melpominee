@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Fortitude;
 
-public class SealTheBeastsMaw : VampireDiscipline
+public class SealTheBeastsMaw : VampirePower
 {
     public override string Id { get; } = "seal_the_beasts_maw";
     public override string Name { get; } = "Seal the Beast's Maw";

@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Protean;
 
-public class EyesOfTheBeast : VampireDiscipline
+public class EyesOfTheBeast : VampirePower
 {
     public override string Id { get; } = "eyes_of_the_beast";
     public override string Name { get; } = "Eyes of the Beast";

@@ -1,13 +1,13 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Protean;
 
-public class HorridForm : VampireDiscipline
+public class HorridForm : VampirePower
 {
     public override string Id { get; } = "horrid_form";
     public override string Name { get; } = "Horrid Form";
     public override string School { get; } = "Protean";
     public override int Level { get; } = 4;
     public override string? Prerequisite { get; } = "Vicissitude";
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = 2,
         School = "Dominate",

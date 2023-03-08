@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Obfuscate;
 
-public class MaskOfAThousandFaces : VampireDiscipline
+public class MaskOfAThousandFaces : VampirePower
 {
     public override string Id { get; } = "mask_of_a_thousand_faces";
     public override string Name { get; } = "Mask of a Thousand Faces";

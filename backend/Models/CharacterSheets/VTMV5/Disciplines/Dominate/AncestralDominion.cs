@@ -1,13 +1,13 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Dominate;
 
-public class AncestralDominion : VampireDiscipline
+public class AncestralDominion : VampirePower
 {
     public override string Id { get; } = "ancestral_dominion";
     public override string Name { get; } = "Ancestral Dominion";
     public override string School { get; } = "Dominate";
     public override int Level { get; } = 4;
     public override string? Prerequisite { get; } = "Mithras";
-    public override VampireDisciplineAmalgam? Amalgam { get; } = new VampireDisciplineAmalgam
+    public override VampirePowerAmalgam? Amalgam { get; } = new VampirePowerAmalgam
     {
         Level = null,
         School = "Blood Sorcery ●●●",

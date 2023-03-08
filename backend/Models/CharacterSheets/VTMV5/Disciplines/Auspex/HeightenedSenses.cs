@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Auspex;
 
-public class HeightenedSenses : VampireDiscipline
+public class HeightenedSenses : VampirePower
 {
     public override string Id { get; } = "heightened_senses";
     public override string Name { get; } = "Heightened Senses";

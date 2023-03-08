@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.BloodSorcery;
 
-public class TheftOfVitae : VampireDiscipline
+public class TheftOfVitae : VampirePower
 {
     public override string Id { get; } = "theft_of_vitae";
     public override string Name { get; } = "Theft of Vitae";

@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Fortitude;
 
-public class FortifyTheInnerFaçade : VampireDiscipline
+public class FortifyTheInnerFaçade : VampirePower
 {
     public override string Id { get; } = "fortify_the_inner_façade";
     public override string Name { get; } = "Fortify the Inner Façade";

@@ -1,6 +1,6 @@
 namespace Melpominee.app.Models.CharacterSheets.VTMV5.Disciplines.Animalism;
 
-public class QuellTheBeast : VampireDiscipline
+public class QuellTheBeast : VampirePower
 {
     public override string Id { get; } = "quell_the_beast";
     public override string Name { get; } = "Quell the Beast";

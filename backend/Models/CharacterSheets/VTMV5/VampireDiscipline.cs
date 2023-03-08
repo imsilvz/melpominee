@@ -1,5 +1,12 @@
-using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 namespace Melpominee.app.Models.CharacterSheets.VTMV5;
+
+public class VampirePowerAmalgam
+{
+    public int? Level { get; set; }
+    public string School { get; set; } = "";
+}
 
 public abstract class VampirePower
 {
@@ -45,8 +52,33 @@ public abstract class VampirePower
     }
 }
 
-public class VampirePowerAmalgam
+public class VampirePowerJsonConverter : JsonConverter<VampirePower>
 {
-    public int? Level { get; set; }
-    public string School { get; set; } = "";
+    public override VampirePower? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void Write(Utf8JsonWriter writer, VampirePower value, JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(value.Id);
+    }
+}
+
+public class VampirePowerListJsonConverter : JsonConverter<List<VampirePower>>
+{
+    public override List<VampirePower>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void Write(Utf8JsonWriter writer, List<VampirePower> value, JsonSerializerOptions options)
+    {
+        writer.WriteStartArray();
+        foreach(var item in value)
+        {
+            writer.WriteStringValue(item.Id);
+        }
+        writer.WriteEndArray();
+    }
 }

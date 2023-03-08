@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 namespace Melpominee.app.Models.CharacterSheets.VTMV5;
 
 public abstract class VampirePredatorType
@@ -32,5 +34,18 @@ public abstract class VampirePredatorType
             return predatorType;
         }
         throw new ArgumentException($"'{id}' is not a valid VampirePredatorType identifier.");
+    }
+}
+
+public class VampirePredatorTypeJsonConverter : JsonConverter<VampirePredatorType>
+{
+    public override VampirePredatorType? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void Write(Utf8JsonWriter writer, VampirePredatorType value, JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(value.Id);
     }
 }

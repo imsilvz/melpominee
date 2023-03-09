@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // redux
 import { useAppSelector } from '../../../redux/hooks';
@@ -16,6 +16,7 @@ import './DisciplineSection.scss';
 
 interface PowerRowProps {
   id: string;
+  level: number;
   school: string;
 }
 
@@ -25,22 +26,31 @@ interface DisciplineTileProps {
   school: string;
 }
 
-const PowerRow = ({ id, school }: PowerRowProps) => {
+interface DisciplineSectionProps {
+  characterId: number;
+  levels: CharacterDisciplines;
+  powers: string[];
+}
+
+const PowerRow = ({ id, level, school }: PowerRowProps) => {
   const disciplines = useAppSelector(selectDisciplines);
   return (
     <div className="charactersheet-disciplines-power">
       <select
         value={school || undefined}
         disabled={!Object.prototype.hasOwnProperty.call(disciplines, school)}
+        onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {}}
       >
         {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
         <option value="" />
         {Object.prototype.hasOwnProperty.call(disciplines, school) &&
-          disciplines[school].powers.map((power, powerIdx) => (
-            <option key={`${id}-power-option${powerIdx}`} value={power.id}>
-              {power.name}
-            </option>
-          ))}
+          disciplines[school].powers
+            .filter((val) => val.level <= level)
+            .map((power, powerIdx) => (
+              <option key={`${id}-power-option${powerIdx}`} value={power.id}>
+                {power.name}
+              </option>
+            ))}
       </select>
       <span />
     </div>
@@ -50,12 +60,14 @@ const PowerRow = ({ id, school }: PowerRowProps) => {
 const DisciplineTile = ({ id, level, school }: DisciplineTileProps) => {
   const disciplines = useAppSelector(selectDisciplines);
   const disciplineList = Array.from(Object.keys(disciplines)).sort();
-  console.log(disciplines[school]);
   return (
     <div className="charactersheet-disciplines-block">
       <div className="charactersheet-disciplines-school">
         <div className="charactersheet-disciplines-school-select">
-          <select value={school || undefined}>
+          <select
+            value={school || undefined}
+            onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {}}
+          >
             {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
             <option value="" />
             {disciplineList.map((discKey) => (
@@ -72,6 +84,7 @@ const DisciplineTile = ({ id, level, school }: DisciplineTileProps) => {
         <PowerRow
           id={`${id}-power${rowIdx}`}
           key={`${id}-power${rowIdx}`}
+          level={level}
           school={school}
         />
       ))}
@@ -79,27 +92,126 @@ const DisciplineTile = ({ id, level, school }: DisciplineTileProps) => {
   );
 };
 
+interface DisciplineSectionTile {
+  school: string;
+  powers: string[];
+  level: number;
+}
+
+interface DisciplineSectionLayout {
+  [key: number]: DisciplineSectionTile;
+}
+
 const DisciplineSection = ({
+  characterId,
   levels,
   powers,
-}: {
-  levels: CharacterDisciplines;
-  powers: string[];
-}) => {
+}: DisciplineSectionProps) => {
+  // we use both state and ref so that there is always a current reference
+  // to the layout, and so we can more easily determine if it is null
+  const sectionLayoutRef = useRef<DisciplineSectionLayout | null>(null);
   const disciplinePowers = useAppSelector(selectDisciplinePowers);
+  const [sectionLayout, setSectionLayout] =
+    useState<DisciplineSectionLayout | null>(null);
 
-  // find character disciplines
-  const charDisciplinesList = powers
-    .reduce((prev: string[], curr) => {
-      if (Object.prototype.hasOwnProperty.call(disciplinePowers, curr)) {
-        const power = disciplinePowers[curr];
-        if (!prev.includes(power.school)) {
-          prev.push(power.school);
+  useEffect(() => {
+    // reset previous layout
+    sectionLayoutRef.current = null;
+    setSectionLayout(null);
+  }, [characterId]);
+
+  useEffect(() => {
+    if (!Object.keys(disciplinePowers).length) {
+      // if masterdata has not loaded yet,
+      // do not proceed
+      return;
+    }
+
+    // maintain layout in a ref
+    if (!sectionLayoutRef.current) {
+      // setup initial layout
+      const newSectionLayout: DisciplineSectionLayout = {};
+      // get count of powers in each character discipline
+      const discCountMap = powers.reduce((prev, curr) => {
+        // check power is valid
+        if (Object.prototype.hasOwnProperty.call(disciplinePowers, curr)) {
+          const power = disciplinePowers[curr];
+          if (!prev.has(power.school)) {
+            prev.set(power.school, 1);
+          } else {
+            prev.set(power.school, (prev.get(power.school) as number) + 1);
+          }
         }
+        return prev;
+      }, new Map<string, number>());
+      // assuming we have 5 rows, figure out how many tiles we need for each discipline
+      // then sort them in alphabetical order
+      const discTileList = Array.from(discCountMap.entries())
+        .reduce((output: string[], kvp) => {
+          for (let i = 0; i < Math.ceil(kvp[1] / 5); i++) {
+            output.push(kvp[0]);
+          }
+          return output;
+        }, [])
+        .sort();
+      // when we create the layout for the first time, it's just sequential
+      // keep a map of indexes for each power
+      const powerIndexMap = new Map<string, number>();
+      for (let i = 0; i < discTileList.length; i++) {
+        const tileLayout: DisciplineSectionTile = {
+          school: discTileList[i],
+          powers: [],
+          level: levels[discTileList[i] as keyof CharacterDisciplines] || 0,
+        };
+        // loop through powers
+        for (let j = 0; j < powers.length; j++) {
+          const power = powers[j];
+          const powerInfo = disciplinePowers[power];
+          if (powerInfo.school === tileLayout.school) {
+            tileLayout.powers.push(power);
+            if (!powerIndexMap.has(powerInfo.school)) {
+              powerIndexMap.set(powerInfo.school, 1);
+            } else {
+              const val = (powerIndexMap.get(powerInfo.school) as number) + 1;
+              powerIndexMap.set(powerInfo.school, val);
+              if (val % 5 === 0) {
+                // if we have filled all five rows,
+                // then we break out of the loop
+                break;
+              }
+            }
+          }
+        }
+        // sort powers by level, and then alphabetically
+        tileLayout.powers = tileLayout.powers.sort().sort((a, b) => {
+          const aInfo = disciplinePowers[a];
+          const bInfo = disciplinePowers[b];
+          if (aInfo.level < bInfo.level) {
+            return -1;
+          }
+          if (aInfo.level > bInfo.level) {
+            return 1;
+          }
+          return 0;
+        });
+        newSectionLayout[i] = tileLayout;
       }
-      return prev;
-    }, [])
-    .sort();
+      // add empty rows to fill remaining space
+      const offset = Object.keys(newSectionLayout).length;
+      const paddingRows = offset % 3;
+      for (let i = 0; i < 3 - paddingRows; i++) {
+        newSectionLayout[offset + i] = {
+          school: '',
+          powers: [],
+          level: 0,
+        };
+      }
+      sectionLayoutRef.current = newSectionLayout;
+    } else {
+      console.log('UPDATE');
+    }
+    setSectionLayout(sectionLayoutRef.current);
+  }, [disciplinePowers, characterId, levels, powers]);
 
   return (
     <div className="charactersheet-disciplines">
@@ -110,26 +222,19 @@ const DisciplineSection = ({
         <div className="charactersheet-disciplines-header-divider" />
       </div>
       <div className="charactersheet-disciplines-inner">
-        {Array.from(Array(6), (_block, i) => i).map((_, idx) => {
-          let schoolLevel = 0;
-          let chosenSchool = '';
-          if (charDisciplinesList.length > idx) {
-            chosenSchool = charDisciplinesList[idx];
-            if (Object.prototype.hasOwnProperty.call(levels, chosenSchool)) {
-              schoolLevel = levels[
-                chosenSchool as keyof CharacterDisciplines
-              ] as number;
-            }
-          }
-          return (
-            <DisciplineTile
-              id={`disciplines-block${idx}`}
-              key={`disciplines-block${idx}`}
-              level={schoolLevel}
-              school={chosenSchool}
-            />
-          );
-        })}
+        {sectionLayout &&
+          Object.keys(sectionLayout).map((idx) => {
+            const tileLayout: DisciplineSectionTile =
+              sectionLayout[parseInt(idx, 10)];
+            return (
+              <DisciplineTile
+                id={`disciplines-tile${idx}`}
+                key={`disciplines-tile${idx}`}
+                level={tileLayout.level}
+                school={tileLayout.school}
+              />
+            );
+          })}
       </div>
     </div>
   );

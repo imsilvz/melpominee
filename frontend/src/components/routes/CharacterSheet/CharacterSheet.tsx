@@ -440,6 +440,7 @@ const CharacterSheet = () => {
           <SkillBlock skills={currCharacter.skills} />
           <SecondaryBlock character={currCharacter} />
           <DisciplineSection
+            characterId={currCharacter.id}
             levels={currCharacter.disciplines}
             powers={currCharacter.disciplinePowers}
           />

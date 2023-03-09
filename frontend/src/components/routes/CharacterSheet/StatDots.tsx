@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // local files
 import './StatDots.scss';
@@ -6,10 +6,16 @@ import './StatDots.scss';
 interface StatDotsProps {
   rootKey: string;
   initialValue?: number;
+  value?: number;
 }
 
-const StatDots = ({ rootKey, initialValue }: StatDotsProps) => {
+const StatDots = ({ rootKey, initialValue, value }: StatDotsProps) => {
   const [dots, setDots] = useState<number>(initialValue || 0);
+  useEffect(() => {
+    if (value !== undefined) {
+      setDots(value);
+    }
+  }, [value]);
   return (
     <div className="statdots-container">
       {Array.from(Array(5), (_, i) => i).map((_, idx) => (

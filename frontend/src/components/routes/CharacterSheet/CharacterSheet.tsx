@@ -8,18 +8,20 @@ import {
   selectPredatorTypes,
 } from '../../../redux/reducers/masterdataReducer';
 
-// local files
+// types
 import {
   Character,
   CharacterAttributes,
-  CharacterSecondaryStats,
   CharacterSkills,
 } from '../../../types/Character';
+
+// local files
 import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
+import DisciplineSection from './DisciplineSection';
 import HeaderBrand from './HeaderBrand';
+import HealthTracker from './HealthTracker';
 import StatDots from './StatDots';
 import './CharacterSheet.scss';
-import HealthTracker from './HealthTracker';
 
 interface APICharacterSheetResponse {
   success: boolean;
@@ -401,22 +403,14 @@ const SecondaryBlock = ({ character }: { character: Character }) => {
   );
 };
 
-const DisciplineBlock = () => {
-  return (
-    <div className="charactersheet-statblock">
-      <div className="charactersheet-statblock-header">
-        <div className="charactersheet-statblock-header-title">
-          <h2>Disciplines</h2>
-        </div>
-        <div className="charactersheet-statblock-header-divider" />
-      </div>
-    </div>
-  );
-};
-
 const CharacterSheet = () => {
   const { id } = useParams();
-  const [character, setCharacter] = useState<Character | null>(null);
+  const [savedCharacter, setSavedCharacter] = useState<Character | null>(null);
+  const [currCharacter, setCurrCharacter] = useState<Character | null>(null);
+
+  useEffect(() => {
+    setCurrCharacter(savedCharacter);
+  }, [savedCharacter]);
 
   useEffect(() => {
     const fetchCharacter = async () => {
@@ -426,7 +420,7 @@ const CharacterSheet = () => {
           const characterJson: APICharacterSheetResponse =
             await (characterRequest.json() as Promise<APICharacterSheetResponse>);
           if (characterJson.character) {
-            setCharacter(characterJson.character);
+            setSavedCharacter(characterJson.character);
           }
         }
       }
@@ -437,15 +431,18 @@ const CharacterSheet = () => {
 
   return (
     <div className="charactersheet-container">
-      {!character ? (
+      {!currCharacter ? (
         <LoadingSpinner />
       ) : (
         <div className="charactersheet-panel">
-          <HeaderBlock character={character} />
-          <AttributeBlock attributes={character.attributes} />
-          <SkillBlock skills={character.skills} />
-          <SecondaryBlock character={character} />
-          <DisciplineBlock />
+          <HeaderBlock character={currCharacter} />
+          <AttributeBlock attributes={currCharacter.attributes} />
+          <SkillBlock skills={currCharacter.skills} />
+          <SecondaryBlock character={currCharacter} />
+          <DisciplineSection
+            levels={currCharacter.disciplines}
+            powers={currCharacter.disciplinePowers}
+          />
         </div>
       )}
     </div>

@@ -46,6 +46,19 @@ export const userSlice = createSlice({
       state.clans = action.payload;
     },
     setDisciplines: (state, action: PayloadAction<DisciplineMasterdata>) => {
+      // sort for later use
+      Object.keys(action.payload).forEach((key) => {
+        const powerList = action.payload[key].powers;
+        action.payload[key].powers = powerList.sort().sort((a, b) => {
+          if (a.level < b.level) {
+            return -1;
+          }
+          if (a.level > b.level) {
+            return 1;
+          }
+          return 0;
+        });
+      });
       state.disciplines = action.payload;
     },
     setDisciplinePowers: (

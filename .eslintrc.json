@@ -30,6 +30,7 @@
     "rules": {
         "no-param-reassign": "off",
         "no-plusplus": "off",
+        "react/no-array-index-key": "off",
         "react/require-default-props": "off",
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",

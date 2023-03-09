@@ -18,37 +18,60 @@ interface PowerRowProps {
   id: string;
   level: number;
   school: string;
+  power: string;
+  onChange?: (oldVal: string, newVal: string) => void;
 }
 
 interface DisciplineTileProps {
   id: string;
   level: number;
   school: string;
+  powers: string[];
+  onLevelChange?: (oldVal: number, newVal: number) => void;
+  onPowerChange?: (
+    index: number,
+    oldVal: string,
+    newVal: string,
+    schoolChange?: boolean
+  ) => void;
 }
 
 interface DisciplineSectionProps {
   characterId: number;
   levels: CharacterDisciplines;
   powers: string[];
+  onLevelChange?: (school: string, oldVal: number, newVal: number) => void;
+  onPowerChange?: (
+    oldVal: string,
+    newVal: string,
+    schoolChange?: boolean
+  ) => void;
 }
 
-const PowerRow = ({ id, level, school }: PowerRowProps) => {
+const PowerRow = ({ id, level, school, power, onChange }: PowerRowProps) => {
   const disciplines = useAppSelector(selectDisciplines);
   return (
     <div className="charactersheet-disciplines-power">
       <select
-        value={school || undefined}
-        disabled={!Object.prototype.hasOwnProperty.call(disciplines, school)}
-        onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {}}
+        value={power || ''}
+        disabled={
+          !Object.prototype.hasOwnProperty.call(disciplines, school) ||
+          level === 0
+        }
+        onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+          if (onChange) {
+            onChange(power, event.target.value);
+          }
+        }}
       >
         {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
         <option value="" />
         {Object.prototype.hasOwnProperty.call(disciplines, school) &&
           disciplines[school].powers
             .filter((val) => val.level <= level)
-            .map((power, powerIdx) => (
-              <option key={`${id}-power-option${powerIdx}`} value={power.id}>
-                {power.name}
+            .map((opt, optIdx) => (
+              <option key={`${id}-power-option${optIdx}`} value={opt.id}>
+                {opt.name}
               </option>
             ))}
       </select>
@@ -57,7 +80,14 @@ const PowerRow = ({ id, level, school }: PowerRowProps) => {
   );
 };
 
-const DisciplineTile = ({ id, level, school }: DisciplineTileProps) => {
+const DisciplineTile = ({
+  id,
+  level,
+  school,
+  powers,
+  onLevelChange,
+  onPowerChange,
+}: DisciplineTileProps) => {
   const disciplines = useAppSelector(selectDisciplines);
   const disciplineList = Array.from(Object.keys(disciplines)).sort();
   return (
@@ -65,8 +95,13 @@ const DisciplineTile = ({ id, level, school }: DisciplineTileProps) => {
       <div className="charactersheet-disciplines-school">
         <div className="charactersheet-disciplines-school-select">
           <select
-            value={school || undefined}
-            onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {}}
+            value={school || ''}
+            onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+              // discipline category has changed!
+              if (onPowerChange) {
+                onPowerChange(-1, school, event.target.value, true);
+              }
+            }}
           >
             {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
             <option value="" />
@@ -86,6 +121,13 @@ const DisciplineTile = ({ id, level, school }: DisciplineTileProps) => {
           key={`${id}-power${rowIdx}`}
           level={level}
           school={school}
+          power={powers[rowIdx] || ''}
+          onChange={(oldVal, newVal) => {
+            // discipline power has changed
+            if (onPowerChange) {
+              onPowerChange(rowIdx, oldVal, newVal);
+            }
+          }}
         />
       ))}
     </div>
@@ -106,6 +148,8 @@ const DisciplineSection = ({
   characterId,
   levels,
   powers,
+  onLevelChange,
+  onPowerChange,
 }: DisciplineSectionProps) => {
   // we use both state and ref so that there is always a current reference
   // to the layout, and so we can more easily determine if it is null
@@ -223,15 +267,84 @@ const DisciplineSection = ({
       </div>
       <div className="charactersheet-disciplines-inner">
         {sectionLayout &&
-          Object.keys(sectionLayout).map((idx) => {
+          Object.keys(sectionLayout).map((tileIdx) => {
             const tileLayout: DisciplineSectionTile =
-              sectionLayout[parseInt(idx, 10)];
+              sectionLayout[parseInt(tileIdx, 10)];
             return (
               <DisciplineTile
-                id={`disciplines-tile${idx}`}
-                key={`disciplines-tile${idx}`}
+                id={`disciplines-tile${tileIdx}`}
+                key={`disciplines-tile${tileIdx}`}
                 level={tileLayout.level}
                 school={tileLayout.school}
+                powers={tileLayout.powers}
+                onLevelChange={(oldVal, newVal) => {}}
+                onPowerChange={(powerIdx, oldVal, newVal, schoolChange) => {
+                  console.log(oldVal, newVal, schoolChange);
+                  const currentSectionLayout = sectionLayoutRef?.current;
+                  if (!currentSectionLayout) {
+                    // this should only happen prior to initialization
+                    // but it will also protect character swaps from changes!
+                    return;
+                  }
+                  if (!schoolChange) {
+                    // this is a change to discipline powers
+                    const oldPowerInfo = disciplinePowers[oldVal];
+                    const newPowerInfo = disciplinePowers[newVal];
+                    if (newPowerInfo) {
+                      // new power is valid, check if it is coming from elsewhere
+                      let found = false;
+                      const replaceLocation = { tile: -1, row: -1 };
+                      const sectionKeys = Object.keys(currentSectionLayout);
+                      for (let i = 0; i < sectionKeys.length; i++) {
+                        const tileInfo =
+                          currentSectionLayout[parseInt(sectionKeys[i], 10)];
+                        if (tileInfo.school === newPowerInfo.school) {
+                          for (let j = 0; j < tileInfo.powers.length; j++) {
+                            const powerInfo = tileInfo.powers[j];
+                            if (powerInfo === newPowerInfo.id) {
+                              replaceLocation.tile = i;
+                              replaceLocation.row = j;
+                              found = true;
+                              break;
+                            }
+                          }
+                          if (found) {
+                            break;
+                          }
+                        }
+                      }
+                      // if we do find another power with the 'new' id
+                      if (found) {
+                        // swap old power into 'new' power location!
+                        currentSectionLayout[replaceLocation.tile].powers[
+                          replaceLocation.row
+                        ] = oldPowerInfo.id;
+                      }
+                      // set the new field!
+                      currentSectionLayout[parseInt(tileIdx, 10)].powers[
+                        powerIdx
+                      ] = newPowerInfo.id;
+                    } else {
+                      // unset power
+                      currentSectionLayout[parseInt(tileIdx, 10)].powers[
+                        powerIdx
+                      ] = '';
+                    }
+                  } else {
+                    // this is a change to discipline school
+                    currentSectionLayout[parseInt(tileIdx, 10)] = {
+                      school: newVal,
+                      powers: [],
+                      level: levels[newVal as keyof CharacterDisciplines] || 0,
+                    };
+                  }
+                  // temporarily apply changes
+                  setSectionLayout({ ...currentSectionLayout });
+                  // pass this info higher up!
+                  if (onPowerChange) {
+                    onPowerChange(oldVal, newVal, schoolChange);
+                  }
+                }}
               />
             );
           })}

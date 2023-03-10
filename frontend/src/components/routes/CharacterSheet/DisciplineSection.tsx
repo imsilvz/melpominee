@@ -260,7 +260,95 @@ const DisciplineSection = ({
       }
       sectionLayoutRef.current = newSectionLayout;
     } else {
-      console.log('UPDATE');
+      const newSectionLayout = { ...sectionLayoutRef.current };
+      // first we must iterate all tiles and their assigned powers
+      // if any powers are no longer in our power list, remove them
+      // if any powers are not currently assigned in our layout, set them
+      const layoutPowers: string[] = [];
+      const layoutKeys = Object.keys(newSectionLayout);
+      for (let i = 0; i < layoutKeys.length; i++) {
+        const tileInfo = newSectionLayout[parseInt(layoutKeys[i], 10)];
+        layoutPowers.push(...tileInfo.powers);
+      }
+      const toAdd = powers.filter((powerId) => !layoutPowers.includes(powerId));
+      const toRemove = layoutPowers.filter(
+        (powerId) => powerId && !powers.includes(powerId)
+      );
+      // first, remove powers that do not belong
+      toRemove.forEach((removeVal) => {
+        for (let i = 0; i < layoutKeys.length; i++) {
+          const tileInfo = newSectionLayout[parseInt(layoutKeys[i], 10)];
+          tileInfo.powers = tileInfo.powers.filter(
+            (powerId) => powerId !== removeVal
+          );
+        }
+      });
+      // next, add powers that are missing
+      toAdd.forEach((addVal) => {
+        let added = false;
+        const powerInfo = disciplinePowers[addVal];
+        for (let i = 0; i < layoutKeys.length; i++) {
+          const tileInfo = newSectionLayout[parseInt(layoutKeys[i], 10)];
+          if (tileInfo.school === powerInfo.school) {
+            // ensure we do not insert into a tile where there is no room!
+            if (tileInfo.powers.length < 5) {
+              // add power
+              // then sort by level, and then alphabetically
+              tileInfo.powers.push(addVal);
+              tileInfo.powers = tileInfo.powers.sort().sort((a, b) => {
+                const aInfo = disciplinePowers[a];
+                const bInfo = disciplinePowers[b];
+                if (aInfo.level < bInfo.level) {
+                  return -1;
+                }
+                if (aInfo.level > bInfo.level) {
+                  return 1;
+                }
+                return 0;
+              });
+              added = true;
+              break;
+            }
+          }
+        }
+        // check if we were successful
+        if (!added) {
+          // this means we were unable to find a tile with open space
+          // so we should now search tiles with empty schools
+          for (let i = 0; i < layoutKeys.length; i++) {
+            const tileInfo = newSectionLayout[parseInt(layoutKeys[i], 10)];
+            if (tileInfo.school === '') {
+              // this tile is empty, so we can set it up
+              tileInfo.school = powerInfo.school;
+              tileInfo.powers = [addVal];
+              tileInfo.level =
+                levels[powerInfo.school as keyof CharacterDisciplines] || 0;
+              added = true;
+              break;
+            }
+          }
+          if (!added) {
+            // this means there are no valid empty rows
+            // so we must add a trio of new rows
+            // and set the first of this new trio to accomodate
+            const offset = Object.keys(newSectionLayout).length;
+            newSectionLayout[offset] = {
+              school: powerInfo.school,
+              powers: [addVal],
+              level:
+                levels[powerInfo.school as keyof CharacterDisciplines] || 0,
+            };
+            for (let i = 1; i < 3; i++) {
+              newSectionLayout[offset + i] = {
+                school: '',
+                powers: [],
+                level: 0,
+              };
+            }
+          }
+        }
+      });
+      sectionLayoutRef.current = newSectionLayout;
     }
     setSectionLayout(sectionLayoutRef.current);
   }, [disciplinePowers, characterId, levels, powers]);
@@ -345,9 +433,11 @@ const DisciplineSection = ({
                             replaceLocation.row
                           ] = oldPowerInfo.id;
                         } else {
-                          currentSectionLayout[replaceLocation.tile].powers[
-                            replaceLocation.row
-                          ] = '';
+                          // unset old power
+                          currentSectionLayout[replaceLocation.tile].powers =
+                            currentSectionLayout[
+                              replaceLocation.tile
+                            ].powers.filter((val) => val !== newVal);
                         }
                       }
                       // set the new field!
@@ -356,9 +446,10 @@ const DisciplineSection = ({
                       ] = newPowerInfo.id;
                     } else {
                       // unset power
-                      currentSectionLayout[parseInt(tileIdx, 10)].powers[
-                        powerIdx
-                      ] = '';
+                      currentSectionLayout[parseInt(tileIdx, 10)].powers =
+                        currentSectionLayout[
+                          parseInt(tileIdx, 10)
+                        ].powers.filter((val) => val !== oldVal);
                     }
                   } else {
                     // this is a change to discipline school

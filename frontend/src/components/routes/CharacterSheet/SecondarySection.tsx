@@ -1,7 +1,7 @@
 import React from 'react';
 
 // types
-import { Character, CharacterAttributes } from '../../../types/Character';
+import { Character } from '../../../types/Character';
 
 // local files
 import HealthTracker from './HealthTracker';

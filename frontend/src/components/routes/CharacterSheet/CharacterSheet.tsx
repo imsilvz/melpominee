@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+// redux
+import { useAppSelector } from '../../../redux/hooks';
+import { selectDisciplinePowers } from '../../../redux/reducers/masterdataReducer';
+
 // types
 import { Character } from '../../../types/Character';
 
@@ -21,6 +25,7 @@ interface APICharacterSheetResponse {
 
 const CharacterSheet = () => {
   const { id } = useParams();
+  const disciplinePowers = useAppSelector(selectDisciplinePowers);
   const [savedCharacter, setSavedCharacter] = useState<Character | null>(null);
   const [currCharacter, setCurrCharacter] = useState<Character | null>(null);
 
@@ -54,13 +59,10 @@ const CharacterSheet = () => {
             character={currCharacter}
             onChange={(field, value) => {
               if (Object.prototype.hasOwnProperty.call(currCharacter, field)) {
-                setCurrCharacter(
-                  (char) =>
-                    char && {
-                      ...char,
-                      [field]: value,
-                    }
-                );
+                setCurrCharacter({
+                  ...currCharacter,
+                  [field]: value,
+                });
               }
             }}
           />
@@ -68,13 +70,12 @@ const CharacterSheet = () => {
             attributes={currCharacter.attributes}
             onChange={(attribute, value) => {
               if (Object.keys(currCharacter.attributes).includes(attribute)) {
-                const newAttributes = {
-                  ...currCharacter.attributes,
-                  [attribute]: value,
-                };
                 setCurrCharacter({
                   ...currCharacter,
-                  attributes: newAttributes,
+                  attributes: {
+                    ...currCharacter.attributes,
+                    [attribute]: value,
+                  },
                 });
               }
             }}
@@ -83,13 +84,12 @@ const CharacterSheet = () => {
             skills={currCharacter.skills}
             onChange={(skill, skillData) => {
               if (Object.keys(currCharacter.skills).includes(skill)) {
-                const newSkills = {
-                  ...currCharacter.skills,
-                  [skill]: skillData,
-                };
                 setCurrCharacter({
                   ...currCharacter,
-                  skills: newSkills,
+                  skills: {
+                    ...currCharacter.skills,
+                    [skill]: skillData,
+                  },
                 });
               }
             }}
@@ -101,22 +101,48 @@ const CharacterSheet = () => {
             powers={currCharacter.disciplinePowers}
             onLevelChange={(school, oldVal, newVal) => {
               if (Object.keys(currCharacter.disciplines).includes(school)) {
-                const newDisciplines = {
-                  ...currCharacter.disciplines,
-                  [school]: newVal,
-                };
                 setCurrCharacter({
                   ...currCharacter,
-                  disciplines: newDisciplines,
+                  disciplines: {
+                    ...currCharacter.disciplines,
+                    [school]: newVal,
+                  },
                 });
               }
             }}
             onPowerChange={(oldVal, newVal, schoolChange) => {
               if (schoolChange) {
                 // entire discipline changed
+                console.log(oldVal, newVal, schoolChange);
               } else {
                 // single ability changed
-                console.log(oldVal, newVal, schoolChange);
+                let newPowers = [...currCharacter.disciplinePowers];
+                if (newPowers.includes(oldVal) && newPowers.includes(newVal)) {
+                  // it's just an order swap, so take no action
+                  return;
+                }
+                if (newPowers.includes(oldVal)) {
+                  // remove old value
+                  newPowers = newPowers.filter((val) => val !== oldVal);
+                }
+                if (newVal !== '' && !newPowers.includes(newVal)) {
+                  // add new value, if applicable
+                  newPowers.push(newVal);
+                }
+                setCurrCharacter({
+                  ...currCharacter,
+                  disciplinePowers: newPowers.sort().sort((a, b) => {
+                    const aInfo = disciplinePowers[a];
+                    const bInfo = disciplinePowers[b];
+                    if (aInfo.level < bInfo.level) {
+                      return -1;
+                    }
+                    if (aInfo.level > bInfo.level) {
+                      return 1;
+                    }
+                    return 0;
+                  }),
+                });
               }
             }}
           />

@@ -7,13 +7,28 @@
         justify-content: center;
         align-items: center;
         width: 100%;
-        height: 6rem;
+        height: 7rem;
         > img {
           position: absolute;
           width: 100%;
           height: 100%;
           object-fit: contain;
           opacity: 0.4;
+        }
+        &.ministry {
+          > img {
+            max-height: 6rem;
+          }
+        }
+        &.salubri {
+          > img {
+            padding-bottom: 1rem;
+          }
+        }
+        &.tremere {
+          > img {
+            max-height: 6rem;
+          }
         }
         >.charactersheet-header-brand-container {
           position: relative;
@@ -24,6 +39,12 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
+          }
+          &.brujah {
+            height: 5rem;
+          }
+          &.toreador {
+            height: 6rem;
           }
         }
       }

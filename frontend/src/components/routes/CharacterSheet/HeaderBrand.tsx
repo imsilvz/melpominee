@@ -65,11 +65,11 @@ const HeaderBrand = ({ clan }: HeaderBrandProps) => {
     }
   }
   return (
-    <div className="charactersheet-header-brand">
+    <div className={`charactersheet-header-brand ${clan}`}>
       {clanLogo && clanLogo !== '' && (
         <img loading="lazy" src={clanLogo} alt="" />
       )}
-      <div className="charactersheet-header-brand-container">
+      <div className={`charactersheet-header-brand-container ${clan}`}>
         <img loading="lazy" src={clanImage} alt="" />
       </div>
     </div>

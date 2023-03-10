@@ -8,17 +8,19 @@ import { toTitleCase } from '../../../util/character';
 import StatDots from './StatDots';
 import './AttributeSection.scss';
 
-const AttributeSection = ({
-  attributes,
-}: {
+interface AttributeSectionProps {
   attributes: CharacterAttributes;
-}) => {
+  onChange?: (attribute: string, value: number) => void;
+}
+
+const AttributeSection = ({ attributes, onChange }: AttributeSectionProps) => {
   const physicalAttributes = ['strength', 'dexterity', 'stamina'];
   const socialAttributes = ['charisma', 'manipulation', 'composure'];
   const mentalAttributes = ['intelligence', 'wits', 'resolve'];
   return (
     <div className="charactersheet-attributes">
       <div className="charactersheet-attributes-header">
+        <div className="charactersheet-attributes-header-divider" />
         <div className="charactersheet-attributes-header-title">
           <h2>Attributes</h2>
         </div>
@@ -27,7 +29,7 @@ const AttributeSection = ({
       <div className="charactersheet-attributes-inner">
         {/* Physical Attributes */}
         <div className="charactersheet-attributes-section">
-          <div className="charactersheet-attributes-item">
+          <div className="charactersheet-attributes-subheader">
             <h3>Physical</h3>
           </div>
           {physicalAttributes.map((attr) => (
@@ -52,7 +54,7 @@ const AttributeSection = ({
         </div>
         {/* Social Attributes */}
         <div className="charactersheet-attributes-section">
-          <div className="charactersheet-attributes-item">
+          <div className="charactersheet-attributes-subheader">
             <h3>Social</h3>
           </div>
           {socialAttributes.map((attr) => (
@@ -77,7 +79,7 @@ const AttributeSection = ({
         </div>
         {/* Mental Attributes */}
         <div className="charactersheet-attributes-section">
-          <div className="charactersheet-attributes-item">
+          <div className="charactersheet-attributes-subheader">
             <h3>Mental</h3>
           </div>
           {mentalAttributes.map((attr) => (
@@ -92,6 +94,11 @@ const AttributeSection = ({
                 <StatDots
                   rootKey={`attributes_mental_${attr}`}
                   value={attributes[attr as keyof CharacterAttributes]}
+                  onChange={(oldVal, newVal) => {
+                    if (onChange) {
+                      onChange(attr, newVal);
+                    }
+                  }}
                 />
               </div>
             </div>

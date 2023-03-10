@@ -7,15 +7,20 @@
         flex-wrap: wrap;
         align-items: center;
         justify-content: center;
+        gap: 1rem;
 
         .charactersheet-skills-header-title {
           >h2 {
             margin: 0;
-            //text-transform: uppercase;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 1.2rem;
+            letter-spacing: 0.1rem;
           }
         }
 
         >.charactersheet-skills-header-divider {
+          flex: 1;
           width: 100%;
           height: 2px;
           background-color: rgba(255, 255, 255, 0.85);

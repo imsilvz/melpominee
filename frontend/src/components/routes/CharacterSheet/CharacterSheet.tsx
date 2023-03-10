@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 // types
-import { Character, CharacterDisciplines } from '../../../types/Character';
+import {
+  Character,
+  CharacterAttributes,
+  CharacterDisciplines,
+} from '../../../types/Character';
 
 // local files
 import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
@@ -65,7 +69,22 @@ const CharacterSheet = () => {
               }
             }}
           />
-          <AttributeSection attributes={currCharacter.attributes} />
+          <AttributeSection
+            attributes={currCharacter.attributes}
+            onChange={(attribute, value) => {
+              if (Object.keys(currCharacter.attributes).includes(attribute)) {
+                currCharacter.attributes[
+                  attribute as keyof CharacterAttributes
+                ] = value;
+                setCurrCharacter(
+                  (char) =>
+                    char && {
+                      ...char,
+                    }
+                );
+              }
+            }}
+          />
           <SkillsSection skills={currCharacter.skills} />
           <SecondarySection character={currCharacter} />
           <DisciplineSection

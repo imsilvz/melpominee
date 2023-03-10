@@ -268,6 +268,7 @@ const DisciplineSection = ({
   return (
     <div className="charactersheet-disciplines">
       <div className="charactersheet-disciplines-header">
+        <div className="charactersheet-disciplines-header-divider" />
         <div className="charactersheet-disciplines-header-title">
           <h2>Disciplines</h2>
         </div>

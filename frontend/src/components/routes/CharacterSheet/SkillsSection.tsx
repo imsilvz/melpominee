@@ -52,6 +52,7 @@ const SkillsSection = ({ skills }: { skills: CharacterSkills }) => {
   return (
     <div className="charactersheet-skills">
       <div className="charactersheet-skills-header">
+        <div className="charactersheet-skills-header-divider" />
         <div className="charactersheet-skills-header-title">
           <h2>Skills</h2>
         </div>

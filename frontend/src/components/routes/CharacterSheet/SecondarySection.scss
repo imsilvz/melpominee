@@ -1,0 +1,39 @@
+.charactersheet-container {
+  >.charactersheet-panel {
+    >.charactersheet-secondary {
+      margin-top: 1.5rem;
+
+      >.charactersheet-secondary-col {
+        display: flex;
+        justify-content: center;
+        margin-top: 0.5rem;
+
+        >.charactersheet-secondary-healthrow-item {
+          display: flex;
+          width: 33.33%;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+
+          >h4 {
+            margin: 0;
+            //text-transform: uppercase;
+          }
+        }
+
+        >.charactersheet-secondary-hungerrow-item {
+          display: flex;
+          width: calc(33.33% + 0.5rem);
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+
+          >h4 {
+            margin: 0;
+            //text-transform: uppercase;
+          }
+        }
+      }
+    }
+  }
+}

@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import {
   Character,
   CharacterAttributes,
+  CharacterDisciplines,
   CharacterSkills,
 } from '../../../types/Character';
 
@@ -310,6 +311,27 @@ const CharacterSheet = () => {
             characterId={currCharacter.id}
             levels={currCharacter.disciplines}
             powers={currCharacter.disciplinePowers}
+            onLevelChange={(school, oldVal, newVal) => {
+              if (Object.keys(currCharacter.disciplines).includes(school)) {
+                currCharacter.disciplines[
+                  school as keyof CharacterDisciplines
+                ] = newVal;
+                setCurrCharacter(
+                  (char) =>
+                    char && {
+                      ...char,
+                    }
+                );
+              }
+            }}
+            onPowerChange={(oldVal, newVal, schoolChange) => {
+              if (schoolChange) {
+                // entire discipline changed
+              } else {
+                // single ability changed
+                console.log(oldVal, newVal, schoolChange);
+              }
+            }}
           />
         </div>
       )}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // redux
 import { useAppSelector } from '../../../redux/hooks';
@@ -22,6 +22,7 @@ interface HeaderSectionProps {
 const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
   const clanData = useAppSelector(selectClans);
   const predatorData = useAppSelector(selectPredatorTypes);
+  const [genState, setGenState] = useState<number | null>(null);
 
   // format generation
   let generationText = '';
@@ -32,7 +33,7 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
     few: 'rd',
     other: 'th',
   };
-  if (character.generation && character.generation >= 3) {
+  if (character.generation) {
     const rule = ordinalRules.select(character.generation);
     generationText = `${character.generation}${suffixes[rule as string]}`;
   }
@@ -48,7 +49,11 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
               <input
                 type="text"
                 value={character.name}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  if (onChange) {
+                    onChange('name', event.target.value);
+                  }
+                }}
               />
             </span>
           </div>
@@ -58,7 +63,11 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
               <input
                 type="text"
                 value={character.concept}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  if (onChange) {
+                    onChange('concept', event.target.value);
+                  }
+                }}
               />
             </span>
           </div>
@@ -68,7 +77,11 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
               <input
                 type="text"
                 value={character.chronicle}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  if (onChange) {
+                    onChange('chronicle', event.target.value);
+                  }
+                }}
               />
             </span>
           </div>
@@ -80,7 +93,11 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
               <input
                 type="text"
                 value={character.ambition}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  if (onChange) {
+                    onChange('ambition', event.target.value);
+                  }
+                }}
               />
             </span>
           </div>
@@ -90,7 +107,11 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
               <input
                 type="text"
                 value={character.desire}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  if (onChange) {
+                    onChange('desire', event.target.value);
+                  }
+                }}
               />
             </span>
           </div>
@@ -99,21 +120,27 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
               Predator Type:
             </span>
             <span className="charactersheet-header-row-field">
-              <input
-                type="text"
-                value={
-                  character.predatorType &&
-                  character.predatorType !== '' &&
-                  predatorData &&
-                  Object.prototype.hasOwnProperty.call(
-                    predatorData,
-                    character.predatorType
-                  )
-                    ? predatorData[character.predatorType].name
-                    : ''
-                }
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
-              />
+              <select
+                value={character.predatorType || ''}
+                onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+                  if (onChange) {
+                    onChange('predatorType', event.target.value);
+                  }
+                }}
+              >
+                {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+                <option value="" />
+                {predatorData &&
+                  Object.keys(predatorData).map((type) => (
+                    <option
+                      key={`charactersheet-clanselect-option-${type}`}
+                      value={type}
+                    >
+                      {predatorData[type].name}
+                    </option>
+                  ))}
+              </select>
+              <span className="select-dropdown" />
             </span>
           </div>
         </div>
@@ -148,9 +175,24 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
             <span className="charactersheet-header-row-label">Generation:</span>
             <span className="charactersheet-header-row-field">
               <input
-                type="text"
-                value={generationText}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+                type={genState !== null ? 'number' : 'text'}
+                max={genState !== null ? '15' : undefined}
+                min={genState !== null ? '1' : undefined}
+                value={genState !== null ? genState : generationText}
+                onBlur={() => {
+                  if (genState && genState >= 1 && genState <= 15) {
+                    if (onChange) {
+                      onChange('generation', genState.toString());
+                    }
+                  }
+                  setGenState(null);
+                }}
+                onFocus={() => {
+                  setGenState(character.generation);
+                }}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setGenState(parseInt(event.target.value, 10));
+                }}
               />
             </span>
           </div>
@@ -160,7 +202,11 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
               <input
                 type="text"
                 value={character.sire}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  if (onChange) {
+                    onChange('sire', event.target.value);
+                  }
+                }}
               />
             </span>
           </div>

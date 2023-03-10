@@ -1,13 +1,17 @@
 import React from 'react';
 
 // types
-import { Character } from '../../../types/Character';
+import { Character, CharacterAttributes } from '../../../types/Character';
 
 // local files
 import HealthTracker from './HealthTracker';
 import './SecondarySection.scss';
 
-const SecondarySection = ({ character }: { character: Character }) => {
+interface SecondarySectionProps {
+  character: Character;
+}
+
+const SecondarySection = ({ character }: SecondarySectionProps) => {
   const maxHealth = character.attributes.stamina + 3;
   const maxWillpower =
     character.attributes.composure + character.attributes.resolve;

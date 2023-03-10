@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import './HeaderBrand.scss';
 
 interface HeaderBrandProps {
@@ -24,8 +24,8 @@ const ClanList = [
 ];
 
 const HeaderBrand = ({ clan }: HeaderBrandProps) => {
-  const logoRef = useRef<Map<string, string> | undefined>();
-  const imageRef = useRef<Map<string, string> | undefined>();
+  const [logoMap, setLogoMap] = useState<Map<string, string> | null>(null);
+  const [imageMap, setImageMap] = useState<Map<string, string> | null>(null);
 
   useEffect(() => {
     // cache to prevent reloads
@@ -52,16 +52,16 @@ const HeaderBrand = ({ clan }: HeaderBrandProps) => {
         (window as any).headerPreload.logos.push(clanLogo);
       }
     });
-    logoRef.current = ClanLogos;
-    imageRef.current = ClanImages;
+    setLogoMap(ClanLogos);
+    setImageMap(ClanImages);
   }, []);
 
   let clanLogo = '';
-  let clanImage = imageRef.current?.get('generic');
-  if (clan && imageRef.current?.has(clan)) {
-    clanImage = imageRef.current?.get(clan) as string;
-    if (logoRef.current?.has(clan)) {
-      clanLogo = logoRef.current?.get(clan) as string;
+  let clanImage = imageMap?.get('generic');
+  if (clan && imageMap?.has(clan)) {
+    clanImage = imageMap?.get(clan) as string;
+    if (logoMap?.has(clan)) {
+      clanLogo = logoMap?.get(clan) as string;
     }
   }
   return (

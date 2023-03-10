@@ -2,12 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 // types
-import {
-  Character,
-  CharacterAttributes,
-  CharacterDisciplines,
-  CharacterSkills,
-} from '../../../types/Character';
+import { Character } from '../../../types/Character';
 
 // local files
 import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
@@ -30,11 +25,9 @@ const CharacterSheet = () => {
   const [currCharacter, setCurrCharacter] = useState<Character | null>(null);
 
   useEffect(() => {
-    setCurrCharacter(savedCharacter);
-  }, [savedCharacter]);
-
-  useEffect(() => {
+    // on id change, try to update the character
     const fetchCharacter = async () => {
+      setCurrCharacter(null);
       if (id) {
         const characterRequest = await fetch(`/api/vtmv5/character/${id}/`);
         if (characterRequest.ok) {
@@ -42,6 +35,7 @@ const CharacterSheet = () => {
             await (characterRequest.json() as Promise<APICharacterSheetResponse>);
           if (characterJson.character) {
             setSavedCharacter(characterJson.character);
+            setCurrCharacter(characterJson.character);
           }
         }
       }
@@ -74,15 +68,14 @@ const CharacterSheet = () => {
             attributes={currCharacter.attributes}
             onChange={(attribute, value) => {
               if (Object.keys(currCharacter.attributes).includes(attribute)) {
-                currCharacter.attributes[
-                  attribute as keyof CharacterAttributes
-                ] = value;
-                setCurrCharacter(
-                  (char) =>
-                    char && {
-                      ...char,
-                    }
-                );
+                const newAttributes = {
+                  ...currCharacter.attributes,
+                  [attribute]: value,
+                };
+                setCurrCharacter({
+                  ...currCharacter,
+                  attributes: newAttributes,
+                });
               }
             }}
           />
@@ -90,14 +83,14 @@ const CharacterSheet = () => {
             skills={currCharacter.skills}
             onChange={(skill, skillData) => {
               if (Object.keys(currCharacter.skills).includes(skill)) {
-                currCharacter.skills[skill as keyof CharacterSkills] =
-                  skillData;
-                setCurrCharacter(
-                  (char) =>
-                    char && {
-                      ...char,
-                    }
-                );
+                const newSkills = {
+                  ...currCharacter.skills,
+                  [skill]: skillData,
+                };
+                setCurrCharacter({
+                  ...currCharacter,
+                  skills: newSkills,
+                });
               }
             }}
           />
@@ -108,15 +101,14 @@ const CharacterSheet = () => {
             powers={currCharacter.disciplinePowers}
             onLevelChange={(school, oldVal, newVal) => {
               if (Object.keys(currCharacter.disciplines).includes(school)) {
-                currCharacter.disciplines[
-                  school as keyof CharacterDisciplines
-                ] = newVal;
-                setCurrCharacter(
-                  (char) =>
-                    char && {
-                      ...char,
-                    }
-                );
+                const newDisciplines = {
+                  ...currCharacter.disciplines,
+                  [school]: newVal,
+                };
+                setCurrCharacter({
+                  ...currCharacter,
+                  disciplines: newDisciplines,
+                });
               }
             }}
             onPowerChange={(oldVal, newVal, schoolChange) => {

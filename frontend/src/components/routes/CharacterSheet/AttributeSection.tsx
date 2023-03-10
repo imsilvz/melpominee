@@ -44,6 +44,11 @@ const AttributeSection = ({ attributes, onChange }: AttributeSectionProps) => {
                 <StatDots
                   rootKey={`attributes_physical_${attr}`}
                   value={attributes[attr as keyof CharacterAttributes]}
+                  onChange={(oldVal, newVal) => {
+                    if (onChange) {
+                      onChange(attr, newVal);
+                    }
+                  }}
                 />
               </div>
             </div>
@@ -69,6 +74,11 @@ const AttributeSection = ({ attributes, onChange }: AttributeSectionProps) => {
                 <StatDots
                   rootKey={`attributes_social_${attr}`}
                   value={attributes[attr as keyof CharacterAttributes]}
+                  onChange={(oldVal, newVal) => {
+                    if (onChange) {
+                      onChange(attr, newVal);
+                    }
+                  }}
                 />
               </div>
             </div>

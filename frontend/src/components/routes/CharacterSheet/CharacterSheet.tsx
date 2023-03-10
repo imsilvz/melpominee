@@ -6,6 +6,7 @@ import {
   Character,
   CharacterAttributes,
   CharacterDisciplines,
+  CharacterSkills,
 } from '../../../types/Character';
 
 // local files
@@ -85,7 +86,21 @@ const CharacterSheet = () => {
               }
             }}
           />
-          <SkillsSection skills={currCharacter.skills} />
+          <SkillsSection
+            skills={currCharacter.skills}
+            onChange={(skill, skillData) => {
+              if (Object.keys(currCharacter.skills).includes(skill)) {
+                currCharacter.skills[skill as keyof CharacterSkills] =
+                  skillData;
+                setCurrCharacter(
+                  (char) =>
+                    char && {
+                      ...char,
+                    }
+                );
+              }
+            }}
+          />
           <SecondarySection character={currCharacter} />
           <DisciplineSection
             characterId={currCharacter.id}

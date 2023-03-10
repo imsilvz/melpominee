@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
 // types
-import { CharacterSkills } from '../../../types/Character';
+import { CharacterSkill, CharacterSkills } from '../../../types/Character';
 
 // local files
 import { toTitleCase } from '../../../util/character';
 import StatDots from './StatDots';
 import './SkillsSection.scss';
+
+interface SkillsSectionProps {
+  skills: CharacterSkills;
+  onChange?: (skill: string, skillInfo: CharacterSkill) => void;
+}
 
 const CharacterSkillsList = [
   'athletics',
@@ -37,7 +42,7 @@ const CharacterSkillsList = [
   'science',
   'technology',
 ];
-const SkillsSection = ({ skills }: { skills: CharacterSkills }) => {
+const SkillsSection = ({ skills, onChange }: SkillsSectionProps) => {
   // break into columns
   let skillColumnIndex = -1;
   const skillColumns: string[][] = [];
@@ -77,15 +82,30 @@ const SkillsSection = ({ skills }: { skills: CharacterSkills }) => {
                   <input
                     type="text"
                     value={skills[skill as keyof CharacterSkills].speciality}
-                    onChange={(
-                      event: React.ChangeEvent<HTMLInputElement>
-                    ) => {}}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      if (onChange) {
+                        const newSkillData = {
+                          ...skills[skill as keyof CharacterSkills],
+                        };
+                        newSkillData.speciality = event.target.value;
+                        onChange(skill, newSkillData);
+                      }
+                    }}
                   />
                 </div>
                 <div className="charactersheet-skills-item-score">
                   <StatDots
                     rootKey={`skills_item_${skill}_dots`}
                     value={skills[skill as keyof CharacterSkills].score}
+                    onChange={(oldVal, newVal) => {
+                      if (onChange) {
+                        const newSkillData = {
+                          ...skills[skill as keyof CharacterSkills],
+                        };
+                        newSkillData.score = newVal;
+                        onChange(skill, newSkillData);
+                      }
+                    }}
                   />
                 </div>
               </div>

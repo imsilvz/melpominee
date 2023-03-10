@@ -14,6 +14,8 @@
           height: 100%;
           object-fit: contain;
           opacity: 0.4;
+          user-select: none;
+          pointer-events: none;
         }
         &.ministry {
           > img {
@@ -39,6 +41,8 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
+            user-select: none;
+            pointer-events: none;
           }
           &.brujah {
             height: 5rem;

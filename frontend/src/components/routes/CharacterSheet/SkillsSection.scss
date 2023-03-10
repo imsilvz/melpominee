@@ -7,14 +7,14 @@
         flex-wrap: wrap;
         align-items: center;
         justify-content: center;
-        gap: 1rem;
+        gap: 2rem;
 
         .charactersheet-skills-header-title {
           >h2 {
             margin: 0;
             text-transform: uppercase;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1rem;
             letter-spacing: 0.1rem;
           }
         }

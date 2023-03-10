@@ -1,0 +1,86 @@
+.charactersheet-container {
+  >.charactersheet-panel {
+    >.charactersheet-attributes {
+      >.charactersheet-attributes-header {
+        margin-top: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+
+        .charactersheet-attributes-header-title {
+          >h2 {
+            margin: 0;
+            //text-transform: uppercase;
+          }
+        }
+
+        >.charactersheet-attributes-header-divider {
+          width: 100%;
+          height: 2px;
+          background-color: rgba(255, 255, 255, 0.85);
+        }
+      }
+
+      >.charactersheet-attributes-inner {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+
+        >.charactersheet-attributes-section {
+          display: flex;
+          flex-direction: column;
+          width: calc(33% - 1rem);
+
+          >.charactersheet-attribute-item {
+            display: flex;
+            padding: 0 1rem 0 1rem;
+
+            >.charactersheet-attribute-info {
+              flex: 1;
+              display: flex;
+              justify-content: flex-start;
+              align-items: center;
+            }
+          }
+
+          >.charactersheet-attributes-item {
+            display: flex;
+
+            >h3 {
+              margin: 0;
+              text-align: center;
+              width: 100%;
+            }
+
+            >.charactersheet-attribute-info {
+              flex: 1;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+
+            >.charactersheet-attribute-score {
+              text-align: center;
+            }
+          }
+        }
+
+        >.charactersheet-attributes-divider {
+          position: relative;
+          bottom: 0;
+          top: 0;
+          width: 1px;
+
+          >.charactersheet-attributes-divider-inner {
+            position: absolute;
+            height: calc(100% - 25px);
+            width: 100%;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.85);
+          }
+        }
+      }
+    }
+  }
+}

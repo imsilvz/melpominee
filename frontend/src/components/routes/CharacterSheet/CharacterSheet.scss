@@ -1,258 +1,56 @@
 .charactersheet-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+
+  >.charactersheet-panel {
+    color: rgba(255, 255, 255, 0.85);
     position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    width: 100%;
-    height: 100%;
-    padding: 2rem;
-    > .charactersheet-panel {
-        color: rgba(255, 255, 255, 0.85);
-        position: relative;
-        border-radius: 0.5rem;
-        background: #1f1f1f;
-        box-shadow: 5px 5px 10px #0003;
-        padding: 1rem 2rem 2rem 2rem;
-        width: 1024px;
-        min-width: 1024px;
-        > .charactersheet-statblock {
-            > .charactersheet-statblock-header {
-                margin-top: 1rem;
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-                justify-content: center;
-                .charactersheet-statblock-header-title {
-                    > h2 {
-                        margin: 0;
-                        //text-transform: uppercase;
-                    }
-                }
-                > .charactersheet-statblock-header-divider {
-                    width: 100%;
-                    height: 2px;
-                    background-color: rgba(255, 255, 255, 0.85);
-                }
-            }
-            > .charactersheet-statblock-inner {
-                display: flex;
-                justify-content: space-between;
-                gap: 1rem;
-                > .charactersheet-statblock-section {
-                    display: flex;
-                    flex-direction: column;
-                    width: calc(33% - 1rem);
-                    > .charactersheet-attribute-item {
-                        display: flex;
-                        padding: 0 1rem 0 1rem;
-                        > .charactersheet-statblock-item-info {
-                            flex: 1;
-                            display: flex;
-                            justify-content: flex-start;
-                            align-items: center;
-                        }
-                    }
-                    > .charactersheet-skill-item {
-                        display: flex;
-                        > .charactersheet-skillblock-speciality {
-                            flex: 1;
-                            height: 1.2em;
-                            > input {
-                                width: 100%;
-                                height: 100%;
-                                border: none;
-                                outline: none;
-                                border-bottom: 1px solid white;
-                                background-color: transparent;
+    border-radius: 0.5rem;
+    background: #1f1f1f;
+    box-shadow: 5px 5px 10px #0003;
+    padding: 1rem 2rem 2rem 2rem;
+    width: 1024px;
+    min-width: 1024px;
 
-                                color: rgba(255, 255, 255, 0.85);
-                                padding: 0 0.25rem 0 0.25rem;
-                                font-size: 0.75rem;
-                            }
-                        }
-                    }
-                    > .charactersheet-statblock-item {
-                        display: flex;
-                        > h3 {
-                            margin: 0;
-                            text-align: center;
-                            width: 100%;
-                        }
-                        > .charactersheet-statblock-item-info {
-                            flex: 1;
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                        }
-                        > .charactersheet-statblock-item-score {
-                            text-align: center;
-                        }
-                    }
-                }
-                > .charactersheet-statblock-divider {
-                    position: relative;
-                    bottom: 0;
-                    top: 0;
-                    width: 1px;
-                    > .charactersheet-statblock-divider-inner {
-                        position: absolute;
-                        height: calc(100% - 25px);
-                        width: 100%;
-                        bottom: 0;
-                        background-color: rgba(255, 255, 255, 0.85);
-                    }
-                }
-            }
+    >.charactersheet-secondary {
+      margin-top: 1.5rem;
+
+      >.charactersheet-secondary-col {
+        display: flex;
+        justify-content: center;
+        margin-top: 0.5rem;
+
+        >.charactersheet-secondary-healthrow-item {
+          display: flex;
+          width: 33.33%;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+
+          >h4 {
+            margin: 0;
+            //text-transform: uppercase;
+          }
         }
-        > .charactersheet-secondary {
-            margin-top: 1.5rem;
-            > .charactersheet-secondary-col {
-                display: flex;
-                justify-content: center;
-                margin-top: 0.5rem;
-                > .charactersheet-secondary-healthrow-item {
-                    display: flex;
-                    width: 33.33%;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                    > h4 {
-                        margin: 0;
-                        //text-transform: uppercase;
-                    }
-                }
-                > .charactersheet-secondary-hungerrow-item {
-                    display: flex;
-                    width: calc(33.33% + 0.5rem);
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                    > h4 {
-                        margin: 0;
-                        //text-transform: uppercase;
-                    }
-                }
-            }
+
+        >.charactersheet-secondary-hungerrow-item {
+          display: flex;
+          width: calc(33.33% + 0.5rem);
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+
+          >h4 {
+            margin: 0;
+            //text-transform: uppercase;
+          }
         }
-        > .charactersheet-disciplines {
-            > .charactersheet-disciplines-header {
-                margin-top: 1rem;
-                margin-bottom: 0.25rem;
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-                justify-content: center;
-                .charactersheet-disciplines-header-title {
-                    > h2 {
-                        margin: 0;
-                        //text-transform: uppercase;
-                    }
-                }
-                > .charactersheet-disciplines-header-divider {
-                    width: 100%;
-                    height: 2px;
-                    background-color: rgba(255, 255, 255, 0.85);
-                }
-            }
-            > .charactersheet-disciplines-inner {
-                display: flex;
-                gap: 0.75rem;
-                flex-wrap: wrap;
-                > .charactersheet-disciplines-block {
-                    width: calc((100% - 0.75rem * 2) / 3);
-                    > .charactersheet-disciplines-school {
-                        display: flex;
-                        align-items: center;
-                        border-bottom: 1px solid rgba(255, 255, 255, 0.85);
-                        > .charactersheet-disciplines-school-select {
-                            position: relative;
-                            flex: 1;
-                            border-right: 1px solid rgba(255, 255, 255, 0.85);
-                            > select {
-                                // A reset of styles, including removing the default dropdown arrow
-                                appearance: none;
-                                background-color: transparent;                      
-                                border: none;
-                                outline: none;
-                                padding: 0 1em 0 0.25em;
-                                margin: 0;
-                                width: 100%;
-                                height: 100%;
-                                font-family: inherit;
-                                font-size: inherit;
-                                cursor: inherit;
-                                line-height: inherit;
-    
-                                // custom style
-                                color: inherit;
-                                position: relative;
-                                cursor: pointer;
-
-                                > option {
-                                    color: inherit;
-                                    font-size: inherit;
-                                    background-color: #1f1f1f;
-                                }
-                            }
-                            > span {
-                                position: absolute;
-                                top: calc(50% - 0.25rem/2);
-                                right: calc(0.5em - 0.2rem);
-                                width: 0.4rem;
-                                height: 0.25rem;
-                                background-color: gray;
-                                clip-path: polygon(100% 0%, 0 0%, 50% 100%);
-                                pointer-events: none;
-                            }
-                        }
-                        > .statdots-container {
-                            margin: 0 0.1rem;
-                        }
-                    }
-                    > .charactersheet-disciplines-power {
-                        position: relative;
-                        width: 100%;
-                        height: 1.2em;
-                        border-bottom: 1px solid rgba(255, 255, 255, 0.85);
-                        > select {
-                            // A reset of styles, including removing the default dropdown arrow
-                            appearance: none;
-                            background-color: transparent;                      
-                            border: none;
-                            outline: none;
-                            padding: 0 1em 0 0.25em;
-                            margin: 0;
-                            width: 100%;
-                            height: 100%;
-                            font-family: inherit;
-                            font-size: inherit;
-                            cursor: inherit;
-                            line-height: inherit;
-
-                            // custom style
-                            color: inherit;
-                            position: relative;
-                            cursor: pointer;
-
-                            > option {
-                                color: inherit;
-                                font-size: inherit;
-                                background-color: #1f1f1f;
-                            }
-                        }
-                        > span {
-                            position: absolute;
-                            top: calc(50% - 0.25rem/2);
-                            right: calc(0.5em - 0.2rem);
-                            width: 0.4rem;
-                            height: 0.25rem;
-                            background-color: gray;
-                            clip-path: polygon(100% 0%, 0 0%, 50% 100%);
-                            pointer-events: none;
-                        }
-                    }
-                }
-            }
-        }
+      }
     }
+  }
 }

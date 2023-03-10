@@ -1,0 +1,32 @@
+.charactersheet-container {
+  >.charactersheet-panel {
+    >.charactersheet-header {
+      >.charactersheet-header-brand {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 6rem;
+        > img {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          opacity: 0.4;
+        }
+        >.charactersheet-header-brand-container {
+          position: relative;
+          max-width: 50%;
+          height: 4rem;
+          z-index: 1;
+          >img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,124 @@
+.charactersheet-container {
+    > .charactersheet-panel {
+        > .charactersheet-disciplines {
+            > .charactersheet-disciplines-header {
+                margin-top: 1rem;
+                margin-bottom: 0.25rem;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: center;
+                .charactersheet-disciplines-header-title {
+                    > h2 {
+                        margin: 0;
+                        //text-transform: uppercase;
+                    }
+                }
+                > .charactersheet-disciplines-header-divider {
+                    width: 100%;
+                    height: 2px;
+                    background-color: rgba(255, 255, 255, 0.85);
+                }
+            }
+            > .charactersheet-disciplines-inner {
+                display: flex;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+                > .charactersheet-disciplines-block {
+                    width: calc((100% - 0.75rem * 2) / 3);
+                    > .charactersheet-disciplines-school {
+                        display: flex;
+                        align-items: center;
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.85);
+                        > .charactersheet-disciplines-school-select {
+                            position: relative;
+                            flex: 1;
+                            border-right: 1px solid rgba(255, 255, 255, 0.85);
+                            > select {
+                                // A reset of styles, including removing the default dropdown arrow
+                                appearance: none;
+                                background-color: transparent;                      
+                                border: none;
+                                outline: none;
+                                padding: 0 1em 0 0.25em;
+                                margin: 0;
+                                width: 100%;
+                                height: 100%;
+                                font-family: inherit;
+                                font-size: inherit;
+                                cursor: inherit;
+                                line-height: inherit;
+
+                                // custom style
+                                color: inherit;
+                                position: relative;
+                                cursor: pointer;
+
+                                > option {
+                                    color: inherit;
+                                    font-size: inherit;
+                                    background-color: #1f1f1f;
+                                }
+                            }
+                            > span {
+                                position: absolute;
+                                top: calc(50% - 0.25rem/2);
+                                right: calc(0.5em - 0.2rem);
+                                width: 0.4rem;
+                                height: 0.25rem;
+                                background-color: gray;
+                                clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+                                pointer-events: none;
+                            }
+                        }
+                        > .statdots-container {
+                            margin: 0 0.1rem;
+                        }
+                    }
+                    > .charactersheet-disciplines-power {
+                        position: relative;
+                        width: 100%;
+                        height: 1.2em;
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.85);
+                        > select {
+                            // A reset of styles, including removing the default dropdown arrow
+                            appearance: none;
+                            background-color: transparent;                      
+                            border: none;
+                            outline: none;
+                            padding: 0 1em 0 0.25em;
+                            margin: 0;
+                            width: 100%;
+                            height: 100%;
+                            font-family: inherit;
+                            font-size: inherit;
+                            cursor: inherit;
+                            line-height: inherit;
+
+                            // custom style
+                            color: inherit;
+                            position: relative;
+                            cursor: pointer;
+
+                            > option {
+                                color: inherit;
+                                font-size: inherit;
+                                background-color: #1f1f1f;
+                            }
+                        }
+                        > span {
+                            position: absolute;
+                            top: calc(50% - 0.25rem/2);
+                            right: calc(0.5em - 0.2rem);
+                            width: 0.4rem;
+                            height: 0.25rem;
+                            background-color: gray;
+                            clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+                            pointer-events: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

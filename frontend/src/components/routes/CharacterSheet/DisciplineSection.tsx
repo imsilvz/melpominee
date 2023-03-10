@@ -69,8 +69,8 @@ const PowerRow = ({ id, level, school, power, onChange }: PowerRowProps) => {
         {Object.prototype.hasOwnProperty.call(disciplines, school) &&
           disciplines[school].powers
             .filter((val) => val.level <= level)
-            .map((opt, optIdx) => (
-              <option key={`${id}-power-option${optIdx}`} value={opt.id}>
+            .map((opt) => (
+              <option key={`${id}-power-option-${opt.id}`} value={opt.id}>
                 {opt.name}
               </option>
             ))}
@@ -113,7 +113,15 @@ const DisciplineTile = ({
           </select>
           <span />
         </div>
-        <StatDots rootKey={`${id}-dots`} value={level} />
+        <StatDots
+          rootKey={`${id}-dots`}
+          value={level}
+          onChange={(oldVal, newVal) => {
+            if (onLevelChange) {
+              onLevelChange(oldVal, newVal);
+            }
+          }}
+        />
       </div>
       {Array.from(Array(5), (_skip, i) => i).map((_skipRow, rowIdx) => (
         <PowerRow
@@ -277,9 +285,24 @@ const DisciplineSection = ({
                 level={tileLayout.level}
                 school={tileLayout.school}
                 powers={tileLayout.powers}
-                onLevelChange={(oldVal, newVal) => {}}
+                onLevelChange={(oldVal, newVal) => {
+                  const currentSectionLayout = sectionLayoutRef?.current;
+                  if (!currentSectionLayout) {
+                    // this should only happen prior to initialization
+                    // but it will also protect character swaps from changes!
+                    return;
+                  }
+                  // get tile info and set new level
+                  const tileInfo = currentSectionLayout[parseInt(tileIdx, 10)];
+                  tileInfo.level = newVal;
+                  // iterate all tiles and remove any disciplines
+                  // which do not meet level or amalgam requirements
+                  setSectionLayout({ ...currentSectionLayout });
+                  if (onLevelChange) {
+                    onLevelChange(tileInfo.school, oldVal, newVal);
+                  }
+                }}
                 onPowerChange={(powerIdx, oldVal, newVal, schoolChange) => {
-                  console.log(oldVal, newVal, schoolChange);
                   const currentSectionLayout = sectionLayoutRef?.current;
                   if (!currentSectionLayout) {
                     // this should only happen prior to initialization
@@ -316,9 +339,15 @@ const DisciplineSection = ({
                       // if we do find another power with the 'new' id
                       if (found) {
                         // swap old power into 'new' power location!
-                        currentSectionLayout[replaceLocation.tile].powers[
-                          replaceLocation.row
-                        ] = oldPowerInfo.id;
+                        if (oldPowerInfo) {
+                          currentSectionLayout[replaceLocation.tile].powers[
+                            replaceLocation.row
+                          ] = oldPowerInfo.id;
+                        } else {
+                          currentSectionLayout[replaceLocation.tile].powers[
+                            replaceLocation.row
+                          ] = '';
+                        }
                       }
                       // set the new field!
                       currentSectionLayout[parseInt(tileIdx, 10)].powers[

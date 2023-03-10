@@ -15,57 +15,6 @@
         padding: 1rem 2rem 2rem 2rem;
         width: 1024px;
         min-width: 1024px;
-        > .charactersheet-header {
-            position: relative;
-            width: 100%;
-            > .charactersheet-header-brand {
-                position: relative;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 100%;
-                > .charactersheet-header-brand-container {
-                    max-width: 50%;
-                    height: 4rem;
-                    > img {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: contain;
-                    }
-                }
-            }
-            > .charactersheet-header-inner {
-                margin-top: 1rem;
-                position: relative;
-                width: 100%;
-                display: flex;
-                justify-content: space-around;
-                gap: 1rem;
-                > .charactersheet-header-column {
-                    // 33% - 2x gap
-                    width: calc(33.3% - 1rem);
-                    > .charactersheet-header-row {
-                        display: flex;
-                        > .charactersheet-header-row-field {
-                            flex: 1;
-                            height: 1.2em;
-                            > input {
-                                width: 100%;
-                                height: 100%;
-                                border: none;
-                                outline: none;
-                                border-bottom: 1px solid white;
-                                background-color: transparent;
-
-                                color: rgba(255, 255, 255, 0.85);
-                                padding: 0 0.25rem 0 0.25rem;
-                                font-size: 0.75rem;
-                            }
-                        }
-                    }
-                }
-            }
-        }
         > .charactersheet-statblock {
             > .charactersheet-statblock-header {
                 margin-top: 1rem;

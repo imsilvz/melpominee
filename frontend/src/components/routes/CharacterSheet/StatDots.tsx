@@ -5,12 +5,12 @@ import './StatDots.scss';
 
 interface StatDotsProps {
   rootKey: string;
-  initialValue?: number;
   value?: number;
+  onChange?: (oldVal: number, newVal: number) => void;
 }
 
-const StatDots = ({ rootKey, initialValue, value }: StatDotsProps) => {
-  const [dots, setDots] = useState<number>(initialValue || 0);
+const StatDots = ({ rootKey, value, onChange }: StatDotsProps) => {
+  const [dots, setDots] = useState<number>(value || 0);
   useEffect(() => {
     if (value !== undefined) {
       setDots(value);
@@ -24,13 +24,17 @@ const StatDots = ({ rootKey, initialValue, value }: StatDotsProps) => {
           key={`${rootKey}_dot${idx}`}
           type="radio"
           className="statdots-dot"
-          checked={dots >= idx + 1}
+          checked={(onChange ? (value as number) : dots) >= idx + 1}
           onChange={() => {}}
           onClick={() => {
-            if (idx + 1 === dots) {
-              setDots(0);
+            let newDots = 0;
+            if (!(idx + 1 === dots)) {
+              newDots = idx + 1;
+            }
+            if (onChange) {
+              onChange(dots, newDots);
             } else {
-              setDots(idx + 1);
+              setDots(newDots);
             }
           }}
         />

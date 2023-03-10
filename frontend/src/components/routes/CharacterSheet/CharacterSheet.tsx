@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-// redux
-import { useAppSelector } from '../../../redux/hooks';
-import {
-  selectClans,
-  selectPredatorTypes,
-} from '../../../redux/reducers/masterdataReducer';
-
 // types
 import {
   Character,
@@ -17,8 +10,8 @@ import {
 
 // local files
 import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
+import HeaderSection from './HeaderSection';
 import DisciplineSection from './DisciplineSection';
-import HeaderBrand from './HeaderBrand';
 import HealthTracker from './HealthTracker';
 import StatDots from './StatDots';
 import './CharacterSheet.scss';
@@ -35,145 +28,6 @@ const toTitleCase = (str: string) => {
     .split(' ')
     .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
     .join(' ');
-};
-
-const HeaderBlock = ({ character }: { character: Character }) => {
-  const clanData = useAppSelector(selectClans);
-  const predatorData = useAppSelector(selectPredatorTypes);
-  let generationText = '';
-  const ordinalRules = new Intl.PluralRules('en', { type: 'ordinal' });
-  const suffixes: { [key: string]: string } = {
-    one: 'st',
-    two: 'nd',
-    few: 'rd',
-    other: 'th',
-  };
-  if (character.generation && character.generation >= 3) {
-    const rule = ordinalRules.select(character.generation);
-    generationText = `${character.generation}${suffixes[rule as string]}`;
-  }
-  return (
-    <div className="charactersheet-header">
-      <HeaderBrand clan={character.clan} />
-      <div className="charactersheet-header-inner">
-        <div className="charactersheet-header-column">
-          <div className="charactersheet-header-row">
-            <span className="charactersheet-header-row-label">Name:</span>
-            <span className="charactersheet-header-row-field">
-              <input
-                type="text"
-                value={character.name}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
-              />
-            </span>
-          </div>
-          <div className="charactersheet-header-row">
-            <span className="charactersheet-header-row-label">Concept:</span>
-            <span className="charactersheet-header-row-field">
-              <input
-                type="text"
-                value={character.concept}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
-              />
-            </span>
-          </div>
-          <div className="charactersheet-header-row">
-            <span className="charactersheet-header-row-label">Chronicle:</span>
-            <span className="charactersheet-header-row-field">
-              <input
-                type="text"
-                value={character.chronicle}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
-              />
-            </span>
-          </div>
-        </div>
-        <div className="charactersheet-header-column">
-          <div className="charactersheet-header-row">
-            <span className="charactersheet-header-row-label">Ambition:</span>
-            <span className="charactersheet-header-row-field">
-              <input
-                type="text"
-                value={character.ambition}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
-              />
-            </span>
-          </div>
-          <div className="charactersheet-header-row">
-            <span className="charactersheet-header-row-label">Desire:</span>
-            <span className="charactersheet-header-row-field">
-              <input
-                type="text"
-                value={character.desire}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
-              />
-            </span>
-          </div>
-          <div className="charactersheet-header-row">
-            <span className="charactersheet-header-row-label">
-              Predator Type:
-            </span>
-            <span className="charactersheet-header-row-field">
-              <input
-                type="text"
-                value={
-                  character.predatorType &&
-                  character.predatorType !== '' &&
-                  predatorData &&
-                  Object.prototype.hasOwnProperty.call(
-                    predatorData,
-                    character.predatorType
-                  )
-                    ? predatorData[character.predatorType].name
-                    : ''
-                }
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
-              />
-            </span>
-          </div>
-        </div>
-        <div className="charactersheet-header-column">
-          <div className="charactersheet-header-row">
-            <span className="charactersheet-header-row-label">Clan:</span>
-            <span className="charactersheet-header-row-field">
-              <input
-                type="text"
-                value={
-                  character.clan &&
-                  character.clan !== '' &&
-                  clanData &&
-                  Object.prototype.hasOwnProperty.call(clanData, character.clan)
-                    ? clanData[character.clan].name
-                    : ''
-                }
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
-              />
-            </span>
-          </div>
-          <div className="charactersheet-header-row">
-            <span className="charactersheet-header-row-label">Generation:</span>
-            <span className="charactersheet-header-row-field">
-              <input
-                type="text"
-                value={generationText}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
-              />
-            </span>
-          </div>
-          <div className="charactersheet-header-row">
-            <span className="charactersheet-header-row-label">Sire:</span>
-            <span className="charactersheet-header-row-field">
-              <input
-                type="text"
-                value={character.sire}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
-              />
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 };
 
 const AttributeBlock = ({
@@ -209,7 +63,7 @@ const AttributeBlock = ({
               <div className="charactersheet-statblock-item-score">
                 <StatDots
                   rootKey={`attributes_physical_${attr}`}
-                  initialValue={attributes[attr as keyof CharacterAttributes]}
+                  value={attributes[attr as keyof CharacterAttributes]}
                 />
               </div>
             </div>
@@ -234,7 +88,7 @@ const AttributeBlock = ({
               <div className="charactersheet-statblock-item-score">
                 <StatDots
                   rootKey={`attributes_social_${attr}`}
-                  initialValue={attributes[attr as keyof CharacterAttributes]}
+                  value={attributes[attr as keyof CharacterAttributes]}
                 />
               </div>
             </div>
@@ -259,7 +113,7 @@ const AttributeBlock = ({
               <div className="charactersheet-statblock-item-score">
                 <StatDots
                   rootKey={`attributes_mental_${attr}`}
-                  initialValue={attributes[attr as keyof CharacterAttributes]}
+                  value={attributes[attr as keyof CharacterAttributes]}
                 />
               </div>
             </div>
@@ -346,7 +200,7 @@ const SkillBlock = ({ skills }: { skills: CharacterSkills }) => {
                 <div className="charactersheet-statblock-item-score">
                   <StatDots
                     rootKey={`skills_item_${skill}_dots`}
-                    initialValue={skills[skill as keyof CharacterSkills].score}
+                    value={skills[skill as keyof CharacterSkills].score}
                   />
                 </div>
               </div>
@@ -435,7 +289,20 @@ const CharacterSheet = () => {
         <LoadingSpinner />
       ) : (
         <div className="charactersheet-panel">
-          <HeaderBlock character={currCharacter} />
+          <HeaderSection
+            character={currCharacter}
+            onChange={(field, value) => {
+              if (Object.prototype.hasOwnProperty.call(currCharacter, field)) {
+                setCurrCharacter(
+                  (char) =>
+                    char && {
+                      ...char,
+                      [field]: value,
+                    }
+                );
+              }
+            }}
+          />
           <AttributeBlock attributes={currCharacter.attributes} />
           <SkillBlock skills={currCharacter.skills} />
           <SecondaryBlock character={currCharacter} />

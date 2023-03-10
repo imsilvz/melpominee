@@ -29,6 +29,7 @@ export interface MasterdataState {
   disciplines: DisciplineMasterdata;
   disciplinePowers: DisciplinePowerMasterdata;
   predatorTypes: PredatorTypeMasterdata;
+  loaded: boolean;
 }
 
 const initialState: MasterdataState = {
@@ -36,6 +37,7 @@ const initialState: MasterdataState = {
   disciplines: {},
   disciplinePowers: {},
   predatorTypes: {},
+  loaded: false,
 };
 
 export const userSlice = createSlice({
@@ -73,6 +75,9 @@ export const userSlice = createSlice({
     ) => {
       state.predatorTypes = action.payload;
     },
+    setMasterdataLoaded: (state, action: PayloadAction<boolean>) => {
+      state.loaded = action.payload;
+    },
   },
 });
 export const {
@@ -80,6 +85,7 @@ export const {
   setDisciplines,
   setDisciplinePowers,
   setPredatorTypes,
+  setMasterdataLoaded,
 } = userSlice.actions;
 export const selectClans = (state: RootState) => state.masterdata.clans;
 export const selectDisciplines = (state: RootState) =>
@@ -88,4 +94,6 @@ export const selectDisciplinePowers = (state: RootState) =>
   state.masterdata.disciplinePowers;
 export const selectPredatorTypes = (state: RootState) =>
   state.masterdata.predatorTypes;
+export const selectMasterdataLoaded = (state: RootState) =>
+  state.masterdata.loaded;
 export default userSlice.reducer;

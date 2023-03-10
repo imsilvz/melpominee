@@ -10,6 +10,7 @@ import {
   setClans,
   setDisciplinePowers,
   setDisciplines,
+  setMasterdataLoaded,
   setPredatorTypes,
 } from '../reducers/masterdataReducer';
 
@@ -101,4 +102,5 @@ export default (): ThunkAction<void, RootState, unknown, AnyAction> =>
         dispatch(setPredatorTypes(predatorDict));
       }
     }
+    dispatch(setMasterdataLoaded(true));
   };

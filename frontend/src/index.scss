@@ -44,8 +44,9 @@
   -moz-box-sizing: border-box;    /* Firefox, other Gecko */
   box-sizing: border-box;         /* Opera/IE 8+ */
   font-family: caslonAntique;
+  padding: 0;
+  margin: 0;
 }
-
 *::before,
 *::after {
   -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */

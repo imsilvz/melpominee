@@ -146,7 +146,17 @@ public class VampireV5Disciplines : IDictionary<string, int>
             conn.Open();
             using (var trans = conn.BeginTransaction())
             {
-                return Save(conn, charId);
+                try
+                {
+                    bool res = Save(conn, charId);
+                    trans.Commit();
+                    return res;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
             }
         }
     }
@@ -285,7 +295,17 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
             conn.Open();
             using (var trans = conn.BeginTransaction())
             {
-                return Save(conn, charId);
+                try
+                {
+                    bool res = Save(conn, charId);
+                    trans.Commit();
+                    return res;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
             }
         }
     }

@@ -195,7 +195,17 @@ public class VampireV5Attributes
             conn.Open();
             using (var trans = conn.BeginTransaction())
             {
-                return Save(conn, charId);
+                try
+                {
+                    bool res = Save(conn, charId);
+                    trans.Commit();
+                    return res;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
             }
         }
     }
@@ -299,7 +309,17 @@ public class VampireV5Skills
             conn.Open();
             using (var trans = conn.BeginTransaction())
             {
-                return Save(conn, charId);
+                try
+                {
+                    bool res = Save(conn, charId);
+                    trans.Commit();
+                    return res;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
             }
         }
     }
@@ -395,7 +415,17 @@ public class VampireV5SecondaryStats
             conn.Open();
             using (var trans = conn.BeginTransaction())
             {
-                return Save(conn, charId);
+                try
+                {
+                    bool res = Save(conn, charId);
+                    trans.Commit();
+                    return res;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
             }
         }
     }

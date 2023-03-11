@@ -1,3 +1,5 @@
+using Dapper;
+using System.Data;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 namespace Melpominee.app.Models.CharacterSheets.VTMV5;
@@ -47,5 +49,18 @@ public class VampireClanJsonConverter : JsonConverter<VampireClan>
     public override void Write(Utf8JsonWriter writer, VampireClan value, JsonSerializerOptions options)
     {
         writer.WriteStringValue(value.Id);
+    }
+}
+
+public class VampireClanTypeHandler : SqlMapper.TypeHandler<VampireClan>
+{
+    public override VampireClan Parse(object value)
+    {
+        return VampireClan.GetClan((string) value);
+    }
+
+    public override void SetValue(IDbDataParameter parameter, VampireClan value)
+    {
+        parameter.Value = value.Id;
     }
 }

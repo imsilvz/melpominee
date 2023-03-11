@@ -1,6 +1,7 @@
 using Dapper;
 using System.Data;
 using Microsoft.Data.Sqlite;
+using Melpominee.app.Models;
 namespace Melpominee.app.Utilities.Database;
 
 
@@ -18,6 +19,8 @@ public class DataContext
 
     public void Initalize()
     {
+        SqlMapper.AddTypeHandler(new Models.CharacterSheets.VTMV5.VampireClanTypeHandler());
+        SqlMapper.AddTypeHandler(new Models.CharacterSheets.VTMV5.VampirePredatorTypeHandler());
         using(var conn = Connect())
         {
             var sql = @"
@@ -38,61 +41,61 @@ public class DataContext
                     FOREIGN KEY(Email) REFERENCES melpominee_users(Email)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_characters (
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL,
-                    concept TEXT NOT NULL,
-                    chronicle TEXT NOT NULL,
-                    ambition TEXT NOT NULL,
-                    desire TEXT NOT NULL,
-                    sire TEXT NOT NULL,
-                    generation INTEGER NOT NULL,
-                    clan TEXT NOT NULL,
-                    predator_type TEXT NOT NULL,
-                    hunger INTEGER NOT NULL,
-                    resonance TEXT NOT NULL,
-                    blood_potency INTEGER NOT NULL
+                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    Name TEXT NOT NULL,
+                    Concept TEXT NOT NULL,
+                    Chronicle TEXT NOT NULL,
+                    Ambition TEXT NOT NULL,
+                    Desire TEXT NOT NULL,
+                    Sire TEXT NOT NULL,
+                    Generation INTEGER NOT NULL,
+                    Clan TEXT NOT NULL,
+                    PredatorType TEXT NOT NULL,
+                    Hunger INTEGER NOT NULL,
+                    Resonance TEXT NOT NULL,
+                    BloodPotency INTEGER NOT NULL
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_attributes (
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                    sheet_id INTEGER NOT NULL,
-                    attribute TEXT NOT NULL,
-                    score INTEGER NOT NULL,
-                    UNIQUE(sheet_id, attribute),
-                    FOREIGN KEY(sheet_id) REFERENCES melpominee_characters(id)
+                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    CharId INTEGER NOT NULL,
+                    Attribute TEXT NOT NULL,
+                    Score INTEGER NOT NULL,
+                    UNIQUE(CharId, Attribute),
+                    FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_skills (
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                    sheet_id INTEGER NOT NULL,
-                    skill TEXT NOT NULL,
-                    speciality TEXT NOT NULL,
-                    score INTEGER NOT NULL,
-                    UNIQUE(sheet_id, skill),
-                    FOREIGN KEY(sheet_id) REFERENCES melpominee_characters(id)
+                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    CharId INTEGER NOT NULL,
+                    Skill TEXT NOT NULL,
+                    Speciality TEXT NOT NULL,
+                    Score INTEGER NOT NULL,
+                    UNIQUE(CharId, Skill),
+                    FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_secondary (
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                    sheet_id INTEGER NOT NULL,
-                    stat_name TEXT NOT NULL,
-                    base_value INTEGER NOT NULL,
-                    superficial_damage INTEGER NOT NULL,
-                    aggravated_damage INTEGER NOT NULL,
-                    UNIQUE(sheet_id, stat_name),
-                    FOREIGN KEY(sheet_id) REFERENCES melpominee_characters(id)
+                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    CharId INTEGER NOT NULL,
+                    StatName TEXT NOT NULL,
+                    BaseValue INTEGER NOT NULL,
+                    SuperficialDamage INTEGER NOT NULL,
+                    AggravatedDamage INTEGER NOT NULL,
+                    UNIQUE(CharId, StatName),
+                    FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_disciplines (
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                    sheet_id INTEGER NOT NULL,
-                    discipline TEXT NOT NULL,
-                    score INTEGER NOT NULL,
-                    UNIQUE(sheet_id, discipline),
-                    FOREIGN KEY(sheet_id) REFERENCES melpominee_characters(id)
+                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    CharId INTEGER NOT NULL,
+                    Discipline TEXT NOT NULL,
+                    Score INTEGER NOT NULL,
+                    UNIQUE(CharId, Discipline),
+                    FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_discipline_powers (
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                    sheet_id INTEGER NOT NULL,
-                    power_name TEXT NOT NULL,
-                    UNIQUE(sheet_id, power_name),
-                    FOREIGN KEY(sheet_id) REFERENCES melpominee_characters(id)
+                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    CharId INTEGER NOT NULL,
+                    PowerId TEXT NOT NULL,
+                    UNIQUE(CharId, PowerId),
+                    FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
             ";
             conn.Execute(sql);

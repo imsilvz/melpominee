@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Microsoft.Data.Sqlite;
 using Melpominee.app.Utilities;
 using Melpominee.app.Utilities.Database;
+using Melpominee.app.Models.CharacterSheets.VTMV5;
 
 // Load Secrets
 SecretManager.Instance.LoadSecret("mail-secrets");
@@ -51,32 +52,34 @@ var sheet = new Melpominee.app.Models.CharacterSheets.VTMV5.VampireV5Sheet()
         Occult = { Score = 1 },
         Politics = { Score = 1 },
     },
-    Disciplines = new Dictionary<string, int>()
+    Disciplines = new VampireV5Disciplines()
     {
         ["Auspex"] = 3,
         ["Dominate"] = 2,
         ["Obfuscate"] = 2,
     },
-    DisciplinePowers = new List<Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower>()
+    DisciplinePowers = new VampireV5DisciplinePowers()
     {
-        Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower.GetDisciplinePower("heightened_senses"),
-        Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower.GetDisciplinePower("premonition"),
-        Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower.GetDisciplinePower("scry_the_soul"),
-        Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower.GetDisciplinePower("cloud_memory"),
-        Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower.GetDisciplinePower("mesmerize"),
-        Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower.GetDisciplinePower("cloak_of_shadows"),
-        Melpominee.app.Models.CharacterSheets.VTMV5.VampirePower.GetDisciplinePower("unseen_passage"),
+        VampirePower.GetDisciplinePower("heightened_senses"),
+        VampirePower.GetDisciplinePower("premonition"),
+        VampirePower.GetDisciplinePower("scry_the_soul"),
+        VampirePower.GetDisciplinePower("cloud_memory"),
+        VampirePower.GetDisciplinePower("mesmerize"),
+        VampirePower.GetDisciplinePower("cloak_of_shadows"),
+        VampirePower.GetDisciplinePower("unseen_passage"),
     },
     Hunger = 1,
     Resonance = "Melancholic",
     BloodPotency = 1,
 };
 sheet.Save();
+sheet.BloodPotency = 9;
+sheet.Attributes.Resolve = 0;
+sheet.Save();
 Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sheet));
 var sheet2 = new Melpominee.app.Models.CharacterSheets.VTMV5.VampireV5Sheet(1);
-Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sheet2));
 sheet2.Hunger = 5;
-sheet2.Save();
+//sheet2.Save();
 Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sheet2));
 
 // API Application Builder

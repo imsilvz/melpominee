@@ -1,3 +1,5 @@
+using Dapper;
+using System.Data;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 namespace Melpominee.app.Models.CharacterSheets.VTMV5;
@@ -47,5 +49,18 @@ public class VampirePredatorTypeJsonConverter : JsonConverter<VampirePredatorTyp
     public override void Write(Utf8JsonWriter writer, VampirePredatorType value, JsonSerializerOptions options)
     {
         writer.WriteStringValue(value.Id);
+    }
+}
+
+public class VampirePredatorTypeHandler : SqlMapper.TypeHandler<VampirePredatorType>
+{
+    public override VampirePredatorType Parse(object value)
+    {
+        return VampirePredatorType.GetPredatorType((string) value);
+    }
+
+    public override void SetValue(IDbDataParameter parameter, VampirePredatorType value)
+    {
+        parameter.Value = value.Id;
     }
 }

@@ -98,7 +98,6 @@ public class UserManager
         byte[] confirmKeyBytes = RandomNumberGenerator.GetBytes(64);
         string rescueKey = Convert.ToBase64String(confirmKeyBytes);
 
-        User? user = null;
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();

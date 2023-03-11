@@ -138,22 +138,6 @@ public class VampireV5Disciplines : IDictionary<string, int>
     {
         return ((IEnumerable)_data).GetEnumerator();
     }
-    public bool Load(int charId)
-    {
-        using (var conn = DataContext.Instance.Connect())
-        {
-            conn.Open();
-            using (var trans = conn.BeginTransaction())
-            {
-                return Load(conn, charId);
-            }
-        }
-    }
-
-    public bool Load(IDbConnection conn, int charId)
-    {
-        return true;
-    }
 
     public bool Save(int charId)
     {
@@ -205,6 +189,20 @@ public class VampireV5Disciplines : IDictionary<string, int>
         ";
         conn.Execute(sql, rowList);
         return true;
+    }
+
+    public static VampireV5Disciplines? Load(int charId)
+    {
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            return Load(conn, charId);
+        }
+    }
+
+    public static VampireV5Disciplines? Load(IDbConnection conn, int charId)
+    {
+        return new VampireV5Disciplines();
     }
 }
 
@@ -268,23 +266,6 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
         return ((IEnumerable)_data).GetEnumerator();
     }
 
-    public bool Load(int charId)
-    {
-        using (var conn = DataContext.Instance.Connect())
-        {
-            conn.Open();
-            using (var trans = conn.BeginTransaction())
-            {
-                return Load(conn, charId);
-            }
-        }
-    }
-
-    public bool Load(IDbConnection conn, int charId)
-    {
-        return true;
-    }
-
     public bool Save(int charId)
     {
         using (var conn = DataContext.Instance.Connect())
@@ -331,6 +312,20 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
         ";
         conn.Execute(sql, rowList);
         return true;
+    }
+
+    public static VampireV5DisciplinePowers? Load(int charId)
+    {
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            return Load(conn, charId);
+        }
+    }
+
+    public static VampireV5DisciplinePowers? Load(IDbConnection conn, int charId)
+    {
+        return new VampireV5DisciplinePowers();
     }
 }
 

@@ -10,12 +10,5 @@ public abstract class BaseCharacterSheet
     public BaseCharacterSheet() 
     { }
 
-    public BaseCharacterSheet(int id)
-    {
-        Id = id;
-        Load();
-    }
-
-    public abstract bool Load();
     public abstract bool Save();
 }

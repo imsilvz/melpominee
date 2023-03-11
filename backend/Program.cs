@@ -77,10 +77,13 @@ sheet.BloodPotency = 9;
 sheet.Attributes.Resolve = 0;
 sheet.Save();
 Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sheet));
-var sheet2 = new Melpominee.app.Models.CharacterSheets.VTMV5.VampireV5Sheet(1);
-sheet2.Hunger = 5;
-//sheet2.Save();
-Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sheet2));
+var sheet2 = VampireV5Sheet.GetCharacter(1);
+if (sheet2 is not null)
+{
+    sheet2.Hunger = 5;
+    //sheet2.Save();
+    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sheet2));
+}
 
 // API Application Builder
 var builder = WebApplication.CreateBuilder(args);

@@ -18,13 +18,13 @@ public class CharacterController : ControllerBase
     [ActionName("")]
     [Route("{charId}")]
     [HttpGet(Name = "Get Character")]
-    public CharacterSheetResponse GetCharacter(int charId)
+    public CharacterSheetResponse Get(int charId)
     {
-        VampireV5Sheet sheet;
+        VampireV5Sheet? sheet;
         if(charId > 0)
         {
-            sheet = new VampireV5Sheet(charId); 
-            if(sheet.Loaded)
+            sheet = VampireV5Sheet.GetCharacter(charId); 
+            if(sheet is not null && sheet.Loaded)
             {
                 return new CharacterSheetResponse
                 {

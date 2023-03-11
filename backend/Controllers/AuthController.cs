@@ -2,6 +2,8 @@ using System.Text.Json;
 using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Mvc;
 using Melpominee.app.Models.Auth;
+using Melpominee.app.Models.Web.Auth;
+using Melpominee.app.Utilities.Auth;
 using System.Diagnostics;
 namespace Melpominee.app.Controllers;
 
@@ -20,21 +22,21 @@ public class AuthController : ControllerBase
 
     [ActionName("")]
     [HttpGet(Name = "Index")]
-    public MelpomineeUser Get()
+    public User Get()
     {
         // Get Active User Data
-        MelpomineeUser? user;
+        User? user;
         var userString = HttpContext.Session.GetString(UserKey);
         if (string.IsNullOrEmpty(userString))
         {
-            return new MelpomineeUser("");
+            return new User();
         }
         else
         {
-            user = JsonSerializer.Deserialize<MelpomineeUser>(userString);
+            user = JsonSerializer.Deserialize<User>(userString);
             if (user is null)
             {
-                return new MelpomineeUser("");
+                return new User();
             }
             return user;
         }
@@ -45,34 +47,11 @@ public class AuthController : ControllerBase
     public LoginResponse Login([FromBody] LoginPayload payload)
     {
         // perform login
-        if ((!string.IsNullOrEmpty(payload.Email)) && (!string.IsNullOrEmpty(payload.Password)))
+        if (!(string.IsNullOrEmpty(payload.Email) || string.IsNullOrEmpty(payload.Password)))
         {
-            MelpomineeUser user = new MelpomineeUser(payload.Email);
-            if (user.Login(payload.Password))
+            User? user = UserManager.Instance.Login(payload.Email, payload.Password);
+            if (user is not null)
             {
-                // log it
-                using (var connection = new SqliteConnection("Data Source=data/melpominee.db"))
-                {
-                    connection.Open();
-                    var command = connection.CreateCommand();
-                    command.CommandText =
-                    @"
-                        INSERT INTO melpominee_logins
-                            (user_email)
-                        VALUES
-                            ($email)
-                    ";
-                    command.Parameters.AddWithValue("$email", payload.Email);
-
-                    if (command.ExecuteNonQuery() < 1)
-                    {
-                        return new LoginResponse
-                        {
-                            Success = false,
-                        };
-                    }
-                }
-
                 // store it in the session
                 HttpContext.Session.SetString(UserKey, JsonSerializer.Serialize(user));
                 return new LoginResponse
@@ -110,8 +89,8 @@ public class AuthController : ControllerBase
             };
         }
 
-        MelpomineeUser user = new MelpomineeUser(payload.Email);
-        if (!user.BeginResetPassword($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}"))
+        // trigger reset password logic
+        if (!UserManager.Instance.BeginResetPassword(payload.Email, $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}"))
         {
             return new ResetResponse
             {
@@ -141,8 +120,7 @@ public class AuthController : ControllerBase
             };
         }
 
-        MelpomineeUser user = new MelpomineeUser(payload.Email);
-        if (!user.FinishResetPassword(payload.Key, payload.Password))
+        if (!UserManager.Instance.FinishResetPassword(payload.Email, payload.Key, payload.Password))
         {
             return new ResetResponse
             {
@@ -154,7 +132,7 @@ public class AuthController : ControllerBase
         {
             Success = true
         };
-    }
+    } 
 
     [ActionName("register")]
     [HttpPost(Name = "Register")]
@@ -169,12 +147,17 @@ public class AuthController : ControllerBase
             };
         }
 
-        MelpomineeUser user = new MelpomineeUser(payload.Email);
-        if (user.Register($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}", payload.Password))
+        User? user = UserManager.Instance.Register(
+            payload.Email, 
+            payload.Password,
+            $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}"
+        );
+        if (user is not null)
         {
             return new RegisterResponse
             {
-                Success = true
+                Success = true,
+                User = user,
             };
         }
         return new RegisterResponse
@@ -187,11 +170,11 @@ public class AuthController : ControllerBase
     [HttpGet(Name = "Register_Confirmation")]
     public RedirectResult RegisterConfirmation([FromQuery] string email, [FromQuery] string activationKey)
     {
-        MelpomineeUser user = new MelpomineeUser(email);
-        if (user.RegistrationFinish(activationKey))
+        User? user = UserManager.Instance.RegistrationFinish(email, activationKey);
+        if (user is null)
         {
-            return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/login?notice=confirmed&email={user.Email}");
+            return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/error?message=help");
         }
-        return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/error?message=help");
+        return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/login?notice=confirmed&email={user.Email}");
     }
 }

@@ -1,4 +1,5 @@
-namespace Melpominee.app.Models.Auth;
+using Melpominee.app.Models.Auth;
+namespace Melpominee.app.Models.Web.Auth;
 
 public class RegisterPayload 
 {
@@ -9,7 +10,7 @@ public class RegisterPayload
 public class RegisterResponse 
 {
     public bool Success { get; set; }
-    public MelpomineeUser? User { get; set; }
+    public User? User { get; set; }
 }
 
 public class RegisterConfirmationResponse

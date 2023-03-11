@@ -148,7 +148,7 @@ public class VampireV5Sheet : BaseCharacterSheet
                     FROM melpominee_characters
                     WHERE Id = @Id;
                 ";
-                user = conn.QuerySingleOrDefault<VampireV5Sheet>(sql, new { Id = 50 });
+                user = conn.QuerySingleOrDefault<VampireV5Sheet>(sql, new { Id = id });
 
                 // periodically check status
                 if (user is null)
@@ -238,7 +238,21 @@ public class VampireV5Attributes
 
     public static VampireV5Attributes? Load(IDbConnection conn, int charId)
     {
-        return new VampireV5Attributes();
+        VampireV5Attributes attr = new VampireV5Attributes();
+        var sql =
+        @"
+            SELECT Attribute, Score
+            FROM melpominee_character_attributes
+            WHERE CharId = @CharId;
+        ";
+        var results = conn.Query(sql, new { CharId = charId });
+        foreach(var result in results)
+        {
+            Type attrType = typeof(VampireV5Attributes);                   
+            var propInfo = attrType.GetProperty(result.Attribute);
+            propInfo?.SetValue(attr, (int)result.Score, null);
+        }
+        return attr;
     }
 }
 
@@ -334,7 +348,27 @@ public class VampireV5Skills
 
     public static VampireV5Skills? Load(IDbConnection conn, int charId)
     {
-        return new VampireV5Skills();
+        VampireV5Skills skills = new VampireV5Skills();
+        var sql =
+        @"
+            SELECT Skill, Speciality, Score
+            FROM melpominee_character_skills
+            WHERE CharId = @CharId;
+        ";
+        var results = conn.Query(sql, new { CharId = charId });
+        foreach(var result in results)
+        {
+            VampireV5Skill skill = new VampireV5Skill()
+            {
+                Speciality = (string)result.Speciality,
+                Score = (int)result.Score,
+            };
+
+            Type skillType = typeof(VampireV5Skills);                   
+            var propInfo = skillType.GetProperty(result.Skill);
+            propInfo?.SetValue(skills, skill, null);
+        }
+        return skills;
     }
 }
 
@@ -417,6 +451,29 @@ public class VampireV5SecondaryStats
 
     public static VampireV5SecondaryStats? Load(IDbConnection conn, int charId)
     {
-        return new VampireV5SecondaryStats();
+        VampireV5SecondaryStats stats = new VampireV5SecondaryStats();
+        var sql =
+        @"
+            SELECT 
+                StatName, BaseValue,
+                SuperficialDamage, AggravatedDamage
+            FROM melpominee_character_secondary
+            WHERE CharId = @CharId;
+        ";
+        var results = conn.Query(sql, new { CharId = charId });
+        foreach(var result in results)
+        {
+            VampireV5SecondaryStat stat = new VampireV5SecondaryStat()
+            {
+                BaseValue = (int)result.BaseValue,
+                SuperficialDamage = (int)result.SuperficialDamage,
+                AggravatedDamage = (int)result.AggravatedDamage,
+            };
+
+            Type statsType = typeof(VampireV5SecondaryStats);                   
+            var propInfo = statsType.GetProperty(result.StatName);
+            propInfo?.SetValue(stats, stat, null);
+        }
+        return stats;
     }
 }

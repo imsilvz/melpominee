@@ -202,7 +202,19 @@ public class VampireV5Disciplines : IDictionary<string, int>
 
     public static VampireV5Disciplines? Load(IDbConnection conn, int charId)
     {
-        return new VampireV5Disciplines();
+        VampireV5Disciplines disciplines = new VampireV5Disciplines();
+        var sql = 
+        @"
+            SELECT Discipline, Score
+            FROM melpominee_character_disciplines
+            WHERE CharId = @CharId;
+        ";
+        var results = conn.Query(sql, new { CharId = charId });
+        foreach(var result in results)
+        {
+            disciplines[(string)result.Discipline] = (int)result.Score;
+        }
+        return disciplines;
     }
 }
 
@@ -325,7 +337,20 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
 
     public static VampireV5DisciplinePowers? Load(IDbConnection conn, int charId)
     {
-        return new VampireV5DisciplinePowers();
+        VampireV5DisciplinePowers powers = new VampireV5DisciplinePowers();
+        var sql = 
+        @"
+            SELECT PowerId
+            FROM melpominee_character_discipline_powers
+            WHERE CharId = @CharId;
+        ";
+        var results = conn.Query(sql, new { CharId = charId });
+        foreach(var result in results)
+        {
+            var power = VampirePower.GetDisciplinePower(result.PowerId);
+            powers.Add(power);
+        }
+        return powers;
     }
 }
 

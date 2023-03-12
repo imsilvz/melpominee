@@ -31,10 +31,9 @@ interface APICharacterUpdateResponse {
 
 const CharacterSheet = () => {
   const { id } = useParams();
-  const debounceHeaderRef = useRef<Map<
-    string,
-    ReturnType<typeof setTimeout>
-  > | null>(new Map<string, ReturnType<typeof setTimeout>>());
+  const debounceRef = useRef<Map<string, ReturnType<typeof setTimeout>> | null>(
+    new Map<string, ReturnType<typeof setTimeout>>()
+  );
   const disciplinePowers = useAppSelector(selectDisciplinePowers);
   const [savedCharacter, setSavedCharacter] = useState<Character | null>(null);
   const [currCharacter, setCurrCharacter] = useState<Character | null>(null);
@@ -56,10 +55,7 @@ const CharacterSheet = () => {
       }
     };
     // setup header text debounce
-    debounceHeaderRef.current = new Map<
-      string,
-      ReturnType<typeof setTimeout>
-    >();
+    debounceRef.current = new Map<string, ReturnType<typeof setTimeout>>();
     // eslint-disable-next-line no-console
     fetchCharacter().catch(console.error);
   }, [id]);
@@ -74,28 +70,138 @@ const CharacterSheet = () => {
             character={currCharacter}
             onChange={(field, value) => {
               if (Object.prototype.hasOwnProperty.call(currCharacter, field)) {
+                const debounceExempt = ['clan', 'predatorType'];
                 setCurrCharacter({
                   ...currCharacter,
                   [field]: value,
                 });
-                if (debounceHeaderRef?.current?.has(field)) {
-                  clearTimeout(debounceHeaderRef?.current?.get(field));
-                  debounceHeaderRef?.current?.delete(field);
+                // this is a simple debounce system
+                // this will be used to prevent a network request occuring
+                // every single time that someone makes a change
+                if (debounceRef?.current?.has(field)) {
+                  // clean up previous timeout
+                  clearTimeout(debounceRef?.current?.get(field));
+                  debounceRef?.current?.delete(field);
                 }
-                debounceHeaderRef?.current?.set(
+                // create next timeout
+                debounceRef?.current?.set(
                   field,
+                  setTimeout(
+                    () => {
+                      // remove previous from map since it has triggered
+                      debounceRef?.current?.delete(field);
+                      // fire function
+                      (async () => {
+                        const updateResult = await fetch(
+                          `/api/vtmv5/character/${currCharacter.id}/`,
+                          {
+                            method: 'PUT',
+                            headers: {
+                              Accept: 'application/json',
+                              'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ [field]: value }),
+                          }
+                        );
+                        if (updateResult.ok) {
+                          const updateJson =
+                            await (updateResult.json() as Promise<APICharacterUpdateResponse>);
+                          if (updateJson.success && updateJson.character) {
+                            setSavedCharacter(updateJson.character);
+                          } else {
+                            if (savedCharacter) {
+                              setCurrCharacter({
+                                ...savedCharacter,
+                              });
+                            } else {
+                              setCurrCharacter(null);
+                            }
+                          }
+                        }
+                      })().catch(console.error);
+                    },
+                    debounceExempt.includes(field) ? 0 : 250
+                  )
+                );
+              }
+            }}
+          />
+          <AttributeSection
+            attributes={currCharacter.attributes}
+            onChange={(attribute, value) => {
+              if (Object.keys(currCharacter.attributes).includes(attribute)) {
+                setCurrCharacter({
+                  ...currCharacter,
+                  attributes: {
+                    ...currCharacter.attributes,
+                    [attribute]: value,
+                  },
+                });
+                // fire network request
+                (async () => {
+                  const updateResult = await fetch(
+                    `/api/vtmv5/character/attributes/${currCharacter.id}/`,
+                    {
+                      method: 'PUT',
+                      headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ [attribute]: value }),
+                    }
+                  );
+                  if (updateResult.ok) {
+                    const updateJson =
+                      await (updateResult.json() as Promise<APICharacterUpdateResponse>);
+                    if (updateJson.success && updateJson.character) {
+                      setSavedCharacter(updateJson.character);
+                    } else {
+                      if (savedCharacter) {
+                        setCurrCharacter({
+                          ...savedCharacter,
+                        });
+                      } else {
+                        setCurrCharacter(null);
+                      }
+                    }
+                  }
+                })().catch(console.error);
+              }
+            }}
+          />
+          <SkillsSection
+            skills={currCharacter.skills}
+            onChange={(skill, skillData) => {
+              if (Object.keys(currCharacter.skills).includes(skill)) {
+                setCurrCharacter({
+                  ...currCharacter,
+                  skills: {
+                    ...currCharacter.skills,
+                    [skill]: skillData,
+                  },
+                });
+                if (debounceRef?.current?.has(`skills_${skill}`)) {
+                  // clean up previous timeout
+                  clearTimeout(debounceRef?.current?.get(`skills_${skill}`));
+                  debounceRef?.current?.delete(`skills_${skill}`);
+                }
+                // create next timeout
+                debounceRef?.current?.set(
+                  `skills_${skill}`,
                   setTimeout(() => {
-                    debounceHeaderRef?.current?.delete(field);
+                    // remove previous from map since it has triggered
+                    debounceRef?.current?.delete(`skills_${skill}`);
+                    // fire function
                     (async () => {
                       const updateResult = await fetch(
-                        `/api/vtmv5/character/${currCharacter.id}/`,
+                        `/api/vtmv5/character/skills/${currCharacter.id}/`,
                         {
                           method: 'PUT',
                           headers: {
                             Accept: 'application/json',
                             'Content-Type': 'application/json',
                           },
-                          body: JSON.stringify({ [field]: value }),
+                          body: JSON.stringify({ [skill]: skillData }),
                         }
                       );
                       if (updateResult.ok) {
@@ -116,34 +222,6 @@ const CharacterSheet = () => {
                     })().catch(console.error);
                   }, 250)
                 );
-              }
-            }}
-          />
-          <AttributeSection
-            attributes={currCharacter.attributes}
-            onChange={(attribute, value) => {
-              if (Object.keys(currCharacter.attributes).includes(attribute)) {
-                setCurrCharacter({
-                  ...currCharacter,
-                  attributes: {
-                    ...currCharacter.attributes,
-                    [attribute]: value,
-                  },
-                });
-              }
-            }}
-          />
-          <SkillsSection
-            skills={currCharacter.skills}
-            onChange={(skill, skillData) => {
-              if (Object.keys(currCharacter.skills).includes(skill)) {
-                setCurrCharacter({
-                  ...currCharacter,
-                  skills: {
-                    ...currCharacter.skills,
-                    [skill]: skillData,
-                  },
-                });
               }
             }}
           />

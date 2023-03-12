@@ -170,7 +170,11 @@ public class VampireDisciplinesUpdate
     {
         var disc = character.Disciplines;
         if (!string.IsNullOrEmpty(School)) {
-            disc[School] = Score;
+            if (Score <= 0) {
+                disc.Remove(School);
+            } else {
+                disc[School] = Score;
+            }
             if (character.Id is not null)
             {
                 disc.Save((int)character.Id);

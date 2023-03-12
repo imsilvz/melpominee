@@ -196,11 +196,19 @@ const DisciplineSection = ({
         }
         return prev;
       }, new Map<string, number>());
+      // check if the player has any disciplines unaccounted for by powers
+      const mappedDisciplines: string[] = Array.from(discCountMap.keys());
+      Array.from(Object.keys(levels)).forEach((discId) => {
+        if (!mappedDisciplines.includes(discId)) {
+          discCountMap.set(discId, 0);
+        }
+      });
       // assuming we have 5 rows, figure out how many tiles we need for each discipline
       // then sort them in alphabetical order
       const discTileList = Array.from(discCountMap.entries())
         .reduce((output: string[], kvp) => {
-          for (let i = 0; i < Math.ceil(kvp[1] / 5); i++) {
+          output.push(kvp[0]);
+          for (let i = 1; i < Math.ceil(kvp[1] / 5); i++) {
             output.push(kvp[0]);
           }
           return output;

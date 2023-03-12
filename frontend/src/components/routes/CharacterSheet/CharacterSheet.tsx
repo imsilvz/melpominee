@@ -3,7 +3,10 @@ import { useParams } from 'react-router-dom';
 
 // redux
 import { useAppSelector } from '../../../redux/hooks';
-import { selectDisciplinePowers } from '../../../redux/reducers/masterdataReducer';
+import {
+  selectDisciplines,
+  selectDisciplinePowers,
+} from '../../../redux/reducers/masterdataReducer';
 
 // types
 import { Character } from '../../../types/Character';
@@ -34,6 +37,7 @@ const CharacterSheet = () => {
   const debounceRef = useRef<Map<string, ReturnType<typeof setTimeout>> | null>(
     new Map<string, ReturnType<typeof setTimeout>>()
   );
+  const disciplines = useAppSelector(selectDisciplines);
   const disciplinePowers = useAppSelector(selectDisciplinePowers);
   const [savedCharacter, setSavedCharacter] = useState<Character | null>(null);
   const [currCharacter, setCurrCharacter] = useState<Character | null>(null);
@@ -230,7 +234,7 @@ const CharacterSheet = () => {
             levels={currCharacter.disciplines}
             powers={currCharacter.disciplinePowers}
             onLevelChange={(school, oldVal, newVal) => {
-              if (Object.keys(currCharacter.disciplines).includes(school)) {
+              if (Object.keys(disciplines).includes(school)) {
                 setCurrCharacter({
                   ...currCharacter,
                   disciplines: {

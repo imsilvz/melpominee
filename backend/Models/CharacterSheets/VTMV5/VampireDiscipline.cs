@@ -164,11 +164,9 @@ public class VampireV5Disciplines : IDictionary<string, int>
     public bool Save(IDbConnection conn, int charId)
     {
         // gather values
-        List<string> idList = new List<string>();
         List<object> rowList = new List<object>();
         foreach(var discipline in this)
         {
-            idList.Add(discipline.Key);
             rowList.Add(new { 
                 CharId = charId,
                 Discipline =  discipline.Key,
@@ -181,10 +179,9 @@ public class VampireV5Disciplines : IDictionary<string, int>
         @"
             DELETE FROM 
             melpominee_character_disciplines
-            WHERE CharId = @CharId
-                AND Discipline IN @DisciplineIds
+            WHERE CharId = @CharId;
         ";
-        conn.Execute(sql, new { CharId = charId, DisciplineIds = idList });
+        conn.Execute(sql, new { CharId = charId });
 
         // make sql query
         sql =

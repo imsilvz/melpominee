@@ -33,7 +33,7 @@ const CharacterItem = ({ character }: CharacterItemProps) => {
       </div>
       <div className="characterlist-listitem">
         <h2>{character.name}</h2>
-        <h3>{clanData[character.clan].name || 'Mortal'}</h3>
+        <h3>{(clanData && clanData[character.clan].name) || 'Mortal'}</h3>
       </div>
     </div>
   );

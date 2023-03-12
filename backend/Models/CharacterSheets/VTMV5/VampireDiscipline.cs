@@ -198,7 +198,7 @@ public class VampireV5Disciplines : IDictionary<string, int>
         return true;
     }
 
-    public static VampireV5Disciplines? Load(int charId)
+    public static VampireV5Disciplines Load(int charId)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -207,7 +207,7 @@ public class VampireV5Disciplines : IDictionary<string, int>
         }
     }
 
-    public static VampireV5Disciplines? Load(IDbConnection conn, int charId)
+    public static VampireV5Disciplines Load(IDbConnection conn, int charId)
     {
         VampireV5Disciplines disciplines = new VampireV5Disciplines();
         var sql = 

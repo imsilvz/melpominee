@@ -1,4 +1,5 @@
 using Dapper;
+using System.Text.Json.Serialization;
 using Melpominee.app.Utilities.Database;
 using Melpominee.app.Models.CharacterSheets.VTMV5;
 namespace Melpominee.app.Models.Web.VTMV5;
@@ -47,6 +48,7 @@ public class VampireAttributesResponse
 
 public class VampireAttributesUpdate
 {
+    [JsonIgnore]
     public int? Id { get; set; }
     public int? Strength { get; set; }
     public int? Dexterity { get; set; }
@@ -60,7 +62,7 @@ public class VampireAttributesUpdate
     public void Apply(VampireV5Character character)
     {
         // Id is required!
-        if (Id is null) { Id = character.Id; }
+        Id = character.Id;
         if (Id is null) 
         { 
             throw new ArgumentNullException
@@ -110,6 +112,7 @@ public class VampireAttributesUpdate
                             Score = @Score;
                     ";
                     conn.Execute(update, updateList);
+                    character.Attributes = VampireV5Attributes.Load(conn, (int)Id);
                 }
                 catch(Exception)
                 {
@@ -119,7 +122,6 @@ public class VampireAttributesUpdate
                 trans.Commit();
             }
         }
-        character.Attributes = VampireV5Attributes.Load((int)Id);
     }
 }
 
@@ -132,6 +134,8 @@ public class VampireSkillsResponse
 
 public class VampireSkillsUpdate
 {
+    [JsonIgnore]
+    public int? Id { get; set; }
     public VampireV5Skill? Athletics { get; set; }
     public VampireV5Skill? Brawl { get; set; }
     public VampireV5Skill? Craft { get; set; }
@@ -162,41 +166,68 @@ public class VampireSkillsUpdate
 
     public void Apply(VampireV5Character character)
     {
-        var skills = character.Skills;
-        skills.Athletics = Athletics ?? skills.Athletics;
-        skills.Brawl = Brawl ?? skills.Brawl;
-        skills.Craft = Craft ?? skills.Craft;
-        skills.Drive = Drive ?? skills.Drive;
-        skills.Firearms = Firearms ?? skills.Firearms;
-        skills.Melee = Melee ?? skills.Melee;
-        skills.Larceny = Larceny ?? skills.Larceny;
-        skills.Stealth = Stealth ?? skills.Stealth;
-        skills.Survival = Survival ?? skills.Survival;
-        skills.AnimalKen = AnimalKen ?? skills.AnimalKen;
-        skills.Ettiquette = Ettiquette ?? skills.Ettiquette;
-        skills.Insight = Insight ?? skills.Insight;
-        skills.Intimidation = Intimidation ?? skills.Intimidation;
-        skills.Leadership = Leadership ?? skills.Leadership;
-        skills.Performance = Performance ?? skills.Performance;
-        skills.Persuasion = Persuasion ?? skills.Persuasion;
-        skills.Streetwise = Streetwise ?? skills.Streetwise;
-        skills.Subterfuge = Subterfuge ?? skills.Subterfuge;
-        skills.Academics = Academics ?? skills.Academics;
-        skills.Awareness = Awareness ?? skills.Awareness;
-        skills.Finance = Finance ?? skills.Finance;
-        skills.Investigation = Investigation ?? skills.Investigation;
-        skills.Medicine = Medicine ?? skills.Medicine;
-        skills.Occult = Occult ?? skills.Occult;
-        skills.Politics = Politics ?? skills.Politics;
-        skills.Science = Science ?? skills.Science;
-        skills.Technology = Technology ?? skills.Technology;
-        if (character.Id is not null)
-        {
-            skills.Save((int)character.Id);
+        // Id is required!
+        Id = character.Id;
+        if (Id is null) 
+        { 
+            throw new ArgumentNullException
+            (
+                "VampireSkillsUpdate.Apply called with unsaved character. A full save must be performed first."
+            ); 
         }
-        else
+
+        // build update query
+        var updateList = new List<object>();
+        var skillProps = typeof(VampireSkillsUpdate).GetProperties();
+        foreach(var skillProperty in skillProps)  
         {
-            character.Save();
+            // skip id
+            if (skillProperty.Name == "Id") { continue; }
+            // check if value is null
+            var v5Skill = (VampireV5Skill?)skillProperty.GetValue(this, null);
+            if (v5Skill is not null)
+            {
+                updateList.Add(new 
+                    { 
+                        CharId = Id, 
+                        Skill = skillProperty.Name, 
+                        Speciality = v5Skill.Speciality,
+                        Score = v5Skill.Score,
+                    }
+                );
+            }
+        }
+        
+        // don't proceed if there is nothing to update
+        if (updateList.Count <= 0) { return; }
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var sql =
+                    @"
+                        INSERT INTO melpominee_character_skills
+                            (CharId, Skill, Speciality, Score)
+                        VALUES
+                            (@CharId, @Skill, @Speciality, @Score)
+                        ON CONFLICT DO
+                        UPDATE SET
+                            Speciality = @Speciality,
+                            Score = @Score;
+                    ";
+                    conn.Execute(sql, updateList);
+                    character.Skills = VampireV5Skills.Load(conn, (int)Id);
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+                trans.Commit();
+            }
         }
     }
 }
@@ -210,25 +241,62 @@ public class VampireDisciplinesResponse
 
 public class VampireDisciplinesUpdate
 {
+    [JsonIgnore]
+    public int? Id { get; set; }
     public string? School { get; set; }
     public int Score { get; set; }
     public void Apply(VampireV5Character character)
     {
+        // Id is required!
+        Id = character.Id;
+        if (Id is null) 
+        { 
+            throw new ArgumentNullException
+            (
+                "VampireSkillsUpdate.Apply called with unsaved character. A full save must be performed first."
+            ); 
+        }
+        
         var disc = character.Disciplines;
         if (!string.IsNullOrEmpty(School)) 
         {
-            if (Score <= 0) {
-                disc.Remove(School);
-            } else {
-                disc[School] = Score;
-            }
-            if (character.Id is not null)
+            using (var conn = DataContext.Instance.Connect())
             {
-                disc.Save((int)character.Id);
-            }
-            else
-            {
-                character.Save();
+                conn.Open();
+                using (var trans = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        string sql = "";
+                        if (Score <= 0) {
+                            sql =
+                            @"
+                                DELETE FROM melpominee_character_disciplines
+                                WHERE CharId = @CharId AND Discipline = @School;
+                            ";
+                        } else {
+                            // make sql query
+                            sql =
+                            @"
+                                INSERT INTO melpominee_character_disciplines
+                                    (CharId, Discipline, Score)
+                                VALUES
+                                    (@CharId, @School, @Score)
+                                ON CONFLICT DO
+                                UPDATE SET
+                                    Score = @Score;
+                            ";
+                        }
+                        conn.Execute(sql, new { CharId = Id, School = School, Score = Score });
+                        character.Disciplines = VampireV5Disciplines.Load(conn, (int)Id);
+                    }
+                    catch(Exception)
+                    {
+                        trans.Rollback();
+                        throw;
+                    }
+                    trans.Commit();
+                }
             }
         }
     }

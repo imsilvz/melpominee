@@ -357,7 +357,7 @@ public class VampireV5Skills
         return true;
     }
 
-    public static VampireV5Skills? Load(int charId)
+    public static VampireV5Skills Load(int charId)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -366,7 +366,7 @@ public class VampireV5Skills
         }
     }
 
-    public static VampireV5Skills? Load(IDbConnection conn, int charId)
+    public static VampireV5Skills Load(IDbConnection conn, int charId)
     {
         VampireV5Skills skills = new VampireV5Skills();
         var sql =

@@ -28,8 +28,9 @@
         "prettier"
     ],
     "rules": {
-        "no-param-reassign": "off",
         "no-plusplus": "off",
+        "no-lonely-if": "off",
+        "no-param-reassign": "off",
         "react/no-array-index-key": "off",
         "react/require-default-props": "off",
         "react-hooks/rules-of-hooks": "error",

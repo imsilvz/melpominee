@@ -15,9 +15,7 @@ public class CharacterController : ControllerBase
         _logger = logger;
     }
 
-    [ActionName("")]
-    [Route("{charId}")]
-    [HttpGet(Name = "Get Character")]
+    [HttpGet("{charId:int}", Name = "Get Character")]
     public CharacterSheetResponse Get(int charId)
     {
         VampireV5Character? character;
@@ -40,10 +38,8 @@ public class CharacterController : ControllerBase
         };
     }
 
-    [ActionName("")]
-    [Route("{charId}")]
-    [HttpPut(Name = "Update Character")]
-    public CharacterSheetResponse Update(int charId)
+    [HttpPut("{charId:int}", Name = "Update Character")]
+    public CharacterSheetResponse Update(int charId, [FromBody] VampireCharacterUpdate update)
     {
         VampireV5Character? character;
         if(charId > 0)
@@ -51,6 +47,7 @@ public class CharacterController : ControllerBase
             character = VampireV5Character.GetCharacter(charId); 
             if(character is not null && character.Loaded)
             {
+                update.Apply(character);
                 return new CharacterSheetResponse
                 {
                     Success = true,

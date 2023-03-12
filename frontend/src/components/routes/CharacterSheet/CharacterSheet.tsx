@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 // redux
@@ -23,8 +23,18 @@ interface APICharacterSheetResponse {
   character?: Character;
 }
 
+interface APICharacterUpdateResponse {
+  success: boolean;
+  error?: string;
+  character?: Character;
+}
+
 const CharacterSheet = () => {
   const { id } = useParams();
+  const debounceHeaderRef = useRef<Map<
+    string,
+    ReturnType<typeof setTimeout>
+  > | null>(new Map<string, ReturnType<typeof setTimeout>>());
   const disciplinePowers = useAppSelector(selectDisciplinePowers);
   const [savedCharacter, setSavedCharacter] = useState<Character | null>(null);
   const [currCharacter, setCurrCharacter] = useState<Character | null>(null);
@@ -45,6 +55,11 @@ const CharacterSheet = () => {
         }
       }
     };
+    // setup header text debounce
+    debounceHeaderRef.current = new Map<
+      string,
+      ReturnType<typeof setTimeout>
+    >();
     // eslint-disable-next-line no-console
     fetchCharacter().catch(console.error);
   }, [id]);
@@ -63,6 +78,44 @@ const CharacterSheet = () => {
                   ...currCharacter,
                   [field]: value,
                 });
+                if (debounceHeaderRef?.current?.has(field)) {
+                  clearTimeout(debounceHeaderRef?.current?.get(field));
+                  debounceHeaderRef?.current?.delete(field);
+                }
+                debounceHeaderRef?.current?.set(
+                  field,
+                  setTimeout(() => {
+                    debounceHeaderRef?.current?.delete(field);
+                    (async () => {
+                      const updateResult = await fetch(
+                        `/api/vtmv5/character/${currCharacter.id}/`,
+                        {
+                          method: 'PUT',
+                          headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({ [field]: value }),
+                        }
+                      );
+                      if (updateResult.ok) {
+                        const updateJson =
+                          await (updateResult.json() as Promise<APICharacterUpdateResponse>);
+                        if (updateJson.success && updateJson.character) {
+                          setSavedCharacter(updateJson.character);
+                        } else {
+                          if (savedCharacter) {
+                            setCurrCharacter({
+                              ...savedCharacter,
+                            });
+                          } else {
+                            setCurrCharacter(null);
+                          }
+                        }
+                      }
+                    })().catch(console.error);
+                  }, 250)
+                );
               }
             }}
           />

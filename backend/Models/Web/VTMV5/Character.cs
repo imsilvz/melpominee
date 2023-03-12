@@ -5,5 +5,5 @@ public class CharacterSheetResponse
 {
     public bool Success { get; set; }
     public string? Error { get; set; }
-    public VampireV5Sheet? Character { get; set; }
+    public VampireV5Character? Character { get; set; }
 }

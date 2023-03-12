@@ -13,7 +13,7 @@ Directory.CreateDirectory("data");
 DataContext.Instance.Initalize();
 //var user = new Melpominee.app.Models.Auth.MelpomineeUser("rjyawger@me.com");
 //user.BeginResetPassword("http://localhost:5173");
-var sheet = new Melpominee.app.Models.CharacterSheets.VTMV5.VampireV5Sheet()
+var sheet = new VampireV5Character()
 {
     Name = "Logan Bessett",
     Concept = "Schizo WWII Vet, also Therapist",
@@ -22,8 +22,8 @@ var sheet = new Melpominee.app.Models.CharacterSheets.VTMV5.VampireV5Sheet()
     Desire = "I forgot",
     Sire = "Alfred von Halstatt, M.D.",
     Generation = 12,
-    Clan = Melpominee.app.Models.CharacterSheets.VTMV5.VampireClan.GetClan("malkavian"),
-    PredatorType = Melpominee.app.Models.CharacterSheets.VTMV5.VampirePredatorType.GetPredatorType("sandman"),
+    Clan = VampireClan.GetClan("malkavian"),
+    PredatorType = VampirePredatorType.GetPredatorType("sandman"),
     Attributes = {
         Strength = 2,
         Dexterity = 1,
@@ -68,22 +68,11 @@ var sheet = new Melpominee.app.Models.CharacterSheets.VTMV5.VampireV5Sheet()
         VampirePower.GetDisciplinePower("cloak_of_shadows"),
         VampirePower.GetDisciplinePower("unseen_passage"),
     },
-    Hunger = 1,
+    Hunger = 3,
     Resonance = "Melancholic",
-    BloodPotency = 1,
+    BloodPotency = 3,
 };
 sheet.Save();
-sheet.BloodPotency = 9;
-sheet.Attributes.Resolve = 0;
-sheet.Save();
-Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sheet));
-var sheet2 = VampireV5Sheet.GetCharacter(1);
-if (sheet2 is not null)
-{
-    sheet2.Hunger = 5;
-    //sheet2.Save();
-    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sheet2));
-}
 
 // API Application Builder
 var builder = WebApplication.CreateBuilder(args);

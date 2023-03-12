@@ -20,16 +20,41 @@ public class CharacterController : ControllerBase
     [HttpGet(Name = "Get Character")]
     public CharacterSheetResponse Get(int charId)
     {
-        VampireV5Sheet? sheet;
+        VampireV5Character? character;
         if(charId > 0)
         {
-            sheet = VampireV5Sheet.GetCharacter(charId); 
-            if(sheet is not null && sheet.Loaded)
+            character = VampireV5Character.GetCharacter(charId); 
+            if(character is not null && character.Loaded)
             {
                 return new CharacterSheetResponse
                 {
                     Success = true,
-                    Character = sheet
+                    Character = character
+                };
+            }
+        }
+        return new CharacterSheetResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
+
+    [ActionName("")]
+    [Route("{charId}")]
+    [HttpPut(Name = "Update Character")]
+    public CharacterSheetResponse Update(int charId)
+    {
+        VampireV5Character? character;
+        if(charId > 0)
+        {
+            character = VampireV5Character.GetCharacter(charId); 
+            if(character is not null && character.Loaded)
+            {
+                return new CharacterSheetResponse
+                {
+                    Success = true,
+                    Character = character
                 };
             }
         }

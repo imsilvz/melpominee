@@ -6,7 +6,7 @@ using Melpominee.app.Utilities.Database;
 
 namespace Melpominee.app.Models.CharacterSheets.VTMV5;
 
-public class VampireV5Sheet : BaseCharacterSheet
+public class VampireV5Character : BaseCharacterSheet
 {
     // meta
     [JsonIgnore]
@@ -40,7 +40,7 @@ public class VampireV5Sheet : BaseCharacterSheet
     public string Resonance { get; set; } = "";
     public int BloodPotency { get; set; } = 0;
 
-    public VampireV5Sheet() : base()
+    public VampireV5Character() : base()
     {
         GameType = "VTMV5";
     }
@@ -129,10 +129,10 @@ public class VampireV5Sheet : BaseCharacterSheet
         return true;
     }
 
-    public static VampireV5Sheet? GetCharacter(int id)
+    public static VampireV5Character? GetCharacter(int id)
     {
         // make connection
-        VampireV5Sheet? user;
+        VampireV5Character? user;
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();
@@ -148,7 +148,7 @@ public class VampireV5Sheet : BaseCharacterSheet
                     FROM melpominee_characters
                     WHERE Id = @Id;
                 ";
-                user = conn.QuerySingleOrDefault<VampireV5Sheet>(sql, new { Id = id });
+                user = conn.QuerySingleOrDefault<VampireV5Character>(sql, new { Id = id });
 
                 // periodically check status
                 if (user is null)

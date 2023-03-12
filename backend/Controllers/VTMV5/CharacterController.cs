@@ -1,9 +1,11 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Melpominee.app.Models.Web.VTMV5;
 using Melpominee.app.Models.CharacterSheets.VTMV5;
 namespace Melpominee.app.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("vtmv5/[controller]")]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]

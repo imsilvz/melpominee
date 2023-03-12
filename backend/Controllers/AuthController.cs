@@ -1,6 +1,7 @@
 using System.Text.Json;
-using Microsoft.Data.Sqlite;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
 using Melpominee.app.Models.Auth;
 using Melpominee.app.Models.Web.Auth;
 using Melpominee.app.Utilities.Auth;
@@ -44,7 +45,7 @@ public class AuthController : ControllerBase
 
     [ActionName("login")]
     [HttpPost(Name = "Login")]
-    public LoginResponse Login([FromBody] LoginPayload payload)
+    public async Task<LoginResponse> Login([FromBody] LoginPayload payload)
     {
         // perform login
         if (!(string.IsNullOrEmpty(payload.Email) || string.IsNullOrEmpty(payload.Password)))
@@ -52,8 +53,29 @@ public class AuthController : ControllerBase
             User? user = UserManager.Instance.Login(payload.Email, payload.Password);
             if (user is not null)
             {
+                // create login claims
+                var claims = new List<Claim>
+                {
+                    new Claim("user", user.Email!),
+                    new Claim("role", "user")
+                };
+
                 // store it in the session
-                HttpContext.Session.SetString(UserKey, JsonSerializer.Serialize(user));
+                await HttpContext.SignInAsync
+                (
+                    new ClaimsPrincipal
+                    (
+                        new ClaimsIdentity
+                        (
+                            claims,
+                            "Cookies",
+                            "user",
+                            "role"
+                        )
+                    )
+                );
+                HttpContext.Session.Clear();
+
                 return new LoginResponse
                 {
                     Success = true,
@@ -70,8 +92,9 @@ public class AuthController : ControllerBase
     [ActionName("logout")]
     [HttpGet(Name = "Logout")]
     [HttpPost(Name = "Logout")]
-    public bool Logout()
+    public async Task<bool> Logout()
     {
+        await HttpContext.SignOutAsync();
         HttpContext.Session.Clear();
         return true;
     }

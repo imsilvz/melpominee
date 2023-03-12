@@ -184,7 +184,7 @@ const ForgotPassword = () => {
             <h1>Email Sent!</h1>
           </div>
           <div className="input-item">
-            <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+            <span>
               An email has been sent with instructions how to reset your
               password. You should receive it within a few minutes. If the email
               does not arrive within a reasonable timeframe, please be sure to

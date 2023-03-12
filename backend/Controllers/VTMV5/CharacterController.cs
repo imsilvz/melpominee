@@ -40,6 +40,39 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [HttpGet("", Name = "Get Character List")]
+    public VampireCharacterListResponse GetList()
+    {
+        // get email of logged in user
+        string email = "";
+        var identity = HttpContext.User.Identity;
+        if (identity is null || 
+            !identity.IsAuthenticated || 
+            identity.Name is null)
+        {
+            return new VampireCharacterListResponse()
+            {
+                Error = "auth_error"
+            };
+        }
+        email = identity.Name;
+
+        // fetch character data
+        var charList = VampireV5Character.GetCharactersByUser(email);
+        var headerList = new List<VampireV5Header>();
+        foreach(var character in charList)
+        {
+            headerList.Add(character.GetHeader());
+        }
+
+        // return!
+        return new VampireCharacterListResponse()
+        {
+            Success = true,
+            CharacterList = headerList,
+        };
+    }
+
     [HttpPut("{charId:int}", Name = "Update Character")]
     public VampireHeaderResponse Update(int charId, [FromBody] VampireCharacterUpdate update)
     {

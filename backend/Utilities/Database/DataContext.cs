@@ -42,6 +42,7 @@ public class DataContext
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_characters (
                     Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    Owner TEXT NOT NULL,
                     Name TEXT NOT NULL,
                     Concept TEXT NOT NULL,
                     Chronicle TEXT NOT NULL,

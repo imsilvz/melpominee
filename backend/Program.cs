@@ -12,6 +12,7 @@ DataContext.Instance.Initalize();
 //user.BeginResetPassword("http://localhost:5173");
 var sheet = new VampireV5Character()
 {
+    Owner = "rjyawger@me.com",
     Name = "Logan Bessett",
     Concept = "Schizo WWII Vet, also Therapist",
     Chronicle = "Gehenna Lost",

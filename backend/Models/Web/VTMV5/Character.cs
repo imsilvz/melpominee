@@ -6,9 +6,16 @@ namespace Melpominee.app.Models.Web.VTMV5;
 
 public class VampireCharacterResponse
 {
-    public bool Success { get; set; }
+    public bool Success { get; set; } = false;
     public string? Error { get; set; }
     public VampireV5Character? Character { get; set; }
+}
+
+public class VampireCharacterListResponse
+{
+    public bool Success { get; set; }
+    public string? Error { get; set; }
+    public List<VampireV5Header>? CharacterList { get; set; }
 }
 
 public class VampireHeaderResponse

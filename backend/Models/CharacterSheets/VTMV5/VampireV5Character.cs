@@ -40,15 +40,13 @@ public class VampireV5Character : BaseCharacterSheet
     public string Resonance { get; set; } = "";
     public int BloodPotency { get; set; } = 0;
 
-    public VampireV5Character() : base()
-    {
-        GameType = "VTMV5";
-    }
+    public VampireV5Character() : base() { }
 
     public VampireV5Header GetHeader()
     {
         var header = new VampireV5Header()
         {
+            Id = Id,
             Name = Name,
             Concept = Concept,
             Chronicle = Chronicle,
@@ -82,14 +80,14 @@ public class VampireV5Character : BaseCharacterSheet
                         @"
                             INSERT INTO melpominee_characters
                                 (
-                                    Name, Concept, Chronicle, 
+                                    Owner, Name, Concept, Chronicle, 
                                     Ambition, Desire, Sire, 
                                     Generation, Clan, PredatorType,
                                     Hunger, Resonance, BloodPotency
                                 )
                             VALUES
                                 (
-                                    @Name, @Concept, @Chronicle,
+                                    @Owner, @Name, @Concept, @Chronicle,
                                     @Ambition, @Desire, @Sire,
                                     @Generation, @Clan, @PredatorType,
                                     @Hunger, @Resonance, @BloodPotency
@@ -102,20 +100,21 @@ public class VampireV5Character : BaseCharacterSheet
                         @"
                             INSERT INTO melpominee_characters
                                 (
-                                    Id, Name, Concept, Chronicle, 
+                                    Id, Owner, Name, Concept, Chronicle, 
                                     Ambition, Desire, Sire, 
                                     Generation, Clan, PredatorType,
                                     Hunger, Resonance, BloodPotency
                                 )
                             VALUES
                                 (
-                                    @Id, @Name, @Concept, @Chronicle,
-                                    @Ambition, @Desire, @Sire,
+                                    @Id, @Owner, @Name, @Concept, 
+                                    @Chronicle, @Ambition, @Desire, @Sire,
                                     @Generation, @Clan, @PredatorType,
                                     @Hunger, @Resonance, @BloodPotency
                                 )
                             ON CONFLICT DO
                             UPDATE SET
+                                Owner = @Owner,
                                 Name = @Name,
                                 Concept = @Concept,
                                 Chronicle = @Chronicle,
@@ -161,8 +160,8 @@ public class VampireV5Character : BaseCharacterSheet
                 var sql =
                 @"
                     SELECT
-                        Id, Name, Concept, Chronicle, 
-                        Ambition, Desire, Sire, 
+                        Id, Owner, Name, Concept, 
+                        Chronicle, Ambition, Desire, Sire, 
                         Generation, Clan, PredatorType,
                         Hunger, Resonance, BloodPotency
                     FROM melpominee_characters
@@ -194,10 +193,51 @@ public class VampireV5Character : BaseCharacterSheet
         user.Loaded = true;
         return user;
     }
+
+    public static List<VampireV5Character> GetCharactersByUser(string email)
+    {
+        List<VampireV5Character> charList;
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                var sql =
+                @"
+                    SELECT 
+                        Id, Owner, Name, Concept, 
+                        Chronicle, Ambition, Desire, Sire, 
+                        Generation, Clan, PredatorType,
+                        Hunger, Resonance, BloodPotency
+                    FROM melpominee_characters
+                    WHERE Owner = @Email;
+                ";
+                charList = conn.Query<VampireV5Character>(sql, new { Email = email }).ToList();
+                foreach(var character in charList)
+                {
+                    // fetch dependant objects
+                    var attributes = VampireV5Attributes.Load(conn, trans, (int)character.Id!);
+                    var skills = VampireV5Skills.Load(conn, trans, (int)character.Id!);
+                    var secondaryStats = VampireV5SecondaryStats.Load(conn, trans, (int)character.Id!);
+                    var disciplines = VampireV5Disciplines.Load(conn, trans, (int)character.Id!);
+                    var disciplinePowers = VampireV5DisciplinePowers.Load(conn, trans, (int)character.Id!);
+
+                    // if any fail to load, keep defaults
+                    character.Attributes = attributes ?? character.Attributes;
+                    character.Skills = skills ?? character.Skills;
+                    character.SecondaryStats = secondaryStats ?? character.SecondaryStats;
+                    character.Disciplines = disciplines ?? character.Disciplines;
+                    character.DisciplinePowers = disciplinePowers ?? character.DisciplinePowers;
+                }
+                return charList;
+            }
+        }
+    }
 }
 
 public class VampireV5Header
 {
+    public int? Id { get; set; }
     public string Name { get; set; } = "";
     public string Concept { get; set; } = "";
     public string Chronicle { get; set; } = ""; // inherit from GameId

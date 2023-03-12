@@ -1,3 +1,5 @@
+@import "./global.scss";
+
 @font-face {
   font-family: caslonAntique;
   src: url('./assets/fonts/CaslonAntique.ttf');
@@ -69,6 +71,7 @@ html {
     }
   }
 
+  color: $text-primary;
   font-size: 24px;
   h1 {
     font-size: 2em;

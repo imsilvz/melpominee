@@ -1,0 +1,54 @@
+@import "../../../global.scss";
+.characterlist-container {
+    display: flex;
+    position: relative;
+    width: 100%;
+    min-height: 100%;
+    >.characterlist-panel {
+      position: relative;
+      border-radius: 0.5rem;
+      background: #1f1f1f;
+      box-shadow: 5px 5px 10px #0003;
+      padding: 1rem 2rem 2rem 2rem;
+      margin: auto auto;
+      width: 1024px;
+      min-width: 1024px;
+      >.characterlist-header {
+        >h1 {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+      }
+      >.characterlist-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        >.characterlist-listitem {
+            display: flex;
+            border: 1px solid $text-primary;
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+            width: 100%;
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.12);
+                cursor: pointer;
+            }
+            >.characterlist-listitem-id {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 0.5rem 0 0.25rem;
+            }
+        }
+      }
+    }
+  }
+  
+  @media screen and (max-width: 1024px) {
+    .characterlist-container {
+      >.characterlist-panel {
+        border-radius: 0;
+        margin: 0 auto;
+      }
+    }
+  }

@@ -1,3 +1,5 @@
+using Dapper;
+using Melpominee.app.Utilities.Database;
 using Melpominee.app.Models.CharacterSheets.VTMV5;
 namespace Melpominee.app.Models.Web.VTMV5;
 
@@ -45,6 +47,7 @@ public class VampireAttributesResponse
 
 public class VampireAttributesUpdate
 {
+    public int? Id { get; set; }
     public int? Strength { get; set; }
     public int? Dexterity { get; set; }
     public int? Stamina { get; set; }
@@ -56,24 +59,67 @@ public class VampireAttributesUpdate
     public int? Resolve { get; set; }
     public void Apply(VampireV5Character character)
     {
-        var attr = character.Attributes;
-        attr.Strength = Strength ?? attr.Strength;
-        attr.Dexterity = Dexterity ?? attr.Dexterity;
-        attr.Stamina = Stamina ?? attr.Stamina;
-        attr.Charisma = Charisma ?? attr.Charisma;
-        attr.Manipulation = Manipulation ?? attr.Manipulation;
-        attr.Composure = Composure ?? attr.Composure;
-        attr.Intelligence = Intelligence ?? attr.Intelligence;
-        attr.Wits = Wits ?? attr.Wits;
-        attr.Resolve = Resolve ?? attr.Resolve;
-        if (character.Id is not null)
-        {
-            attr.Save((int)character.Id);
+        // Id is required!
+        if (Id is null) { Id = character.Id; }
+        if (Id is null) 
+        { 
+            throw new ArgumentNullException
+            (
+                "VampireAttributesUpdate.Apply called with unsaved character. A full save must be performed first."
+            ); 
         }
-        else
+
+        // build update query
+        var updateList = new List<object>();
+        var attrProps = typeof(VampireAttributesUpdate).GetProperties();
+        foreach(var attributeProperty in attrProps)  
         {
-            character.Save();
+            // skip id
+            if (attributeProperty.Name == "Id") { continue; }
+            // check if value is null
+            var v5Attribute = (int?)attributeProperty.GetValue(this, null);
+            if (v5Attribute is not null)
+            {
+                updateList.Add(new 
+                    { 
+                        CharId = Id, 
+                        Attr = attributeProperty.Name, 
+                        Score = v5Attribute
+                    }
+                );
+            }
         }
+        
+        // don't proceed if there is nothing to update
+        if (updateList.Count <= 0) { return; }
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var update =
+                    @"
+                        INSERT INTO melpominee_character_attributes
+                            (CharId, Attribute, Score)
+                        VALUES
+                            (@CharId, @Attr, @Score)
+                        ON CONFLICT DO
+                        UPDATE SET
+                            Score = @Score;
+                    ";
+                    conn.Execute(update, updateList);
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+                trans.Commit();
+            }
+        }
+        character.Attributes = VampireV5Attributes.Load((int)Id);
     }
 }
 

@@ -237,7 +237,7 @@ public class VampireV5Attributes
         return true;
     }
 
-    public static VampireV5Attributes? Load(int charId)
+    public static VampireV5Attributes Load(int charId)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -246,7 +246,7 @@ public class VampireV5Attributes
         }
     }
 
-    public static VampireV5Attributes? Load(IDbConnection conn, int charId)
+    public static VampireV5Attributes Load(IDbConnection conn, int charId)
     {
         VampireV5Attributes attr = new VampireV5Attributes();
         var sql =

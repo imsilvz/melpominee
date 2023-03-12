@@ -197,41 +197,23 @@ public class VampirePowersResponse
 
 public class VampirePowersUpdate
 {
-    public string? PowerId { get; set; }
-    public bool Remove { get; set; }
+    public List<string>? PowerIds { get; set; }
     public void Apply(VampireV5Character character)
     {
-        var powers = character.DisciplinePowers;
-        if (!string.IsNullOrEmpty(PowerId)) 
+        if (PowerIds is not null) 
         {
-            // convert current power list to keys
-            List<string> newPowers = new List<string>();
-            foreach(var power in powers)
-            {
-                // if remove, remove it during this loop
-                if (Remove && power.Id == PowerId)
-                    continue;
-                newPowers.Add(power.Id);
-            }
-
-            // perform update action
-            if (!Remove)
-            {
-                newPowers.Add(PowerId);
-            }
-
             // convert back to powers list
-            powers = new VampireV5DisciplinePowers();
-            foreach(var powerId in newPowers)
+            var newPowers = new VampireV5DisciplinePowers();
+            foreach(var powerId in PowerIds)
             {
-                powers.Add(VampirePower.GetDisciplinePower(powerId));
+                newPowers.Add(VampirePower.GetDisciplinePower(powerId));
             }
 
             // update object reference and save
-            character.DisciplinePowers = powers;
+            character.DisciplinePowers = newPowers;
             if (character.Id is not null)
             {
-                powers.Save((int)character.Id);
+                newPowers.Save((int)character.Id);
             }
             else
             {

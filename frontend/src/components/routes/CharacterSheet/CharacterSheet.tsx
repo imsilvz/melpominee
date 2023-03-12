@@ -292,6 +292,7 @@ const CharacterSheet = () => {
                   // add new value, if applicable
                   newPowers.push(newVal);
                 }
+                // update local state
                 setCurrCharacter({
                   ...currCharacter,
                   disciplinePowers: newPowers.sort().sort((a, b) => {
@@ -306,6 +307,37 @@ const CharacterSheet = () => {
                     return 0;
                   }),
                 });
+                const powerUpdate = async (PowerIds: string[]) => {
+                  const updateResult = await fetch(
+                    `/api/vtmv5/character/powers/${currCharacter.id}/`,
+                    {
+                      method: 'PUT',
+                      headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        PowerIds,
+                      }),
+                    }
+                  );
+                  if (updateResult.ok) {
+                    const updateJson =
+                      await (updateResult.json() as Promise<APICharacterUpdateResponse>);
+                    if (updateJson.success && updateJson.character) {
+                      setSavedCharacter(updateJson.character);
+                    } else {
+                      if (savedCharacter) {
+                        setCurrCharacter({
+                          ...savedCharacter,
+                        });
+                      } else {
+                        setCurrCharacter(null);
+                      }
+                    }
+                  }
+                };
+                powerUpdate(newPowers).catch(console.error);
               }
             }}
           />

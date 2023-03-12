@@ -310,11 +310,9 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
     public bool Save(IDbConnection conn, int charId)
     {
         // gather values
-        List<string> idList = new List<string>();
         List<object> rowList = new List<object>();
         for(int i=0; i<this.Count; i++)
         {
-            idList.Add(this[i].Id);
             rowList.Add(new { 
                 CharId = charId,
                 PowerId =  this[i].Id,
@@ -326,10 +324,9 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
         @"
             DELETE FROM 
             melpominee_character_discipline_powers
-            WHERE CharId = @CharId
-                AND PowerId IN @PowerIds
+            WHERE CharId = @CharId;
         ";
-        conn.Execute(sql, new { CharId = charId, PowerIds = idList });
+        conn.Execute(sql, new { CharId = charId });
 
         // make sql query
         sql =

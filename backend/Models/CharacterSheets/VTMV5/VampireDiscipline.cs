@@ -340,7 +340,7 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
         return true;
     }
 
-    public static VampireV5DisciplinePowers? Load(int charId)
+    public static VampireV5DisciplinePowers Load(int charId)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -349,7 +349,7 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
         }
     }
 
-    public static VampireV5DisciplinePowers? Load(IDbConnection conn, int charId)
+    public static VampireV5DisciplinePowers Load(IDbConnection conn, int charId)
     {
         VampireV5DisciplinePowers powers = new VampireV5DisciplinePowers();
         var sql = 

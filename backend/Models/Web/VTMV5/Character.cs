@@ -309,29 +309,90 @@ public class VampirePowersResponse
     public VampireV5DisciplinePowers? Powers { get; set; }
 }
 
+public class VampirePowerUpdateItem
+{
+    public string? PowerId { get; set; }
+    public bool Remove { get; set; }
+}
+
 public class VampirePowersUpdate
 {
-    public List<string>? PowerIds { get; set; }
+    public int? Id { get; set; }
+    public List<VampirePowerUpdateItem>? PowerIds { get; set; }
     public void Apply(VampireV5Character character)
     {
-        if (PowerIds is not null) 
+        // Id is required!
+        Id = character.Id;
+        if (Id is null) 
+        { 
+            throw new ArgumentNullException
+            (
+                "VampirePowersUpdate.Apply called with unsaved character. A full save must be performed first."
+            ); 
+        }
+
+        if (PowerIds is not null && PowerIds.Count > 0) 
         {
             // convert back to powers list
+            var addItems = new List<object>();
+            var removeItems = new List<object>();
             var newPowers = new VampireV5DisciplinePowers();
-            foreach(var powerId in PowerIds)
+            foreach (var powerId in PowerIds)
             {
-                newPowers.Add(VampirePower.GetDisciplinePower(powerId));
+                if (powerId.Remove) 
+                {
+                    removeItems.Add(new {
+                        CharId = character.Id,
+                        PowerId = powerId.PowerId,
+                    });
+                } 
+                else 
+                {
+                    Console.WriteLine(powerId.PowerId);
+                    addItems.Add(new {
+                        CharId = character.Id,
+                        PowerId = powerId.PowerId,
+                    });
+                }
             }
 
             // update object reference and save
-            character.DisciplinePowers = newPowers;
-            if (character.Id is not null)
+            using (var conn = DataContext.Instance.Connect())
             {
-                newPowers.Save((int)character.Id);
-            }
-            else
-            {
-                character.Save();
+                conn.Open();
+                using (var trans = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        if (removeItems.Count > 0)
+                        {
+                            string sql =
+                            @"
+                                DELETE FROM melpominee_character_discipline_powers
+                                WHERE CharId = @CharId AND PowerId = @PowerId;
+                            ";
+                            conn.Execute(sql, removeItems);
+                        }
+                        if (addItems.Count > 0)
+                        {
+                            string sql =
+                            @"
+                                INSERT INTO melpominee_character_discipline_powers
+                                    (CharId, PowerId)
+                                VALUES
+                                    (@CharId, @PowerId);
+                            ";
+                            conn.Execute(sql, addItems);
+                        }
+                        character.DisciplinePowers = VampireV5DisciplinePowers.Load(conn, (int)Id);
+                    }
+                    catch(Exception)
+                    {
+                        trans.Rollback();
+                        throw;
+                    }
+                    trans.Commit();
+                }
             }
         }
     }

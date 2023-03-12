@@ -307,7 +307,9 @@ const CharacterSheet = () => {
                     return 0;
                   }),
                 });
-                const powerUpdate = async (PowerIds: string[]) => {
+                const powerUpdate = async (
+                  data: { powerId: string; remove: boolean }[]
+                ) => {
                   const updateResult = await fetch(
                     `/api/vtmv5/character/powers/${currCharacter.id}/`,
                     {
@@ -317,7 +319,7 @@ const CharacterSheet = () => {
                         'Content-Type': 'application/json',
                       },
                       body: JSON.stringify({
-                        PowerIds,
+                        PowerIds: data,
                       }),
                     }
                   );
@@ -337,7 +339,16 @@ const CharacterSheet = () => {
                     }
                   }
                 };
-                powerUpdate(newPowers).catch(console.error);
+                // configure payload
+                const changeData: { powerId: string; remove: boolean }[] = [];
+                if (oldVal !== '') {
+                  changeData.push({ powerId: oldVal, remove: true });
+                }
+                if (newVal !== '') {
+                  changeData.push({ powerId: newVal, remove: false });
+                }
+                console.log(changeData);
+                powerUpdate(changeData).catch(console.error);
               }
             }}
           />

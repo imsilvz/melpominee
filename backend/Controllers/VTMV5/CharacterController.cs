@@ -155,4 +155,51 @@ public class CharacterController : ControllerBase
             Error = "not_found"
         };
     }
+
+    [HttpGet("disciplines/{charId:int}", Name = "Get Character Disciplines")]
+    public VampireDisciplinesResponse GetDisciplines(int charId)
+    {
+        VampireV5Disciplines? disciplines;
+        if(charId > 0)
+        {
+            disciplines = VampireV5Disciplines.Load(charId); 
+            if(disciplines is not null)
+            {
+                return new VampireDisciplinesResponse
+                {
+                    Success = true,
+                    Disciplines = disciplines,
+                };
+            }
+        }
+        return new VampireDisciplinesResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
+    
+    [HttpPut("disciplines/{charId:int}", Name = "Update Character Disciplines")]
+    public VampireCharacterResponse UpdateDisciplines(int charId, [FromBody] VampireDisciplinesUpdate update)
+    {
+        VampireV5Character? character;
+        if(charId > 0)
+        {
+            character = VampireV5Character.GetCharacter(charId); 
+            if(character is not null && character.Loaded)
+            {
+                update.Apply(character);
+                return new VampireCharacterResponse
+                {
+                    Success = true,
+                    Character = character
+                };
+            }
+        }
+        return new VampireCharacterResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
 }

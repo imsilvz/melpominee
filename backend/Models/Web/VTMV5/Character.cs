@@ -154,3 +154,31 @@ public class VampireSkillsUpdate
         }
     }
 }
+
+public class VampireDisciplinesResponse 
+{
+    public bool Success { get; set; }
+    public string? Error { get; set; }
+    public VampireV5Disciplines? Disciplines { get; set; }
+}
+
+public class VampireDisciplinesUpdate
+{
+    public string? School { get; set; }
+    public int Score { get; set; }
+    public void Apply(VampireV5Character character)
+    {
+        var disc = character.Disciplines;
+        if (!string.IsNullOrEmpty(School)) {
+            disc[School] = Score;
+            if (character.Id is not null)
+            {
+                disc.Save((int)character.Id);
+            }
+            else
+            {
+                character.Save();
+            }
+        }
+    }
+}

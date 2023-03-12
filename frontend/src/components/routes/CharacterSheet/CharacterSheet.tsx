@@ -238,6 +238,35 @@ const CharacterSheet = () => {
                     [school]: newVal,
                   },
                 });
+                // fire network request
+                (async () => {
+                  const updateResult = await fetch(
+                    `/api/vtmv5/character/disciplines/${currCharacter.id}/`,
+                    {
+                      method: 'PUT',
+                      headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ school, score: newVal }),
+                    }
+                  );
+                  if (updateResult.ok) {
+                    const updateJson =
+                      await (updateResult.json() as Promise<APICharacterUpdateResponse>);
+                    if (updateJson.success && updateJson.character) {
+                      setSavedCharacter(updateJson.character);
+                    } else {
+                      if (savedCharacter) {
+                        setCurrCharacter({
+                          ...savedCharacter,
+                        });
+                      } else {
+                        setCurrCharacter(null);
+                      }
+                    }
+                  }
+                })().catch(console.error);
               }
             }}
             onPowerChange={(oldVal, newVal, schoolChange) => {

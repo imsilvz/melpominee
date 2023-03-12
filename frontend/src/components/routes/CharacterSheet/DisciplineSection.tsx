@@ -268,6 +268,9 @@ const DisciplineSection = ({
       const layoutKeys = Object.keys(newSectionLayout);
       for (let i = 0; i < layoutKeys.length; i++) {
         const tileInfo = newSectionLayout[parseInt(layoutKeys[i], 10)];
+        // while we're doing this, update tile levels
+        tileInfo.level =
+          levels[tileInfo.school as keyof CharacterDisciplines] || 0;
         layoutPowers.push(...tileInfo.powers);
       }
       const toAdd = powers.filter((powerId) => !layoutPowers.includes(powerId));

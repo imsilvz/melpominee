@@ -9,7 +9,13 @@ import {
 } from '../../../redux/reducers/masterdataReducer';
 
 // types
-import { Character } from '../../../types/Character';
+import {
+  Character,
+  CharacterAttributes,
+  CharacterDisciplines,
+  CharacterHeader,
+  CharacterSkills,
+} from '../../../types/Character';
 
 // local files
 import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
@@ -29,7 +35,11 @@ interface APICharacterSheetResponse {
 interface APICharacterUpdateResponse {
   success: boolean;
   error?: string;
-  character?: Character;
+  character?: CharacterHeader;
+  attributes?: CharacterAttributes;
+  skills?: CharacterSkills;
+  disciplines?: CharacterDisciplines;
+  powers?: string[];
 }
 
 const CharacterSheet = () => {
@@ -73,7 +83,6 @@ const CharacterSheet = () => {
             character={currCharacter}
             onChange={(field, value) => {
               if (Object.prototype.hasOwnProperty.call(currCharacter, field)) {
-                const debounceExempt = ['clan', 'predatorType'];
                 setCurrCharacter({
                   ...currCharacter,
                   [field]: value,
@@ -89,42 +98,46 @@ const CharacterSheet = () => {
                 // create next timeout
                 debounceRef?.current?.set(
                   field,
-                  setTimeout(
-                    () => {
-                      // remove previous from map since it has triggered
-                      debounceRef?.current?.delete(field);
-                      // fire function
-                      (async () => {
-                        const updateResult = await fetch(
-                          `/api/vtmv5/character/${currCharacter.id}/`,
-                          {
-                            method: 'PUT',
-                            headers: {
-                              Accept: 'application/json',
-                              'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ [field]: value }),
-                          }
-                        );
-                        if (updateResult.ok) {
-                          const updateJson =
-                            await (updateResult.json() as Promise<APICharacterUpdateResponse>);
-                          if (updateJson.success && updateJson.character) {
-                            setSavedCharacter(updateJson.character);
+                  setTimeout(() => {
+                    // remove previous from map since it has triggered
+                    debounceRef?.current?.delete(field);
+                    // fire function
+                    (async () => {
+                      const updateResult = await fetch(
+                        `/api/vtmv5/character/${currCharacter.id}/`,
+                        {
+                          method: 'PUT',
+                          headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({ [field]: value }),
+                        }
+                      );
+                      if (updateResult.ok) {
+                        const updateJson =
+                          await (updateResult.json() as Promise<APICharacterUpdateResponse>);
+                        if (
+                          savedCharacter &&
+                          updateJson.success &&
+                          updateJson.character
+                        ) {
+                          setSavedCharacter({
+                            ...savedCharacter,
+                            ...updateJson.character,
+                          });
+                        } else {
+                          if (savedCharacter) {
+                            setCurrCharacter({
+                              ...savedCharacter,
+                            });
                           } else {
-                            if (savedCharacter) {
-                              setCurrCharacter({
-                                ...savedCharacter,
-                              });
-                            } else {
-                              setCurrCharacter(null);
-                            }
+                            setCurrCharacter(null);
                           }
                         }
-                      })().catch(console.error);
-                    },
-                    debounceExempt.includes(field) ? 0 : 250
-                  )
+                      }
+                    })().catch(console.error);
+                  }, 250)
                 );
               }
             }}
@@ -156,8 +169,17 @@ const CharacterSheet = () => {
                   if (updateResult.ok) {
                     const updateJson =
                       await (updateResult.json() as Promise<APICharacterUpdateResponse>);
-                    if (updateJson.success && updateJson.character) {
-                      setSavedCharacter(updateJson.character);
+                    if (
+                      savedCharacter &&
+                      updateJson.success &&
+                      updateJson.attributes
+                    ) {
+                      setSavedCharacter({
+                        ...savedCharacter,
+                        attributes: {
+                          ...updateJson.attributes,
+                        },
+                      });
                     } else {
                       if (savedCharacter) {
                         setCurrCharacter({
@@ -210,8 +232,17 @@ const CharacterSheet = () => {
                       if (updateResult.ok) {
                         const updateJson =
                           await (updateResult.json() as Promise<APICharacterUpdateResponse>);
-                        if (updateJson.success && updateJson.character) {
-                          setSavedCharacter(updateJson.character);
+                        if (
+                          savedCharacter &&
+                          updateJson.success &&
+                          updateJson.skills
+                        ) {
+                          setSavedCharacter({
+                            ...savedCharacter,
+                            skills: {
+                              ...updateJson.skills,
+                            },
+                          });
                         } else {
                           if (savedCharacter) {
                             setCurrCharacter({
@@ -258,8 +289,17 @@ const CharacterSheet = () => {
                   if (updateResult.ok) {
                     const updateJson =
                       await (updateResult.json() as Promise<APICharacterUpdateResponse>);
-                    if (updateJson.success && updateJson.character) {
-                      setSavedCharacter(updateJson.character);
+                    if (
+                      savedCharacter &&
+                      updateJson.success &&
+                      updateJson.disciplines
+                    ) {
+                      setSavedCharacter({
+                        ...savedCharacter,
+                        disciplines: {
+                          ...updateJson.disciplines,
+                        },
+                      });
                     } else {
                       if (savedCharacter) {
                         setCurrCharacter({
@@ -326,8 +366,15 @@ const CharacterSheet = () => {
                   if (updateResult.ok) {
                     const updateJson =
                       await (updateResult.json() as Promise<APICharacterUpdateResponse>);
-                    if (updateJson.success && updateJson.character) {
-                      setSavedCharacter(updateJson.character);
+                    if (
+                      savedCharacter &&
+                      updateJson.success &&
+                      updateJson.powers
+                    ) {
+                      setSavedCharacter({
+                        ...savedCharacter,
+                        disciplinePowers: [...updateJson.powers],
+                      });
                     } else {
                       if (savedCharacter) {
                         setCurrCharacter({
@@ -347,7 +394,6 @@ const CharacterSheet = () => {
                 if (newVal !== '') {
                   changeData.push({ powerId: newVal, remove: false });
                 }
-                console.log(changeData);
                 powerUpdate(changeData).catch(console.error);
               }
             }}

@@ -298,6 +298,7 @@ const DisciplineSection = ({
       toAdd.forEach((addVal) => {
         let added = false;
         const powerInfo = disciplinePowers[addVal];
+        console.log(addVal, powerInfo);
         for (let i = 0; i < layoutKeys.length; i++) {
           const tileInfo = newSectionLayout[parseInt(layoutKeys[i], 10)];
           if (tileInfo.school === powerInfo.school) {

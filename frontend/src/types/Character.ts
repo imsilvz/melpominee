@@ -24,6 +24,22 @@ export interface Character {
   bloodPotency: number;
 }
 
+export interface CharacterHeader {
+  id: number;
+  name: string;
+  concept: string;
+  chronicle: string;
+  ambition: string;
+  desire: string;
+  sire: string;
+  generation: number;
+  clan: string;
+  predatorType: string;
+  hunger: number;
+  resonance: string;
+  bloodPotency: number;
+}
+
 export interface CharacterAttributes {
   strength: number;
   dexterity: number;

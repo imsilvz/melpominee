@@ -39,7 +39,7 @@ public class CharacterController : ControllerBase
     }
 
     [HttpPut("{charId:int}", Name = "Update Character")]
-    public VampireCharacterResponse Update(int charId, [FromBody] VampireCharacterUpdate update)
+    public VampireHeaderResponse Update(int charId, [FromBody] VampireCharacterUpdate update)
     {
         VampireV5Character? character;
         if(charId > 0)
@@ -48,14 +48,14 @@ public class CharacterController : ControllerBase
             if(character is not null && character.Loaded)
             {
                 update.Apply(character);
-                return new VampireCharacterResponse
+                return new VampireHeaderResponse
                 {
                     Success = true,
-                    Character = character
+                    Character = character.GetHeader()
                 };
             }
         }
-        return new VampireCharacterResponse
+        return new VampireHeaderResponse
         {
             Success = false,
             Error = "not_found"
@@ -86,7 +86,7 @@ public class CharacterController : ControllerBase
     }
     
     [HttpPut("attributes/{charId:int}", Name = "Update Character Attributes")]
-    public VampireCharacterResponse UpdateAttributes(int charId, [FromBody] VampireAttributesUpdate update)
+    public VampireAttributesResponse UpdateAttributes(int charId, [FromBody] VampireAttributesUpdate update)
     {
         VampireV5Character? character;
         if(charId > 0)
@@ -95,14 +95,14 @@ public class CharacterController : ControllerBase
             if(character is not null && character.Loaded)
             {
                 update.Apply(character);
-                return new VampireCharacterResponse
+                return new VampireAttributesResponse
                 {
                     Success = true,
-                    Character = character
+                    Attributes = character.Attributes
                 };
             }
         }
-        return new VampireCharacterResponse
+        return new VampireAttributesResponse
         {
             Success = false,
             Error = "not_found"
@@ -133,7 +133,7 @@ public class CharacterController : ControllerBase
     }
     
     [HttpPut("skills/{charId:int}", Name = "Update Character Skills")]
-    public VampireCharacterResponse UpdateSkills(int charId, [FromBody] VampireSkillsUpdate update)
+    public VampireSkillsResponse UpdateSkills(int charId, [FromBody] VampireSkillsUpdate update)
     {
         VampireV5Character? character;
         if(charId > 0)
@@ -142,14 +142,14 @@ public class CharacterController : ControllerBase
             if(character is not null && character.Loaded)
             {
                 update.Apply(character);
-                return new VampireCharacterResponse
+                return new VampireSkillsResponse
                 {
                     Success = true,
-                    Character = character
+                    Skills = character.Skills
                 };
             }
         }
-        return new VampireCharacterResponse
+        return new VampireSkillsResponse
         {
             Success = false,
             Error = "not_found"
@@ -180,7 +180,7 @@ public class CharacterController : ControllerBase
     }
     
     [HttpPut("disciplines/{charId:int}", Name = "Update Character Disciplines")]
-    public VampireCharacterResponse UpdateDisciplines(int charId, [FromBody] VampireDisciplinesUpdate update)
+    public VampireDisciplinesResponse UpdateDisciplines(int charId, [FromBody] VampireDisciplinesUpdate update)
     {
         VampireV5Character? character;
         if(charId > 0)
@@ -189,14 +189,14 @@ public class CharacterController : ControllerBase
             if(character is not null && character.Loaded)
             {
                 update.Apply(character);
-                return new VampireCharacterResponse
+                return new VampireDisciplinesResponse
                 {
                     Success = true,
-                    Character = character
+                    Disciplines = character.Disciplines
                 };
             }
         }
-        return new VampireCharacterResponse
+        return new VampireDisciplinesResponse
         {
             Success = false,
             Error = "not_found"
@@ -215,7 +215,7 @@ public class CharacterController : ControllerBase
                 return new VampirePowersResponse
                 {
                     Success = true,
-                    Powers = powers,
+                    Powers = powers.GetIdList(),
                 };
             }
         }
@@ -227,7 +227,7 @@ public class CharacterController : ControllerBase
     }
     
     [HttpPut("powers/{charId:int}", Name = "Update Character Powers")]
-    public VampireCharacterResponse UpdatePowers(int charId, [FromBody] VampirePowersUpdate update)
+    public VampirePowersResponse UpdatePowers(int charId, [FromBody] VampirePowersUpdate update)
     {
         VampireV5Character? character;
         if(charId > 0)
@@ -236,14 +236,14 @@ public class CharacterController : ControllerBase
             if(character is not null && character.Loaded)
             {
                 update.Apply(character);
-                return new VampireCharacterResponse
+                return new VampirePowersResponse
                 {
                     Success = true,
-                    Character = character
+                    Powers = character.DisciplinePowers.GetIdList()
                 };
             }
         }
-        return new VampireCharacterResponse
+        return new VampirePowersResponse
         {
             Success = false,
             Error = "not_found"

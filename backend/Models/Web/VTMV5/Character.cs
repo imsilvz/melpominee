@@ -11,6 +11,13 @@ public class VampireCharacterResponse
     public VampireV5Character? Character { get; set; }
 }
 
+public class VampireHeaderResponse
+{
+    public bool Success { get; set; }
+    public string? Error { get; set; }
+    public VampireV5Header? Character { get; set; }
+}
+
 public class VampireCharacterUpdate
 {
     public string? Name { get; set; }
@@ -22,6 +29,9 @@ public class VampireCharacterUpdate
     public int? Generation { get; set; }
     public string? Clan { get; set; }
     public string? PredatorType { get; set; }
+    public int? Hunger { get; set; }
+    public string? Resonance { get; set; }
+    public int? BloodPotency { get; set; }
     public void Apply(VampireV5Character character)
     {
         character.Name = Name ?? character.Name;
@@ -35,6 +45,9 @@ public class VampireCharacterUpdate
             VampireClan.GetClan(Clan) : character.Clan;
         character.PredatorType = PredatorType is not null ? 
             VampirePredatorType.GetPredatorType(PredatorType) : character.PredatorType;
+        character.Hunger = Hunger ?? character.Hunger;
+        character.Resonance = Resonance ?? character.Resonance;
+        character.BloodPotency = BloodPotency ?? character.BloodPotency;
         character.Save();
     }
 }
@@ -111,15 +124,15 @@ public class VampireAttributesUpdate
                         UPDATE SET
                             Score = @Score;
                     ";
-                    conn.Execute(update, updateList);
-                    character.Attributes = VampireV5Attributes.Load(conn, (int)Id);
+                    conn.Execute(update, updateList, transaction: trans);
+                    character.Attributes = VampireV5Attributes.Load(conn, trans, (int)Id);
+                    trans.Commit();
                 }
                 catch(Exception)
                 {
                     trans.Rollback();
                     throw;
                 }
-                trans.Commit();
             }
         }
     }
@@ -218,15 +231,15 @@ public class VampireSkillsUpdate
                             Speciality = @Speciality,
                             Score = @Score;
                     ";
-                    conn.Execute(sql, updateList);
-                    character.Skills = VampireV5Skills.Load(conn, (int)Id);
+                    conn.Execute(sql, updateList, transaction: trans);
+                    character.Skills = VampireV5Skills.Load(conn, trans, (int)Id);
+                    trans.Commit();
                 }
                 catch(Exception)
                 {
                     trans.Rollback();
                     throw;
                 }
-                trans.Commit();
             }
         }
     }
@@ -287,15 +300,15 @@ public class VampireDisciplinesUpdate
                                     Score = @Score;
                             ";
                         }
-                        conn.Execute(sql, new { CharId = Id, School = School, Score = Score });
-                        character.Disciplines = VampireV5Disciplines.Load(conn, (int)Id);
+                        conn.Execute(sql, new { CharId = Id, School = School, Score = Score }, transaction: trans);
+                        character.Disciplines = VampireV5Disciplines.Load(conn, trans, (int)Id);
+                        trans.Commit();
                     }
                     catch(Exception)
                     {
                         trans.Rollback();
                         throw;
                     }
-                    trans.Commit();
                 }
             }
         }
@@ -306,7 +319,7 @@ public class VampirePowersResponse
 {
     public bool Success { get; set; }
     public string? Error { get; set; }
-    public VampireV5DisciplinePowers? Powers { get; set; }
+    public List<string>? Powers { get; set; }
 }
 
 public class VampirePowerUpdateItem
@@ -371,7 +384,7 @@ public class VampirePowersUpdate
                                 DELETE FROM melpominee_character_discipline_powers
                                 WHERE CharId = @CharId AND PowerId = @PowerId;
                             ";
-                            conn.Execute(sql, removeItems);
+                            conn.Execute(sql, removeItems, transaction: trans);
                         }
                         if (addItems.Count > 0)
                         {
@@ -382,16 +395,16 @@ public class VampirePowersUpdate
                                 VALUES
                                     (@CharId, @PowerId);
                             ";
-                            conn.Execute(sql, addItems);
+                            conn.Execute(sql, addItems, transaction: trans);
                         }
-                        character.DisciplinePowers = VampireV5DisciplinePowers.Load(conn, (int)Id);
+                        character.DisciplinePowers = VampireV5DisciplinePowers.Load(conn, trans, (int)Id);
+                        trans.Commit();
                     }
                     catch(Exception)
                     {
                         trans.Rollback();
                         throw;
                     }
-                    trans.Commit();
                 }
             }
         }

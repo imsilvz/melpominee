@@ -45,6 +45,26 @@ public class VampireV5Character : BaseCharacterSheet
         GameType = "VTMV5";
     }
 
+    public VampireV5Header GetHeader()
+    {
+        var header = new VampireV5Header()
+        {
+            Name = Name,
+            Concept = Concept,
+            Chronicle = Chronicle,
+            Ambition = Ambition,
+            Desire = Desire,
+            Sire = Sire,
+            Generation = Generation,
+            Clan = Clan,
+            PredatorType = PredatorType,
+            Hunger = Hunger,
+            Resonance = Resonance,
+            BloodPotency = BloodPotency,
+        };
+        return header;
+    }
+
     public override bool Save()
     {
         using (var conn = DataContext.Instance.Connect())
@@ -76,7 +96,7 @@ public class VampireV5Character : BaseCharacterSheet
                                 )
                             RETURNING Id;
                         ";
-                        Id = conn.ExecuteScalar<int>(sql, this);
+                        Id = conn.ExecuteScalar<int>(sql, this, transaction: trans);
                     } else {
                         sql =
                         @"
@@ -110,13 +130,13 @@ public class VampireV5Character : BaseCharacterSheet
                                 BloodPotency = @BloodPotency
                             RETURNING Id;
                         ";
-                        conn.ExecuteScalar<int>(sql, this);
+                        conn.ExecuteScalar<int>(sql, this, transaction: trans);
                     }
-                    Attributes.Save(conn, (int) Id);
-                    Skills.Save(conn, (int)Id);
-                    SecondaryStats.Save(conn, (int)Id);
-                    Disciplines.Save(conn, (int)Id);
-                    DisciplinePowers.Save(conn, (int)Id);
+                    Attributes.Save(conn, trans, (int) Id);
+                    Skills.Save(conn, trans, (int)Id);
+                    SecondaryStats.Save(conn, trans, (int)Id);
+                    Disciplines.Save(conn, trans, (int)Id);
+                    DisciplinePowers.Save(conn, trans, (int)Id);
                     trans.Commit();
                 }
                 catch(Exception)
@@ -157,11 +177,11 @@ public class VampireV5Character : BaseCharacterSheet
                 }
 
                 // fetch dependant objects
-                var attributes = VampireV5Attributes.Load(conn, id);
-                var skills = VampireV5Skills.Load(conn, id);
-                var secondaryStats = VampireV5SecondaryStats.Load(conn, id);
-                var disciplines = VampireV5Disciplines.Load(conn, id);
-                var disciplinePowers = VampireV5DisciplinePowers.Load(conn, id);
+                var attributes = VampireV5Attributes.Load(conn, trans, id);
+                var skills = VampireV5Skills.Load(conn, trans, id);
+                var secondaryStats = VampireV5SecondaryStats.Load(conn, trans, id);
+                var disciplines = VampireV5Disciplines.Load(conn, trans, id);
+                var disciplinePowers = VampireV5DisciplinePowers.Load(conn, trans, id);
 
                 // if any fail to load, keep defaults
                 user.Attributes = attributes ?? user.Attributes;
@@ -174,6 +194,24 @@ public class VampireV5Character : BaseCharacterSheet
         user.Loaded = true;
         return user;
     }
+}
+
+public class VampireV5Header
+{
+    public string Name { get; set; } = "";
+    public string Concept { get; set; } = "";
+    public string Chronicle { get; set; } = ""; // inherit from GameId
+    public string Ambition { get; set; } = "";
+    public string Desire { get; set; } = "";
+    public string Sire { get; set; } = "";
+    public int Generation { get; set; } = 13;
+    [JsonConverter(typeof(VampireClanJsonConverter))]
+    public VampireClan? Clan { get; set; }
+    [JsonConverter(typeof(VampirePredatorTypeJsonConverter))]
+    public VampirePredatorType? PredatorType { get; set; }
+    public int Hunger { get; set; } = 0;
+    public string Resonance { get; set; } = "";
+    public int BloodPotency { get; set; } = 0;
 }
 
 public class VampireV5Attributes
@@ -197,7 +235,7 @@ public class VampireV5Attributes
             {
                 try
                 {
-                    bool res = Save(conn, charId);
+                    bool res = Save(conn, trans, charId);
                     trans.Commit();
                     return res;
                 }
@@ -210,7 +248,7 @@ public class VampireV5Attributes
         }
     }
 
-    public bool Save(IDbConnection conn, int charId)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
     {
         // gather values
         List<object> rowList = new List<object>();
@@ -233,7 +271,7 @@ public class VampireV5Attributes
             UPDATE SET
                 Score = @Score;
         ";
-        conn.Execute(sql, rowList);
+        conn.Execute(sql, rowList, transaction: trans);
         return true;
     }
 
@@ -242,11 +280,24 @@ public class VampireV5Attributes
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();
-            return Load(conn, charId);
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var result = Load(conn, trans, charId);
+                    trans.Commit();
+                    return result;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
         }
     }
 
-    public static VampireV5Attributes Load(IDbConnection conn, int charId)
+    public static VampireV5Attributes Load(IDbConnection conn, IDbTransaction trans, int charId)
     {
         VampireV5Attributes attr = new VampireV5Attributes();
         var sql =
@@ -255,7 +306,7 @@ public class VampireV5Attributes
             FROM melpominee_character_attributes
             WHERE CharId = @CharId;
         ";
-        var results = conn.Query(sql, new { CharId = charId });
+        var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
         foreach(var result in results)
         {
             Type attrType = typeof(VampireV5Attributes);                   
@@ -311,7 +362,7 @@ public class VampireV5Skills
             {
                 try
                 {
-                    bool res = Save(conn, charId);
+                    bool res = Save(conn, trans, charId);
                     trans.Commit();
                     return res;
                 }
@@ -324,7 +375,7 @@ public class VampireV5Skills
         }
     }
 
-    public bool Save(IDbConnection conn, int charId)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
     {
         // gather values
         List<object> rowList = new List<object>();
@@ -353,7 +404,7 @@ public class VampireV5Skills
                 Speciality = @Speciality,
                 Score = @Score;
         ";
-        conn.Execute(sql, rowList);
+        conn.Execute(sql, rowList, transaction: trans);
         return true;
     }
 
@@ -362,11 +413,24 @@ public class VampireV5Skills
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();
-            return Load(conn, charId);
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var result = Load(conn, trans, charId);
+                    trans.Commit();
+                    return result;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
         }
     }
 
-    public static VampireV5Skills Load(IDbConnection conn, int charId)
+    public static VampireV5Skills Load(IDbConnection conn, IDbTransaction trans, int charId)
     {
         VampireV5Skills skills = new VampireV5Skills();
         var sql =
@@ -375,7 +439,7 @@ public class VampireV5Skills
             FROM melpominee_character_skills
             WHERE CharId = @CharId;
         ";
-        var results = conn.Query(sql, new { CharId = charId });
+        var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
         foreach(var result in results)
         {
             VampireV5Skill skill = new VampireV5Skill()
@@ -417,7 +481,7 @@ public class VampireV5SecondaryStats
             {
                 try
                 {
-                    bool res = Save(conn, charId);
+                    bool res = Save(conn, trans, charId);
                     trans.Commit();
                     return res;
                 }
@@ -430,7 +494,7 @@ public class VampireV5SecondaryStats
         }
     }
 
-    public bool Save(IDbConnection conn, int charId)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
     {
         // gather values
         List<object> rowList = new List<object>();
@@ -466,7 +530,7 @@ public class VampireV5SecondaryStats
                 SuperficialDamage = @SuperficialDamage,
                 AggravatedDamage = @AggravatedDamage;
         ";
-        conn.Execute(sql, rowList);
+        conn.Execute(sql, rowList, transaction: trans);
         return true;
     }
 
@@ -475,11 +539,24 @@ public class VampireV5SecondaryStats
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();
-            return Load(conn, charId);
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var result = Load(conn, trans, charId);
+                    trans.Commit();
+                    return result;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
         }
     }
 
-    public static VampireV5SecondaryStats? Load(IDbConnection conn, int charId)
+    public static VampireV5SecondaryStats? Load(IDbConnection conn, IDbTransaction trans, int charId)
     {
         VampireV5SecondaryStats stats = new VampireV5SecondaryStats();
         var sql =
@@ -490,7 +567,7 @@ public class VampireV5SecondaryStats
             FROM melpominee_character_secondary
             WHERE CharId = @CharId;
         ";
-        var results = conn.Query(sql, new { CharId = charId });
+        var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
         foreach(var result in results)
         {
             VampireV5SecondaryStat stat = new VampireV5SecondaryStat()

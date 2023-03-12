@@ -148,7 +148,7 @@ public class VampireV5Disciplines : IDictionary<string, int>
             {
                 try
                 {
-                    bool res = Save(conn, charId);
+                    bool res = Save(conn, trans, charId);
                     trans.Commit();
                     return res;
                 }
@@ -161,7 +161,7 @@ public class VampireV5Disciplines : IDictionary<string, int>
         }
     }
 
-    public bool Save(IDbConnection conn, int charId)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
     {
         // gather values
         List<object> rowList = new List<object>();
@@ -181,7 +181,7 @@ public class VampireV5Disciplines : IDictionary<string, int>
             melpominee_character_disciplines
             WHERE CharId = @CharId;
         ";
-        conn.Execute(sql, new { CharId = charId });
+        conn.Execute(sql, new { CharId = charId }, transaction: trans);
 
         // make sql query
         sql =
@@ -194,7 +194,7 @@ public class VampireV5Disciplines : IDictionary<string, int>
             UPDATE SET
                 Score = @Score;
         ";
-        conn.Execute(sql, rowList);
+        conn.Execute(sql, rowList, transaction: trans);
         return true;
     }
 
@@ -203,11 +203,24 @@ public class VampireV5Disciplines : IDictionary<string, int>
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();
-            return Load(conn, charId);
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var result = Load(conn, trans, charId);
+                    trans.Commit();
+                    return result;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
         }
     }
 
-    public static VampireV5Disciplines Load(IDbConnection conn, int charId)
+    public static VampireV5Disciplines Load(IDbConnection conn, IDbTransaction trans, int charId)
     {
         VampireV5Disciplines disciplines = new VampireV5Disciplines();
         var sql = 
@@ -216,7 +229,7 @@ public class VampireV5Disciplines : IDictionary<string, int>
             FROM melpominee_character_disciplines
             WHERE CharId = @CharId;
         ";
-        var results = conn.Query(sql, new { CharId = charId });
+        var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
         foreach(var result in results)
         {
             disciplines[(string)result.Discipline] = (int)result.Score;
@@ -294,7 +307,7 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
             {
                 try
                 {
-                    bool res = Save(conn, charId);
+                    bool res = Save(conn, trans, charId);
                     trans.Commit();
                     return res;
                 }
@@ -307,7 +320,17 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
         }
     }
 
-    public bool Save(IDbConnection conn, int charId)
+    public List<string> GetIdList()
+    {
+        var ret = new List<string>();
+        foreach(var power in this)
+        {
+            ret.Add(power.Id);
+        }
+        return ret;
+    }
+
+    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
     {
         // gather values
         List<object> rowList = new List<object>();
@@ -326,7 +349,7 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
             melpominee_character_discipline_powers
             WHERE CharId = @CharId;
         ";
-        conn.Execute(sql, new { CharId = charId });
+        conn.Execute(sql, new { CharId = charId }, transaction: trans);
 
         // make sql query
         sql =
@@ -336,7 +359,7 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
             VALUES
                 (@CharId, @PowerId);
         ";
-        conn.Execute(sql, rowList);
+        conn.Execute(sql, rowList, transaction: trans);
         return true;
     }
 
@@ -345,11 +368,24 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();
-            return Load(conn, charId);
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var result = Load(conn, trans, charId);
+                    trans.Commit();
+                    return result;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
         }
     }
 
-    public static VampireV5DisciplinePowers Load(IDbConnection conn, int charId)
+    public static VampireV5DisciplinePowers Load(IDbConnection conn, IDbTransaction trans, int charId)
     {
         VampireV5DisciplinePowers powers = new VampireV5DisciplinePowers();
         var sql = 
@@ -358,7 +394,7 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
             FROM melpominee_character_discipline_powers
             WHERE CharId = @CharId;
         ";
-        var results = conn.Query(sql, new { CharId = charId });
+        var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
         foreach(var result in results)
         {
             var power = VampirePower.GetDisciplinePower(result.PowerId);

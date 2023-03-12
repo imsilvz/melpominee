@@ -18,70 +18,48 @@ public class UserManager
 
     public UserManager() {}
 
-    /* public bool Login(User user, string password)
+    public User? GetUser(string? email, bool onlyActive = false)
     {
-        // validate Login
-        if (string.IsNullOrEmpty(user.Email)) { 
-            return false; 
-        }
-
-        // check database
-        string? dbEmail = null;
-        string? dbPassword = null;
-        using (var connection = new SqliteConnection("Data Source=data/melpominee.db"))
-        {
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandText = 
-            @"
-                SELECT email, password
-                FROM melpominee_users
-                WHERE email = $email
-            ";
-            command.Parameters.AddWithValue("$email", user.Email);
-
-            using (var reader = command.ExecuteReader())
-            {
-                if (reader.Read())
-                {
-                    dbEmail = reader.GetString(0);
-                    dbPassword = reader.GetString(1);
-                }
-            }
-        }
-
-        // check if a match is found
-        if (string.IsNullOrEmpty(dbEmail) || string.IsNullOrEmpty(dbPassword))
-        {
-            return false;
-        }
-        return VerifyPassword(dbPassword, password);
-    } */
-
-    public User? Login(string email, string password)
-    {
+        User? user;
         if(string.IsNullOrEmpty(email)) 
         { 
             return null; 
         }
 
-        User? user = null;
         using (var conn = DataContext.Instance.Connect())
         {
             string sql = "SELECT * FROM melpominee_users WHERE Email = @Email";
             user = conn.QueryFirstOrDefault<User>(sql, new { Email = email });
-            if (user is null)
+            if (user is null || (onlyActive && !user.Active))
             {
                 // unable to find this user!
                 return null;
             }
+        }
+        return user;
+    }
 
-            // check password
-            if (VerifyPassword(user.Password, password))
-            {
-                // login successful!
-                return user;
-            }
+    public User? Login(string email, string password)
+    {
+        // validate input
+        if(string.IsNullOrEmpty(email)) 
+        { 
+            return null; 
+        }
+
+        // get user object
+        User? user = GetUser(email, true);
+        if (user is null)
+        {
+            // unable to find this user!
+            return null;
+        }
+
+        // check password
+        if (VerifyPassword(user.Password, password))
+        {
+            // login successful!
+            return user;
         }
         return null;
     }

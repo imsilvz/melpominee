@@ -25,21 +25,20 @@ public class AuthController : ControllerBase
     [HttpGet(Name = "Index")]
     public User Get()
     {
-        // Get Active User Data
-        User? user;
-        var userString = HttpContext.Session.GetString(UserKey);
-        if (string.IsNullOrEmpty(userString))
+        var identity = HttpContext.User.Identity;
+        if (identity is null)
         {
             return new User();
         }
         else
         {
-            user = JsonSerializer.Deserialize<User>(userString);
-            if (user is null)
+            User? user;
+            if (!identity.IsAuthenticated)
             {
                 return new User();
             }
-            return user;
+            user = UserManager.Instance.GetUser(identity.Name, true);
+            return user is null ? new User() : user;
         }
     }
 
@@ -63,6 +62,7 @@ public class AuthController : ControllerBase
                 // store it in the session
                 await HttpContext.SignInAsync
                 (
+                    "Melpominee.app.Auth",
                     new ClaimsPrincipal
                     (
                         new ClaimsIdentity

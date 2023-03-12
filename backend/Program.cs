@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Melpominee.app.Utilities;
 using Melpominee.app.Utilities.Database;
 using Melpominee.app.Models.CharacterSheets.VTMV5;

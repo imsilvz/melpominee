@@ -17,7 +17,7 @@ import Login from './routes/Auth/Login';
 import ForgotPassword from './routes/Auth/ForgotPassword';
 import Register from './routes/Auth/Register';
 import RequireAuth from './shared/Auth/RequireAuth';
-import GameList from './routes/Games/GameList/GameList';
+import CharacterList from './routes/CharacterList/CharacterList';
 import CharacterSheet from './routes/CharacterSheet/CharacterSheet';
 import LoadingSpinner from './shared/LoadingSpinner/LoadingSpinner';
 import './App.scss';
@@ -48,7 +48,7 @@ const App = () => {
               index
               element={
                 <RequireAuth>
-                  <GameList />
+                  <CharacterList />
                 </RequireAuth>
               }
             />

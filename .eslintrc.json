@@ -28,6 +28,7 @@
         "prettier"
     ],
     "rules": {
+        "no-console": "off",
         "no-plusplus": "off",
         "no-lonely-if": "off",
         "no-param-reassign": "off",

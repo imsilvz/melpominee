@@ -56,7 +56,6 @@ const CharacterSheet = () => {
     };
     // setup header text debounce
     debounceRef.current = new Map<string, ReturnType<typeof setTimeout>>();
-    // eslint-disable-next-line no-console
     fetchCharacter().catch(console.error);
   }, [id]);
 

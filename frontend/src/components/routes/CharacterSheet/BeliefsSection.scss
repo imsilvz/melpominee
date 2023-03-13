@@ -1,0 +1,28 @@
+@import "../../../global.scss";
+.charactersheet-section {
+  >.charactersheet-beliefs-inner {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 0.75rem;
+    >.charactersheet-beliefs-tile {
+      flex: 1;
+      >span {
+        >h3 {
+          font-size: 0.85rem;
+          font-style: italic;
+        }
+      }
+      >textarea {
+        width: 100%;
+        resize: none;
+        padding: 0.25rem;
+
+        color: $text-primary;
+        background-color: transparent;
+        outline: none;
+        border: 1px dotted $text-primary;
+      }
+    }
+  }
+}

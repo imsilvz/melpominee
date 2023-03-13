@@ -7,6 +7,7 @@ import { CharacterSkill, CharacterSkills } from '../../../types/Character';
 import { toTitleCase } from '../../../util/character';
 import StatDots from './StatDots';
 import './SkillsSection.scss';
+import CharacterSheetSection from './CharacterSheetSection';
 
 interface SkillsSectionProps {
   skills: CharacterSkills;
@@ -55,65 +56,53 @@ const SkillsSection = ({ skills, onChange }: SkillsSectionProps) => {
   }
 
   return (
-    <div className="charactersheet-skills">
-      <div className="charactersheet-skills-header">
-        <div className="charactersheet-skills-header-divider" />
-        <div className="charactersheet-skills-header-title">
-          <h2>Skills</h2>
-        </div>
-        <div className="charactersheet-skills-header-divider" />
-      </div>
-      <div className="charactersheet-skills-inner">
-        {skillColumns.map((column, columnIdx) => (
-          <div
-            // eslint-disable-next-line react/no-array-index-key
-            key={`skills_column${columnIdx}`}
-            className="charactersheet-skills-section"
-          >
-            {column.map((skill) => (
-              <div
-                key={`skills_item_${skill}`}
-                className="charactersheet-skill-item"
-              >
-                <div className="charactersheet-skills-item-info">
-                  <span>{toTitleCase(skill)}</span>
-                </div>
-                <div className="charactersheet-skills-speciality">
-                  <input
-                    type="text"
-                    value={skills[skill as keyof CharacterSkills].speciality}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      if (onChange) {
-                        const newSkillData = {
-                          ...skills[skill as keyof CharacterSkills],
-                        };
-                        newSkillData.speciality = event.target.value;
-                        onChange(skill, newSkillData);
-                      }
-                    }}
-                  />
-                </div>
-                <div className="charactersheet-skills-item-score">
-                  <StatDots
-                    rootKey={`skills_item_${skill}_dots`}
-                    value={skills[skill as keyof CharacterSkills].score}
-                    onChange={(oldVal, newVal) => {
-                      if (onChange) {
-                        const newSkillData = {
-                          ...skills[skill as keyof CharacterSkills],
-                        };
-                        newSkillData.score = newVal;
-                        onChange(skill, newSkillData);
-                      }
-                    }}
-                  />
-                </div>
+    <CharacterSheetSection className="charactersheet-skills-inner" title="Skills">
+      {skillColumns.map((column, columnIdx) => (
+        <div
+          // eslint-disable-next-line react/no-array-index-key
+          key={`skills_column${columnIdx}`}
+          className="charactersheet-skills-section"
+        >
+          {column.map((skill) => (
+            <div key={`skills_item_${skill}`} className="charactersheet-skill-item">
+              <div className="charactersheet-skills-item-info">
+                <span>{toTitleCase(skill)}</span>
               </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
+              <div className="charactersheet-skills-speciality">
+                <input
+                  type="text"
+                  value={skills[skill as keyof CharacterSkills].speciality}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    if (onChange) {
+                      const newSkillData = {
+                        ...skills[skill as keyof CharacterSkills],
+                      };
+                      newSkillData.speciality = event.target.value;
+                      onChange(skill, newSkillData);
+                    }
+                  }}
+                />
+              </div>
+              <div className="charactersheet-skills-item-score">
+                <StatDots
+                  rootKey={`skills_item_${skill}_dots`}
+                  value={skills[skill as keyof CharacterSkills].score}
+                  onChange={(oldVal, newVal) => {
+                    if (onChange) {
+                      const newSkillData = {
+                        ...skills[skill as keyof CharacterSkills],
+                      };
+                      newSkillData.score = newVal;
+                      onChange(skill, newSkillData);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </CharacterSheetSection>
   );
 };
 export default SkillsSection;

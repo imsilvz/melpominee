@@ -1,101 +1,71 @@
 @import "../../../global.scss";
-.charactersheet-container {
-  >.charactersheet-panel {
-    >.charactersheet-skills {
-      >.charactersheet-skills-header {
-        margin-top: 1rem;
+.charactersheet-section {
+  >.charactersheet-skills-inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+
+    >.charactersheet-skills-section {
+      display: flex;
+      flex-direction: column;
+      width: calc(33% - 1rem);
+
+      >.charactersheet-skill-item {
         display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: center;
-        gap: 2rem;
 
-        .charactersheet-skills-header-title {
-          >h2 {
-            margin: 0;
-            text-transform: uppercase;
-            font-weight: bold;
-            font-size: 1rem;
-            letter-spacing: 0.1rem;
-          }
-        }
-
-        >.charactersheet-skills-header-divider {
+        >.charactersheet-skills-speciality {
           flex: 1;
-          width: 100%;
-          height: 2px;
-          background-color: $text-primary;
+          height: 1.2em;
+
+          >input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            border-bottom: 1px solid $text-primary;
+            background-color: transparent;
+            color: $text-primary;
+
+            padding: 0 0.25rem 0 0.25rem;
+            font-size: 0.75rem;
+          }
         }
       }
 
-      >.charactersheet-skills-inner {
+      >.charactersheet-skills-item {
         display: flex;
-        justify-content: space-between;
-        gap: 1rem;
 
-        >.charactersheet-skills-section {
+        >h3 {
+          margin: 0;
+          text-align: center;
+          width: 100%;
+        }
+
+        >.charactersheet-skills-item-info {
+          flex: 1;
           display: flex;
-          flex-direction: column;
-          width: calc(33% - 1rem);
-
-          >.charactersheet-skill-item {
-            display: flex;
-
-            >.charactersheet-skills-speciality {
-              flex: 1;
-              height: 1.2em;
-
-              >input {
-                width: 100%;
-                height: 100%;
-                border: none;
-                outline: none;
-                border-bottom: 1px solid $text-primary;
-                background-color: transparent;
-                color: $text-primary;
-
-                padding: 0 0.25rem 0 0.25rem;
-                font-size: 0.75rem;
-              }
-            }
-          }
-
-          >.charactersheet-skills-item {
-            display: flex;
-
-            >h3 {
-              margin: 0;
-              text-align: center;
-              width: 100%;
-            }
-
-            >.charactersheet-skills-item-info {
-              flex: 1;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-            }
-
-            >.charactersheet-skills-item-score {
-              text-align: center;
-            }
-          }
+          justify-content: center;
+          align-items: center;
         }
 
-        >.charactersheet-skills-divider {
-          position: relative;
-          bottom: 0;
-          top: 0;
-          width: 1px;
-
-          >.charactersheet-skills-divider-inner {
-            position: absolute;
-            height: calc(100% - 25px);
-            width: 100%;
-            bottom: 0;
-            background-color: $text-primary;
-          }
+        >.charactersheet-skills-item-score {
+          text-align: center;
         }
+      }
+    }
+
+    >.charactersheet-skills-divider {
+      position: relative;
+      bottom: 0;
+      top: 0;
+      width: 1px;
+
+      >.charactersheet-skills-divider-inner {
+        position: absolute;
+        height: calc(100% - 25px);
+        width: 100%;
+        bottom: 0;
+        background-color: $text-primary;
       }
     }
   }

@@ -13,6 +13,7 @@ import { CharacterDisciplines } from '../../../types/Character';
 // local files
 import StatDots from './StatDots';
 import './DisciplineSection.scss';
+import CharacterSheetSection from './CharacterSheetSection';
 
 interface PowerRowProps {
   id: string;
@@ -369,166 +370,160 @@ const DisciplineSection = ({
   }, [disciplinePowers, characterId, levels, powers]);
 
   return (
-    <div className="charactersheet-disciplines">
-      <div className="charactersheet-disciplines-header">
-        <div className="charactersheet-disciplines-header-divider" />
-        <div className="charactersheet-disciplines-header-title">
-          <h2>Disciplines</h2>
-        </div>
-        <div className="charactersheet-disciplines-header-divider" />
-      </div>
-      <div className="charactersheet-disciplines-inner">
-        {sectionLayout &&
-          Object.keys(sectionLayout).map((tileIdx) => {
-            const tileLayout: DisciplineSectionTile =
-              sectionLayout[parseInt(tileIdx, 10)];
-            return (
-              <DisciplineTile
-                id={`disciplines-tile${tileIdx}`}
-                key={`disciplines-tile${tileIdx}`}
-                level={tileLayout.level}
-                school={tileLayout.school}
-                powers={tileLayout.powers}
-                onLevelChange={(oldVal, newVal) => {
-                  const currentSectionLayout = sectionLayoutRef?.current;
-                  if (!currentSectionLayout) {
-                    // this should only happen prior to initialization
-                    // but it will also protect character swaps from changes!
-                    return;
-                  }
-                  // get tile info and set new level
-                  const tileInfo = currentSectionLayout[parseInt(tileIdx, 10)];
-                  tileInfo.level = newVal;
-                  // iterate all tiles and remove any disciplines
-                  // which do not meet level or amalgam requirements
-                  setSectionLayout({ ...currentSectionLayout });
-                  if (onLevelChange) {
-                    onLevelChange(tileInfo.school, oldVal, newVal);
-                  }
-                }}
-                onPowerChange={(powerIdx, oldVal, newVal, schoolChange) => {
-                  const currentSectionLayout = sectionLayoutRef?.current;
-                  if (!currentSectionLayout) {
-                    // this should only happen prior to initialization
-                    // but it will also protect character swaps from changes!
-                    return;
-                  }
-                  if (!schoolChange) {
-                    // this is a change to discipline powers
-                    const oldPowerInfo = disciplinePowers[oldVal];
-                    const newPowerInfo = disciplinePowers[newVal];
-                    if (newPowerInfo) {
-                      // new power is valid, check if it is coming from elsewhere
-                      let found = false;
-                      const replaceLocation = { tile: -1, row: -1 };
-                      const sectionKeys = Object.keys(currentSectionLayout);
-                      for (let i = 0; i < sectionKeys.length; i++) {
-                        const tileInfo =
-                          currentSectionLayout[parseInt(sectionKeys[i], 10)];
-                        if (tileInfo.school === newPowerInfo.school) {
-                          for (let j = 0; j < tileInfo.powers.length; j++) {
-                            const powerInfo = tileInfo.powers[j];
-                            if (powerInfo === newPowerInfo.id) {
-                              replaceLocation.tile = i;
-                              replaceLocation.row = j;
-                              found = true;
-                              break;
-                            }
-                          }
-                          if (found) {
+    <CharacterSheetSection
+      className="charactersheet-disciplines-inner"
+      title="Disciplines"
+    >
+      {sectionLayout &&
+        Object.keys(sectionLayout).map((tileIdx) => {
+          const tileLayout: DisciplineSectionTile =
+            sectionLayout[parseInt(tileIdx, 10)];
+          return (
+            <DisciplineTile
+              id={`disciplines-tile${tileIdx}`}
+              key={`disciplines-tile${tileIdx}`}
+              level={tileLayout.level}
+              school={tileLayout.school}
+              powers={tileLayout.powers}
+              onLevelChange={(oldVal, newVal) => {
+                const currentSectionLayout = sectionLayoutRef?.current;
+                if (!currentSectionLayout) {
+                  // this should only happen prior to initialization
+                  // but it will also protect character swaps from changes!
+                  return;
+                }
+                // get tile info and set new level
+                const tileInfo = currentSectionLayout[parseInt(tileIdx, 10)];
+                tileInfo.level = newVal;
+                // iterate all tiles and remove any disciplines
+                // which do not meet level or amalgam requirements
+                setSectionLayout({ ...currentSectionLayout });
+                if (onLevelChange) {
+                  onLevelChange(tileInfo.school, oldVal, newVal);
+                }
+              }}
+              onPowerChange={(powerIdx, oldVal, newVal, schoolChange) => {
+                const currentSectionLayout = sectionLayoutRef?.current;
+                if (!currentSectionLayout) {
+                  // this should only happen prior to initialization
+                  // but it will also protect character swaps from changes!
+                  return;
+                }
+                if (!schoolChange) {
+                  // this is a change to discipline powers
+                  const oldPowerInfo = disciplinePowers[oldVal];
+                  const newPowerInfo = disciplinePowers[newVal];
+                  if (newPowerInfo) {
+                    // new power is valid, check if it is coming from elsewhere
+                    let found = false;
+                    const replaceLocation = { tile: -1, row: -1 };
+                    const sectionKeys = Object.keys(currentSectionLayout);
+                    for (let i = 0; i < sectionKeys.length; i++) {
+                      const tileInfo =
+                        currentSectionLayout[parseInt(sectionKeys[i], 10)];
+                      if (tileInfo.school === newPowerInfo.school) {
+                        for (let j = 0; j < tileInfo.powers.length; j++) {
+                          const powerInfo = tileInfo.powers[j];
+                          if (powerInfo === newPowerInfo.id) {
+                            replaceLocation.tile = i;
+                            replaceLocation.row = j;
+                            found = true;
                             break;
                           }
                         }
-                      }
-                      // if we do find another power with the 'new' id
-                      if (found) {
-                        // swap old power into 'new' power location!
-                        if (oldPowerInfo) {
-                          currentSectionLayout[replaceLocation.tile].powers[
-                            replaceLocation.row
-                          ] = oldPowerInfo.id;
-                        } else {
-                          // unset old power
-                          currentSectionLayout[replaceLocation.tile].powers =
-                            currentSectionLayout[replaceLocation.tile].powers.filter(
-                              (val) => val !== newVal,
-                            );
+                        if (found) {
+                          break;
                         }
                       }
-                      // set the new field!
-                      currentSectionLayout[parseInt(tileIdx, 10)].powers[powerIdx] =
-                        newPowerInfo.id;
-                    } else {
-                      // unset power
-                      currentSectionLayout[parseInt(tileIdx, 10)].powers =
-                        currentSectionLayout[parseInt(tileIdx, 10)].powers.filter(
-                          (val) => val !== oldVal,
-                        );
+                    }
+                    // if we do find another power with the 'new' id
+                    if (found) {
+                      // swap old power into 'new' power location!
+                      if (oldPowerInfo) {
+                        currentSectionLayout[replaceLocation.tile].powers[
+                          replaceLocation.row
+                        ] = oldPowerInfo.id;
+                      } else {
+                        // unset old power
+                        currentSectionLayout[replaceLocation.tile].powers =
+                          currentSectionLayout[replaceLocation.tile].powers.filter(
+                            (val) => val !== newVal,
+                          );
+                      }
+                    }
+                    // set the new field!
+                    currentSectionLayout[parseInt(tileIdx, 10)].powers[powerIdx] =
+                      newPowerInfo.id;
+                  } else {
+                    // unset power
+                    currentSectionLayout[parseInt(tileIdx, 10)].powers =
+                      currentSectionLayout[parseInt(tileIdx, 10)].powers.filter(
+                        (val) => val !== oldVal,
+                      );
+                  }
+                } else {
+                  // this is a change to discipline school
+                  currentSectionLayout[parseInt(tileIdx, 10)] = {
+                    school: newVal,
+                    powers: [],
+                    level: levels[newVal as keyof CharacterDisciplines] || 0,
+                  };
+                  // check to see if we need to add new blank tiles
+                  let selectedCounter = 0;
+                  const layoutKeys = Object.keys(currentSectionLayout);
+                  for (let i = 0; i < layoutKeys.length; i++) {
+                    const tileInfo =
+                      currentSectionLayout[parseInt(layoutKeys[i], 10)];
+                    // while we're doing this, update tile levels
+                    if (tileInfo.school && tileInfo.school !== '')
+                      selectedCounter += 1;
+                  }
+                  if (
+                    selectedCounter % 3 === 0 &&
+                    selectedCounter === layoutKeys.length
+                  ) {
+                    for (let i = 0; i < 3; i++) {
+                      currentSectionLayout[layoutKeys.length + i] = {
+                        school: '',
+                        powers: [],
+                        level: 0,
+                      };
                     }
                   } else {
-                    // this is a change to discipline school
-                    currentSectionLayout[parseInt(tileIdx, 10)] = {
-                      school: newVal,
-                      powers: [],
-                      level: levels[newVal as keyof CharacterDisciplines] || 0,
-                    };
-                    // check to see if we need to add new blank tiles
-                    let selectedCounter = 0;
-                    const layoutKeys = Object.keys(currentSectionLayout);
-                    for (let i = 0; i < layoutKeys.length; i++) {
-                      const tileInfo =
-                        currentSectionLayout[parseInt(layoutKeys[i], 10)];
-                      // while we're doing this, update tile levels
-                      if (tileInfo.school && tileInfo.school !== '')
-                        selectedCounter += 1;
-                    }
                     if (
-                      selectedCounter % 3 === 0 &&
-                      selectedCounter === layoutKeys.length
+                      selectedCounter - (selectedCounter % 3) <
+                      layoutKeys.length - 3
                     ) {
+                      // if no disciplines are selected in the final 3
+                      // then we should remove them to save space
+                      let slice = true;
                       for (let i = 0; i < 3; i++) {
-                        currentSectionLayout[layoutKeys.length + i] = {
-                          school: '',
-                          powers: [],
-                          level: 0,
-                        };
-                      }
-                    } else {
-                      if (
-                        selectedCounter - (selectedCounter % 3) <
-                        layoutKeys.length - 3
-                      ) {
-                        // if no disciplines are selected in the final 3
-                        // then we should remove them to save space
-                        let slice = true;
-                        for (let i = 0; i < 3; i++) {
-                          const tile =
-                            currentSectionLayout[layoutKeys.length - (i + 1)];
-                          if (tile.school && tile.school !== '') {
-                            slice = false;
-                            break;
-                          }
+                        const tile =
+                          currentSectionLayout[layoutKeys.length - (i + 1)];
+                        if (tile.school && tile.school !== '') {
+                          slice = false;
+                          break;
                         }
-                        if (slice) {
-                          for (let i = 0; i < 3; i++) {
-                            delete currentSectionLayout[layoutKeys.length - (i + 1)];
-                          }
+                      }
+                      if (slice) {
+                        for (let i = 0; i < 3; i++) {
+                          delete currentSectionLayout[layoutKeys.length - (i + 1)];
                         }
                       }
                     }
                   }
-                  // temporarily apply changes
-                  setSectionLayout({ ...currentSectionLayout });
-                  // pass this info higher up!
-                  if (onPowerChange) {
-                    onPowerChange(oldVal, newVal, schoolChange);
-                  }
-                }}
-              />
-            );
-          })}
-      </div>
-    </div>
+                }
+                // temporarily apply changes
+                setSectionLayout({ ...currentSectionLayout });
+                // pass this info higher up!
+                if (onPowerChange) {
+                  onPowerChange(oldVal, newVal, schoolChange);
+                }
+              }}
+            />
+          );
+        })}
+    </CharacterSheetSection>
   );
 };
 export default DisciplineSection;

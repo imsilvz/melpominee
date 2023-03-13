@@ -11,6 +11,16 @@
     margin: 2rem auto 2rem auto;
     width: 1024px;
     min-width: 1024px;
+    >.charactersheet-panel-split {
+      display: flex;
+      gap: 1rem;
+      >.charactersheet-panel-split-column {
+        flex: 2;
+        &:first-child {
+          flex: 1;
+        }
+      }
+    }
   }
 }
 

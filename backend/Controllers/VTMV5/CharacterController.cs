@@ -97,6 +97,37 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [HttpPost("", Name = "Create Character")]
+    public VampireCharacterCreateResponse CreateCharacter()
+    {
+        // get email of logged in user
+        string email = "";
+        var identity = HttpContext.User.Identity;
+        if (identity is null || 
+            !identity.IsAuthenticated || 
+            identity.Name is null)
+        {
+            return new VampireCharacterCreateResponse()
+            {
+                Success = false,
+                Error = "auth_error"
+            };
+        }
+        email = identity.Name;
+
+        var character = new VampireV5Character()
+        {
+            Owner = email,
+        };
+        character.Save();
+
+        return new VampireCharacterCreateResponse
+        {
+            Success = true,
+            CharacterId = character.Id
+        };
+    }
+
     [HttpGet("attributes/{charId:int}", Name = "Get Character Attributes")]
     public VampireAttributesResponse GetAttributes(int charId)
     {

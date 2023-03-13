@@ -18,6 +18,13 @@ public class VampireCharacterListResponse
     public List<VampireV5Header>? CharacterList { get; set; }
 }
 
+public class VampireCharacterCreateResponse
+{
+    public bool Success { get; set; }
+    public string? Error { get; set; }
+    public int? CharacterId { get; set; }
+}
+
 public class VampireHeaderResponse
 {
     public bool Success { get; set; }

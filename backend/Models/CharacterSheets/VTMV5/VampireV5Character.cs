@@ -21,9 +21,9 @@ public class VampireV5Character : BaseCharacterSheet
     public string Sire { get; set; } = "";
     public int Generation { get; set; } = 13;
     [JsonConverter(typeof(VampireClanJsonConverter))]
-    public VampireClan? Clan { get; set; }
+    public VampireClan? Clan { get; set; } = VampireClan.GetClan("");
     [JsonConverter(typeof(VampirePredatorTypeJsonConverter))]
-    public VampirePredatorType? PredatorType { get; set; }
+    public VampirePredatorType? PredatorType { get; set; } = VampirePredatorType.GetPredatorType("");
 
     // primary stats
     public VampireV5Attributes Attributes { get; set; } = new VampireV5Attributes();

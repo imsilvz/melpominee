@@ -129,16 +129,21 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
                 }}
               >
                 {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                <option value="" />
+                <option value="">N/A</option>
                 {predatorData &&
-                  Object.keys(predatorData).map((type) => (
-                    <option
-                      key={`charactersheet-clanselect-option-${type}`}
-                      value={type}
-                    >
-                      {predatorData[type].name}
-                    </option>
-                  ))}
+                  Object.keys(predatorData).map((type) => {
+                    if (type === '') {
+                      return null;
+                    }
+                    return (
+                      <option
+                        key={`charactersheet-clanselect-option-${type}`}
+                        value={type}
+                      >
+                        {predatorData[type].name}
+                      </option>
+                    );
+                  })}
               </select>
               <span className="select-dropdown" />
             </span>
@@ -157,16 +162,21 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
                 }}
               >
                 {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                <option value="" />
+                <option value="">Mortal</option>
                 {clanData &&
-                  Object.keys(clanData).map((clan) => (
-                    <option
-                      key={`charactersheet-clanselect-option-${clan}`}
-                      value={clan}
-                    >
-                      {clanData[clan].name}
-                    </option>
-                  ))}
+                  Object.keys(clanData).map((clan) => {
+                    if (clan === '') {
+                      return null;
+                    }
+                    return (
+                      <option
+                        key={`charactersheet-clanselect-option-${clan}`}
+                        value={clan}
+                      >
+                        {clanData[clan].name}
+                      </option>
+                    );
+                  })}
               </select>
               <span className="select-dropdown" />
             </span>

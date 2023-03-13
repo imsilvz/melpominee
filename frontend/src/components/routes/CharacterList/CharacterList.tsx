@@ -19,6 +19,12 @@ interface CharacterListResponse {
   characterList?: CharacterHeader[];
 }
 
+interface CharacterCreateResponse {
+  success: boolean;
+  error?: string;
+  characterId?: number;
+}
+
 const CharacterItem = ({ character }: CharacterItemProps) => {
   const navigate = useNavigate();
   const clanData = useAppSelector(selectClans);
@@ -40,6 +46,7 @@ const CharacterItem = ({ character }: CharacterItemProps) => {
 };
 
 const CharacterList = () => {
+  const navigate = useNavigate();
   const [characterList, setCharacterList] = useState<CharacterHeader[] | null>(
     null
   );
@@ -72,6 +79,29 @@ const CharacterList = () => {
                 character={character}
               />
             ))}
+          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+          <div
+            className="characterlist-additem"
+            onClick={() => {
+              (async () => {
+                const createRequest = await fetch(`/api/vtmv5/character/`, {
+                  method: 'POST',
+                  headers: {
+                    Accept: 'application/json',
+                  },
+                });
+                if (createRequest.ok) {
+                  const createJson: CharacterCreateResponse =
+                    await (createRequest.json() as Promise<CharacterCreateResponse>);
+                  if (createJson.characterId) {
+                    navigate(`/character/${createJson.characterId}/`);
+                  }
+                }
+              })().catch(console.error);
+            }}
+          >
+            <span>Create New Character</span>
+          </div>
         </div>
       </div>
     </div>

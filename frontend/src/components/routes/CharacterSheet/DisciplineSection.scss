@@ -117,7 +117,12 @@
               position: relative;
               cursor: pointer;
 
-              >option {
+              option {
+                color: inherit;
+                font-size: inherit;
+                background-color: #1f1f1f;
+              }
+              >optgroup {
                 color: inherit;
                 font-size: inherit;
                 background-color: #1f1f1f;

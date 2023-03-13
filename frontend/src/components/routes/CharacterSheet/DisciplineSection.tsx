@@ -66,14 +66,24 @@ const PowerRow = ({ id, level, school, power, onChange }: PowerRowProps) => {
       >
         {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
         <option value="" />
-        {Object.prototype.hasOwnProperty.call(disciplines, school) &&
-          disciplines[school].powers
-            .filter((val) => val.level <= level)
-            .map((opt) => (
-              <option key={`${id}-power-option-${opt.id}`} value={opt.id}>
-                {opt.name}
-              </option>
-            ))}
+        {Array.from(Array(level), (_skip, i) => i).map((groupLevel) => (
+          <optgroup
+            key={`${id}-${school}-group${groupLevel}`}
+            label={`Level ${groupLevel + 1}`}
+          >
+            {Object.prototype.hasOwnProperty.call(disciplines, school) &&
+              disciplines[school].powers
+                .filter((val) => val.level === groupLevel + 1)
+                .map((opt) => (
+                  <option
+                    key={`${id}-${school}-${opt.level}-option-${opt.id}`}
+                    value={opt.id}
+                  >
+                    {opt.name}
+                  </option>
+                ))}
+          </optgroup>
+        ))}
       </select>
       <span />
     </div>
@@ -360,6 +370,26 @@ const DisciplineSection = ({
           }
         }
       });
+      // check to see if we need to add new blank tiles
+      let selectedCounter = 0;
+      const newLayoutKeys = Object.keys(newSectionLayout);
+      for (let i = 0; i < newLayoutKeys.length; i++) {
+        const tileInfo = newSectionLayout[parseInt(newLayoutKeys[i], 10)];
+        // while we're doing this, update tile levels
+        if (tileInfo.school && tileInfo.school !== '') selectedCounter += 1;
+      }
+      if (
+        selectedCounter % 3 === 0 &&
+        selectedCounter === newLayoutKeys.length
+      ) {
+        for (let i = 0; i < 3; i++) {
+          newSectionLayout[newLayoutKeys.length + i] = {
+            school: '',
+            powers: [],
+            level: 0,
+          };
+        }
+      }
       sectionLayoutRef.current = newSectionLayout;
     }
     setSectionLayout(sectionLayoutRef.current);

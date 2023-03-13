@@ -44,18 +44,16 @@ const Register = () => {
             ) {
               setLoading(false);
               setRegistrationError(
-                'All fields on this page are required. Please do not leave any blank!'
+                'All fields on this page are required. Please do not leave any blank!',
               );
               return;
             }
 
             // check password and confirm password match
-            if (
-              passwordRef.current?.value !== confirmPasswordRef.current?.value
-            ) {
+            if (passwordRef.current?.value !== confirmPasswordRef.current?.value) {
               setLoading(false);
               setRegistrationError(
-                'Your password must match your confirm password!'
+                'Your password must match your confirm password!',
               );
               return;
             }
@@ -82,7 +80,7 @@ const Register = () => {
                 setRegistered(registerPayload.email);
               } else {
                 setRegistrationError(
-                  'An account is already associated with this email address.'
+                  'An account is already associated with this email address.',
                 );
               }
             }
@@ -147,10 +145,9 @@ const Register = () => {
           </div>
           <div className="input-item" style={{ textAlign: 'center' }}>
             <span className="subtitle">
-              Before you can log in, you must activate your account. An email
-              has been sent to you containing a link that will perform the
-              activation. Once this process has been completed, you will be able
-              to login.
+              Before you can log in, you must activate your account. An email has
+              been sent to you containing a link that will perform the activation.
+              Once this process has been completed, you will be able to login.
             </span>
           </div>
           <div className="input-item">

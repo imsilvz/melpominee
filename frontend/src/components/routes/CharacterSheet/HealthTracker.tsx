@@ -10,12 +10,7 @@ interface StatDotsProps {
   onChange?: (oldVal: number, newVal: number) => void;
 }
 
-const HealthTracker = ({
-  rootKey,
-  dotCount,
-  value,
-  onChange,
-}: StatDotsProps) => {
+const HealthTracker = ({ rootKey, dotCount, value, onChange }: StatDotsProps) => {
   const [dots, setDots] = useState<number>(value || 0);
   useEffect(() => {
     if (value !== undefined) {

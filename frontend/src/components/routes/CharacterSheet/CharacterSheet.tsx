@@ -45,7 +45,7 @@ interface APICharacterUpdateResponse {
 const CharacterSheet = () => {
   const { id } = useParams();
   const debounceRef = useRef<Map<string, ReturnType<typeof setTimeout>> | null>(
-    new Map<string, ReturnType<typeof setTimeout>>()
+    new Map<string, ReturnType<typeof setTimeout>>(),
   );
   const disciplines = useAppSelector(selectDisciplines);
   const disciplinePowers = useAppSelector(selectDisciplinePowers);
@@ -112,7 +112,7 @@ const CharacterSheet = () => {
                             'Content-Type': 'application/json',
                           },
                           body: JSON.stringify({ [field]: value }),
-                        }
+                        },
                       );
                       if (updateResult.ok) {
                         const updateJson =
@@ -137,7 +137,7 @@ const CharacterSheet = () => {
                         }
                       }
                     })().catch(console.error);
-                  }, 250)
+                  }, 250),
                 );
               }
             }}
@@ -164,7 +164,7 @@ const CharacterSheet = () => {
                         'Content-Type': 'application/json',
                       },
                       body: JSON.stringify({ [attribute]: value }),
-                    }
+                    },
                   );
                   if (updateResult.ok) {
                     const updateJson =
@@ -227,7 +227,7 @@ const CharacterSheet = () => {
                             'Content-Type': 'application/json',
                           },
                           body: JSON.stringify({ [skill]: skillData }),
-                        }
+                        },
                       );
                       if (updateResult.ok) {
                         const updateJson =
@@ -254,7 +254,7 @@ const CharacterSheet = () => {
                         }
                       }
                     })().catch(console.error);
-                  }, 250)
+                  }, 250),
                 );
               }
             }}
@@ -284,7 +284,7 @@ const CharacterSheet = () => {
                         'Content-Type': 'application/json',
                       },
                       body: JSON.stringify({ school, score: newVal }),
-                    }
+                    },
                   );
                   if (updateResult.ok) {
                     const updateJson =
@@ -348,7 +348,7 @@ const CharacterSheet = () => {
                   }),
                 });
                 const powerUpdate = async (
-                  data: { powerId: string; remove: boolean }[]
+                  data: { powerId: string; remove: boolean }[],
                 ) => {
                   const updateResult = await fetch(
                     `/api/vtmv5/character/powers/${currCharacter.id}/`,
@@ -361,16 +361,12 @@ const CharacterSheet = () => {
                       body: JSON.stringify({
                         PowerIds: data,
                       }),
-                    }
+                    },
                   );
                   if (updateResult.ok) {
                     const updateJson =
                       await (updateResult.json() as Promise<APICharacterUpdateResponse>);
-                    if (
-                      savedCharacter &&
-                      updateJson.success &&
-                      updateJson.powers
-                    ) {
+                    if (savedCharacter && updateJson.success && updateJson.powers) {
                       setSavedCharacter({
                         ...savedCharacter,
                         disciplinePowers: [...updateJson.powers],

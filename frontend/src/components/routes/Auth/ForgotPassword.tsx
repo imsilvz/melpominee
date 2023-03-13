@@ -64,7 +64,7 @@ const ConfirmForgotPassword = ({ email, resetKey }: ConfirmPasswordProps) => {
           if (!validatePassword(password)) {
             setLoading(false);
             setForgotError(
-              'Your password must be at least 8 characters long and have at least one number, uppercase letter, or special character.'
+              'Your password must be at least 8 characters long and have at least one number, uppercase letter, or special character.',
             );
             return;
           }
@@ -81,17 +81,14 @@ const ConfirmForgotPassword = ({ email, resetKey }: ConfirmPasswordProps) => {
             email,
             password,
           };
-          const resetRequest = await fetch(
-            `/api/auth/reset-password/confirmation`,
-            {
-              method: 'POST',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(resetPayload),
-            }
-          );
+          const resetRequest = await fetch(`/api/auth/reset-password/confirmation`, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(resetPayload),
+          });
 
           setLoading(false);
           if (resetRequest.ok) {
@@ -102,9 +99,7 @@ const ConfirmForgotPassword = ({ email, resetKey }: ConfirmPasswordProps) => {
               navigate(`/login?notice=reset&email=${email}`, { replace: true });
             } else {
               // failure
-              setForgotError(
-                'An error has occurred during the password reset.'
-              );
+              setForgotError('An error has occurred during the password reset.');
             }
           }
         }}
@@ -185,10 +180,10 @@ const ForgotPassword = () => {
           </div>
           <div className="input-item">
             <span>
-              An email has been sent with instructions how to reset your
-              password. You should receive it within a few minutes. If the email
-              does not arrive within a reasonable timeframe, please be sure to
-              check your spam or junk inboxes.
+              An email has been sent with instructions how to reset your password.
+              You should receive it within a few minutes. If the email does not
+              arrive within a reasonable timeframe, please be sure to check your spam
+              or junk inboxes.
             </span>
           </div>
           <div className="input-item">

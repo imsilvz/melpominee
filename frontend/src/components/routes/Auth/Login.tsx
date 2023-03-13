@@ -34,7 +34,7 @@ const Login = () => {
     const messageType = searchParams.get('notice');
     if (messageType === 'confirmed') {
       setLoginNotice(
-        'Your account has been activated successfully and you may now log in!'
+        'Your account has been activated successfully and you may now log in!',
       );
     } else if (messageType === 'reset') {
       setLoginNotice('Your password has been changed successfully.');
@@ -82,7 +82,7 @@ const Login = () => {
               searchParams.delete('message');
               setSearchParams(searchParams);
               setLoginError(
-                'Unable to login, please check your email and password!'
+                'Unable to login, please check your email and password!',
               );
             }
           }

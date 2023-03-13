@@ -5,10 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import initialThunk from '../redux/thunk/initial';
 import masterdataThunk from '../redux/thunk/masterdata';
-import {
-  selectUserReady,
-  selectUserEmail,
-} from '../redux/reducers/userReducer';
+import { selectUserReady, selectUserEmail } from '../redux/reducers/userReducer';
 import { selectMasterdataLoaded } from '../redux/reducers/masterdataReducer';
 
 // local files

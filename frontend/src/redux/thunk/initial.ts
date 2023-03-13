@@ -16,7 +16,7 @@ export default (): ThunkAction<void, RootState, unknown, AnyAction> =>
       dispatch(
         setUserdata({
           ...user,
-        })
+        }),
       );
     }
   };

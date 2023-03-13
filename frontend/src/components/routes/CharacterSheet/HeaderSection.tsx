@@ -116,9 +116,7 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
             </span>
           </div>
           <div className="charactersheet-header-row">
-            <span className="charactersheet-header-row-label">
-              Predator Type:
-            </span>
+            <span className="charactersheet-header-row-label">Predator Type:</span>
             <span className="charactersheet-header-row-field">
               <select
                 value={character.predatorType || ''}

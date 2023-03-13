@@ -47,14 +47,11 @@ const CharacterItem = ({ character }: CharacterItemProps) => {
 
 const CharacterList = () => {
   const navigate = useNavigate();
-  const [characterList, setCharacterList] = useState<CharacterHeader[] | null>(
-    null
-  );
+  const [characterList, setCharacterList] = useState<CharacterHeader[] | null>(null);
   const GetCharacterList = async () => {
     const listRequest = await fetch('/api/vtmv5/character/');
     if (listRequest.ok) {
-      const listJson =
-        await (listRequest.json() as Promise<CharacterListResponse>);
+      const listJson = await (listRequest.json() as Promise<CharacterListResponse>);
       if (listJson.success && listJson.characterList) {
         setCharacterList(listJson.characterList);
       }

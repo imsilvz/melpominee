@@ -32,7 +32,7 @@ interface DisciplineTileProps {
     index: number,
     oldVal: string,
     newVal: string,
-    schoolChange?: boolean
+    schoolChange?: boolean,
   ) => void;
 }
 
@@ -41,11 +41,7 @@ interface DisciplineSectionProps {
   levels: CharacterDisciplines;
   powers: string[];
   onLevelChange?: (school: string, oldVal: number, newVal: number) => void;
-  onPowerChange?: (
-    oldVal: string,
-    newVal: string,
-    schoolChange?: boolean
-  ) => void;
+  onPowerChange?: (oldVal: string, newVal: string, schoolChange?: boolean) => void;
 }
 
 const PowerRow = ({ id, level, school, power, onChange }: PowerRowProps) => {
@@ -55,8 +51,7 @@ const PowerRow = ({ id, level, school, power, onChange }: PowerRowProps) => {
       <select
         value={power || ''}
         disabled={
-          !Object.prototype.hasOwnProperty.call(disciplines, school) ||
-          level === 0
+          !Object.prototype.hasOwnProperty.call(disciplines, school) || level === 0
         }
         onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
           if (onChange) {
@@ -173,8 +168,9 @@ const DisciplineSection = ({
   // to the layout, and so we can more easily determine if it is null
   const sectionLayoutRef = useRef<DisciplineSectionLayout | null>(null);
   const disciplinePowers = useAppSelector(selectDisciplinePowers);
-  const [sectionLayout, setSectionLayout] =
-    useState<DisciplineSectionLayout | null>(null);
+  const [sectionLayout, setSectionLayout] = useState<DisciplineSectionLayout | null>(
+    null,
+  );
 
   useEffect(() => {
     // reset previous layout
@@ -287,20 +283,19 @@ const DisciplineSection = ({
       for (let i = 0; i < layoutKeys.length; i++) {
         const tileInfo = newSectionLayout[parseInt(layoutKeys[i], 10)];
         // while we're doing this, update tile levels
-        tileInfo.level =
-          levels[tileInfo.school as keyof CharacterDisciplines] || 0;
+        tileInfo.level = levels[tileInfo.school as keyof CharacterDisciplines] || 0;
         layoutPowers.push(...tileInfo.powers);
       }
       const toAdd = powers.filter((powerId) => !layoutPowers.includes(powerId));
       const toRemove = layoutPowers.filter(
-        (powerId) => powerId && !powers.includes(powerId)
+        (powerId) => powerId && !powers.includes(powerId),
       );
       // first, remove powers that do not belong
       toRemove.forEach((removeVal) => {
         for (let i = 0; i < layoutKeys.length; i++) {
           const tileInfo = newSectionLayout[parseInt(layoutKeys[i], 10)];
           tileInfo.powers = tileInfo.powers.filter(
-            (powerId) => powerId !== removeVal
+            (powerId) => powerId !== removeVal,
           );
         }
       });
@@ -308,7 +303,6 @@ const DisciplineSection = ({
       toAdd.forEach((addVal) => {
         let added = false;
         const powerInfo = disciplinePowers[addVal];
-        console.log(addVal, powerInfo);
         for (let i = 0; i < layoutKeys.length; i++) {
           const tileInfo = newSectionLayout[parseInt(layoutKeys[i], 10)];
           if (tileInfo.school === powerInfo.school) {
@@ -357,8 +351,7 @@ const DisciplineSection = ({
             newSectionLayout[offset] = {
               school: powerInfo.school,
               powers: [addVal],
-              level:
-                levels[powerInfo.school as keyof CharacterDisciplines] || 0,
+              level: levels[powerInfo.school as keyof CharacterDisciplines] || 0,
             };
             for (let i = 1; i < 3; i++) {
               newSectionLayout[offset + i] = {
@@ -370,26 +363,6 @@ const DisciplineSection = ({
           }
         }
       });
-      // check to see if we need to add new blank tiles
-      let selectedCounter = 0;
-      const newLayoutKeys = Object.keys(newSectionLayout);
-      for (let i = 0; i < newLayoutKeys.length; i++) {
-        const tileInfo = newSectionLayout[parseInt(newLayoutKeys[i], 10)];
-        // while we're doing this, update tile levels
-        if (tileInfo.school && tileInfo.school !== '') selectedCounter += 1;
-      }
-      if (
-        selectedCounter % 3 === 0 &&
-        selectedCounter === newLayoutKeys.length
-      ) {
-        for (let i = 0; i < 3; i++) {
-          newSectionLayout[newLayoutKeys.length + i] = {
-            school: '',
-            powers: [],
-            level: 0,
-          };
-        }
-      }
       sectionLayoutRef.current = newSectionLayout;
     }
     setSectionLayout(sectionLayoutRef.current);
@@ -477,21 +450,20 @@ const DisciplineSection = ({
                         } else {
                           // unset old power
                           currentSectionLayout[replaceLocation.tile].powers =
-                            currentSectionLayout[
-                              replaceLocation.tile
-                            ].powers.filter((val) => val !== newVal);
+                            currentSectionLayout[replaceLocation.tile].powers.filter(
+                              (val) => val !== newVal,
+                            );
                         }
                       }
                       // set the new field!
-                      currentSectionLayout[parseInt(tileIdx, 10)].powers[
-                        powerIdx
-                      ] = newPowerInfo.id;
+                      currentSectionLayout[parseInt(tileIdx, 10)].powers[powerIdx] =
+                        newPowerInfo.id;
                     } else {
                       // unset power
                       currentSectionLayout[parseInt(tileIdx, 10)].powers =
-                        currentSectionLayout[
-                          parseInt(tileIdx, 10)
-                        ].powers.filter((val) => val !== oldVal);
+                        currentSectionLayout[parseInt(tileIdx, 10)].powers.filter(
+                          (val) => val !== oldVal,
+                        );
                     }
                   } else {
                     // this is a change to discipline school
@@ -500,6 +472,50 @@ const DisciplineSection = ({
                       powers: [],
                       level: levels[newVal as keyof CharacterDisciplines] || 0,
                     };
+                    // check to see if we need to add new blank tiles
+                    let selectedCounter = 0;
+                    const layoutKeys = Object.keys(currentSectionLayout);
+                    for (let i = 0; i < layoutKeys.length; i++) {
+                      const tileInfo =
+                        currentSectionLayout[parseInt(layoutKeys[i], 10)];
+                      // while we're doing this, update tile levels
+                      if (tileInfo.school && tileInfo.school !== '')
+                        selectedCounter += 1;
+                    }
+                    if (
+                      selectedCounter % 3 === 0 &&
+                      selectedCounter === layoutKeys.length
+                    ) {
+                      for (let i = 0; i < 3; i++) {
+                        currentSectionLayout[layoutKeys.length + i] = {
+                          school: '',
+                          powers: [],
+                          level: 0,
+                        };
+                      }
+                    } else {
+                      if (
+                        selectedCounter - (selectedCounter % 3) <
+                        layoutKeys.length - 3
+                      ) {
+                        // if no disciplines are selected in the final 3
+                        // then we should remove them to save space
+                        let slice = true;
+                        for (let i = 0; i < 3; i++) {
+                          const tile =
+                            currentSectionLayout[layoutKeys.length - (i + 1)];
+                          if (tile.school && tile.school !== '') {
+                            slice = false;
+                            break;
+                          }
+                        }
+                        if (slice) {
+                          for (let i = 0; i < 3; i++) {
+                            delete currentSectionLayout[layoutKeys.length - (i + 1)];
+                          }
+                        }
+                      }
+                    }
                   }
                   // temporarily apply changes
                   setSectionLayout({ ...currentSectionLayout });

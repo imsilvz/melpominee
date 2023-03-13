@@ -13,8 +13,7 @@ interface SecondarySectionProps {
 
 const SecondarySection = ({ character }: SecondarySectionProps) => {
   const maxHealth = character.attributes.stamina + 3;
-  const maxWillpower =
-    character.attributes.composure + character.attributes.resolve;
+  const maxWillpower = character.attributes.composure + character.attributes.resolve;
   const humanityValue = character.secondaryStats.humanity.baseValue;
   return (
     <div className="charactersheet-secondary">
@@ -25,17 +24,11 @@ const SecondarySection = ({ character }: SecondarySectionProps) => {
         </div>
         <div className="charactersheet-secondary-healthrow-item">
           <h4>Willpower</h4>
-          <HealthTracker
-            rootKey="secondarystat-willpower"
-            value={maxWillpower}
-          />
+          <HealthTracker rootKey="secondarystat-willpower" value={maxWillpower} />
         </div>
         <div className="charactersheet-secondary-healthrow-item">
           <h4>Humanity</h4>
-          <HealthTracker
-            rootKey="secondarystat-humanity"
-            value={humanityValue}
-          />
+          <HealthTracker rootKey="secondarystat-humanity" value={humanityValue} />
         </div>
       </div>
       <div className="charactersheet-secondary-col">

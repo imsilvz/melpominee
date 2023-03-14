@@ -42,6 +42,10 @@ public class VampireV5Character : BaseCharacterSheet
     public int XpSpent { get; set; } = 0;
     public int XpTotal { get; set; } = 0; 
 
+    // additional related models
+    public VampireV5Beliefs Beliefs { get; set; } = new VampireV5Beliefs();
+    public VampireV5Profile Profile { get; set; } = new VampireV5Profile();
+
     public VampireV5Character() : base() { }
 
     public VampireV5Header GetHeader()
@@ -76,77 +80,9 @@ public class VampireV5Character : BaseCharacterSheet
             {
                 try
                 {
-                    var sql = "";
-                    if (Id is null)
-                    {
-                        // we must create one!
-                        sql =
-                        @"
-                            INSERT INTO melpominee_characters
-                                (
-                                    Owner, Name, Concept, Chronicle, 
-                                    Ambition, Desire, Sire, 
-                                    Generation, Clan, PredatorType,
-                                    Hunger, Resonance, BloodPotency,
-                                    XpSpent, XpTotal
-                                )
-                            VALUES
-                                (
-                                    @Owner, @Name, @Concept, @Chronicle,
-                                    @Ambition, @Desire, @Sire,
-                                    @Generation, @Clan, @PredatorType,
-                                    @Hunger, @Resonance, @BloodPotency,
-                                    @XpSpent, @XpTotal
-                                )
-                            RETURNING Id;
-                        ";
-                        Id = conn.ExecuteScalar<int>(sql, this, transaction: trans);
-                    } else {
-                        sql =
-                        @"
-                            INSERT INTO melpominee_characters
-                                (
-                                    Id, Owner, Name, Concept, Chronicle, 
-                                    Ambition, Desire, Sire, 
-                                    Generation, Clan, PredatorType,
-                                    Hunger, Resonance, BloodPotency
-                                    XpSpent, XpTotal
-                                )
-                            VALUES
-                                (
-                                    @Id, @Owner, @Name, @Concept, 
-                                    @Chronicle, @Ambition, @Desire, @Sire,
-                                    @Generation, @Clan, @PredatorType,
-                                    @Hunger, @Resonance, @BloodPotency
-                                    @XpSpent, @XpTotal
-                                )
-                            ON CONFLICT DO
-                            UPDATE SET
-                                Owner = @Owner,
-                                Name = @Name,
-                                Concept = @Concept,
-                                Chronicle = @Chronicle,
-                                Ambition = @Ambition,
-                                Desire = @Desire,
-                                Sire = @Sire,
-                                Generation = @Generation,
-                                Clan = @Clan,
-                                PredatorType = @PredatorType,
-                                Hunger = @Hunger,
-                                Resonance = @Resonance,
-                                BloodPotency = @BloodPotency,
-                                XpSpent = @XpSpent,
-                                XpTotal = @XpTotal
-                            RETURNING Id;
-                        ";
-                        conn.ExecuteScalar<int>(sql, this, transaction: trans);
-                    }
-                    Attributes.Save(conn, trans, (int) Id);
-                    Skills.Save(conn, trans, (int)Id);
-                    SecondaryStats.Save(conn, trans, (int)Id);
-                    Disciplines.Save(conn, trans, (int)Id);
-                    DisciplinePowers.Save(conn, trans, (int)Id);
+                    var result = Save(conn, trans);
                     trans.Commit();
+                    return result;
                 }
                 catch(Exception)
                 {
@@ -155,6 +91,82 @@ public class VampireV5Character : BaseCharacterSheet
                 }
             }
         }
+    }
+
+    public bool Save(IDbConnection conn, IDbTransaction trans)
+    {
+        var sql = "";
+        if (Id is null)
+        {
+            // we must create one!
+            sql =
+            @"
+                INSERT INTO melpominee_characters
+                    (
+                        Owner, Name, Concept, Chronicle, 
+                        Ambition, Desire, Sire, 
+                        Generation, Clan, PredatorType,
+                        Hunger, Resonance, BloodPotency,
+                        XpSpent, XpTotal
+                    )
+                VALUES
+                    (
+                        @Owner, @Name, @Concept, @Chronicle,
+                        @Ambition, @Desire, @Sire,
+                        @Generation, @Clan, @PredatorType,
+                        @Hunger, @Resonance, @BloodPotency,
+                        @XpSpent, @XpTotal
+                    )
+                RETURNING Id;
+            ";
+            Id = conn.ExecuteScalar<int>(sql, this, transaction: trans);
+        } else {
+            sql =
+            @"
+                INSERT INTO melpominee_characters
+                    (
+                        Id, Owner, Name, Concept, Chronicle, 
+                        Ambition, Desire, Sire, 
+                        Generation, Clan, PredatorType,
+                        Hunger, Resonance, BloodPotency,
+                        XpSpent, XpTotal
+                    )
+                VALUES
+                    (
+                        @Id, @Owner, @Name, @Concept, 
+                        @Chronicle, @Ambition, @Desire, @Sire,
+                        @Generation, @Clan, @PredatorType,
+                        @Hunger, @Resonance, @BloodPotency,
+                        @XpSpent, @XpTotal
+                    )
+                ON CONFLICT DO
+                UPDATE SET
+                    Owner = @Owner,
+                    Name = @Name,
+                    Concept = @Concept,
+                    Chronicle = @Chronicle,
+                    Ambition = @Ambition,
+                    Desire = @Desire,
+                    Sire = @Sire,
+                    Generation = @Generation,
+                    Clan = @Clan,
+                    PredatorType = @PredatorType,
+                    Hunger = @Hunger,
+                    Resonance = @Resonance,
+                    BloodPotency = @BloodPotency,
+                    XpSpent = @XpSpent,
+                    XpTotal = @XpTotal
+                RETURNING Id;
+            ";
+            conn.ExecuteScalar<int>(sql, this, transaction: trans);
+        }
+        Attributes.Save(conn, trans, (int) Id);
+        Skills.Save(conn, trans, (int)Id);
+        SecondaryStats.Save(conn, trans, (int)Id);
+        Disciplines.Save(conn, trans, (int)Id);
+        DisciplinePowers.Save(conn, trans, (int)Id);
+        Beliefs.Save(conn, trans, (int)Id);
+        Profile.Save(conn, trans, (int)Id);
         return true;
     }
 
@@ -192,6 +204,8 @@ public class VampireV5Character : BaseCharacterSheet
                 var secondaryStats = VampireV5SecondaryStats.Load(conn, trans, id);
                 var disciplines = VampireV5Disciplines.Load(conn, trans, id);
                 var disciplinePowers = VampireV5DisciplinePowers.Load(conn, trans, id);
+                var beliefs = VampireV5Beliefs.Load(conn, trans, id);
+                var profile = VampireV5Profile.Load(conn, trans, id);
 
                 // if any fail to load, keep defaults
                 user.Attributes = attributes ?? user.Attributes;
@@ -199,6 +213,18 @@ public class VampireV5Character : BaseCharacterSheet
                 user.SecondaryStats = secondaryStats ?? user.SecondaryStats;
                 user.Disciplines = disciplines ?? user.Disciplines;
                 user.DisciplinePowers = disciplinePowers ?? user.DisciplinePowers;
+                user.Beliefs = beliefs ?? user.Beliefs;
+                user.Profile = profile ?? user.Profile;
+                try
+                {
+                    user.Save(conn, trans);
+                    trans.Commit();
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
             }
         }
         user.Loaded = true;
@@ -233,6 +259,8 @@ public class VampireV5Character : BaseCharacterSheet
                     var secondaryStats = VampireV5SecondaryStats.Load(conn, trans, (int)character.Id!);
                     var disciplines = VampireV5Disciplines.Load(conn, trans, (int)character.Id!);
                     var disciplinePowers = VampireV5DisciplinePowers.Load(conn, trans, (int)character.Id!);
+                    var beliefs = VampireV5Beliefs.Load(conn, trans, (int)character.Id!);
+                    var profile = VampireV5Profile.Load(conn, trans, (int)character.Id!);
 
                     // if any fail to load, keep defaults
                     character.Attributes = attributes ?? character.Attributes;
@@ -240,6 +268,8 @@ public class VampireV5Character : BaseCharacterSheet
                     character.SecondaryStats = secondaryStats ?? character.SecondaryStats;
                     character.Disciplines = disciplines ?? character.Disciplines;
                     character.DisciplinePowers = disciplinePowers ?? character.DisciplinePowers;
+                    character.Beliefs = beliefs ?? character.Beliefs;
+                    character.Profile = profile ?? character.Profile;
                 }
                 return charList;
             }
@@ -588,7 +618,7 @@ public class VampireV5SecondaryStats
         return true;
     }
 
-    public static VampireV5SecondaryStats? Load(int charId)
+    public static VampireV5SecondaryStats Load(int charId)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -610,7 +640,7 @@ public class VampireV5SecondaryStats
         }
     }
 
-    public static VampireV5SecondaryStats? Load(IDbConnection conn, IDbTransaction trans, int charId)
+    public static VampireV5SecondaryStats Load(IDbConnection conn, IDbTransaction trans, int charId)
     {
         VampireV5SecondaryStats stats = new VampireV5SecondaryStats();
         var sql =
@@ -636,5 +666,212 @@ public class VampireV5SecondaryStats
             propInfo?.SetValue(stats, stat, null);
         }
         return stats;
+    }
+}
+
+public class VampireV5Beliefs
+{
+    public string Tenets { get; set; } = "";
+    public string Convictions { get; set; } = "";
+    public string Touchstones { get; set; } = "";
+
+    public bool Save(int charId)
+    {
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    bool res = Save(conn, trans, charId);
+                    trans.Commit();
+                    return res;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+    }
+
+    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    {
+        var sql =
+        @"
+            INSERT INTO melpominee_character_beliefs
+                (CharId, Tenets, Convictions, Touchstones)
+            VALUES
+                (@CharId, @Tenets, @Convictions, @Touchstones)
+            ON CONFLICT DO
+            UPDATE SET
+                Tenets = @Tenets,
+                Convictions = @Convictions,
+                Touchstones = @Touchstones
+            RETURNING Id;
+        ";
+        var res = conn.ExecuteScalar(sql, new 
+        { 
+            CharId = charId, 
+            Tenets = Tenets, 
+            Convictions = Convictions, 
+            Touchstones = Touchstones 
+        }, transaction: trans);
+        return true;
+    }
+
+    public static VampireV5Beliefs Load(int charId)
+    {
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var result = Load(conn, trans, charId);
+                    trans.Commit();
+                    return result;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+    }
+
+    public static VampireV5Beliefs Load(IDbConnection conn, IDbTransaction trans, int charId)
+    {
+        VampireV5Beliefs? beliefs;
+        var sql =
+        @"
+            SELECT Tenets, Convictions, Touchstones
+            FROM melpominee_character_beliefs
+            WHERE CharId = @Id;
+        ";
+        beliefs = conn.QuerySingleOrDefault<VampireV5Beliefs>(sql, new { Id = charId }, transaction: trans);
+        if (beliefs is null)
+        {
+            return new VampireV5Beliefs();
+        }
+        return beliefs;
+    }
+}
+
+public class VampireV5Profile
+{
+    public int TrueAge { get; set; } = 0;
+    public int ApparentAge { get; set; } = 0;
+    public string DateOfBirth { get; set; } = "01/01/0001";
+    public string DateOfDeath { get; set; } = "01/01/0001";
+    public string Description { get; set; } = "";
+    public string History { get; set; } = "";
+    public string Notes { get; set; } = "";
+
+    public bool Save(int charId)
+    {
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    bool res = Save(conn, trans, charId);
+                    trans.Commit();
+                    return res;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+    }
+
+    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    {
+        var sql =
+        @"
+            INSERT INTO melpominee_character_profile
+                (
+                    CharId, TrueAge, ApparentAge, DateOfBirth, 
+                    DateOfDeath, Description, History, Notes
+                )
+            VALUES
+                (
+                    @CharId, @TrueAge, @ApparentAge, @DateOfBirth, 
+                    @DateOfDeath, @Description, @History, @Notes
+                )
+            ON CONFLICT DO
+            UPDATE SET
+                TrueAge = @TrueAge, 
+                ApparentAge = @ApparentAge, 
+                DateOfBirth = @DateOfBirth, 
+                DateOfDeath = @DateOfDeath, 
+                Description = @Description, 
+                History = @History, 
+                Notes = @Notes
+            RETURNING Id;
+        ";
+        var res = conn.ExecuteScalar(sql, new 
+        { 
+            CharId = charId, 
+            TrueAge = TrueAge, 
+            ApparentAge = ApparentAge, 
+            DateOfBirth = DateOfBirth,
+            DateOfDeath = DateOfDeath, 
+            Description = Description, 
+            History = History,
+            Notes = Notes
+        }, transaction: trans);
+        return true;
+    }
+
+    public static VampireV5Profile Load(int charId)
+    {
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var result = Load(conn, trans, charId);
+                    trans.Commit();
+                    return result;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+    }
+
+    public static VampireV5Profile Load(IDbConnection conn, IDbTransaction trans, int charId)
+    {
+        VampireV5Profile? profile;
+        var sql =
+        @"
+            SELECT 
+                TrueAge, ApparentAge, DateOfBirth,
+                DateOfDeath, Description,
+                History, Notes
+            FROM melpominee_character_profile
+            WHERE CharId = @Id;
+        ";
+        profile = conn.QuerySingleOrDefault<VampireV5Profile>(sql, new { Id = charId }, transaction: trans);
+        if (profile is null)
+        {
+            return new VampireV5Profile();
+        }
+        return profile;
     }
 }

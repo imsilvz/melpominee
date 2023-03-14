@@ -153,6 +153,15 @@ const CharacterSheet = () => {
           setCurrCharacter(null);
         }
       }
+    } else {
+      console.log(savedCharacter, respProperty, property);
+      if (savedCharacter) {
+        setCurrCharacter({
+          ...savedCharacter,
+        });
+      } else {
+        setCurrCharacter(null);
+      }
     }
   };
 
@@ -314,7 +323,39 @@ const CharacterSheet = () => {
               }
             }}
           />
-          <BeliefsSection />
+          <BeliefsSection
+            beliefs={currCharacter.beliefs}
+            onChange={(field, val) => {
+              if (Object.keys(currCharacter.beliefs).includes(field)) {
+                setCurrCharacter({
+                  ...currCharacter,
+                  beliefs: {
+                    ...currCharacter.beliefs,
+                    [field]: val,
+                  },
+                });
+                if (debounceRef?.current?.has(`beliefs_${field}`)) {
+                  // clean up previous timeout
+                  clearTimeout(debounceRef?.current?.get(`beliefs_${field}`));
+                  debounceRef?.current?.delete(`beliefs_${field}`);
+                }
+                // create next timeout
+                debounceRef?.current?.set(
+                  `beliefs_${field}`,
+                  setTimeout(() => {
+                    // remove previous from map since it has triggered
+                    debounceRef?.current?.delete(`beliefs_${field}`);
+                    // fire network request
+                    updateGeneric<APICharacterUpdateResponse>(
+                      `/api/vtmv5/character/beliefs/${currCharacter.id}/`,
+                      'beliefs',
+                      { [field]: val },
+                    ).catch(console.error);
+                  }, 250),
+                );
+              }
+            }}
+          />
           <div className="charactersheet-panel-split">
             <div className="charactersheet-panel-split-column">
               <MeritFlawSection />
@@ -327,7 +368,39 @@ const CharacterSheet = () => {
                 XpTotal={currCharacter.xpTotal}
                 onChange={(field, val) => updateHeader(field, val)}
               />
-              <ProfileSection />
+              <ProfileSection
+                profile={currCharacter.profile}
+                onChange={(field, val) => {
+                  if (Object.keys(currCharacter.profile).includes(field)) {
+                    setCurrCharacter({
+                      ...currCharacter,
+                      profile: {
+                        ...currCharacter.profile,
+                        [field]: val,
+                      },
+                    });
+                    if (debounceRef?.current?.has(`profile_${field}`)) {
+                      // clean up previous timeout
+                      clearTimeout(debounceRef?.current?.get(`profile_${field}`));
+                      debounceRef?.current?.delete(`profile_${field}`);
+                    }
+                    // create next timeout
+                    debounceRef?.current?.set(
+                      `profile_${field}`,
+                      setTimeout(() => {
+                        // remove previous from map since it has triggered
+                        debounceRef?.current?.delete(`profile_${field}`);
+                        // fire network request
+                        updateGeneric<APICharacterUpdateResponse>(
+                          `/api/vtmv5/character/profile/${currCharacter.id}/`,
+                          'profile',
+                          { [field]: val },
+                        ).catch(console.error);
+                      }, 250),
+                    );
+                  }
+                }}
+              />
             </div>
           </div>
         </div>

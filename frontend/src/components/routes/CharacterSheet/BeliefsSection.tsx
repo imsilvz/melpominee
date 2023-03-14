@@ -1,39 +1,72 @@
 import React from 'react';
 
 // types
-import { Character } from '../../../types/Character';
+import { CharacterBeliefs } from '../../../types/Character';
 
 // local files
 import CharacterSheetSection from './CharacterSheetSection';
 import './BeliefsSection.scss';
 
 interface BeliefsSectionProps {
-  id?: string;
-  title?: string;
+  beliefs: CharacterBeliefs;
+  onChange?: (field: string, val: string) => void;
 }
 
 interface BeliefsSectionTileProps {
-  id: string;
   title: string;
+  text: string;
+  onChange?: (val: string) => void;
 }
 
-const BeliefsTile = ({ id, title }: BeliefsSectionTileProps) => {
+const BeliefsTile = ({ title, text, onChange }: BeliefsSectionTileProps) => {
   return (
     <div className="charactersheet-beliefs-tile">
       <span>
         <h3>{title}</h3>
       </span>
-      <textarea rows={8} />
+      <textarea
+        rows={8}
+        value={text}
+        onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+          if (onChange) {
+            onChange(event.target.value);
+          }
+        }}
+      />
     </div>
   );
 };
 
-const BeliefsSection = ({ id, title }: BeliefsSectionProps) => {
+const BeliefsSection = ({ beliefs, onChange }: BeliefsSectionProps) => {
   return (
     <CharacterSheetSection className="charactersheet-beliefs-inner" title="Beliefs">
-      <BeliefsTile id="chronicleTenets" title="Chronicle Tenets" />
-      <BeliefsTile id="convictions" title="Convictions" />
-      <BeliefsTile id="Touchstones" title="Touchstones" />
+      <BeliefsTile
+        title="Chronicle Tenets"
+        text={beliefs.tenets}
+        onChange={(val) => {
+          if (onChange) {
+            onChange('tenets', val);
+          }
+        }}
+      />
+      <BeliefsTile
+        title="Convictions"
+        text={beliefs.convictions}
+        onChange={(val) => {
+          if (onChange) {
+            onChange('convictions', val);
+          }
+        }}
+      />
+      <BeliefsTile
+        title="Touchstones"
+        text={beliefs.touchstones}
+        onChange={(val) => {
+          if (onChange) {
+            onChange('touchstones', val);
+          }
+        }}
+      />
     </CharacterSheetSection>
   );
 };

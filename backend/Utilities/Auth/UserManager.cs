@@ -175,7 +175,6 @@ public class UserManager
                     // check if this key does not exist or has already been used
                     // then check if attached key matches. if not,
                     // return false and rollback any changes
-                    Console.WriteLine(rescueData.RescueCompleted is not null);
                     if (string.IsNullOrEmpty(rescueData.RescueKey) || 
                         (rescueData.RescueCompleted is not null) ||
                         !VerifyPassword(rescueData.RescueKey, key))

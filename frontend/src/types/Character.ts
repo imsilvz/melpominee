@@ -24,6 +24,9 @@ export interface Character {
   bloodPotency: number;
   xpSpent: number;
   xpTotal: number;
+
+  beliefs: CharacterBeliefs;
+  profile: CharacterProfile;
 }
 
 export interface CharacterHeader {
@@ -116,4 +119,20 @@ export interface CharacterDisciplines {
   Presence?: number;
   Protean?: number;
   ThinBloodAlchemy?: number;
+}
+
+export interface CharacterBeliefs {
+  tenets: string;
+  convictions: string;
+  touchstones: string;
+}
+
+export interface CharacterProfile {
+  trueAge: number;
+  apparentAge: number;
+  dateOfBirth: string;
+  dateOfDeath: string;
+  description: string;
+  history: string;
+  notes: string;
 }

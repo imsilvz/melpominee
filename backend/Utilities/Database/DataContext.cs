@@ -100,6 +100,28 @@ public class DataContext
                     UNIQUE(CharId, PowerId),
                     FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
+                CREATE TABLE IF NOT EXISTS melpominee_character_beliefs (
+                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    CharId INTEGER NOT NULL,
+                    Tenets TEXT NOT NULL,
+                    Convictions TEXT NOT NULL,
+                    Touchstones TEXT NOT NULL,
+                    UNIQUE(CharId),
+                    FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
+                );
+                CREATE TABLE IF NOT EXISTS melpominee_character_profile (
+                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    CharId INTEGER NOT NULL,
+                    TrueAge INTEGER NOT NULL,
+                    ApparentAge INTEGER NOT NULL,
+                    DateOfBirth TEXT NOT NULL,
+                    DateOfDeath TEXT NOT NULL,
+                    Description TEXT NOT NULL,
+                    History TEXT NOT NULL,
+                    Notes TEXT NOT NULL,
+                    UNIQUE(CharId),
+                    FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
+                );
             ";
             conn.Execute(sql);
         }

@@ -317,4 +317,98 @@ public class CharacterController : ControllerBase
             Error = "not_found"
         };
     }
+
+    [HttpGet("beliefs/{charId:int}", Name = "Get Character Beliefs")]
+    public VampireBeliefsResponse GetBeliefs(int charId)
+    {
+        VampireV5Beliefs? beliefs;
+        if(charId > 0)
+        {
+            beliefs = VampireV5Beliefs.Load(charId); 
+            if(beliefs is not null)
+            {
+                return new VampireBeliefsResponse
+                {
+                    Success = true,
+                    Beliefs = beliefs,
+                };
+            }
+        }
+        return new VampireBeliefsResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
+
+    [HttpPut("beliefs/{charId:int}", Name = "Update Character Beliefs")]
+    public VampireBeliefsResponse UpdateBeliefs(int charId, [FromBody] VampireBeliefsUpdate update)
+    {
+        VampireV5Character? character;
+        if(charId > 0)
+        {
+            character = VampireV5Character.GetCharacter(charId); 
+            if(character is not null && character.Loaded)
+            {
+                update.Apply(character);
+                return new VampireBeliefsResponse
+                {
+                    Success = true,
+                    Beliefs = character.Beliefs,
+                };
+            }
+        }
+        return new VampireBeliefsResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
+    
+    [HttpGet("profile/{charId:int}", Name = "Get Character Profile")]
+    public VampireProfileResponse GetProfile(int charId)
+    {
+        VampireV5Profile? profile;
+        if(charId > 0)
+        {
+            profile = VampireV5Profile.Load(charId); 
+            if(profile is not null)
+            {
+                return new VampireProfileResponse
+                {
+                    Success = true,
+                    Profile = profile,
+                };
+            }
+        }
+        return new VampireProfileResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
+
+    [HttpPut("profile/{charId:int}", Name = "Update Character Profile")]
+    public VampireProfileResponse UpdateProfile(int charId, [FromBody] VampireProfileUpdate update)
+    {
+        VampireV5Character? character;
+        if(charId > 0)
+        {
+            character = VampireV5Character.GetCharacter(charId); 
+            if(character is not null && character.Loaded)
+            {
+                update.Apply(character);
+                return new VampireProfileResponse
+                {
+                    Success = true,
+                    Profile = character.Profile,
+                };
+            }
+        }
+        return new VampireProfileResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
 }

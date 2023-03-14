@@ -431,6 +431,7 @@ public class VampirePowerUpdateItem
 
 public class VampirePowersUpdate
 {
+    [JsonIgnore]
     public int? Id { get; set; }
     public List<VampirePowerUpdateItem>? PowerIds { get; set; }
     public void Apply(VampireV5Character character)
@@ -455,7 +456,6 @@ public class VampirePowersUpdate
             {
                 if (powerId.Remove) 
                 {
-                    Console.WriteLine($"REMOVE: {powerId.PowerId}");
                     removeItems.Add(new
                     {
                         CharId = character.Id,
@@ -464,7 +464,6 @@ public class VampirePowersUpdate
                 } 
                 else 
                 {
-                    Console.WriteLine($"ADD: {powerId.PowerId}");
                     addItems.Add(new
                     {
                         CharId = character.Id,
@@ -509,6 +508,148 @@ public class VampirePowersUpdate
                         trans.Rollback();
                         throw;
                     }
+                }
+            }
+        }
+    }
+}
+
+public class VampireBeliefsResponse 
+{
+    public bool Success { get; set; }
+    public string? Error { get; set; }
+    public VampireV5Beliefs? Beliefs { get; set; }
+}
+
+public class VampireBeliefsUpdate
+{
+    [JsonIgnore]
+    public int? Id { get; set; }
+    public string? Tenets { get; set; }
+    public string? Convictions { get; set; }
+    public string? Touchstones { get; set; }
+
+    public void Apply(VampireV5Character character)
+    {
+        // Id is required!
+        Id = character.Id;
+        if (Id is null) 
+        { 
+            throw new ArgumentNullException
+            (
+                "VampireBeliefsUpdate.Apply called with unsaved character. A full save must be performed."
+            ); 
+        }
+
+        var updateList = new List<string>();
+        if (Tenets is not null)
+            updateList.Add("Tenets");
+        if (Convictions is not null)
+            updateList.Add("Convictions");
+        if (Touchstones is not null)
+            updateList.Add("Touchstones");
+
+        // update object reference and save
+        if (updateList.Count < 1) { return; }
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var sql =
+                    @$"
+                        UPDATE melpominee_character_beliefs
+                        SET
+                            {String.Join(',', updateList.Select(prop => $"{prop} = @{prop}"))}
+                        WHERE CharId = @Id;
+                    ";
+                    conn.Execute(sql, this, transaction: trans);
+                    character.Beliefs = VampireV5Beliefs.Load(conn, trans, (int)this.Id);
+                    trans.Commit();
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+    }
+}
+
+public class VampireProfileResponse 
+{
+    public bool Success { get; set; }
+    public string? Error { get; set; }
+    public VampireV5Profile? Profile { get; set; }
+}
+
+public class VampireProfileUpdate
+{
+    [JsonIgnore]
+    public int? Id { get; set; }
+    public int? TrueAge { get; set; }
+    public int? ApparentAge { get; set; }
+    public string? DateOfBirth { get; set; }
+    public string? DateOfDeath { get; set; }
+    public string? Description { get; set; }
+    public string? History { get; set; }
+    public string? Notes { get; set; }
+
+    public void Apply(VampireV5Character character)
+    {
+        // Id is required!
+        Id = character.Id;
+        if (Id is null) 
+        { 
+            throw new ArgumentNullException
+            (
+                "VampireBeliefsUpdate.Apply called with unsaved character. A full save must be performed."
+            ); 
+        }
+
+        var updateList = new List<string>();
+        if (TrueAge is not null)
+            updateList.Add("TrueAge");
+        if (ApparentAge is not null)
+            updateList.Add("ApparentAge");
+        if (DateOfBirth is not null)
+            updateList.Add("DateOfBirth");
+        if (DateOfDeath is not null)
+            updateList.Add("DateOfDeath");
+        if (Description is not null)
+            updateList.Add("Description");
+        if (History is not null)
+            updateList.Add("History");
+        if (Notes is not null)
+            updateList.Add("Notes");
+
+        // update object reference and save
+        if (updateList.Count < 1) { return; }
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var sql =
+                    @$"
+                        UPDATE melpominee_character_profile
+                        SET
+                            {String.Join(',', updateList.Select(prop => $"{prop} = @{prop}"))}
+                        WHERE CharId = @Id;
+                    ";
+                    conn.Execute(sql, this, transaction: trans);
+                    character.Profile = VampireV5Profile.Load(conn, trans, (int)this.Id);
+                    trans.Commit();
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
                 }
             }
         }

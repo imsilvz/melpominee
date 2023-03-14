@@ -15,6 +15,28 @@ public class MasterdataController : ControllerBase
         _logger = logger;
     }
 
+    [ActionName("bloodpotency")]
+    [HttpGet(Name = "Get Blood Potency")]
+    public BloodPotencyResponse GetBloodPotency([FromQuery] int id)
+    {
+        return new BloodPotencyResponse()
+        {
+            Success = BloodPotency.BloodPotencyDict.ContainsKey(id),
+            BloodPotency = BloodPotency.GetPotency(id)
+        };
+    }
+
+    [ActionName("bloodpotency/list")]
+    [HttpGet(Name = "Get Blood Potency List")]
+    public BloodPotencyListResponse GetBloodPotencyList()
+    {
+        return new BloodPotencyListResponse()
+        {
+            Success = true,
+            BloodPotencies = BloodPotency.BloodPotencyDict
+        };
+    }
+
     [ActionName("clan")]
     [HttpGet(Name = "Get Clan")]
     public ClanResponse GetClan([FromQuery] string id)

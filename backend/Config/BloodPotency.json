@@ -1,0 +1,125 @@
+{
+    "0": {
+        "BloodSurge": 1,
+        "DamageMend": 1,
+        "PowerBonus": 0,
+        "RouseReroll": 0,
+        "BaneSeverity": 0,
+        "FeedingPenalty": [
+            "No effect"
+        ]
+    },
+    "1": {
+        "BloodSurge": 2,
+        "DamageMend": 1,
+        "PowerBonus": 0,
+        "RouseReroll": 1,
+        "BaneSeverity": 2,
+        "FeedingPenalty": [
+            "No effect"
+        ]
+    },
+    "2": {
+        "BloodSurge": 2,
+        "DamageMend": 2,
+        "PowerBonus": 1,
+        "RouseReroll": 1,
+        "BaneSeverity": 2,
+        "FeedingPenalty": [
+            "- Animal and bagged blood slakes half Hunger"
+        ]
+    },
+    "3": {
+        "BloodSurge": 3,
+        "DamageMend": 2,
+        "PowerBonus": 1,
+        "RouseReroll": 2,
+        "BaneSeverity": 3,
+        "FeedingPenalty": [
+            "- Animal and bagged blood slake no Hunger"
+        ]
+    },
+    "4": {
+        "BloodSurge": 3,
+        "DamageMend": 3,
+        "PowerBonus": 2,
+        "RouseReroll": 2,
+        "BaneSeverity": 3,
+        "FeedingPenalty": [
+            "- Animal and bagged blood slake no Hunger",
+            "- Slake 1 less Hunger per human"
+        ]
+    },
+    "5": {
+        "BloodSurge": 4,
+        "DamageMend": 3,
+        "PowerBonus": 2,
+        "RouseReroll": 3,
+        "BaneSeverity": 4,
+        "FeedingPenalty": [
+            "- Animal and bagged blood slake no Hunger",
+            "- Slake 1 less Hunger per human",
+            "- Must drain and kill a human to reduce Hunger below 2"
+        ]
+    },
+    "6": {
+        "BloodSurge": 4,
+        "DamageMend": 3,
+        "PowerBonus": 3,
+        "RouseReroll": 3,
+        "BaneSeverity": 4,
+        "FeedingPenalty": [
+            "- Animal and bagged blood slake no Hunger",
+            "- Slake 2 less Hunger per human",
+            "- Must drain and kill a human to reduce Hunger below 2"
+        ]
+    },
+    "7": {
+        "BloodSurge": 5,
+        "DamageMend": 3,
+        "PowerBonus": 3,
+        "RouseReroll": 4,
+        "BaneSeverity": 5,
+        "FeedingPenalty": [
+            "- Animal and bagged blood slake no Hunger",
+            "- Slake 2 less Hunger per human",
+            "- Must drain and kill a human to reduce Hunger below 2"
+        ]
+    },
+    "8": {
+        "BloodSurge": 5,
+        "DamageMend": 4,
+        "PowerBonus": 4,
+        "RouseReroll": 4,
+        "BaneSeverity": 5,
+        "FeedingPenalty": [
+            "- Animal and bagged blood slake no Hunger",
+            "- Slake 2 less Hunger per human",
+            "- Must drain and kill a human to reduce Hunger below 3"
+        ]
+    },
+    "9": {
+        "BloodSurge": 6,
+        "DamageMend": 4,
+        "PowerBonus": 4,
+        "RouseReroll": 5,
+        "BaneSeverity": 6,
+        "FeedingPenalty": [
+            "- Animal and bagged blood slake no Hunger",
+            "- Slake 2 less Hunger per human",
+            "- Must drain and kill a human to reduce Hunger below 3"
+        ]
+    },
+    "10": {
+        "BloodSurge": 6,
+        "DamageMend": 5,
+        "PowerBonus": 5,
+        "RouseReroll": 5,
+        "BaneSeverity": 6,
+        "FeedingPenalty": [
+            "- Animal and bagged blood slake no Hunger",
+            "- Slake 3 less Hunger per human",
+            "- Must drain and kill a human to reduce Hunger below 3"
+        ]
+    }
+}

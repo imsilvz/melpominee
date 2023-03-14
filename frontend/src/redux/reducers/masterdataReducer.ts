@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { BloodPotency } from '../../types/BloodPotency';
 
 // type imports
 import { Clan } from '../../types/Clan';
@@ -7,6 +8,10 @@ import { PredatorType } from '../../types/PredatorType';
 
 // state imports
 import type { RootState } from '../store';
+
+interface BloodPotencyMasterdata {
+  [key: number]: BloodPotency;
+}
 
 interface ClanMasterdata {
   [key: string]: Clan;
@@ -25,6 +30,7 @@ interface PredatorTypeMasterdata {
 }
 
 export interface MasterdataState {
+  bloodPotencies: BloodPotencyMasterdata;
   clans: ClanMasterdata;
   disciplines: DisciplineMasterdata;
   disciplinePowers: DisciplinePowerMasterdata;
@@ -33,6 +39,7 @@ export interface MasterdataState {
 }
 
 const initialState: MasterdataState = {
+  bloodPotencies: {},
   clans: {},
   disciplines: {},
   disciplinePowers: {},
@@ -44,6 +51,9 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    setBloodPotencies: (state, action: PayloadAction<BloodPotencyMasterdata>) => {
+      state.bloodPotencies = action.payload;
+    },
     setClans: (state, action: PayloadAction<ClanMasterdata>) => {
       state.clans = action.payload;
     },
@@ -78,12 +88,15 @@ export const userSlice = createSlice({
   },
 });
 export const {
+  setBloodPotencies,
   setClans,
   setDisciplines,
   setDisciplinePowers,
   setPredatorTypes,
   setMasterdataLoaded,
 } = userSlice.actions;
+export const selectBloodPotencies = (state: RootState) =>
+  state.masterdata.bloodPotencies;
 export const selectClans = (state: RootState) => state.masterdata.clans;
 export const selectDisciplines = (state: RootState) => state.masterdata.disciplines;
 export const selectDisciplinePowers = (state: RootState) =>

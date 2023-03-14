@@ -8,6 +8,8 @@ SecretManager.Instance.LoadSecret("mail-secrets");
 Directory.CreateDirectory("data");
 DataContext.Instance.Initalize();
 
+BloodPotency.GetPotency(0);
+
 // API Application Builder
 var builder = WebApplication.CreateBuilder(args);
 

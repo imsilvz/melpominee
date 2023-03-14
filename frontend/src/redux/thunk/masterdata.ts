@@ -1,12 +1,14 @@
 // Redux Imports
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import { BloodPotency } from '../../types/BloodPotency';
 
 // Type Imports
 import { Clan } from '../../types/Clan';
 import { Discipline, DisciplinePower } from '../../types/Discipline';
 import { PredatorType } from '../../types/PredatorType';
 import {
+  setBloodPotencies,
   setClans,
   setDisciplinePowers,
   setDisciplines,
@@ -37,16 +39,26 @@ interface PredatorTypeResponse {
   predatorTypes?: PredatorType[];
 }
 
+interface BloodPotencyResponse {
+  success: boolean;
+  error?: string;
+  bloodPotencies?: {
+    [key: number]: BloodPotency;
+  };
+}
+
 export default (): ThunkAction<void, RootState, unknown, AnyAction> =>
   async (dispatch) => {
     // Make Requests
     const clanRequest = fetch(`/api/vtmv5/masterdata/clan/list`);
     const powerRequest = fetch(`/api/vtmv5/masterdata/discipline/list`);
     const predatorRequest = fetch(`/api/vtmv5/masterdata/predatortype/list`);
+    const potencyRequest = fetch(`/api/vtmv5/masterdata/bloodpotency/list`);
     const responses = await Promise.all([
       clanRequest,
       powerRequest,
       predatorRequest,
+      potencyRequest,
     ]);
 
     // clans
@@ -100,6 +112,14 @@ export default (): ThunkAction<void, RootState, unknown, AnyAction> =>
           predatorDict[predator.id] = predator;
         }
         dispatch(setPredatorTypes(predatorDict));
+      }
+    }
+
+    // blood potency
+    if (responses[3].ok) {
+      const bpJson = await (responses[3].json() as Promise<BloodPotencyResponse>);
+      if (bpJson.success && bpJson.bloodPotencies) {
+        dispatch(setBloodPotencies(bpJson.bloodPotencies));
       }
     }
     dispatch(setMasterdataLoaded(true));

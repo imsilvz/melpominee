@@ -321,6 +321,7 @@ const CharacterSheet = () => {
             </div>
             <div className="charactersheet-panel-split-column">
               <TheBloodSection
+                Clan={currCharacter.clan}
                 BloodPotency={currCharacter.bloodPotency}
                 XpSpent={currCharacter.xpSpent}
                 XpTotal={currCharacter.xpTotal}

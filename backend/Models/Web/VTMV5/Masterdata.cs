@@ -1,6 +1,20 @@
 using Melpominee.app.Models.CharacterSheets.VTMV5;
 namespace Melpominee.app.Models.Web.VTMV5;
 
+public class BloodPotencyResponse
+{
+    public bool Success { get; set; }
+    public string? Error { get; set; }
+    public BloodPotency? BloodPotency { get; set; }
+}
+
+public class BloodPotencyListResponse
+{
+    public bool Success { get; set; }
+    public string? Error { get; set; }
+    public Dictionary<int, BloodPotency>? BloodPotencies { get; set; }
+}
+
 public class ClanResponse
 {
     public bool Success { get; set; }

@@ -404,7 +404,7 @@ const CharacterSheet = () => {
               <MeritFlawSection />
             </div>
             <div className="charactersheet-panel-split-column">
-              <TheBloodSection />
+              <TheBloodSection BloodPotency={currCharacter.bloodPotency} />
               <ProfileSection />
             </div>
           </div>

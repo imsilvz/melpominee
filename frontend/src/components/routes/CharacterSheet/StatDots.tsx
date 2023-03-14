@@ -5,11 +5,12 @@ import './StatDots.scss';
 
 interface StatDotsProps {
   rootKey: string;
+  dotCount?: number;
   value?: number;
   onChange?: (oldVal: number, newVal: number) => void;
 }
 
-const StatDots = ({ rootKey, value, onChange }: StatDotsProps) => {
+const StatDots = ({ rootKey, dotCount, value, onChange }: StatDotsProps) => {
   const [dots, setDots] = useState<number>(value || 0);
   useEffect(() => {
     if (value !== undefined) {
@@ -18,7 +19,7 @@ const StatDots = ({ rootKey, value, onChange }: StatDotsProps) => {
   }, [value]);
   return (
     <div className="statdots-container">
-      {Array.from(Array(5), (_, i) => i).map((_, idx) => (
+      {Array.from(Array(dotCount || 5), (_, i) => i).map((_, idx) => (
         <input
           // eslint-disable-next-line react/no-array-index-key
           key={`${rootKey}_dot${idx}`}

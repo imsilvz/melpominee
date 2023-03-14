@@ -1,0 +1,70 @@
+@import "../../../global.scss";
+.charactersheet-section {
+    >.charactersheet-theblood-inner {
+        >.charactersheet-theblood-section {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0 0.5rem;
+            &:nth-child(2) {
+                margin-top: 0;
+            }
+            >.charactersheet-theblood-item {
+                flex: 1;
+                min-width: calc(50% - 0.5rem);
+                display: flex;
+                flex-direction: column;
+                >.charactersheet-theblood-bloodpotency {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 0.5rem;
+                    margin: auto auto;
+                    >span {
+                        text-align: center;
+                    }
+                    >.statdots-container {
+                        margin: auto 0;
+                    }
+                }
+                >.charactersheet-theblood-input {
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: nowrap;
+                    >input {
+                        flex: 1;
+                        width: 100%;
+                        height: 100%;
+                        border: none;
+                        outline: none;
+                        border-bottom: 1px solid $text-primary;
+                        background-color: transparent;
+        
+                        color: $text-primary;
+                        padding: 0 0.25rem 0 0.25rem;
+                        font-size: 0.75rem;
+                    }
+                }
+                >.charactersheet-theblood-textarea {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    >span {
+                        display: block;
+                        width: 100%;
+                    }
+                    >textarea {
+                        flex: 1;
+                        width: 100%;
+                        resize: none;
+                        padding: 0.25rem;
+                
+                        color: $text-primary;
+                        background-color: transparent;
+                        outline: none;
+                        border: 1px dotted $text-primary;
+                    }
+                }
+            }
+        }
+    }
+}

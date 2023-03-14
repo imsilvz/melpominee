@@ -83,10 +83,12 @@ public class CharacterController : ControllerBase
             if(character is not null && character.Loaded)
             {
                 update.Apply(character);
+                // reload
+                character = VampireV5Character.GetCharacter(charId);
                 return new VampireHeaderResponse
                 {
-                    Success = true,
-                    Character = character.GetHeader()
+                    Success = (character is not null),
+                    Character = character?.GetHeader()
                 };
             }
         }

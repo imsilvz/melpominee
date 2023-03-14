@@ -2,13 +2,18 @@
 
 .charactersheet-section {
   >.charactersheet-profile-inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     .profile-header, >.profile-section {
       margin-top: 0.5rem;
       display: flex;
       flex-wrap: nowrap;
       justify-content: space-between;
       gap: 0 0.25rem;
-
+      &:last-child {
+        flex: 1;
+      }
       >.profile-section-item {
         flex: 1;
         >.profile-section-input {

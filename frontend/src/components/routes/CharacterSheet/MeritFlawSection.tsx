@@ -16,13 +16,38 @@ const MeritFlawSection = ({}: MeritFlawSectionProps) => {
       className="charactersheet-meritflaw-inner"
       title="Merits & Flaws"
     >
-      <div className="meritflaw-list">
-        {Array.from(Array(25), (_skip, i) => i).map((_skipRow, rowIdx) => (
-          <div className="meritflaw-row">
-            <input />
-            <StatDots rootKey={`merit-${rowIdx}`} />
-          </div>
-        ))}
+      <div className="meritflaw-group">
+        <span>Backgrounds</span>
+        <div className="meritflaw-list">
+          {Array.from(Array(10), (_skip, i) => i).map((_skipRow, rowIdx) => (
+            <div className="meritflaw-row">
+              <input />
+              <StatDots rootKey={`merit-${rowIdx}`} />
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="meritflaw-group">
+        <span>Merits</span>
+        <div className="meritflaw-list">
+          {Array.from(Array(10), (_skip, i) => i).map((_skipRow, rowIdx) => (
+            <div className="meritflaw-row">
+              <input />
+              <StatDots rootKey={`merit-${rowIdx}`} />
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="meritflaw-group">
+        <span>Flaws</span>
+        <div className="meritflaw-list">
+          {Array.from(Array(10), (_skip, i) => i).map((_skipRow, rowIdx) => (
+            <div className="meritflaw-row">
+              <input />
+              <StatDots rootKey={`merit-${rowIdx}`} />
+            </div>
+          ))}
+        </div>
       </div>
     </CharacterSheetSection>
   );

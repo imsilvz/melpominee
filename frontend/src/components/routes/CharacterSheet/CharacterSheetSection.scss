@@ -1,7 +1,16 @@
 @import "../../../global.scss";
 .charactersheet-container {
   >.charactersheet-panel, .charactersheet-panel-split-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
     >.charactersheet-section {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      &:last-child {
+        flex: 1;
+      }
       >.charactersheet-section-header {
         margin-top: 1rem;
         margin-bottom: 0.25rem;

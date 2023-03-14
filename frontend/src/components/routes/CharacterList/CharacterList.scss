@@ -13,6 +13,10 @@
       margin: auto auto;
       width: 1024px;
       min-width: 1024px;
+
+      animation: fadeIn ease-in 0.5s;
+      animation-iteration-count: 1;
+      animation-fill-mode: forwards;
       >.characterlist-header {
         >h1 {
           text-align: center;
@@ -56,6 +60,11 @@
               background-color: rgba(255, 255, 255, 0.12);
               cursor: pointer;
           }
+        }
+        >.characterlist-listitem,.characterlist-additem {
+          animation: fadeIn ease-in 0.25s;
+          animation-iteration-count: 1;
+          animation-fill-mode: forwards;
         }
       }
     }

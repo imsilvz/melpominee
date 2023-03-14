@@ -56,6 +56,106 @@ const CharacterSheet = () => {
   const [savedCharacter, setSavedCharacter] = useState<Character | null>(null);
   const [currCharacter, setCurrCharacter] = useState<Character | null>(null);
 
+  const updateHeader = (field: string, value: string) => {
+    if (
+      currCharacter &&
+      Object.prototype.hasOwnProperty.call(currCharacter, field)
+    ) {
+      setCurrCharacter({
+        ...currCharacter,
+        [field]: value,
+      });
+      // this is a simple debounce system
+      // this will be used to prevent a network request occuring
+      // every single time that someone makes a change
+      if (debounceRef?.current?.has(field)) {
+        // clean up previous timeout
+        clearTimeout(debounceRef?.current?.get(field));
+        debounceRef?.current?.delete(field);
+      }
+      // create next timeout
+      debounceRef?.current?.set(
+        field,
+        setTimeout(() => {
+          // remove previous from map since it has triggered
+          debounceRef?.current?.delete(field);
+          // fire function
+          (async () => {
+            const updateResult = await fetch(
+              `/api/vtmv5/character/${currCharacter.id}/`,
+              {
+                method: 'PUT',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ [field]: value }),
+              },
+            );
+            if (updateResult.ok) {
+              const updateJson =
+                await (updateResult.json() as Promise<APICharacterUpdateResponse>);
+              if (savedCharacter && updateJson.success && updateJson.character) {
+                setSavedCharacter({
+                  ...savedCharacter,
+                  ...updateJson.character,
+                });
+              } else {
+                if (savedCharacter) {
+                  setCurrCharacter({
+                    ...savedCharacter,
+                  });
+                } else {
+                  setCurrCharacter(null);
+                }
+              }
+            }
+          })().catch(console.error);
+        }, 250),
+      );
+    }
+  };
+
+  const updateGeneric = async <T extends APICharacterUpdateResponse>(
+    endpoint: string,
+    property: string,
+    value: unknown,
+    respProperty?: string,
+  ) => {
+    const result = await fetch(endpoint, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(value),
+    });
+    if (result.ok) {
+      const updateJson = await (result.json() as Promise<T>);
+      if (
+        savedCharacter &&
+        updateJson.success &&
+        updateJson[(respProperty || property) as keyof T]
+      ) {
+        setSavedCharacter({
+          ...savedCharacter,
+          [property]: {
+            ...updateJson[(respProperty || property) as keyof T],
+          },
+        });
+      } else {
+        console.log(savedCharacter, updateJson.success, respProperty, property);
+        if (savedCharacter) {
+          setCurrCharacter({
+            ...savedCharacter,
+          });
+        } else {
+          setCurrCharacter(null);
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     // on id change, try to update the character
     const fetchCharacter = async () => {
@@ -85,66 +185,7 @@ const CharacterSheet = () => {
         <div className="charactersheet-panel">
           <HeaderSection
             character={currCharacter}
-            onChange={(field, value) => {
-              if (Object.prototype.hasOwnProperty.call(currCharacter, field)) {
-                setCurrCharacter({
-                  ...currCharacter,
-                  [field]: value,
-                });
-                // this is a simple debounce system
-                // this will be used to prevent a network request occuring
-                // every single time that someone makes a change
-                if (debounceRef?.current?.has(field)) {
-                  // clean up previous timeout
-                  clearTimeout(debounceRef?.current?.get(field));
-                  debounceRef?.current?.delete(field);
-                }
-                // create next timeout
-                debounceRef?.current?.set(
-                  field,
-                  setTimeout(() => {
-                    // remove previous from map since it has triggered
-                    debounceRef?.current?.delete(field);
-                    // fire function
-                    (async () => {
-                      const updateResult = await fetch(
-                        `/api/vtmv5/character/${currCharacter.id}/`,
-                        {
-                          method: 'PUT',
-                          headers: {
-                            Accept: 'application/json',
-                            'Content-Type': 'application/json',
-                          },
-                          body: JSON.stringify({ [field]: value }),
-                        },
-                      );
-                      if (updateResult.ok) {
-                        const updateJson =
-                          await (updateResult.json() as Promise<APICharacterUpdateResponse>);
-                        if (
-                          savedCharacter &&
-                          updateJson.success &&
-                          updateJson.character
-                        ) {
-                          setSavedCharacter({
-                            ...savedCharacter,
-                            ...updateJson.character,
-                          });
-                        } else {
-                          if (savedCharacter) {
-                            setCurrCharacter({
-                              ...savedCharacter,
-                            });
-                          } else {
-                            setCurrCharacter(null);
-                          }
-                        }
-                      }
-                    })().catch(console.error);
-                  }, 250),
-                );
-              }
-            }}
+            onChange={(field, value) => updateHeader(field, value)}
           />
           <AttributeSection
             attributes={currCharacter.attributes}
@@ -158,43 +199,11 @@ const CharacterSheet = () => {
                   },
                 });
                 // fire network request
-                (async () => {
-                  const updateResult = await fetch(
-                    `/api/vtmv5/character/attributes/${currCharacter.id}/`,
-                    {
-                      method: 'PUT',
-                      headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({ [attribute]: value }),
-                    },
-                  );
-                  if (updateResult.ok) {
-                    const updateJson =
-                      await (updateResult.json() as Promise<APICharacterUpdateResponse>);
-                    if (
-                      savedCharacter &&
-                      updateJson.success &&
-                      updateJson.attributes
-                    ) {
-                      setSavedCharacter({
-                        ...savedCharacter,
-                        attributes: {
-                          ...updateJson.attributes,
-                        },
-                      });
-                    } else {
-                      if (savedCharacter) {
-                        setCurrCharacter({
-                          ...savedCharacter,
-                        });
-                      } else {
-                        setCurrCharacter(null);
-                      }
-                    }
-                  }
-                })().catch(console.error);
+                updateGeneric<APICharacterUpdateResponse>(
+                  `/api/vtmv5/character/attributes/${currCharacter.id}/`,
+                  'attributes',
+                  { [attribute]: value },
+                ).catch(console.error);
               }
             }}
           />
@@ -221,43 +230,11 @@ const CharacterSheet = () => {
                     // remove previous from map since it has triggered
                     debounceRef?.current?.delete(`skills_${skill}`);
                     // fire function
-                    (async () => {
-                      const updateResult = await fetch(
-                        `/api/vtmv5/character/skills/${currCharacter.id}/`,
-                        {
-                          method: 'PUT',
-                          headers: {
-                            Accept: 'application/json',
-                            'Content-Type': 'application/json',
-                          },
-                          body: JSON.stringify({ [skill]: skillData }),
-                        },
-                      );
-                      if (updateResult.ok) {
-                        const updateJson =
-                          await (updateResult.json() as Promise<APICharacterUpdateResponse>);
-                        if (
-                          savedCharacter &&
-                          updateJson.success &&
-                          updateJson.skills
-                        ) {
-                          setSavedCharacter({
-                            ...savedCharacter,
-                            skills: {
-                              ...updateJson.skills,
-                            },
-                          });
-                        } else {
-                          if (savedCharacter) {
-                            setCurrCharacter({
-                              ...savedCharacter,
-                            });
-                          } else {
-                            setCurrCharacter(null);
-                          }
-                        }
-                      }
-                    })().catch(console.error);
+                    updateGeneric<APICharacterUpdateResponse>(
+                      `/api/vtmv5/character/skills/${currCharacter.id}/`,
+                      'skills',
+                      { [skill]: skillData },
+                    ).catch(console.error);
                   }, 250),
                 );
               }
@@ -278,43 +255,11 @@ const CharacterSheet = () => {
                   },
                 });
                 // fire network request
-                (async () => {
-                  const updateResult = await fetch(
-                    `/api/vtmv5/character/disciplines/${currCharacter.id}/`,
-                    {
-                      method: 'PUT',
-                      headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({ school, score: newVal }),
-                    },
-                  );
-                  if (updateResult.ok) {
-                    const updateJson =
-                      await (updateResult.json() as Promise<APICharacterUpdateResponse>);
-                    if (
-                      savedCharacter &&
-                      updateJson.success &&
-                      updateJson.disciplines
-                    ) {
-                      setSavedCharacter({
-                        ...savedCharacter,
-                        disciplines: {
-                          ...updateJson.disciplines,
-                        },
-                      });
-                    } else {
-                      if (savedCharacter) {
-                        setCurrCharacter({
-                          ...savedCharacter,
-                        });
-                      } else {
-                        setCurrCharacter(null);
-                      }
-                    }
-                  }
-                })().catch(console.error);
+                updateGeneric<APICharacterUpdateResponse>(
+                  `/api/vtmv5/character/disciplines/${currCharacter.id}/`,
+                  'disciplines',
+                  { school, score: newVal },
+                ).catch(console.error);
               }
             }}
             onPowerChange={(oldVal, newVal, schoolChange) => {
@@ -324,6 +269,8 @@ const CharacterSheet = () => {
               } else {
                 // single ability changed
                 let newPowers = [...currCharacter.disciplinePowers];
+                const changeData: { powerId: string; remove: boolean }[] = [];
+                console.log(oldVal, newVal, newPowers);
                 if (newPowers.includes(oldVal) && newPowers.includes(newVal)) {
                   // it's just an order swap, so take no action
                   return;
@@ -331,10 +278,12 @@ const CharacterSheet = () => {
                 if (newPowers.includes(oldVal)) {
                   // remove old value
                   newPowers = newPowers.filter((val) => val !== oldVal);
+                  changeData.push({ powerId: oldVal, remove: true });
                 }
                 if (newVal !== '' && !newPowers.includes(newVal)) {
                   // add new value, if applicable
                   newPowers.push(newVal);
+                  changeData.push({ powerId: newVal, remove: false });
                 }
                 // update local state
                 setCurrCharacter({
@@ -351,50 +300,17 @@ const CharacterSheet = () => {
                     return 0;
                   }),
                 });
-                const powerUpdate = async (
-                  data: { powerId: string; remove: boolean }[],
-                ) => {
-                  const updateResult = await fetch(
+                // configure payload and fire request
+                if (changeData.length > 0) {
+                  updateGeneric(
                     `/api/vtmv5/character/powers/${currCharacter.id}/`,
+                    'disciplinePowers',
                     {
-                      method: 'PUT',
-                      headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({
-                        PowerIds: data,
-                      }),
+                      PowerIds: changeData,
                     },
-                  );
-                  if (updateResult.ok) {
-                    const updateJson =
-                      await (updateResult.json() as Promise<APICharacterUpdateResponse>);
-                    if (savedCharacter && updateJson.success && updateJson.powers) {
-                      setSavedCharacter({
-                        ...savedCharacter,
-                        disciplinePowers: [...updateJson.powers],
-                      });
-                    } else {
-                      if (savedCharacter) {
-                        setCurrCharacter({
-                          ...savedCharacter,
-                        });
-                      } else {
-                        setCurrCharacter(null);
-                      }
-                    }
-                  }
-                };
-                // configure payload
-                const changeData: { powerId: string; remove: boolean }[] = [];
-                if (oldVal !== '') {
-                  changeData.push({ powerId: oldVal, remove: true });
+                    'powers',
+                  ).catch(console.error);
                 }
-                if (newVal !== '') {
-                  changeData.push({ powerId: newVal, remove: false });
-                }
-                powerUpdate(changeData).catch(console.error);
               }
             }}
           />
@@ -404,7 +320,10 @@ const CharacterSheet = () => {
               <MeritFlawSection />
             </div>
             <div className="charactersheet-panel-split-column">
-              <TheBloodSection BloodPotency={currCharacter.bloodPotency} />
+              <TheBloodSection
+                BloodPotency={currCharacter.bloodPotency}
+                onChange={(field, val) => updateHeader(field, val)}
+              />
               <ProfileSection />
             </div>
           </div>

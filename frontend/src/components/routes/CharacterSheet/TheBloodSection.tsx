@@ -10,9 +10,10 @@ import './TheBloodSection.scss';
 
 interface TheBloodSectionProps {
   BloodPotency: number;
+  onChange?: (field: string, val: string) => void;
 }
 
-const TheBloodSection = ({ BloodPotency }: TheBloodSectionProps) => {
+const TheBloodSection = ({ BloodPotency, onChange }: TheBloodSectionProps) => {
   return (
     <CharacterSheetSection
       className="charactersheet-theblood-inner"
@@ -26,6 +27,12 @@ const TheBloodSection = ({ BloodPotency }: TheBloodSectionProps) => {
               rootKey="theblood-bloodpotency"
               dotCount={10}
               value={BloodPotency}
+              onChange={(oldVal, newVal) => {
+                if (onChange) {
+                  console.log(newVal);
+                  onChange('bloodPotency', newVal.toString());
+                }
+              }}
             />
           </div>
         </div>

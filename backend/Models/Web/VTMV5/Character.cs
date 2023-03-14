@@ -368,15 +368,18 @@ public class VampirePowersUpdate
             {
                 if (powerId.Remove) 
                 {
-                    removeItems.Add(new {
+                    Console.WriteLine($"REMOVE: {powerId.PowerId}");
+                    removeItems.Add(new
+                    {
                         CharId = character.Id,
                         PowerId = powerId.PowerId,
                     });
                 } 
                 else 
                 {
-                    Console.WriteLine(powerId.PowerId);
-                    addItems.Add(new {
+                    Console.WriteLine($"ADD: {powerId.PowerId}");
+                    addItems.Add(new
+                    {
                         CharId = character.Id,
                         PowerId = powerId.PowerId,
                     });
@@ -404,7 +407,7 @@ public class VampirePowersUpdate
                         {
                             string sql =
                             @"
-                                INSERT INTO melpominee_character_discipline_powers
+                                INSERT OR IGNORE INTO melpominee_character_discipline_powers
                                     (CharId, PowerId)
                                 VALUES
                                     (@CharId, @PowerId);

@@ -6,15 +6,17 @@ import './StatDots.scss';
 interface StatDotsProps {
   rootKey: string;
   dotCount?: number;
-  value?: number;
+  value?: string | number;
   onChange?: (oldVal: number, newVal: number) => void;
 }
 
 const StatDots = ({ rootKey, dotCount, value, onChange }: StatDotsProps) => {
-  const [dots, setDots] = useState<number>(value || 0);
+  const [dots, setDots] = useState<number>(
+    (typeof value === 'string' ? parseInt(value, 10) : value) || 0,
+  );
   useEffect(() => {
     if (value !== undefined) {
-      setDots(value);
+      setDots(typeof value === 'string' ? parseInt(value, 10) : value);
     }
   }, [value]);
   return (

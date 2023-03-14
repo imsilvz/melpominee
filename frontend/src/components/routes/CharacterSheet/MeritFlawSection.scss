@@ -1,0 +1,31 @@
+@import "../../../global.scss";
+
+.charactersheet-section {
+  >.charactersheet-meritflaw-inner {
+    >.meritflaw-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-top: 0.5rem;
+      >.meritflaw-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.125rem;
+        >input {
+          flex: 1;
+          height: 100%;
+          border: none;
+          outline: none;
+          border-bottom: 1px dotted $text-primary;
+          background-color: transparent;
+          color: $text-primary;
+
+          padding: 0 0.25rem 0 0.25rem;
+          font-size: 0.75rem;
+        }
+      }
+    }
+  }
+}

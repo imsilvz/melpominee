@@ -52,7 +52,7 @@
             height: 100%;
             border: none;
             outline: none;
-            border-bottom: 1px solid $text-primary;
+            border-bottom: 1px dotted $text-primary;
             background-color: transparent;
 
             color: $text-primary;
@@ -102,7 +102,7 @@
             background-color: transparent;
             outline: none;
             border: 1px dotted $text-primary;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
           }
         }
       }

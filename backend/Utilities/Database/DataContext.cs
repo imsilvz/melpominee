@@ -54,7 +54,9 @@ public class DataContext
                     PredatorType TEXT NOT NULL,
                     Hunger INTEGER NOT NULL,
                     Resonance TEXT NOT NULL,
-                    BloodPotency INTEGER NOT NULL
+                    BloodPotency INTEGER NOT NULL,
+                    XpSpent INTEGER NOT NULL,
+                    XpTotal INTEGER NOT NULL
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_attributes (
                     Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,

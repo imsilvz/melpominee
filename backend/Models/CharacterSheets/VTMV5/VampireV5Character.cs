@@ -39,6 +39,8 @@ public class VampireV5Character : BaseCharacterSheet
     public int Hunger { get; set; } = 0;
     public string Resonance { get; set; } = "";
     public int BloodPotency { get; set; } = 0;
+    public int XpSpent { get; set; } = 0;
+    public int XpTotal { get; set; } = 0; 
 
     public VampireV5Character() : base() { }
 
@@ -59,6 +61,8 @@ public class VampireV5Character : BaseCharacterSheet
             Hunger = Hunger,
             Resonance = Resonance,
             BloodPotency = BloodPotency,
+            XpSpent = XpSpent,
+            XpTotal = XpTotal,
         };
         return header;
     }
@@ -83,14 +87,16 @@ public class VampireV5Character : BaseCharacterSheet
                                     Owner, Name, Concept, Chronicle, 
                                     Ambition, Desire, Sire, 
                                     Generation, Clan, PredatorType,
-                                    Hunger, Resonance, BloodPotency
+                                    Hunger, Resonance, BloodPotency,
+                                    XpSpent, XpTotal
                                 )
                             VALUES
                                 (
                                     @Owner, @Name, @Concept, @Chronicle,
                                     @Ambition, @Desire, @Sire,
                                     @Generation, @Clan, @PredatorType,
-                                    @Hunger, @Resonance, @BloodPotency
+                                    @Hunger, @Resonance, @BloodPotency,
+                                    @XpSpent, @XpTotal
                                 )
                             RETURNING Id;
                         ";
@@ -104,6 +110,7 @@ public class VampireV5Character : BaseCharacterSheet
                                     Ambition, Desire, Sire, 
                                     Generation, Clan, PredatorType,
                                     Hunger, Resonance, BloodPotency
+                                    XpSpent, XpTotal
                                 )
                             VALUES
                                 (
@@ -111,6 +118,7 @@ public class VampireV5Character : BaseCharacterSheet
                                     @Chronicle, @Ambition, @Desire, @Sire,
                                     @Generation, @Clan, @PredatorType,
                                     @Hunger, @Resonance, @BloodPotency
+                                    @XpSpent, @XpTotal
                                 )
                             ON CONFLICT DO
                             UPDATE SET
@@ -126,7 +134,9 @@ public class VampireV5Character : BaseCharacterSheet
                                 PredatorType = @PredatorType,
                                 Hunger = @Hunger,
                                 Resonance = @Resonance,
-                                BloodPotency = @BloodPotency
+                                BloodPotency = @BloodPotency,
+                                XpSpent = @XpSpent,
+                                XpTotal = @XpTotal
                             RETURNING Id;
                         ";
                         conn.ExecuteScalar<int>(sql, this, transaction: trans);
@@ -163,7 +173,8 @@ public class VampireV5Character : BaseCharacterSheet
                         Id, Owner, Name, Concept, 
                         Chronicle, Ambition, Desire, Sire, 
                         Generation, Clan, PredatorType,
-                        Hunger, Resonance, BloodPotency
+                        Hunger, Resonance, BloodPotency,
+                        XpSpent, XpTotal
                     FROM melpominee_characters
                     WHERE Id = @Id;
                 ";
@@ -208,7 +219,8 @@ public class VampireV5Character : BaseCharacterSheet
                         Id, Owner, Name, Concept, 
                         Chronicle, Ambition, Desire, Sire, 
                         Generation, Clan, PredatorType,
-                        Hunger, Resonance, BloodPotency
+                        Hunger, Resonance, BloodPotency,
+                        XpSpent, XpTotal
                     FROM melpominee_characters
                     WHERE Owner = @Email;
                 ";
@@ -252,6 +264,8 @@ public class VampireV5Header
     public int Hunger { get; set; } = 0;
     public string Resonance { get; set; } = "";
     public int BloodPotency { get; set; } = 0;
+    public int XpSpent { get; set; } = 0;
+    public int XpTotal { get; set; } = 0; 
 }
 
 public class VampireV5Attributes

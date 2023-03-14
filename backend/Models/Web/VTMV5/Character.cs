@@ -46,23 +46,110 @@ public class VampireCharacterUpdate
     public int? Hunger { get; set; }
     public string? Resonance { get; set; }
     public int? BloodPotency { get; set; }
+    public int? XpSpent { get; set; }
+    public int? XpTotal { get; set; }
     public void Apply(VampireV5Character character)
     {
-        character.Name = Name ?? character.Name;
-        character.Concept = Concept ?? character.Concept;
-        character.Chronicle = Chronicle ?? character.Chronicle;
-        character.Ambition = Ambition ?? character.Ambition;
-        character.Desire = Desire ?? character.Desire;
-        character.Sire = Sire ?? character.Sire;
-        character.Generation = Generation ?? character.Generation;
-        character.Clan = Clan is not null ? 
-            VampireClan.GetClan(Clan) : character.Clan;
-        character.PredatorType = PredatorType is not null ? 
-            VampirePredatorType.GetPredatorType(PredatorType) : character.PredatorType;
-        character.Hunger = Hunger ?? character.Hunger;
-        character.Resonance = Resonance ?? character.Resonance;
-        character.BloodPotency = BloodPotency ?? character.BloodPotency;
-        character.Save();
+        VampireV5Header header;
+        var updateList = new List<string>();
+        if (Name is not null)
+        {
+            character.Name = Name;
+            updateList.Add("Name");
+        }
+        if (Concept is not null)
+        {
+            character.Concept = Concept;
+            updateList.Add("Concept");
+        }
+        if (Chronicle is not null)
+        {
+            character.Chronicle = Chronicle;
+            updateList.Add("Chronicle");
+        }
+        if (Ambition is not null)
+        {
+            character.Ambition = Ambition;
+            updateList.Add("Ambition");
+        }
+        if (Desire is not null)
+        {
+            character.Desire = Desire;
+            updateList.Add("Desire");
+        }
+        if (Sire is not null)
+        {
+            character.Sire = Sire;
+            updateList.Add("Sire");
+        }
+        if (Generation is not null)
+        {
+            character.Generation = (int)Generation;
+            updateList.Add("Generation");
+        }
+        if (Clan is not null)
+        {
+            character.Clan = VampireClan.GetClan(Clan);
+            updateList.Add("Clan");
+        }
+        if (PredatorType is not null)
+        {
+            character.PredatorType = VampirePredatorType.GetPredatorType(PredatorType);
+            updateList.Add("PredatorType");
+        }
+        if (Hunger is not null)
+        {
+            character.Hunger = (int)Hunger;
+            updateList.Add("Hunger");
+        }
+        if (Resonance is not null)
+        {
+            character.Resonance = Resonance;
+            updateList.Add("Resonance");
+        }
+        if (BloodPotency is not null)
+        {
+            character.Hunger = (int)BloodPotency;
+            updateList.Add("BloodPotency");
+        }
+        if (XpSpent is not null)
+        {
+            character.Hunger = (int)XpSpent;
+            updateList.Add("XpSpent");
+        }
+        if (XpTotal is not null)
+        {
+            character.XpTotal = (int)XpTotal;
+            updateList.Add("XpTotal");
+        }
+
+        // prepare insert
+        if (updateList.Count <= 0) { return; }
+        header = character.GetHeader();
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var sql =
+                    @$"
+                        UPDATE melpominee_characters 
+                        SET
+                            {String.Join(',', updateList.Select(prop => $"{prop} = @{prop}"))}
+                        WHERE Id = @Id;
+                    ";
+                    conn.Execute(sql, header, transaction: trans);
+                    trans.Commit();
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
     }
 }
 

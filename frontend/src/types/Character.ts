@@ -22,6 +22,8 @@ export interface Character {
   hunger: number;
   resonance: string;
   bloodPotency: number;
+  xpSpent: number;
+  xpTotal: number;
 }
 
 export interface CharacterHeader {
@@ -38,6 +40,8 @@ export interface CharacterHeader {
   hunger: number;
   resonance: string;
   bloodPotency: number;
+  xpSpent: number;
+  xpTotal: number;
 }
 
 export interface CharacterAttributes {

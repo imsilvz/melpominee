@@ -85,13 +85,13 @@ const TheBloodSection = ({ BloodPotency, onChange }: TheBloodSectionProps) => {
         <div className="charactersheet-theblood-item">
           <div className="charactersheet-theblood-input">
             <span>XP Spent</span>
-            <input />
+            <input type="number" />
           </div>
         </div>
         <div className="charactersheet-theblood-item">
           <div className="charactersheet-theblood-input">
             <span>Total XP</span>
-            <input />
+            <input type="number" />
           </div>
         </div>
       </div>

@@ -10,10 +10,17 @@ import './TheBloodSection.scss';
 
 interface TheBloodSectionProps {
   BloodPotency: number;
+  XpSpent: number;
+  XpTotal: number;
   onChange?: (field: string, val: string) => void;
 }
 
-const TheBloodSection = ({ BloodPotency, onChange }: TheBloodSectionProps) => {
+const TheBloodSection = ({
+  BloodPotency,
+  XpSpent,
+  XpTotal,
+  onChange,
+}: TheBloodSectionProps) => {
   return (
     <CharacterSheetSection
       className="charactersheet-theblood-inner"
@@ -85,13 +92,31 @@ const TheBloodSection = ({ BloodPotency, onChange }: TheBloodSectionProps) => {
         <div className="charactersheet-theblood-item">
           <div className="charactersheet-theblood-input">
             <span>XP Spent</span>
-            <input type="number" />
+            <input
+              type="number"
+              value={XpSpent}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                const val = parseInt(event.target.value, 10) || 0;
+                if (onChange) {
+                  onChange('xpSpent', val.toString());
+                }
+              }}
+            />
           </div>
         </div>
         <div className="charactersheet-theblood-item">
           <div className="charactersheet-theblood-input">
             <span>Total XP</span>
-            <input type="number" />
+            <input
+              type="number"
+              value={XpTotal}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                const val = parseInt(event.target.value, 10) || 0;
+                if (onChange) {
+                  onChange('xpTotal', val.toString());
+                }
+              }}
+            />
           </div>
         </div>
       </div>

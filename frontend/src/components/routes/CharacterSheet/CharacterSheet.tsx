@@ -322,6 +322,8 @@ const CharacterSheet = () => {
             <div className="charactersheet-panel-split-column">
               <TheBloodSection
                 BloodPotency={currCharacter.bloodPotency}
+                XpSpent={currCharacter.xpSpent}
+                XpTotal={currCharacter.xpTotal}
                 onChange={(field, val) => updateHeader(field, val)}
               />
               <ProfileSection />

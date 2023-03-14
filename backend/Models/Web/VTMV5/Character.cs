@@ -109,12 +109,12 @@ public class VampireCharacterUpdate
         }
         if (BloodPotency is not null)
         {
-            character.Hunger = (int)BloodPotency;
+            character.BloodPotency = (int)BloodPotency;
             updateList.Add("BloodPotency");
         }
         if (XpSpent is not null)
         {
-            character.Hunger = (int)XpSpent;
+            character.XpSpent = (int)XpSpent;
             updateList.Add("XpSpent");
         }
         if (XpTotal is not null)

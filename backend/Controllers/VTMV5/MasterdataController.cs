@@ -65,22 +65,10 @@ public class MasterdataController : ControllerBase
     [HttpGet(Name = "Get Clan List")]
     public ClanListResponse GetClanList()
     {
-        List<VampireClan> clanList = new List<VampireClan>();
-        foreach(var asm in AppDomain.CurrentDomain.GetAssemblies())
-        {
-            foreach (var type in asm.GetTypes())
-            {
-                if (type.BaseType == typeof(VampireClan))
-                {
-                    VampireClan reflectClan = (VampireClan)Activator.CreateInstance(type)!;
-                    clanList.Add(reflectClan);
-                }
-            }
-        }
         return new ClanListResponse
         {
             Success = true,
-            Clans = clanList
+            Clans = VampireClan.ClanDict.Values.ToList()
         };
     }
 

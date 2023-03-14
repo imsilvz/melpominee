@@ -1,0 +1,151 @@
+{
+    "": {
+        "Id": "",
+        "Name": "Mortal",
+        "Bane": "Mortals do not suffer from a clan Bane.",
+        "Compulsion": "Mortals do not suffer from a clan Compulsion.",
+        "Disciplines": []
+    },
+    "banu_haqim": {
+        "Id": "banu_haqim",
+        "Name": "Banu Haqim",
+        "Bane": "Blood Addiction - When the Banu Haqim slakes at least one Hunger level from another vampire, they must make a Hungry Frenzy test at difficulty 2 plus Bane Severity. If they fail, they must gorge themselves on vitae, in turn opening the door to possible Diablerie.",
+        "Compulsion": "Judgement - Urged to punish a wrongdoer, the vampire must slake one Hunger from anyone that acts against their own Convictions. Failing to do so results in a three-dice penalty to all rolls until the Compulsion is satisfied or the scene ends. Should the victim be a vampire, the Bane applies.",
+        "Disciplines": [
+            "Blood Sorcery", "Celerity", "Obfuscate"
+        ]
+    },
+    "brujah": {
+        "Id": "brujah",
+        "Name": "Brujah",
+        "Bane": "Violent Temper - A rage is simmering in the back of the mind with a Brujah with the slightest provocation able to send them into a frenzied rage. Subtracts dice equal to the Bane Severity of the Brujah against Fury Frenzy.",
+        "Compulsion": "Rebellion - The Brujah craves to take a stance against those who represent the status quo. This does not relent until they have gone against orders, expectations, or changed someone's mind. During this Compulsion, they suffer a -2 to dice all pools.",
+        "Disciplines": [
+            "Celerity", "Potence", "Presence"
+        ]
+    },
+    "gangrel": {
+        "Id": "gangrel",
+        "Name": "Gangrel",
+        "Bane": "Bestial Features - In Frenzy, Gangrel gains animalistic features equal to their Bane Severity. These features last for one more night afterward, each feature reducing one Attribute by 1 point. The Gangrel may choose to Ride the Wave in order to only have one feature manifest and only lose one Attribute point.",
+        "Compulsion": "Feral Impulses - Unleash the animal hidden in their Blood. This urges the Gangrel to regress into an animalistic state where speech becomes difficult, clothes become too constrictive and arguments and best settled with claws and teeth. For one scene the Gangrel suffers a -3 dice penalty to all rolls involving Manipulation and Intelligence as they are only able to speak one word sentences during this Compulsion.",
+        "Disciplines": [
+            "Animalism", "Fortitude", "Protean"
+        ]
+    },
+    "caitiff": {
+        "Id": "caitiff",
+        "Name": "Caitiff",
+        "Bane": "Untouched by their ancestors, the Caitiff do not share a common Bane. The character begins with the Flaw Suspect (•) and they may not purchase positive status during Character Creation. The Storyteller may impose a 1-2 dice penalty to social tests against Kindred who know they are Caitiff. To improve a Discipline, the cost is 6 time the level in experience points.",
+        "Compulsion": "Caitiffs do not have a clan Compulsion.",
+        "Disciplines": []
+    },
+    "hecata": {
+        "Id": "hecata",
+        "Name": "Hecata",
+        "Bane": "Painful Kiss - Hecata may only take harmful drinks from mortals which result in blood loss. Unwilling mortals that are able to escape will make the attempt, even those who are convinced or willing must succeed in a Stamina + Resolve test against Difficulty 2 + Bane Severity in order to not recoil. Vampires who are willingly bit must make a Frenzy test against Difficulty 3 to avoid terror Frenzy.",
+        "Compulsion": "Morbidity - The Hecata must study individuals around them for signs of illness or impending death. Until they either predict a death without supernatural means or solved the cause of a local death, they suffer a three-dice penalty to other rolls until the scene ends. The conclusions are not required to be entirely correct, but should be within the bounds of possible.",
+        "Disciplines": [
+            "Auspex", "Fortitude", "Oblivion"
+        ]
+    },
+    "lasombra": {
+        "Id": "lasombra",
+        "Name": "Lasombra",
+        "Bane": "Distorted Image - In reflections or recordings (live or not) the Lasombra appear to be distorted, those who know what vampires are know precisely what's going on, while others might be confused but know something is wrong. This does not however, hide their identity with any certainty and they are not likely to be caught more often on surveillance than any other Kindred. In addition to this, modern communication technology which includes making a phone call requires a Technology test at Difficulty 2 + Bane Severity as microphones struggle with them as much as cameras. Avoiding any electronic vampire detection system is also done with a penalty equal to their Bane Severity.",
+        "Compulsion": "Ruthlessness - The next time the vampire fails an action they receive a two-dice penalty to all rolls until a future attempt at the same action succeeds. This penalty applies to future attempts of the same action still.",
+        "Disciplines": [
+            "Dominate", "Oblivion", "Potence"
+        ]
+    },
+    "malkavian": {
+        "Id": "malkavian",
+        "Name": "Malkavian",
+        "Bane": "Fractured Perspective - When suffering a Bestial Failure or a Compulsion, their mental derangement comes to the forefront. Suffers a penalty equal to their Bane Severity to one category of dice pools (Physical, Social or Mental) for the entire scene. The penalty and nature of the affliction are decided between the player and Storyteller during character creation.",
+        "Compulsion": "Delusion - Whether it's figments of their imagination or extrasensory perception of the truths. For one scene, the Malkavian suffers a 2 dice penalty to rolls involving Dexterity, Manipulation, Composure, or Wits. As well as rolls to resist terror Frenzy.",
+        "Disciplines": [
+            "Auspex", "Dominate", "Obfuscate"
+        ]
+    },
+    "ministry": {
+        "Id": "ministry",
+        "Name": "The Ministry",
+        "Bane": "Abhors the Light - When a Minister is exposed to direct illumination, be it naturally caused or artificial, they receive a penalty equal to their Bane Severity to all dice pools while subject to the light. They also add their Bane Severity to Aggravated damage taken from sunlight.",
+        "Compulsion": "Transgression - The Minister suffers a burning desire to influence those around them to shatter the chains of their own making. They suffer a two-dice penalty to all dice pools that do not relate to enticing someone or themselves to break a Chronicle or personal Conviction. The Compulsion ends once the Minister causes someone, or themselves, at least one stain.",
+        "Disciplines": [
+            "Protean", "Obfuscate", "Presence"
+        ]
+    },
+    "nosferatu": {
+        "Id": "nosferatu",
+        "Name": "Nosferatu",
+        "Bane": "Repulsiveness - Cursed by their blood, when they are Embraced they are twisted into revolting monsters. They can never raise their rating in the Looks merits and instead must take the (••) Repulsive flaw. Any attempt to disguise themselves incurs a penalty equal to the character's Bane Severity, this also includes the use of Disciplines such as Mask of a Thousand Faces. However, most Nosferatu do not breach the Masquerade by being seen, they are instead perceived as gross or terrifying.",
+        "Compulsion": "Cryptophilia - Consumed by a hunger for private secrets, the Nosferatu seeks to obtain knowledge no matter big or small as long as it's not a well-known bit of information. During this, they also refuse to give up their secrets except in strict trade for something greater than their own. Any action not actively working towards gaining them a secret they take a two-dice penalty. This Compulsion does not end till they learn a secret they deem to be useful, sharing this secret is entirely optional.",
+        "Disciplines": [
+            "Animalism", "Obfuscate", "Potence"
+        ]
+    },
+    "ravnos": {
+        "Id": "ravnos",
+        "Name": "Ravnos",
+        "Bane": "Doomed - Anytime they daysleep within the same place more than once in seven nights, roll a number of dice equal to their Bane Severity. If they receive any 10's they then take 1 Aggravated damage for each as they are scorched from within. What constitutes as the same place is defined by the chronicle, but generally will need a mile distance between the two resting places before the bane is triggered. Mobile havens do work as long as the haven is moved a mile away. Due to this, the Ravnos may not take the No Haven Flaw.",
+        "Compulsion": "Tempting Fate - When faced with their next problem, the Daredevil must attempt the solution with the most dangerous or daring of actions, anything less incurs a two-dice penalty. Context appropriate flashy or risky attempts may even net bonus dice. They are free to convince others to follow them in their actions but may as well go it alone. This Compulsion persists until the problem is solved or further attempts become impossible to accomplish.",
+        "Disciplines": [
+            "Animalism", "Obfuscate", "Presence"
+        ]
+    },
+    "salubri": {
+        "Id": "salubri",
+        "Name": "Salubri",
+        "Bane": "Hunted - Their vitae has a unique trait where when another clan partakes in their Blood they find it difficult to pull away. Once a non-Salubri has consumed at least one Hunger level worth, they must make a Hunger Frenzy test at difficulty 2 + the Salubri's Bane Severity (3 + the Salubri's Bane Severity for Banu Haqim). If they fail, they will continue to consume the Salubri until pried off. Additionally, each Salubri has a third eye and while it's not always human-like it's always present and cannot be obscured by supernatural powers. In addition to this, whenever they activate a Discipline, the eye weeps vitae with its intensity correlating to the level of the Discipline used. The Blood flowing from the eye can trigger a Hunger Frenzy test from nearby vampires with Hunger 4 or more.",
+        "Compulsion": "Affective Empathy - Overwhelmed with empathy for a personal problem of someone else, any action not taken to help the person mitigate the suffering they take a two-dice penalty. This Compulsion continues until the sufferer's burden is eased, a more critical problem arises or the scene ends.",
+        "Disciplines": [
+            "Auspex", "Dominate", "Fortitude"
+        ]
+    },
+    "toreador": {
+        "Id": "toreador",
+        "Name": "Toreador",
+        "Bane": "Aesthetic Fixation - A desire for beauty takes control over the Toreador and when in lesser surroundings they suffer. When they are within settings they find less than beautiful, they take a penalty equal to their Bane Severity when using Disciplines.",
+        "Compulsion": "Obsession - Utterly obsessed with a single thing, the Toreador cannot speak of anything but that object. Be it a person, a piece of artwork, a blood splatter in the right lighting, or the sunrise itself, they cannot take their attention from it. Any other actions receive a two-dice penalty. This Compulsion lasts until they can no longer perceive the object or the scene ends.",
+        "Disciplines": [
+            "Auspex", "Celerity", "Presence"
+        ]
+    },
+    "tremere": {
+        "Id": "tremere",
+        "Name": "Tremere",
+        "Bane": "Deficient Blood - Before the fall of Vienna, they were defined by their rigid hierarchy of Blood Bonds within the Pyramid. After the fall, their Blood weakened and rejected all prior connections. Tremere are unable to Blood Bond other Kindred, though they can still be Bound by other clans. Tremere can still Blood Bond mortals to do their bidding, but the vitae must drink an additional amount of times equal to their Bane Severity.",
+        "Compulsion": "Perfectionism - Nothing but the best will satisfy them, anything less than exceptional still instills a profound sense of failure. When afflicted by this, the Warlock suffers a two-dice penalty to all dice pools. The penalty is reduced to one die when actions are being repeated and removed entirely on a second repeat. This does not end till they managed to score a critical win on a Skill roll or the scene ends.",
+        "Disciplines": [
+            "Auspex", "Dominate", "Blood Sorcery"
+        ]
+    },
+    "tzimisce": {
+        "Id": "tzimisce",
+        "Name": "Tzimisce",
+        "Bane": "Grounded - Each Tzimisce must select a specific charge, be it physical location, a group of people, or something even more esoteric. Each night they must sleep surrounded by their charge, if they do not, they sustain aggravated Willpower damage equal to their Bane Severity upon waking the following night.",
+        "Compulsion": "Covetousness - When afflicted with this compulsion they become obsessed with owning something in the scene, be it an object, or property to a living person. Whatever it is, they must add it to their collection and any action taken not towards this purpose incurs a two-dice penalty. This penalty continues until ownership is established or the object of their desire is unobtainable.",
+        "Disciplines": [
+            "Animalism", "Dominate", "Protean"
+        ]
+    },
+    "ventrue": {
+        "Id": "ventrue",
+        "Name": "Ventrue",
+        "Bane": "Rarefied Tastes - When the Ventrue drinks the blood of a mortal who does not fall within their preference, they must spend Willpower equal to their Bane Severity else they will vomit the blood from their bodies unable to slake their hunger. Their preferences range within the clan, some looking for descendants of a certain nationality to soldiers suffering from PTSD. With a Resolve + Awareness test, they can sense if a mortal they seek to feed from fits within their preference. At character creation, their preference should be selected.",
+        "Compulsion": "Arrogance - Fueled by the beast and their natural desire for power, the Ventrue must force someone to obey a command given. The order cannot be given through supernatural means such as Dominate. Until they satisfy the requirements, they receive a two-dice penalty for any actions not directly related to leadership.",
+        "Disciplines": [
+            "Dominate", "Fortitude", "Presence"
+        ]
+    },
+    "thin_blood": {
+        "Id": "thin_blood",
+        "Name": "Thin-Blood",
+        "Bane": "Thin-bloods do not suffer from a Bane unless the thin-blood Flaw Clan Curse is taken.",
+        "Compulsion": "Thin-bloods do not suffer from a clan Compulsion. ",
+        "Disciplines": [
+            "Thin-blood Alchemy"
+        ]
+    }
+}

@@ -112,14 +112,44 @@ const TheBloodSection = ({
         <div className="charactersheet-theblood-section">
           <div className="charactersheet-theblood-item">
             <div className="charactersheet-theblood-textarea">
-              <span>Clan Bane</span>
-              <textarea disabled rows={6} value={clan && clan.bane} />
+              <div className="charactersheet-theblood-textarea-header">
+                <h3>Clan Bane</h3>
+                {clan && clan.bane && clan.bane.split(' - ').length > 1 && (
+                  <h4 className="textarea-header-name">
+                    {clan.bane.split(' - ')[0] || ''}
+                  </h4>
+                )}
+              </div>
+              <textarea
+                disabled
+                rows={6}
+                value={
+                  clan && clan.bane ? clan.bane.split(' - ')[1] || clan.bane : ''
+                }
+              />
             </div>
           </div>
           <div className="charactersheet-theblood-item">
             <div className="charactersheet-theblood-textarea">
-              <span>Clan Compulsion</span>
-              <textarea />
+              <div className="charactersheet-theblood-textarea-header">
+                <h3>Clan Compulsion</h3>
+                {clan &&
+                  clan.compulsion &&
+                  clan.compulsion.split(' - ').length > 1 && (
+                    <h4 className="textarea-header-name">
+                      {clan.compulsion.split(' - ')[0] || ''}
+                    </h4>
+                  )}
+              </div>
+              <textarea
+                disabled
+                rows={6}
+                value={
+                  clan && clan.compulsion
+                    ? clan.compulsion.split(' - ')[1] || clan.compulsion
+                    : ''
+                }
+              />
             </div>
           </div>
         </div>

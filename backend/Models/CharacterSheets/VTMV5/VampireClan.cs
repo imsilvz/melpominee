@@ -2,35 +2,40 @@ using Dapper;
 using System.Data;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Reflection;
 namespace Melpominee.app.Models.CharacterSheets.VTMV5;
 
-public abstract class VampireClan
+public class VampireClan
 {
-    public abstract string Id { get; }
-    public abstract string Name { get; }
-    public abstract string Bane { get; }
-    public abstract List<string> Disciplines { get; }
+    public string Id { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string Compulsion { get; set; } = "";
+    public string Bane { get; set; } = "";
+    public List<string> Disciplines { get; set; } = new List<string>();
 
-    private static Dictionary<string, VampireClan>? ClanDict;
-    public static VampireClan GetClan(string name)
+    public static Dictionary<string, VampireClan> ClanDict = new Dictionary<string, VampireClan>();
+    static VampireClan()
     {
-        VampireClan? clan = null;
-        if (ClanDict is null)
+        Assembly assembly = Assembly.GetExecutingAssembly();
+        string resourceName = "Melpominee.app.backend.Config.Clans.json";
+        using (Stream? stream = assembly.GetManifestResourceStream(resourceName))
         {
-            // first run
-            ClanDict = new Dictionary<string, VampireClan>();
-            foreach(var asm in AppDomain.CurrentDomain.GetAssemblies())
+            if (stream is not null)
+            using (StreamReader reader = new StreamReader(stream))
             {
-                foreach (var type in asm.GetTypes())
+                string json = reader.ReadToEnd();
+                var clanDict = JsonSerializer.Deserialize<Dictionary<string, VampireClan>>(json);
+                if (clanDict is not null)
                 {
-                    if (type.BaseType == typeof(VampireClan))
-                    {
-                        VampireClan reflectClan = (VampireClan)Activator.CreateInstance(type)!;
-                        ClanDict.Add(reflectClan.Id, reflectClan);
-                    }
+                    ClanDict = clanDict;
                 }
             }
         }
+    }
+
+    public static VampireClan GetClan(string name)
+    {
+        VampireClan? clan = null;
         if (ClanDict.TryGetValue(name, out clan))
         {
             return clan;

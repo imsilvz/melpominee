@@ -3,26 +3,36 @@ import { useAppSelector } from '../../../redux/hooks';
 import { selectResonances } from '../../../redux/reducers/masterdataReducer';
 
 // types
-import { Character } from '../../../types/Character';
+import { Character, CharacterStat } from '../../../types/Character';
 
 // local files
 import HealthTracker from './HealthTracker';
 import HumanityTracker from './HumanityTracker';
 import './SecondarySection.scss';
 
+interface CharacterStatPayload {
+  baseValue?: number;
+  superficialDamage?: number;
+  aggravatedDamage?: number;
+}
+
 interface SecondarySectionProps {
   character: Character;
   onChangeHeaderField?: (field: string, val: string) => void;
+  onChangeSecondaryStat?: (field: string, val: CharacterStatPayload) => void;
 }
 
 const SecondarySection = ({
   character,
   onChangeHeaderField,
+  onChangeSecondaryStat,
 }: SecondarySectionProps) => {
   const resonances = useAppSelector(selectResonances);
   const maxHealth = character.attributes.stamina + 3;
   const maxWillpower = character.attributes.composure + character.attributes.resolve;
   const humanityValue = character.secondaryStats.humanity.baseValue;
+  const humanityStains = character.secondaryStats.humanity.superficialDamage;
+  const humanityLoss = character.secondaryStats.humanity.aggravatedDamage;
   return (
     <div className="charactersheet-secondary">
       <div className="charactersheet-secondary-col">
@@ -41,6 +51,21 @@ const SecondarySection = ({
           <HumanityTracker
             rootKey="secondarystat-humanity"
             maxValue={humanityValue}
+            stains={humanityStains}
+            loss={humanityLoss}
+            onChange={(loss, stains) => {
+              console.log(loss, stains);
+              if (onChangeSecondaryStat) {
+                const newStat: CharacterStatPayload = {};
+                if (loss !== undefined) {
+                  newStat.aggravatedDamage = loss;
+                }
+                if (stains !== undefined) {
+                  newStat.superficialDamage = stains;
+                }
+                onChangeSecondaryStat('humanity', newStat);
+              }
+            }}
           />
         </div>
       </div>

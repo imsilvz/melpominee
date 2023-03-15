@@ -15,6 +15,7 @@ import {
   CharacterAttributes,
   CharacterDisciplines,
   CharacterHeader,
+  CharacterSecondaryStats,
   CharacterSkills,
   MeritBackgroundFlaw,
 } from '../../../types/Character';
@@ -268,6 +269,27 @@ const CharacterSheet = () => {
           <SecondarySection
             character={currCharacter}
             onChangeHeaderField={(field, val) => updateHeader(field, val)}
+            onChangeSecondaryStat={(field, val) => {
+              setCurrCharacter({
+                ...currCharacter,
+                secondaryStats: {
+                  ...currCharacter.secondaryStats,
+                  [field as keyof CharacterSecondaryStats]: {
+                    ...currCharacter.secondaryStats[
+                      field as keyof CharacterSecondaryStats
+                    ],
+                    ...val,
+                  },
+                },
+              });
+              // fire network request
+              updateGeneric<APICharacterUpdateResponse>(
+                `/api/vtmv5/character/stats/${currCharacter.id}/`,
+                'secondaryStats',
+                { [field]: val },
+                'stats',
+              ).catch(console.error);
+            }}
           />
           <DisciplineSection
             characterId={currCharacter.id}

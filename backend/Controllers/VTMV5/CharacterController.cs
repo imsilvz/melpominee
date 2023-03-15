@@ -224,6 +224,54 @@ public class CharacterController : ControllerBase
         };
     }
 
+    // secondary stats
+    [HttpGet("stats/{charId:int}", Name = "Get Character Stats")]
+    public VampireStatResponse GetSecondaryStats(int charId)
+    {
+        VampireV5SecondaryStats? stats;
+        if(charId > 0)
+        {
+            stats = VampireV5SecondaryStats.Load(charId);
+            if(stats is not null)
+            {
+                return new VampireStatResponse
+                {
+                    Success = true,
+                    Stats = stats
+                };
+            }
+        }
+        return new VampireStatResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
+
+    [HttpPut("stats/{charId:int}", Name = "Update Character Stats")]
+    public VampireStatResponse UpdateSecondaryStats(int charId, [FromBody] VampireStatsUpdate update)
+    {
+        VampireV5Character? character;
+        if(charId > 0)
+        {
+            character = VampireV5Character.GetCharacter(charId); 
+            if(character is not null && character.Loaded)
+            {
+                update.Apply(character);
+                return new VampireStatResponse
+                {
+                    Success = true,
+                    Stats = character.SecondaryStats
+                };
+            }
+        }
+        return new VampireStatResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
+
     [HttpGet("disciplines/{charId:int}", Name = "Get Character Disciplines")]
     public VampireDisciplinesResponse GetDisciplines(int charId)
     {

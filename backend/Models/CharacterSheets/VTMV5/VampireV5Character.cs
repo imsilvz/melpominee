@@ -3,6 +3,7 @@ using System.Data;
 using Microsoft.Data.Sqlite;
 using System.Text.Json.Serialization;
 using Melpominee.app.Utilities.Database;
+using System.Collections;
 
 namespace Melpominee.app.Models.CharacterSheets.VTMV5;
 
@@ -44,6 +45,9 @@ public class VampireV5Character : BaseCharacterSheet
 
     // additional related models
     public VampireV5Beliefs Beliefs { get; set; } = new VampireV5Beliefs();
+    public VampireV5Backgrounds Backgrounds { get; set; } = new VampireV5Backgrounds();
+    public VampireV5Merits Merits { get; set; } = new VampireV5Merits();
+    public VampireV5Flaws Flaws { get; set; } = new VampireV5Flaws();
     public VampireV5Profile Profile { get; set; } = new VampireV5Profile();
 
     public VampireV5Character() : base() { }
@@ -139,8 +143,8 @@ public class VampireV5Character : BaseCharacterSheet
                         @Hunger, @Resonance, @BloodPotency,
                         @XpSpent, @XpTotal
                     )
-                ON CONFLICT DO
-                UPDATE SET
+                ON CONFLICT DO UPDATE 
+                SET
                     Owner = @Owner,
                     Name = @Name,
                     Concept = @Concept,
@@ -167,6 +171,9 @@ public class VampireV5Character : BaseCharacterSheet
         DisciplinePowers.Save(conn, trans, (int)Id);
         Beliefs.Save(conn, trans, (int)Id);
         Profile.Save(conn, trans, (int)Id);
+        Backgrounds.Save(conn, trans, (int)Id);
+        Merits.Save(conn, trans, (int)Id);
+        Flaws.Save(conn, trans, (int)Id);
         return true;
     }
 
@@ -206,6 +213,9 @@ public class VampireV5Character : BaseCharacterSheet
                 var disciplinePowers = VampireV5DisciplinePowers.Load(conn, trans, id);
                 var beliefs = VampireV5Beliefs.Load(conn, trans, id);
                 var profile = VampireV5Profile.Load(conn, trans, id);
+                var backgrounds = VampireV5Backgrounds.Load(conn, trans, id);
+                var merits = VampireV5Merits.Load(conn, trans, id);
+                var flaws = VampireV5Flaws.Load(conn, trans, id);
 
                 // if any fail to load, keep defaults
                 user.Attributes = attributes ?? user.Attributes;
@@ -215,6 +225,10 @@ public class VampireV5Character : BaseCharacterSheet
                 user.DisciplinePowers = disciplinePowers ?? user.DisciplinePowers;
                 user.Beliefs = beliefs ?? user.Beliefs;
                 user.Profile = profile ?? user.Profile;
+                user.Backgrounds = backgrounds ?? user.Backgrounds;
+                user.Merits = merits ?? user.Merits;
+                user.Flaws = flaws ?? user.Flaws;
+
                 try
                 {
                     user.Save(conn, trans);
@@ -261,6 +275,9 @@ public class VampireV5Character : BaseCharacterSheet
                     var disciplinePowers = VampireV5DisciplinePowers.Load(conn, trans, (int)character.Id!);
                     var beliefs = VampireV5Beliefs.Load(conn, trans, (int)character.Id!);
                     var profile = VampireV5Profile.Load(conn, trans, (int)character.Id!);
+                    var backgrounds = VampireV5Backgrounds.Load(conn, trans, (int)character.Id!);
+                    var merits = VampireV5Merits.Load(conn, trans, (int)character.Id!);
+                    var flaws = VampireV5Flaws.Load(conn, trans, (int)character.Id!);
 
                     // if any fail to load, keep defaults
                     character.Attributes = attributes ?? character.Attributes;
@@ -351,8 +368,8 @@ public class VampireV5Attributes
                 (CharId, Attribute, Score)
             VALUES
                 (@CharId, @Attr, @Score)
-            ON CONFLICT DO
-            UPDATE SET
+            ON CONFLICT DO UPDATE 
+            SET
                 Score = @Score;
         ";
         conn.Execute(sql, rowList, transaction: trans);
@@ -483,8 +500,8 @@ public class VampireV5Skills
                 (CharId, Skill, Speciality, Score)
             VALUES
                 (@CharId, @Skill, @Speciality, @Score)
-            ON CONFLICT DO
-            UPDATE SET
+            ON CONFLICT DO UPDATE 
+            SET
                 Speciality = @Speciality,
                 Score = @Score;
         ";
@@ -608,8 +625,8 @@ public class VampireV5SecondaryStats
                 (
                     @CharId, @Stat, @BaseValue, 
                     @SuperficialDamage, @AggravatedDamage)
-            ON CONFLICT DO
-            UPDATE SET
+            ON CONFLICT DO UPDATE 
+            SET
                 BaseValue = @BaseValue,
                 SuperficialDamage = @SuperficialDamage,
                 AggravatedDamage = @AggravatedDamage;
@@ -705,8 +722,8 @@ public class VampireV5Beliefs
                 (CharId, Tenets, Convictions, Touchstones)
             VALUES
                 (@CharId, @Tenets, @Convictions, @Touchstones)
-            ON CONFLICT DO
-            UPDATE SET
+            ON CONFLICT DO UPDATE 
+            SET
                 Tenets = @Tenets,
                 Convictions = @Convictions,
                 Touchstones = @Touchstones
@@ -808,8 +825,8 @@ public class VampireV5Profile
                     @CharId, @TrueAge, @ApparentAge, @DateOfBirth, 
                     @DateOfDeath, @Description, @History, @Notes
                 )
-            ON CONFLICT DO
-            UPDATE SET
+            ON CONFLICT DO UPDATE 
+            SET
                 TrueAge = @TrueAge, 
                 ApparentAge = @ApparentAge, 
                 DateOfBirth = @DateOfBirth, 
@@ -873,5 +890,302 @@ public class VampireV5Profile
             return new VampireV5Profile();
         }
         return profile;
+    }
+}
+
+public class MeritFlawBackground
+{
+    [JsonIgnore]
+    public int? Id { get; set; }
+    [JsonIgnore]
+    public int? CharId { get; set; }
+    [JsonIgnore]
+    public string? ItemType { get; set; }
+    public int SortOrder { get; set; } = 0;
+    public string Name { get; set; } = "";
+    public int Score { get; set; } = 0;
+}
+
+public class VampireV5MeritFlawBackground : IList<MeritFlawBackground>
+{
+    public List<MeritFlawBackground> data = new List<MeritFlawBackground>();
+
+    public MeritFlawBackground this[int index] { get => ((IList<MeritFlawBackground>)data)[index]; set => ((IList<MeritFlawBackground>)data)[index] = value; }
+
+    public int Count => ((ICollection<MeritFlawBackground>)data).Count;
+
+    public bool IsReadOnly => ((ICollection<MeritFlawBackground>)data).IsReadOnly;
+
+    public void Add(MeritFlawBackground item)
+    {
+        ((ICollection<MeritFlawBackground>)data).Add(item);
+    }
+
+    public void Clear()
+    {
+        ((ICollection<MeritFlawBackground>)data).Clear();
+    }
+
+    public bool Contains(MeritFlawBackground item)
+    {
+        return ((ICollection<MeritFlawBackground>)data).Contains(item);
+    }
+
+    public void CopyTo(MeritFlawBackground[] array, int arrayIndex)
+    {
+        ((ICollection<MeritFlawBackground>)data).CopyTo(array, arrayIndex);
+    }
+
+    public IEnumerator<MeritFlawBackground> GetEnumerator()
+    {
+        return ((IEnumerable<MeritFlawBackground>)data).GetEnumerator();
+    }
+
+    public int IndexOf(MeritFlawBackground item)
+    {
+        return ((IList<MeritFlawBackground>)data).IndexOf(item);
+    }
+
+    public void Insert(int index, MeritFlawBackground item)
+    {
+        ((IList<MeritFlawBackground>)data).Insert(index, item);
+    }
+
+    public bool Remove(MeritFlawBackground item)
+    {
+        return ((ICollection<MeritFlawBackground>)data).Remove(item);
+    }
+
+    public void RemoveAt(int index)
+    {
+        ((IList<MeritFlawBackground>)data).RemoveAt(index);
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return ((IEnumerable)data).GetEnumerator();
+    }
+
+    public bool Save(int charId, string itemType)
+    {
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    bool res = Save(conn, trans, charId, itemType);
+                    trans.Commit();
+                    return res;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+    }
+
+    public bool Save(IDbConnection conn, IDbTransaction trans, int charId, string itemType)
+    {
+        // set character id for save
+        foreach(var item in this)
+        {
+            item.CharId = charId;
+            item.ItemType = itemType;
+        }
+        
+        var sql =
+        @"
+            INSERT INTO melpominee_character_meritflawbackgrounds
+                (CharId, ItemType, SortOrder, Name, Score)
+            VALUES
+                (@CharId, @ItemType, @SortOrder, @Name, @Score)
+            ON CONFLICT DO UPDATE
+            SET
+                Name = @Name,
+                Score = @Score;
+        ";
+        var res = conn.Execute(sql, this, transaction: trans);
+        return true;
+    }
+}
+
+public class VampireV5Backgrounds : VampireV5MeritFlawBackground
+{
+    protected static string ItemType { get; set; } = "background";
+
+    public bool Save(int charId)
+    {
+        return Save(charId, ItemType);
+    }
+
+    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    {
+        return Save(conn, trans, charId, ItemType);
+    }
+
+    public static VampireV5MeritFlawBackground Load(int charId)
+    {
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var result = Load(conn, trans, charId);
+                    trans.Commit();
+                    return result;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+    }
+
+    public static VampireV5Backgrounds Load(IDbConnection conn, IDbTransaction trans, int charId)
+    {
+        VampireV5Backgrounds backgrounds = new VampireV5Backgrounds();
+        var sql =
+        @"
+            SELECT SortOrder, Name, Score
+            FROM melpominee_character_meritflawbackgrounds
+            WHERE CharId = @CharId AND ItemType = @ItemType;
+        ";
+        var results = conn.Query(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
+        foreach(var result in results)
+        {
+            backgrounds.Add(new MeritFlawBackground()
+            {
+                SortOrder = (int)result.SortOrder,
+                Name = result.Name,
+                Score = (int)result.Score,
+            });
+        }
+        return backgrounds;
+    }
+}
+
+public class VampireV5Merits : VampireV5MeritFlawBackground
+{
+    protected static string ItemType { get; set; } = "merit";
+
+    public bool Save(int charId)
+    {
+        return Save(charId, ItemType);
+    }
+
+    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    {
+        return Save(conn, trans, charId, ItemType);
+    }
+
+    public static VampireV5Merits Load(int charId)
+    {
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var result = Load(conn, trans, charId);
+                    trans.Commit();
+                    return result;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+    }
+
+    public static VampireV5Merits Load(IDbConnection conn, IDbTransaction trans, int charId)
+    {
+        VampireV5Merits merits = new VampireV5Merits();
+        var sql =
+        @"
+            SELECT SortOrder, Name, Score
+            FROM melpominee_character_meritflawbackgrounds
+            WHERE CharId = @CharId AND ItemType = @ItemType;
+        ";
+        var results = conn.Query(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
+        foreach(var result in results)
+        {
+            merits.Add(new MeritFlawBackground()
+            {
+                SortOrder = (int)result.SortOrder,
+                Name = result.Name,
+                Score = (int)result.Score,
+            });
+        }
+        return merits;
+    }
+}
+
+public class VampireV5Flaws : VampireV5MeritFlawBackground
+{
+    protected static string ItemType { get; set; } = "flaw";
+
+    public bool Save(int charId)
+    {
+        return Save(charId, ItemType);
+    }
+
+    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    {
+        return Save(conn, trans, charId, ItemType);
+    }
+
+    public static VampireV5Flaws Load(int charId)
+    {
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var result = Load(conn, trans, charId);
+                    trans.Commit();
+                    return result;
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+    }
+
+    public static VampireV5Flaws Load(IDbConnection conn, IDbTransaction trans, int charId)
+    {
+        VampireV5Flaws merits = new VampireV5Flaws();
+        var sql =
+        @"
+            SELECT SortOrder, Name, Score
+            FROM melpominee_character_meritflawbackgrounds
+            WHERE CharId = @CharId AND ItemType = @ItemType;
+        ";
+        var results = conn.Query(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
+        foreach(var result in results)
+        {
+            merits.Add(new MeritFlawBackground()
+            {
+                SortOrder = (int)result.SortOrder,
+                Name = result.Name,
+                Score = (int)result.Score,
+            });
+        }
+        return merits;
     }
 }

@@ -1,7 +1,8 @@
 using System.IO;
- using System.Reflection;
- using System.Text.Json;
- using System.Text.Json.Serialization;
+using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+namespace Melpominee.app.Models.CharacterSheets.VTMV5;
 public class BloodPotency
 {
     public int Potency { get; set; } = 0;

@@ -26,6 +26,9 @@ export interface Character {
   xpTotal: number;
 
   beliefs: CharacterBeliefs;
+  backgrounds: MeritBackgroundFlaw[];
+  merits: MeritBackgroundFlaw[];
+  flaws: MeritBackgroundFlaw[];
   profile: CharacterProfile;
 }
 
@@ -135,4 +138,10 @@ export interface CharacterProfile {
   description: string;
   history: string;
   notes: string;
+}
+
+export interface MeritBackgroundFlaw {
+  sortOrder: number;
+  name: string;
+  score: number;
 }

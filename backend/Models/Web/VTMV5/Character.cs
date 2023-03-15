@@ -221,8 +221,8 @@ public class VampireAttributesUpdate
                             (CharId, Attribute, Score)
                         VALUES
                             (@CharId, @Attr, @Score)
-                        ON CONFLICT DO
-                        UPDATE SET
+                        ON CONFLICT DO UPDATE 
+                        SET
                             Score = @Score;
                     ";
                     conn.Execute(update, updateList, transaction: trans);
@@ -327,8 +327,8 @@ public class VampireSkillsUpdate
                             (CharId, Skill, Speciality, Score)
                         VALUES
                             (@CharId, @Skill, @Speciality, @Score)
-                        ON CONFLICT DO
-                        UPDATE SET
+                        ON CONFLICT DO UPDATE 
+                        SET
                             Speciality = @Speciality,
                             Score = @Score;
                     ";
@@ -396,8 +396,8 @@ public class VampireDisciplinesUpdate
                                     (CharId, Discipline, Score)
                                 VALUES
                                     (@CharId, @School, @Score)
-                                ON CONFLICT DO
-                                UPDATE SET
+                                ON CONFLICT DO UPDATE 
+                                SET
                                     Score = @Score;
                             ";
                         }

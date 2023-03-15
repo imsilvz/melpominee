@@ -190,8 +190,8 @@ public class VampireV5Disciplines : IDictionary<string, int>
                 (CharId, Discipline, Score)
             VALUES
                 (@CharId, @Discipline, @Score)
-            ON CONFLICT DO
-            UPDATE SET
+            ON CONFLICT DO UPDATE 
+            SET
                 Score = @Score;
         ";
         conn.Execute(sql, rowList, transaction: trans);

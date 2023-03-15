@@ -109,6 +109,16 @@ public class DataContext
                     UNIQUE(CharId),
                     FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
+                CREATE TABLE IF NOT EXISTS melpominee_character_meritflawbackgrounds (
+                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    CharId INTEGER NOT NULL,
+                    ItemType TEXT NOT NULL,
+                    SortOrder INTEGER NOT NULL,
+                    Name TEXT NOT NULL,
+                    Score INTEGER NOT NULL,
+                    UNIQUE(CharId, ItemType, SortOrder),
+                    FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
+                );
                 CREATE TABLE IF NOT EXISTS melpominee_character_profile (
                     Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     CharId INTEGER NOT NULL,

@@ -1,5 +1,6 @@
 using Melpominee.app.Utilities;
 using Melpominee.app.Utilities.Database;
+using Melpominee.app.Models.CharacterSheets.VTMV5;
 
 // Load Secrets
 SecretManager.Instance.LoadSecret("mail-secrets");
@@ -7,8 +8,6 @@ SecretManager.Instance.LoadSecret("mail-secrets");
 // Create Initial Data Schema
 Directory.CreateDirectory("data");
 DataContext.Instance.Initalize();
-
-BloodPotency.GetPotency(0);
 
 // API Application Builder
 var builder = WebApplication.CreateBuilder(args);

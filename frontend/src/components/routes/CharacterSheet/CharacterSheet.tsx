@@ -24,11 +24,11 @@ import AttributeSection from './AttributeSection';
 import SkillsSection from './SkillsSection';
 import SecondarySection from './SecondarySection';
 import DisciplineSection from './DisciplineSection';
-import './CharacterSheet.scss';
 import BeliefsSection from './BeliefsSection';
 import MeritFlawSection from './MeritFlawSection';
 import TheBloodSection from './TheBloodSection';
 import ProfileSection from './ProfileSection';
+import './CharacterSheet.scss';
 
 interface APICharacterSheetResponse {
   success: boolean;
@@ -358,7 +358,11 @@ const CharacterSheet = () => {
           />
           <div className="charactersheet-panel-split">
             <div className="charactersheet-panel-split-column">
-              <MeritFlawSection />
+              <MeritFlawSection
+                Backgrounds={currCharacter.backgrounds}
+                Merits={currCharacter.merits}
+                Flaws={currCharacter.flaws}
+              />
             </div>
             <div className="charactersheet-panel-split-column">
               <TheBloodSection

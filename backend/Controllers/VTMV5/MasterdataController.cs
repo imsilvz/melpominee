@@ -108,7 +108,7 @@ public class MasterdataController : ControllerBase
             if(!disciplineList.TryGetValue(schoolName, out powerList))
             {
                 powerList = new List<VampirePower>();
-                disciplineList.Add(schoolName, new List<VampirePower>());
+                disciplineList.Add(schoolName, powerList);
             }
             powerList.Add(power.Value);
         }

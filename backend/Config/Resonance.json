@@ -1,0 +1,58 @@
+{
+    "animal": {
+        "Id": "animal",
+        "Name": "Animal Blood",
+        "Description": "While not a Resonance, it does serve a purpose to vampires. Giving them access to the last two Disciplines of Animalism and Protean. The Storyteller is free to correlate animal blood to the main four Resonances, should they find it important to their chronicle.",
+        "Emotions": "N/A",
+        "Disciplines": []
+    },
+    "choleric": {
+        "Id": "choleric",
+        "Name": "Choleric",
+        "Description": "The humor of passion and anger but also one of jealousy and violence. This Resonance can, but not exclusively, be found in vessels that have the will to fight back against whatever problems they face.",
+        "Emotions": "Angry, violent, bullying, passionate or envious.",
+        "Disciplines": [
+            "Celerity",
+            "Potence"
+        ]
+    },
+    "empty": {
+        "Id": "empty",
+        "Name": "\"Empty\"",
+        "Description": "This Resonance represents those who lack general emotions.",
+        "Emotions": "That of sociopaths or the emotionally detached",
+        "Disciplines": [
+            "Oblivion"
+        ]
+    },
+    "melancholy": {
+        "Id": "melancholy",
+        "Name": "Melancholy",
+        "Description": "The humor of sadness and the downtrodden but also those who seek enlightenment. This Resonance can, but not exclusively, be found in vessels who have lost the will to fight or those who are seized by the gain of knowledge.",
+        "Emotions": "Sad, scared, depressed, intellectual, or grounded.",
+        "Disciplines": [
+            "Fortitude",
+            "Obfuscate"
+        ]
+    },
+    "phlegmatic": {
+        "Id": "phlegmatic",
+        "Name": "Phlegmatic",
+        "Description": "The humor of those who are calm and relaxed or those who are lost in their own reminiscing. This Resonance can, but not exclusively, be found in vessels who are at peace or can't find a reason to care at the moment.",
+        "Emotions": "Lazy, apathetic, calm, controlling, and sentimental.",
+        "Disciplines": [
+            "Auspex",
+            "Dominate"
+        ]
+    },
+    "sanguine": {
+        "Id": "sanguine",
+        "Name": "Sanguine",
+        "Description": "The humor of sex and passion but also of happiness and liveliness. This Resonance can, but not exclusively, be found in vessels who have a sexual interest in the vampire or are simply enjoying life itself.",
+        "Emotions": "Horny, happy, enthusiastic, addicted, active, and flighty.",
+        "Disciplines": [
+            "Blood Sorcery",
+            "Presence"
+        ]
+    }
+}

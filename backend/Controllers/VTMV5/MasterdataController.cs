@@ -172,4 +172,39 @@ public class MasterdataController : ControllerBase
             PredatorTypes = predatorList
         };
     }
+
+    [ActionName("resonance")]
+    [HttpGet(Name = "Get Resonance")]
+    public ResonanceResponse GetResonance(string id)
+    {
+        Resonance resonance;
+        try
+        {
+            resonance = Resonance.GetResonance(id);
+        }
+        catch(ArgumentException)
+        {
+            return new ResonanceResponse
+            {
+                Success = false,
+                Error = "invalid_resonance"
+            };
+        }
+        return new ResonanceResponse
+        {
+            Success = true,
+            Resonance = resonance
+        };
+    }
+    
+    [ActionName("resonance/list")]
+    [HttpGet(Name = "Get Resonance List")]
+    public ResonanceListResponse GetResonanceList()
+    {
+        return new ResonanceListResponse
+        {
+            Success = true,
+            Resonances = Resonance.ResonanceDict.Values.ToList()
+        };
+    }
 }

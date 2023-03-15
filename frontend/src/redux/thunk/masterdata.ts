@@ -7,6 +7,7 @@ import { BloodPotency } from '../../types/BloodPotency';
 import { Clan } from '../../types/Clan';
 import { Discipline, DisciplinePower } from '../../types/Discipline';
 import { PredatorType } from '../../types/PredatorType';
+import { Resonance } from '../../types/Resonance';
 import {
   setBloodPotencies,
   setClans,
@@ -14,6 +15,7 @@ import {
   setDisciplines,
   setMasterdataLoaded,
   setPredatorTypes,
+  setResonances,
 } from '../reducers/masterdataReducer';
 
 // State Imports
@@ -47,6 +49,12 @@ interface BloodPotencyResponse {
   };
 }
 
+interface ResonanceResponse {
+  success: boolean;
+  error?: string;
+  resonances?: Resonance[];
+}
+
 export default (): ThunkAction<void, RootState, unknown, AnyAction> =>
   async (dispatch) => {
     // Make Requests
@@ -54,11 +62,13 @@ export default (): ThunkAction<void, RootState, unknown, AnyAction> =>
     const powerRequest = fetch(`/api/vtmv5/masterdata/discipline/list`);
     const predatorRequest = fetch(`/api/vtmv5/masterdata/predatortype/list`);
     const potencyRequest = fetch(`/api/vtmv5/masterdata/bloodpotency/list`);
+    const resonanceRequest = fetch(`/api/vtmv5/masterdata/resonance/list`);
     const responses = await Promise.all([
       clanRequest,
       powerRequest,
       predatorRequest,
       potencyRequest,
+      resonanceRequest,
     ]);
 
     // clans
@@ -120,6 +130,19 @@ export default (): ThunkAction<void, RootState, unknown, AnyAction> =>
       const bpJson = await (responses[3].json() as Promise<BloodPotencyResponse>);
       if (bpJson.success && bpJson.bloodPotencies) {
         dispatch(setBloodPotencies(bpJson.bloodPotencies));
+      }
+    }
+
+    // resonances
+    if (responses[4].ok) {
+      const resDict: { [key: string]: Resonance } = {};
+      const resJson = await (responses[4].json() as Promise<ResonanceResponse>);
+      if (resJson.success && resJson.resonances) {
+        for (let i = 0; i < resJson.resonances?.length; i++) {
+          const resonance = resJson.resonances[i];
+          resDict[resonance.id] = resonance;
+        }
+        dispatch(setResonances(resDict));
       }
     }
     dispatch(setMasterdataLoaded(true));

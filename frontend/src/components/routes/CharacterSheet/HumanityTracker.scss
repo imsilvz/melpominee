@@ -1,0 +1,58 @@
+@import "../../../global.scss";
+
+.humanitytracker-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  >.humanitytracker-dot {
+    display: grid;
+    place-content: center;
+    position: relative;
+
+    // disable default styles
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    margin: 2px;
+
+    // custom styles
+    font: inherit;
+    color: $text-secondary;
+    //border-radius: 50%;
+    border: 1px solid $text-secondary;
+    width: 0.6em;
+    height: 0.6em;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.12);
+    }
+
+    &:checked {
+      border: 1px solid rgba(0, 0, 0, 0.4);
+      background-color: $text-secondary;
+
+      &:hover {
+        background-color: $text-primary;
+      }
+    }
+
+    &.humanitytracker-stained {
+      border: 1px solid $text-secondary;
+      background-color: transparent;
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.12);
+      }
+      &:after {
+        content: " ";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        border-bottom: 1px solid #FFF;
+        width: 100%;
+        transform: rotate(-45deg);
+      }
+    }
+  }
+}

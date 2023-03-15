@@ -56,3 +56,17 @@ public class PredatorTypeListResponse
     public string? Error { get; set; }
     public List<VampirePredatorType>? PredatorTypes { get; set; }
 }
+
+public class ResonanceResponse
+{
+    public bool Success { get; set; }
+    public string? Error { get; set; }
+    public Resonance? Resonance { get; set; }
+}
+
+public class ResonanceListResponse
+{
+    public bool Success { get; set; }
+    public string? Error { get; set; }
+    public List<Resonance>? Resonances { get; set; }
+}

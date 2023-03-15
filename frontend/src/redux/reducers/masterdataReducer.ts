@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BloodPotency } from '../../types/BloodPotency';
 
 // type imports
+import { BloodPotency } from '../../types/BloodPotency';
 import { Clan } from '../../types/Clan';
 import { Discipline, DisciplinePower } from '../../types/Discipline';
 import { PredatorType } from '../../types/PredatorType';
+import { Resonance } from '../../types/Resonance';
 
 // state imports
 import type { RootState } from '../store';
@@ -29,12 +30,17 @@ interface PredatorTypeMasterdata {
   [key: string]: PredatorType;
 }
 
+interface ResonanceMasterdata {
+  [key: string]: Resonance;
+}
+
 export interface MasterdataState {
   bloodPotencies: BloodPotencyMasterdata;
   clans: ClanMasterdata;
   disciplines: DisciplineMasterdata;
   disciplinePowers: DisciplinePowerMasterdata;
   predatorTypes: PredatorTypeMasterdata;
+  resonances: ResonanceMasterdata;
   loaded: boolean;
 }
 
@@ -44,6 +50,7 @@ const initialState: MasterdataState = {
   disciplines: {},
   disciplinePowers: {},
   predatorTypes: {},
+  resonances: {},
   loaded: false,
 };
 
@@ -82,6 +89,9 @@ export const userSlice = createSlice({
     setPredatorTypes: (state, action: PayloadAction<PredatorTypeMasterdata>) => {
       state.predatorTypes = action.payload;
     },
+    setResonances: (state, action: PayloadAction<ResonanceMasterdata>) => {
+      state.resonances = action.payload;
+    },
     setMasterdataLoaded: (state, action: PayloadAction<boolean>) => {
       state.loaded = action.payload;
     },
@@ -93,6 +103,7 @@ export const {
   setDisciplines,
   setDisciplinePowers,
   setPredatorTypes,
+  setResonances,
   setMasterdataLoaded,
 } = userSlice.actions;
 export const selectBloodPotencies = (state: RootState) =>
@@ -103,5 +114,6 @@ export const selectDisciplinePowers = (state: RootState) =>
   state.masterdata.disciplinePowers;
 export const selectPredatorTypes = (state: RootState) =>
   state.masterdata.predatorTypes;
+export const selectResonances = (state: RootState) => state.masterdata.resonances;
 export const selectMasterdataLoaded = (state: RootState) => state.masterdata.loaded;
 export default userSlice.reducer;

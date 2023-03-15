@@ -1,3 +1,4 @@
+import * as signalR from '@microsoft/signalr';
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -49,6 +50,7 @@ interface APICharacterUpdateResponse {
 
 const CharacterSheet = () => {
   const { id } = useParams();
+  const connectionRef = useRef<signalR.HubConnection | null>(null);
   const debounceRef = useRef<Map<string, ReturnType<typeof setTimeout>> | null>(
     new Map<string, ReturnType<typeof setTimeout>>(),
   );
@@ -186,6 +188,19 @@ const CharacterSheet = () => {
     debounceRef.current = new Map<string, ReturnType<typeof setTimeout>>();
     fetchCharacter().catch(console.error);
   }, [id]);
+
+  useEffect(() => {
+    const conn = new signalR.HubConnectionBuilder()
+      .withUrl('/api/vtmv5/watch')
+      .build();
+
+    conn.on('messageReceived', () => {
+      console.log('Recieved!');
+    });
+    conn.start().catch(console.error);
+
+    connectionRef.current = conn;
+  }, []);
 
   return (
     <div className="charactersheet-container">

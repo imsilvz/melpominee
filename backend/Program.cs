@@ -1,3 +1,4 @@
+using Melpominee.app.Hubs;
 using Melpominee.app.Utilities;
 using Melpominee.app.Utilities.Database;
 using Melpominee.app.Models.CharacterSheets.VTMV5;
@@ -15,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSignalR();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(60);
@@ -60,6 +62,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
+app.MapHub<CharacterHub>("/vtmv5/watch");
 app.MapControllers();
 
 app.Run();

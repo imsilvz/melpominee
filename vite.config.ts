@@ -16,6 +16,7 @@ export default defineConfig({
         changeOrigin: false,
         secure: false,
         rewrite: (subdir) => subdir.replace(/^\/api/, ''),
+        ws: true, // even if true, websocket proxy doesn't work.
       },
     },
   },

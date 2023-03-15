@@ -11,10 +11,12 @@ interface StatDotsProps {
 }
 
 const HealthTracker = ({ rootKey, dotCount, value, onChange }: StatDotsProps) => {
-  const [dots, setDots] = useState<number>(value || 0);
+  const [dots, setDots] = useState<number>(
+    (typeof value === 'string' ? parseInt(value, 10) : value) || 0,
+  );
   useEffect(() => {
     if (value !== undefined) {
-      setDots(value);
+      setDots(typeof value === 'string' ? parseInt(value, 10) : value);
     }
   }, [value]);
   return (
@@ -25,15 +27,17 @@ const HealthTracker = ({ rootKey, dotCount, value, onChange }: StatDotsProps) =>
           key={`${rootKey}_dot${idx}`}
           type="radio"
           className="healthtracker-dot"
-          checked={dots >= idx + 1}
+          checked={(onChange ? (value as number) : dots) >= idx + 1}
           onChange={() => {}}
           onClick={() => {
-            if (idx + 1 === dots) {
-              if (value === undefined) {
-                setDots(0);
-              }
-            } else if (value === undefined) {
-              setDots(idx + 1);
+            let newDots = 0;
+            if (!(idx + 1 === dots)) {
+              newDots = idx + 1;
+            }
+            if (onChange) {
+              onChange(dots, newDots);
+            } else {
+              setDots(newDots);
             }
           }}
         />

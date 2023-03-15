@@ -9,9 +9,13 @@ import './SecondarySection.scss';
 
 interface SecondarySectionProps {
   character: Character;
+  onChangeHeaderField?: (field: string, val: string) => void;
 }
 
-const SecondarySection = ({ character }: SecondarySectionProps) => {
+const SecondarySection = ({
+  character,
+  onChangeHeaderField,
+}: SecondarySectionProps) => {
   const maxHealth = character.attributes.stamina + 3;
   const maxWillpower = character.attributes.composure + character.attributes.resolve;
   const humanityValue = character.secondaryStats.humanity.baseValue;
@@ -42,6 +46,11 @@ const SecondarySection = ({ character }: SecondarySectionProps) => {
             rootKey="secondarystat-hunger"
             dotCount={5}
             value={character.hunger}
+            onChange={(oldVal, newVal) => {
+              if (onChangeHeaderField) {
+                onChangeHeaderField('hunger', newVal.toString());
+              }
+            }}
           />
         </div>
       </div>

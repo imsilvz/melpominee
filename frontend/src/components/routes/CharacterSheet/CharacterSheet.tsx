@@ -250,7 +250,10 @@ const CharacterSheet = () => {
               }
             }}
           />
-          <SecondarySection character={currCharacter} />
+          <SecondarySection
+            character={currCharacter}
+            onChangeHeaderField={(field, val) => updateHeader(field, val)}
+          />
           <DisciplineSection
             characterId={currCharacter.id}
             levels={currCharacter.disciplines}
@@ -368,7 +371,6 @@ const CharacterSheet = () => {
                     const newItems = (items as MeritBackgroundFlaw[]).filter(
                       (item) => item.sortOrder !== val.sortOrder,
                     );
-                    console.log(val);
                     setCurrCharacter({
                       ...currCharacter,
                       [field]: [...newItems, val],

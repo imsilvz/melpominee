@@ -1,6 +1,7 @@
 using Dapper;
 using System.Data;
 using System.Collections;
+using System.Reflection;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -13,60 +14,50 @@ public class VampirePowerAmalgam
     public string School { get; set; } = "";
 }
 
-public abstract class VampirePower
+public class VampirePower
 {
-    public abstract string Id { get; }
-    public abstract string Name { get; }
-    public abstract string School { get; }
-    public abstract int Level { get; }
-    public virtual string? Prerequisite { get; } = null;
-    public virtual VampirePowerAmalgam? Amalgam { get; } = null;
-    public abstract string Cost { get; }
-    public abstract string Duration { get; }
-    public abstract string DicePool { get; }
-    public abstract string OpposingPool { get; }
-    public abstract string Effect { get; }
-    public virtual string? AdditionalNotes { get; } = null;
-    public abstract string Source { get; }
+    public string Id { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string School { get; set; } = "";
+    public int Level { get; set; } = 0;
+    public string? Prerequisite { get; set; } = null;
+    public VampirePowerAmalgam? Amalgam { get; set; } = null;
+    public string Cost { get; set; } = "";
+    public string Duration { get; set; } = "";
+    public string DicePool { get; set; } = "";
+    public string OpposingPool { get; set; } = "";
+    public string Effect { get; set; } = "";
+    public string? AdditionalNotes { get; set; } = null;
+    public string Source { get; set; } = "";
 
-    private static Dictionary<string, VampirePower>? PowerDict;
-    public static VampirePower GetDisciplinePower(string id)
+    public static Dictionary<string, VampirePower> PowerDict = new Dictionary<string, VampirePower>();
+    static VampirePower()
     {
-        VampirePower? disc = null;
-        if (PowerDict is null)
+        Assembly assembly = Assembly.GetExecutingAssembly();
+        string resourceName = "Melpominee.app.backend.Config.DisciplinePowers.json";
+        using (Stream? stream = assembly.GetManifestResourceStream(resourceName))
         {
-            // first run
-            PowerDict = new Dictionary<string, VampirePower>();
-            foreach(var asm in AppDomain.CurrentDomain.GetAssemblies())
+            if (stream is not null)
+            using (StreamReader reader = new StreamReader(stream))
             {
-                foreach (var type in asm.GetTypes())
+                string json = reader.ReadToEnd();
+                var powerDict = JsonSerializer.Deserialize<Dictionary<string, VampirePower>>(json);
+                if (powerDict is not null)
                 {
-                    if (type.BaseType == typeof(VampirePower))
-                    {
-                        VampirePower reflectDisc = (VampirePower)Activator.CreateInstance(type)!;
-                        PowerDict.Add(reflectDisc.Id, reflectDisc);
-                    }
+                    PowerDict = powerDict;
                 }
             }
         }
+    }
+
+    public static VampirePower GetDisciplinePower(string id)
+    {
+        VampirePower? disc = null;
         if (PowerDict.TryGetValue(id, out disc))
         {
             return disc;
         }
         throw new ArgumentException($"'{id}' is not a valid VampirePower identifier.");
-    }
-}
-
-public class VampirePowerJsonConverter : JsonConverter<VampirePower>
-{
-    public override VampirePower? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void Write(Utf8JsonWriter writer, VampirePower value, JsonSerializerOptions options)
-    {
-        writer.WriteStringValue(value.Id);
     }
 }
 

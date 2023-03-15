@@ -101,23 +101,16 @@ public class MasterdataController : ControllerBase
     public DisciplineListResponse GetDisciplinePowerList()
     {
         Dictionary<string, List<VampirePower>> disciplineList = new Dictionary<string, List<VampirePower>>();
-        foreach(var asm in AppDomain.CurrentDomain.GetAssemblies())
+        foreach(var power in VampirePower.PowerDict)
         {
-            foreach (var type in asm.GetTypes())
+            List<VampirePower>? powerList;
+            string schoolName = power.Value.School.Replace(" ", "").Replace("-", "");
+            if(!disciplineList.TryGetValue(schoolName, out powerList))
             {
-                if (type.BaseType == typeof(VampirePower))
-                {
-                    List<VampirePower>? powerList;
-                    VampirePower reflectDisc = (VampirePower)Activator.CreateInstance(type)!;
-                    string schoolName = reflectDisc.School.Replace(" ", "").Replace("-", "");
-                    if(!disciplineList.TryGetValue(schoolName, out powerList))
-                    {
-                        powerList = new List<VampirePower>();
-                        disciplineList.Add(schoolName, new List<VampirePower>());
-                    }
-                    powerList.Add(reflectDisc);
-                }
+                powerList = new List<VampirePower>();
+                disciplineList.Add(schoolName, new List<VampirePower>());
             }
+            powerList.Add(power.Value);
         }
         return new DisciplineListResponse
         {

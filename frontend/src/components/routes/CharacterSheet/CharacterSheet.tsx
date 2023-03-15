@@ -373,12 +373,26 @@ const CharacterSheet = () => {
                       ...currCharacter,
                       [field]: [...newItems, val],
                     });
-                    // fire network request
-                    updateGeneric<APICharacterUpdateResponse>(
-                      `/api/vtmv5/character/${field}/${currCharacter.id}/`,
-                      field,
-                      { [field]: [val] },
-                    ).catch(console.error);
+                    if (debounceRef?.current?.has(`${field}_${val.sortOrder}`)) {
+                      // clean up previous timeout
+                      clearTimeout(
+                        debounceRef?.current?.get(`${field}_${val.sortOrder}`),
+                      );
+                      debounceRef?.current?.delete(`${field}_${val.sortOrder}`);
+                    }
+                    debounceRef?.current?.set(
+                      `${field}_${val.sortOrder}`,
+                      setTimeout(() => {
+                        // remove previous from map since it has triggered
+                        debounceRef?.current?.delete(`${field}_${val.sortOrder}`);
+                        // fire network request
+                        updateGeneric<APICharacterUpdateResponse>(
+                          `/api/vtmv5/character/${field}/${currCharacter.id}/`,
+                          field,
+                          { [field]: [val] },
+                        ).catch(console.error);
+                      }, 250),
+                    );
                   }
                 }}
               />

@@ -12,10 +12,15 @@ interface MeritFlawSectionProps {
   Backgrounds: MeritBackgroundFlaw[];
   Merits: MeritBackgroundFlaw[];
   Flaws: MeritBackgroundFlaw[];
+  onChange?: (field: string, val: MeritBackgroundFlaw) => void;
 }
 
-const MeritFlawSection = ({ Backgrounds, Merits, Flaws }: MeritFlawSectionProps) => {
-  console.log(Backgrounds, Merits, Flaws);
+const MeritFlawSection = ({
+  Backgrounds,
+  Merits,
+  Flaws,
+  onChange,
+}: MeritFlawSectionProps) => {
   return (
     <CharacterSheetSection
       className="charactersheet-meritflaw-inner"
@@ -28,10 +33,31 @@ const MeritFlawSection = ({ Backgrounds, Merits, Flaws }: MeritFlawSectionProps)
             const background = Backgrounds.find((item) => item.sortOrder === rowIdx);
             return (
               <div key={`background-${rowIdx}`} className="meritflaw-row">
-                <input value={background ? background.name : ''} />
+                <input
+                  value={background ? background.name : ''}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    const text = event.target.value || '';
+                    if (onChange) {
+                      onChange('backgrounds', {
+                        sortOrder: rowIdx,
+                        name: text,
+                        score: background ? background.score : 0,
+                      });
+                    }
+                  }}
+                />
                 <StatDots
                   rootKey={`background-${rowIdx}`}
                   value={background ? background.score : 0}
+                  onChange={(oldVal, newVal) => {
+                    if (onChange) {
+                      onChange('backgrounds', {
+                        sortOrder: rowIdx,
+                        name: background ? background.name : '',
+                        score: newVal,
+                      });
+                    }
+                  }}
                 />
               </div>
             );
@@ -45,10 +71,31 @@ const MeritFlawSection = ({ Backgrounds, Merits, Flaws }: MeritFlawSectionProps)
             const merit = Merits.find((item) => item.sortOrder === rowIdx);
             return (
               <div key={`merit-${rowIdx}`} className="meritflaw-row">
-                <input value={merit ? merit.name : ''} />
+                <input
+                  value={merit ? merit.name : ''}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    const text = event.target.value || '';
+                    if (onChange) {
+                      onChange('merits', {
+                        sortOrder: rowIdx,
+                        name: text,
+                        score: merit ? merit.score : 0,
+                      });
+                    }
+                  }}
+                />
                 <StatDots
                   rootKey={`merit-${rowIdx}`}
                   value={merit ? merit.score : 0}
+                  onChange={(oldVal, newVal) => {
+                    if (onChange) {
+                      onChange('merits', {
+                        sortOrder: rowIdx,
+                        name: merit ? merit.name : '',
+                        score: newVal,
+                      });
+                    }
+                  }}
                 />
               </div>
             );
@@ -62,8 +109,32 @@ const MeritFlawSection = ({ Backgrounds, Merits, Flaws }: MeritFlawSectionProps)
             const flaw = Flaws.find((item) => item.sortOrder === rowIdx);
             return (
               <div key={`flaw-${rowIdx}`} className="meritflaw-row">
-                <input value={flaw ? flaw.name : ''} />
-                <StatDots rootKey={`flaw-${rowIdx}`} value={flaw ? flaw.score : 0} />
+                <input
+                  value={flaw ? flaw.name : ''}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    const text = event.target.value || '';
+                    if (onChange) {
+                      onChange('flaws', {
+                        sortOrder: rowIdx,
+                        name: text,
+                        score: flaw ? flaw.score : 0,
+                      });
+                    }
+                  }}
+                />
+                <StatDots
+                  rootKey={`flaw-${rowIdx}`}
+                  value={flaw ? flaw.score : 0}
+                  onChange={(oldVal, newVal) => {
+                    if (onChange) {
+                      onChange('flaws', {
+                        sortOrder: rowIdx,
+                        name: flaw ? flaw.name : '',
+                        score: newVal,
+                      });
+                    }
+                  }}
+                />
               </div>
             );
           })}

@@ -1015,7 +1015,7 @@ public class VampireV5MeritFlawBackground : IList<MeritFlawBackground>
 
 public class VampireV5Backgrounds : VampireV5MeritFlawBackground
 {
-    protected static string ItemType { get; set; } = "background";
+    public static string ItemType { get; set; } = "background";
 
     public bool Save(int charId)
     {
@@ -1027,7 +1027,7 @@ public class VampireV5Backgrounds : VampireV5MeritFlawBackground
         return Save(conn, trans, charId, ItemType);
     }
 
-    public static VampireV5MeritFlawBackground Load(int charId)
+    public static VampireV5Backgrounds Load(int charId)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -1074,7 +1074,7 @@ public class VampireV5Backgrounds : VampireV5MeritFlawBackground
 
 public class VampireV5Merits : VampireV5MeritFlawBackground
 {
-    protected static string ItemType { get; set; } = "merit";
+    public static string ItemType { get; set; } = "merit";
 
     public bool Save(int charId)
     {
@@ -1133,7 +1133,7 @@ public class VampireV5Merits : VampireV5MeritFlawBackground
 
 public class VampireV5Flaws : VampireV5MeritFlawBackground
 {
-    protected static string ItemType { get; set; } = "flaw";
+    public static string ItemType { get; set; } = "flaw";
 
     public bool Save(int charId)
     {

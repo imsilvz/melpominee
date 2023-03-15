@@ -48,7 +48,6 @@ const TheBloodSection = ({
                 value={BloodPotency}
                 onChange={(oldVal, newVal) => {
                   if (onChange) {
-                    console.log(newVal);
                     onChange('bloodPotency', newVal.toString());
                   }
                 }}

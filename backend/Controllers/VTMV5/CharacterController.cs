@@ -364,6 +364,147 @@ public class CharacterController : ControllerBase
             Error = "not_found"
         };
     }
+
+    [HttpGet("backgrounds/{charId:int}", Name = "Get Character Backgrounds")]
+    public VampireBackgroundMeritFlawResponse GetBackgrounds(int charId)
+    {
+        VampireV5Backgrounds? backgrounds;
+        if(charId > 0)
+        {
+            backgrounds = VampireV5Backgrounds.Load(charId);
+            if(backgrounds is not null)
+            {
+                return new VampireBackgroundMeritFlawResponse
+                {
+                    Success = true,
+                    Backgrounds = backgrounds,
+                };
+            }
+        }
+        return new VampireBackgroundMeritFlawResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
+    
+    [HttpPut("backgrounds/{charId:int}", Name = "Update Character Backgrounds")]
+    public VampireBackgroundMeritFlawResponse UpdateBackgrounds(int charId, [FromBody] VampireBackgroundMeritFlawUpdate update)
+    {
+        VampireV5Character? character;
+        if(charId > 0)
+        {
+            character = VampireV5Character.GetCharacter(charId); 
+            if(character is not null && character.Loaded)
+            {
+                update.Apply(character);
+                return new VampireBackgroundMeritFlawResponse
+                {
+                    Success = true,
+                    Backgrounds = character.Backgrounds,
+                };
+            }
+        }
+        return new VampireBackgroundMeritFlawResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
+
+    [HttpGet("merits/{charId:int}", Name = "Get Character Merits")]
+    public VampireBackgroundMeritFlawResponse GetMerits(int charId)
+    {
+        VampireV5Merits? merits;
+        if(charId > 0)
+        {
+            merits = VampireV5Merits.Load(charId);
+            if(merits is not null)
+            {
+                return new VampireBackgroundMeritFlawResponse
+                {
+                    Success = true,
+                    Merits = merits,
+                };
+            }
+        }
+        return new VampireBackgroundMeritFlawResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
+    
+    [HttpPut("merits/{charId:int}", Name = "Update Character Merits")]
+    public VampireBackgroundMeritFlawResponse UpdateMerits(int charId, [FromBody] VampireBackgroundMeritFlawUpdate update)
+    {
+        VampireV5Character? character;
+        if(charId > 0)
+        {
+            character = VampireV5Character.GetCharacter(charId); 
+            if(character is not null && character.Loaded)
+            {
+                update.Apply(character);
+                return new VampireBackgroundMeritFlawResponse
+                {
+                    Success = true,
+                    Merits = character.Merits,
+                };
+            }
+        }
+        return new VampireBackgroundMeritFlawResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
+    
+    [HttpGet("flaws/{charId:int}", Name = "Get Character Flaws")]
+    public VampireBackgroundMeritFlawResponse GetFlaws(int charId)
+    {
+        VampireV5Flaws? flaws;
+        if(charId > 0)
+        {
+            flaws = VampireV5Flaws.Load(charId);
+            if(flaws is not null)
+            {
+                return new VampireBackgroundMeritFlawResponse
+                {
+                    Success = true,
+                    Flaws = flaws,
+                };
+            }
+        }
+        return new VampireBackgroundMeritFlawResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
+
+    [HttpPut("flaws/{charId:int}", Name = "Update Character Flaws")]
+    public VampireBackgroundMeritFlawResponse UpdateFlaws(int charId, [FromBody] VampireBackgroundMeritFlawUpdate update)
+    {
+        VampireV5Character? character;
+        if(charId > 0)
+        {
+            character = VampireV5Character.GetCharacter(charId); 
+            if(character is not null && character.Loaded)
+            {
+                update.Apply(character);
+                return new VampireBackgroundMeritFlawResponse
+                {
+                    Success = true,
+                    Flaws = character.Flaws,
+                };
+            }
+        }
+        return new VampireBackgroundMeritFlawResponse
+        {
+            Success = false,
+            Error = "not_found"
+        };
+    }
     
     [HttpGet("profile/{charId:int}", Name = "Get Character Profile")]
     public VampireProfileResponse GetProfile(int charId)

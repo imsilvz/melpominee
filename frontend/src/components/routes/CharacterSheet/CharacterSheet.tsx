@@ -15,6 +15,7 @@ import {
   CharacterDisciplines,
   CharacterHeader,
   CharacterSkills,
+  MeritBackgroundFlaw,
 } from '../../../types/Character';
 
 // local files
@@ -279,7 +280,6 @@ const CharacterSheet = () => {
                 // single ability changed
                 let newPowers = [...currCharacter.disciplinePowers];
                 const changeData: { powerId: string; remove: boolean }[] = [];
-                console.log(oldVal, newVal, newPowers);
                 if (newPowers.includes(oldVal) && newPowers.includes(newVal)) {
                   // it's just an order swap, so take no action
                   return;
@@ -362,6 +362,25 @@ const CharacterSheet = () => {
                 Backgrounds={currCharacter.backgrounds}
                 Merits={currCharacter.merits}
                 Flaws={currCharacter.flaws}
+                onChange={(field, val) => {
+                  if (Object.keys(currCharacter).includes(field)) {
+                    const items = currCharacter[field as keyof Character];
+                    const newItems = (items as MeritBackgroundFlaw[]).filter(
+                      (item) => item.sortOrder !== val.sortOrder,
+                    );
+                    console.log(val);
+                    setCurrCharacter({
+                      ...currCharacter,
+                      [field]: [...newItems, val],
+                    });
+                    // fire network request
+                    updateGeneric<APICharacterUpdateResponse>(
+                      `/api/vtmv5/character/${field}/${currCharacter.id}/`,
+                      field,
+                      { [field]: [val] },
+                    ).catch(console.error);
+                  }
+                }}
               />
             </div>
             <div className="charactersheet-panel-split-column">

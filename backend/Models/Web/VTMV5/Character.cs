@@ -579,6 +579,82 @@ public class VampireBeliefsUpdate
     }
 }
 
+public class VampireBackgroundMeritFlawResponse
+{
+    public bool Success { get; set; }
+    public string? Error { get; set; }
+    public VampireV5MeritFlawBackground? Backgrounds { get; set; }
+    public VampireV5MeritFlawBackground? Merits { get; set; }
+    public VampireV5MeritFlawBackground? Flaws { get; set; }
+}
+
+public class VampireBackgroundMeritFlawUpdate
+{
+    public int? Id { get; set; }
+    public VampireV5MeritFlawBackground? Backgrounds { get; set; }
+    public VampireV5MeritFlawBackground? Merits { get; set; }
+    public VampireV5MeritFlawBackground? Flaws { get; set; }
+
+    public void Apply(VampireV5Character character)
+    {
+        // Id is required!
+        Id = character.Id;
+        if (Id is null) 
+        { 
+            throw new ArgumentNullException
+            (
+                "VampireBackgroundMeritFlawUpdate.Apply called with unsaved character. A full save must be performed."
+            ); 
+        }
+        
+        if (Backgrounds is not null)
+            Apply(character, VampireV5Backgrounds.ItemType, Backgrounds);
+        if (Merits is not null)
+            Apply(character, VampireV5Merits.ItemType, Merits);
+        if (Flaws is not null)
+            Apply(character, VampireV5Flaws.ItemType, Flaws);
+    }
+
+    private void Apply(VampireV5Character character, string ItemType, VampireV5MeritFlawBackground Items)
+    {
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    // set update fields
+                    foreach(var item in Items)
+                    {
+                        item.CharId = character.Id;
+                        item.ItemType = ItemType;
+                    };
+
+                    var sql =
+                    @"
+                        INSERT INTO melpominee_character_meritflawbackgrounds
+                            (CharId, ItemType, SortOrder, Name, Score)
+                        VALUES
+                            (@CharId, @ItemType, @SortOrder, @Name, @Score)
+                        ON CONFLICT DO UPDATE
+                        SET
+                            Name = @Name,
+                            Score = @Score;
+                    ";
+                    conn.Execute(sql, Items, transaction: trans);
+                    trans.Commit();
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+    }
+}
+
 public class VampireProfileResponse 
 {
     public bool Success { get; set; }

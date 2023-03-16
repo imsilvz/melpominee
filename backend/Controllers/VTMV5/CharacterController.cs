@@ -105,7 +105,7 @@ public class CharacterController : ControllerBase
             {
                 await update.UpdateData.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnHeaderUpdate(charId, startTime, update.UpdateData);
+                    .OnHeaderUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireHeaderResponse
                 {
                     Success = (character is not null),
@@ -195,7 +195,7 @@ public class CharacterController : ControllerBase
             {
                 await update.UpdateData.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnAttributeUpdate(charId, startTime, update.UpdateData);
+                    .OnAttributeUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireAttributesResponse
                 {
                     Success = true,
@@ -254,7 +254,7 @@ public class CharacterController : ControllerBase
             {
                 await update.UpdateData.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnSkillUpdate(charId, startTime, update.UpdateData);
+                    .OnSkillUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireSkillsResponse
                 {
                     Success = true,
@@ -314,7 +314,7 @@ public class CharacterController : ControllerBase
             {
                 await update.UpdateData.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnSecondaryUpdate(charId, startTime, update.UpdateData);
+                    .OnSecondaryUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireStatResponse
                 {
                     Success = true,
@@ -373,7 +373,7 @@ public class CharacterController : ControllerBase
             {
                 await update.UpdateData.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnDisciplineUpdate(charId, startTime, update.UpdateData);
+                    .OnDisciplineUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireDisciplinesResponse
                 {
                     Success = true,
@@ -482,7 +482,7 @@ public class CharacterController : ControllerBase
             {
                 await update.UpdateData.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnBeliefsupdate(charId, startTime, update.UpdateData);
+                    .OnBeliefsupdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireBeliefsResponse
                 {
                     Success = true,
@@ -541,7 +541,7 @@ public class CharacterController : ControllerBase
             {
                 await update.UpdateData.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnBackgroundMeritFlawUpdate(charId, startTime, update.UpdateData);
+                    .OnBackgroundMeritFlawUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireBackgroundMeritFlawResponse
                 {
                     Success = true,
@@ -600,7 +600,7 @@ public class CharacterController : ControllerBase
             {
                 await update.UpdateData.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnBackgroundMeritFlawUpdate(charId, startTime, update.UpdateData);
+                    .OnBackgroundMeritFlawUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireBackgroundMeritFlawResponse
                 {
                     Success = true,
@@ -659,7 +659,7 @@ public class CharacterController : ControllerBase
             {
                 await update.UpdateData.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnBackgroundMeritFlawUpdate(charId, startTime, update.UpdateData);
+                    .OnBackgroundMeritFlawUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireBackgroundMeritFlawResponse
                 {
                     Success = true,
@@ -718,7 +718,7 @@ public class CharacterController : ControllerBase
             {
                 await update.UpdateData.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnProfileUpdate(charId, startTime, update.UpdateData);
+                    .OnProfileUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireProfileResponse
                 {
                     Success = true,

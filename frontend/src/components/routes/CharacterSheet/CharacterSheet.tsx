@@ -73,7 +73,12 @@ const CharacterSheet = () => {
 
       conn.on(
         'onHeaderUpdate',
-        (charId: number, timestamp: string, update: CharacterHeader) => {
+        (
+          charId: number,
+          updateId: string | null,
+          timestamp: string,
+          update: CharacterHeader,
+        ) => {
           const cleaned = cleanUpdate(update) as CharacterHeader;
           console.log(timestamp, `Header update for ${charId}`, cleaned);
           setCurrCharacter(
@@ -95,7 +100,12 @@ const CharacterSheet = () => {
 
       conn.on(
         'onAttributeUpdate',
-        (charId: number, timestamp: string, update: CharacterAttributes) => {
+        (
+          charId: number,
+          updateId: string | null,
+          timestamp: string,
+          update: CharacterAttributes,
+        ) => {
           const cleaned = cleanUpdate(update) as CharacterAttributes;
           console.log(timestamp, `Attribute update for ${charId}`, cleaned);
           setCurrCharacter(
@@ -123,7 +133,12 @@ const CharacterSheet = () => {
 
       conn.on(
         'onSkillUpdate',
-        (charId: number, timestamp: string, update: CharacterSkills) => {
+        (
+          charId: number,
+          updateId: string | null,
+          timestamp: string,
+          update: CharacterSkills,
+        ) => {
           const cleaned = cleanUpdate(update) as CharacterSkills;
           console.log(timestamp, `Skill update for ${charId}`, cleaned);
           setCurrCharacter(
@@ -151,7 +166,12 @@ const CharacterSheet = () => {
 
       conn.on(
         'onSecondaryUpdate',
-        (charId: number, timestamp: string, update: CharacterSecondaryStats) => {
+        (
+          charId: number,
+          updateId: string | null,
+          timestamp: string,
+          update: CharacterSecondaryStats,
+        ) => {
           const cleaned = cleanUpdate(update) as CharacterSecondaryStats;
           console.log(timestamp, `Secondary Stat update for ${charId}`, cleaned);
           setCurrCharacter((char) => {
@@ -181,6 +201,7 @@ const CharacterSheet = () => {
         'onDisciplineUpdate',
         (
           charId: number,
+          updateId: string | null,
           timestamp: string,
           update: { school: string; score: number },
         ) => {
@@ -211,7 +232,12 @@ const CharacterSheet = () => {
 
       conn.on(
         'onBeliefsUpdate',
-        (charId: number, timestamp: string, update: CharacterBeliefs) => {
+        (
+          charId: number,
+          updateId: string | null,
+          timestamp: string,
+          update: CharacterBeliefs,
+        ) => {
           const cleaned = cleanUpdate(update) as CharacterBeliefs;
           console.log(timestamp, `Beliefs update for ${charId}`, cleaned);
           setCurrCharacter(
@@ -241,6 +267,7 @@ const CharacterSheet = () => {
         'onBackgroundMeritFlawUpdate',
         (
           charId: number,
+          updateId: string | null,
           timestamp: string,
           update: {
             backgrounds: {
@@ -281,7 +308,12 @@ const CharacterSheet = () => {
 
       conn.on(
         'onProfileUpdate',
-        (charId: number, timestamp: string, update: CharacterProfile) => {
+        (
+          charId: number,
+          updateId: string | null,
+          timestamp: string,
+          update: CharacterProfile,
+        ) => {
           const cleaned = cleanUpdate(update) as CharacterProfile;
           console.log(timestamp, `Profile update for ${charId}`, cleaned);
           setCurrCharacter(

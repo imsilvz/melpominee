@@ -72,13 +72,17 @@ const handleUpdateAsync = async (
   payload: object,
   opts?: UpdateOptions,
 ) => {
+  const updateId = crypto.randomUUID();
   const result = await fetch(endpoint, {
     method: 'PUT',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      updateId,
+      updateData: payload,
+    }),
   });
   if (result.ok) {
     const responseBody = await (result.json() as Promise<UpdateResponse>);

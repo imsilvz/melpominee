@@ -5,6 +5,12 @@ using Melpominee.app.Utilities.Database;
 using Melpominee.app.Models.CharacterSheets.VTMV5;
 namespace Melpominee.app.Models.Web.VTMV5;
 
+public class CharacterUpdateWrapper<T>
+{
+    public string? UpdateId { get; set; }
+    public T? UpdateData { get; set; }
+}
+
 public class VampireCharacterResponse
 {
     public bool Success { get; set; } = false;

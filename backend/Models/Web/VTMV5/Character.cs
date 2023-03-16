@@ -49,7 +49,7 @@ public class VampireCharacterUpdate
     public int? BloodPotency { get; set; }
     public int? XpSpent { get; set; }
     public int? XpTotal { get; set; }
-    public void Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character)
     {
         VampireV5Header header;
         var updateList = new List<string>();
@@ -141,7 +141,7 @@ public class VampireCharacterUpdate
                             {String.Join(',', updateList.Select(prop => $"{prop} = @{prop}"))}
                         WHERE Id = @Id;
                     ";
-                    conn.Execute(sql, header, transaction: trans);
+                    await conn.ExecuteAsync(sql, header, transaction: trans);
                     trans.Commit();
                 }
                 catch(Exception)
@@ -174,7 +174,7 @@ public class VampireAttributesUpdate
     public int? Intelligence { get; set; }
     public int? Wits { get; set; }
     public int? Resolve { get; set; }
-    public void Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character)
     {
         // Id is required!
         Id = character.Id;
@@ -226,7 +226,7 @@ public class VampireAttributesUpdate
                         SET
                             Score = @Score;
                     ";
-                    conn.Execute(update, updateList, transaction: trans);
+                    await conn.ExecuteAsync(update, updateList, transaction: trans);
                     character.Attributes = VampireV5Attributes.Load(conn, trans, (int)Id);
                     trans.Commit();
                 }
@@ -279,7 +279,7 @@ public class VampireSkillsUpdate
     public VampireV5Skill? Science { get; set; }
     public VampireV5Skill? Technology { get; set; }
 
-    public void Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character)
     {
         // Id is required!
         Id = character.Id;
@@ -302,6 +302,9 @@ public class VampireSkillsUpdate
             var v5Skill = (VampireV5Skill?)skillProperty.GetValue(this, null);
             if (v5Skill is not null)
             {
+                // set new value for our character
+                typeof(VampireV5Skills).GetProperty(skillProperty.Name)!
+                    .SetValue(character.Skills, v5Skill);
                 updateList.Add(new 
                     { 
                         CharId = Id, 
@@ -333,8 +336,7 @@ public class VampireSkillsUpdate
                             Speciality = @Speciality,
                             Score = @Score;
                     ";
-                    conn.Execute(sql, updateList, transaction: trans);
-                    character.Skills = VampireV5Skills.Load(conn, trans, (int)Id);
+                    await conn.ExecuteAsync(sql, updateList, transaction: trans);
                     trans.Commit();
                 }
                 catch(Exception)

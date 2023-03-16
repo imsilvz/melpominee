@@ -1,6 +1,9 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
+using Melpominee.app.Hubs.VTMV5;
+using Melpominee.app.Hubs.Clients.VTMV5;
 using Melpominee.app.Models.Web.VTMV5;
 using Melpominee.app.Models.CharacterSheets.VTMV5;
 namespace Melpominee.app.Controllers;
@@ -11,10 +14,12 @@ namespace Melpominee.app.Controllers;
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class CharacterController : ControllerBase
 {
+    private readonly IHubContext<CharacterHub, ICharacterClient> _characterHub;
     private readonly ILogger<CharacterController> _logger;
-    public CharacterController(ILogger<CharacterController> logger)
+    public CharacterController(ILogger<CharacterController> logger, IHubContext<CharacterHub, ICharacterClient> characterHub)
     {
         _logger = logger;
+        _characterHub = characterHub;
     }
 
     [HttpGet("{charId:int}", Name = "Get Character")]
@@ -74,7 +79,7 @@ public class CharacterController : ControllerBase
     }
 
     [HttpPut("{charId:int}", Name = "Update Character")]
-    public VampireHeaderResponse Update(int charId, [FromBody] VampireCharacterUpdate update)
+    public async Task<VampireHeaderResponse> Update(int charId, [FromBody] VampireCharacterUpdate update)
     {
         VampireV5Character? character;
         if(charId > 0)
@@ -82,13 +87,13 @@ public class CharacterController : ControllerBase
             character = VampireV5Character.GetCharacter(charId); 
             if(character is not null && character.Loaded)
             {
-                update.Apply(character);
-                // reload
-                character = VampireV5Character.GetCharacter(charId);
+                await update.Apply(character);
+                _ = _characterHub.Clients.Group($"character_{charId}")
+                    .OnHeaderUpdate(charId, update);
                 return new VampireHeaderResponse
                 {
                     Success = (character is not null),
-                    Character = character?.GetHeader()
+                    Character = character!.GetHeader()
                 };
             }
         }
@@ -154,7 +159,7 @@ public class CharacterController : ControllerBase
     }
     
     [HttpPut("attributes/{charId:int}", Name = "Update Character Attributes")]
-    public VampireAttributesResponse UpdateAttributes(int charId, [FromBody] VampireAttributesUpdate update)
+    public async Task<VampireAttributesResponse> UpdateAttributes(int charId, [FromBody] VampireAttributesUpdate update)
     {
         VampireV5Character? character;
         if(charId > 0)
@@ -162,7 +167,9 @@ public class CharacterController : ControllerBase
             character = VampireV5Character.GetCharacter(charId); 
             if(character is not null && character.Loaded)
             {
-                update.Apply(character);
+                await update.Apply(character);
+                _ = _characterHub.Clients.Group($"character_{charId}")
+                    .OnAttributeUpdate(charId, update);
                 return new VampireAttributesResponse
                 {
                     Success = true,
@@ -201,7 +208,7 @@ public class CharacterController : ControllerBase
     }
     
     [HttpPut("skills/{charId:int}", Name = "Update Character Skills")]
-    public VampireSkillsResponse UpdateSkills(int charId, [FromBody] VampireSkillsUpdate update)
+    public async Task<VampireSkillsResponse> UpdateSkills(int charId, [FromBody] VampireSkillsUpdate update)
     {
         VampireV5Character? character;
         if(charId > 0)
@@ -209,7 +216,9 @@ public class CharacterController : ControllerBase
             character = VampireV5Character.GetCharacter(charId); 
             if(character is not null && character.Loaded)
             {
-                update.Apply(character);
+                await update.Apply(character);
+                _ = _characterHub.Clients.Group($"character_{charId}")
+                    .OnSkillUpdate(charId, update);
                 return new VampireSkillsResponse
                 {
                     Success = true,

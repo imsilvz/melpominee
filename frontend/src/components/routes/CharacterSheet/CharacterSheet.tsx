@@ -1,6 +1,7 @@
 import * as signalR from '@microsoft/signalr';
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { cleanUpdate } from '../../../util/character';
 
 // redux
 import { useAppSelector } from '../../../redux/hooks';
@@ -59,6 +60,75 @@ const CharacterSheet = () => {
   const disciplinePowers = useAppSelector(selectDisciplinePowers);
   const [savedCharacter, setSavedCharacter] = useState<Character | null>(null);
   const [currCharacter, setCurrCharacter] = useState<Character | null>(null);
+
+  useEffect(() => {
+    if (id !== undefined) {
+      const conn = new signalR.HubConnectionBuilder()
+        .withUrl('/api/vtmv5/watch')
+        .withAutomaticReconnect()
+        .configureLogging(signalR.LogLevel.Critical)
+        .build();
+
+      conn.on('onHeaderUpdate', (charId: number, update: CharacterHeader) => {
+        console.log(`Header update for ${charId}`, update);
+        const cleaned = cleanUpdate(update) as CharacterHeader;
+        setCurrCharacter(
+          (char) =>
+            char && {
+              ...char,
+              ...cleaned,
+            },
+        );
+      });
+
+      conn.on('onAttributeUpdate', (charId: number, update: CharacterAttributes) => {
+        console.log(`Attribute update for ${charId}`, update);
+        const cleaned = cleanUpdate(update) as CharacterAttributes;
+        setCurrCharacter(
+          (char) =>
+            char && {
+              ...char,
+              attributes: {
+                ...char.attributes,
+                ...cleaned,
+              },
+            },
+        );
+      });
+
+      conn.on('onSkillUpdate', (charId: number, update: CharacterSkills) => {
+        console.log(`Skill update for ${charId}`, update);
+        const cleaned = cleanUpdate(update) as CharacterSkills;
+        setCurrCharacter(
+          (char) =>
+            char && {
+              ...char,
+              skills: {
+                ...char.skills,
+                ...cleaned,
+              },
+            },
+        );
+      });
+
+      conn
+        .start()
+        .then(async () => {
+          console.log('Hello??');
+          return conn.invoke('WatchCharacter', parseInt(id, 10));
+        })
+        .catch((err: Error) => {
+          if (err.message !== 'The connection was stopped during negotiation.') {
+            console.error(err);
+          }
+        });
+
+      connectionRef.current = conn;
+    }
+    return () => {
+      connectionRef.current?.stop().catch(console.error);
+    };
+  }, [id]);
 
   const updateHeader = (field: string, value: string) => {
     if (
@@ -189,19 +259,6 @@ const CharacterSheet = () => {
     debounceRef.current = new Map<string, ReturnType<typeof setTimeout>>();
     fetchCharacter().catch(console.error);
   }, [id]);
-
-  useEffect(() => {
-    const conn = new signalR.HubConnectionBuilder()
-      .withUrl('/api/vtmv5/watch')
-      .build();
-
-    conn.on('messageReceived', () => {
-      console.log('Recieved!');
-    });
-    conn.start().catch(console.error);
-
-    connectionRef.current = conn;
-  }, []);
 
   return (
     <div className="charactersheet-container">

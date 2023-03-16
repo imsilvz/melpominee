@@ -1,4 +1,4 @@
-using Melpominee.app.Hubs;
+using Melpominee.app.Hubs.VTMV5;
 using Melpominee.app.Utilities;
 using Melpominee.app.Utilities.Database;
 using Melpominee.app.Models.CharacterSheets.VTMV5;

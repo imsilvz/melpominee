@@ -463,17 +463,32 @@ public class VampireDisciplinesResponse
 
 public class VampireDisciplinesUpdate
 {
+    // JsonPropertyName to enforce case
+    // case is important for this particular API
+    // as these properties might be used as keys!
+    [JsonPropertyName("Animalism")]
     public int? Animalism { get; set; }
+    [JsonPropertyName("Auspex")]
     public int? Auspex { get; set; }
+    [JsonPropertyName("BloodSorcery")]
     public int? BloodSorcery { get; set; }
+    [JsonPropertyName("Celerity")]
     public int? Celerity { get; set; }
+    [JsonPropertyName("Dominate")]
     public int? Dominate { get; set; }
+    [JsonPropertyName("Fortitude")]
     public int? Fortitude { get; set; }
+    [JsonPropertyName("Obfuscate")]
     public int? Obfuscate { get; set; }
+    [JsonPropertyName("Oblivion")]
     public int? Oblivion { get; set; }
+    [JsonPropertyName("Potence")]
     public int? Potence { get; set; }
+    [JsonPropertyName("Presence")]
     public int? Presence { get; set; }
+    [JsonPropertyName("Protean")]
     public int? Protean { get; set; }
+    [JsonPropertyName("ThinBloodAlchemy")]
     public int? ThinBloodAlchemy { get; set; }
     public async Task Apply(VampireV5Character character)
     {

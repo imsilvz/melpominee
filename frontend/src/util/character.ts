@@ -144,7 +144,6 @@ export const handleUpdate = (
   // send network request
   if (opts?.debounceOptions?.enable) {
     const debounceKey = `${opts?.property || 'character'}-${getDebounceKey(update)}`;
-    console.log(debounceKey);
     if (DebounceMap.has(debounceKey)) {
       // clear previous timer and hold updates
       clearTimeout(DebounceMap.get(debounceKey));

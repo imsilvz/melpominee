@@ -184,14 +184,15 @@ const CharacterSheet = () => {
           timestamp: string,
           update: { school: string; score: number },
         ) => {
-          console.log(timestamp, `Discipline update for ${charId}`, update);
+          const cleaned = cleanUpdate(update) as CharacterDisciplines;
+          console.log(timestamp, `Discipline update for ${charId}`, cleaned);
           setCurrCharacter(
             (char) =>
               char && {
                 ...char,
                 disciplines: {
                   ...char.disciplines,
-                  [update.school as keyof CharacterDisciplines]: update.score,
+                  ...cleaned,
                 },
               },
           );
@@ -201,7 +202,7 @@ const CharacterSheet = () => {
                 ...char,
                 disciplines: {
                   ...char.disciplines,
-                  [update.school as keyof CharacterDisciplines]: update.score,
+                  ...cleaned,
                 },
               },
           );

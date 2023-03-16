@@ -366,7 +366,7 @@ public class VampireStatUpdate
     public int? SuperficialDamage { get; set; }
     public int? AggravatedDamage { get; set; }
 
-    public void Apply(IDbConnection conn, IDbTransaction trans, VampireV5Character character, string statName)
+    public async Task Apply(IDbConnection conn, IDbTransaction trans, VampireV5Character character, string statName)
     {
         // Id is required!
         CharId = character.Id;
@@ -379,13 +379,28 @@ public class VampireStatUpdate
             ); 
         }
 
+        // grab object thru reflection
+        VampireV5SecondaryStat statObject = (VampireV5SecondaryStat)typeof(VampireV5SecondaryStats)
+            .GetProperty(statName)!
+            .GetValue(character.SecondaryStats)!;
+        
+        // make changes
         List<string> updList = new List<string>();
         if (BaseValue is not null)
+        {
             updList.Add("BaseValue");
+            statObject.BaseValue = (int)BaseValue;
+        }
         if (SuperficialDamage is not null)
+        {
             updList.Add("SuperficialDamage");
+            statObject.SuperficialDamage = (int)SuperficialDamage;
+        }
         if (AggravatedDamage is not null)
+        {
             updList.Add("AggravatedDamage");
+            statObject.AggravatedDamage = (int)AggravatedDamage;
+        }
 
         var sql =
         @$"
@@ -394,7 +409,7 @@ public class VampireStatUpdate
                 {String.Join(", ", updList.Select(i => $"{i} = @{i}"))}
             WHERE CharId = @CharId AND StatName = @StatName;
         ";
-        conn.Execute(sql, this, transaction: trans);
+        await conn.ExecuteAsync(sql, this, transaction: trans);
     }
 }
 
@@ -405,7 +420,7 @@ public class VampireStatsUpdate
     public VampireStatUpdate? Health { get; set; }
     public VampireStatUpdate? Willpower { get; set; }
     public VampireStatUpdate? Humanity { get; set; }
-    public void Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character)
     {
         // Id is required!
         Id = character.Id;
@@ -425,12 +440,11 @@ public class VampireStatsUpdate
                 try
                 {
                     if (Health is not null)
-                        Health.Apply(conn, trans, character, "Health");
+                        await Health.Apply(conn, trans, character, "Health");
                     if (Willpower is not null)
-                        Willpower.Apply(conn, trans, character, "Willpower");
+                        await Willpower.Apply(conn, trans, character, "Willpower");
                     if (Humanity is not null)
-                        Humanity.Apply(conn, trans, character, "Humanity");
-                    character.SecondaryStats = VampireV5SecondaryStats.Load(conn, trans, (int)Id);
+                        await Humanity.Apply(conn, trans, character, "Humanity");
                     trans.Commit();
                 }
                 catch(Exception)
@@ -456,7 +470,7 @@ public class VampireDisciplinesUpdate
     public int? Id { get; set; }
     public string? School { get; set; }
     public int Score { get; set; }
-    public void Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character)
     {
         // Id is required!
         Id = character.Id;
@@ -485,6 +499,7 @@ public class VampireDisciplinesUpdate
                                 DELETE FROM melpominee_character_disciplines
                                 WHERE CharId = @CharId AND Discipline = @School;
                             ";
+                            character.Disciplines.Remove(School);
                         } else {
                             // make sql query
                             sql =
@@ -497,9 +512,9 @@ public class VampireDisciplinesUpdate
                                 SET
                                     Score = @Score;
                             ";
+                            character.Disciplines[School] = Score;
                         }
-                        conn.Execute(sql, new { CharId = Id, School = School, Score = Score }, transaction: trans);
-                        character.Disciplines = VampireV5Disciplines.Load(conn, trans, (int)Id);
+                        await conn.ExecuteAsync(sql, new { CharId = Id, School = School, Score = Score }, transaction: trans);
                         trans.Commit();
                     }
                     catch(Exception)
@@ -531,7 +546,7 @@ public class VampirePowersUpdate
     [JsonIgnore]
     public int? Id { get; set; }
     public List<VampirePowerUpdateItem>? PowerIds { get; set; }
-    public void Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character)
     {
         // Id is required!
         Id = character.Id;
@@ -584,7 +599,7 @@ public class VampirePowersUpdate
                                 DELETE FROM melpominee_character_discipline_powers
                                 WHERE CharId = @CharId AND PowerId = @PowerId;
                             ";
-                            conn.Execute(sql, removeItems, transaction: trans);
+                            await conn.ExecuteAsync(sql, removeItems, transaction: trans);
                         }
                         if (addItems.Count > 0)
                         {
@@ -595,7 +610,7 @@ public class VampirePowersUpdate
                                 VALUES
                                     (@CharId, @PowerId);
                             ";
-                            conn.Execute(sql, addItems, transaction: trans);
+                            await conn.ExecuteAsync(sql, addItems, transaction: trans);
                         }
                         character.DisciplinePowers = VampireV5DisciplinePowers.Load(conn, trans, (int)Id);
                         trans.Commit();
@@ -626,7 +641,7 @@ public class VampireBeliefsUpdate
     public string? Convictions { get; set; }
     public string? Touchstones { get; set; }
 
-    public void Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character)
     {
         // Id is required!
         Id = character.Id;
@@ -640,11 +655,20 @@ public class VampireBeliefsUpdate
 
         var updateList = new List<string>();
         if (Tenets is not null)
+        {
+            character.Beliefs.Tenets = Tenets;
             updateList.Add("Tenets");
+        }
         if (Convictions is not null)
+        {
+            character.Beliefs.Convictions = Convictions;
             updateList.Add("Convictions");
+        }
         if (Touchstones is not null)
+        {
+            character.Beliefs.Touchstones = Touchstones;
             updateList.Add("Touchstones");
+        }
 
         // update object reference and save
         if (updateList.Count < 1) { return; }
@@ -662,8 +686,7 @@ public class VampireBeliefsUpdate
                             {String.Join(',', updateList.Select(prop => $"{prop} = @{prop}"))}
                         WHERE CharId = @Id;
                     ";
-                    conn.Execute(sql, this, transaction: trans);
-                    character.Beliefs = VampireV5Beliefs.Load(conn, trans, (int)this.Id);
+                    await conn.ExecuteAsync(sql, this, transaction: trans);
                     trans.Commit();
                 }
                 catch(Exception)
@@ -692,7 +715,7 @@ public class VampireBackgroundMeritFlawUpdate
     public VampireV5MeritFlawBackground? Merits { get; set; }
     public VampireV5MeritFlawBackground? Flaws { get; set; }
 
-    public void Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character)
     {
         // Id is required!
         Id = character.Id;
@@ -705,14 +728,14 @@ public class VampireBackgroundMeritFlawUpdate
         }
         
         if (Backgrounds is not null)
-            Apply(character, VampireV5Backgrounds.ItemType, Backgrounds);
+            await Apply(character, VampireV5Backgrounds.ItemType, Backgrounds);
         if (Merits is not null)
-            Apply(character, VampireV5Merits.ItemType, Merits);
+            await Apply(character, VampireV5Merits.ItemType, Merits);
         if (Flaws is not null)
-            Apply(character, VampireV5Flaws.ItemType, Flaws);
+            await Apply(character, VampireV5Flaws.ItemType, Flaws);
     }
 
-    private void Apply(VampireV5Character character, string ItemType, VampireV5MeritFlawBackground Items)
+    private async Task Apply(VampireV5Character character, string ItemType, VampireV5MeritFlawBackground Items)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -739,7 +762,7 @@ public class VampireBackgroundMeritFlawUpdate
                             Name = @Name,
                             Score = @Score;
                     ";
-                    conn.Execute(sql, Items, transaction: trans);
+                    await conn.ExecuteAsync(sql, Items, transaction: trans);
                     trans.Commit();
                 }
                 catch(Exception)
@@ -771,7 +794,7 @@ public class VampireProfileUpdate
     public string? History { get; set; }
     public string? Notes { get; set; }
 
-    public void Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character)
     {
         // Id is required!
         Id = character.Id;
@@ -815,7 +838,7 @@ public class VampireProfileUpdate
                             {String.Join(',', updateList.Select(prop => $"{prop} = @{prop}"))}
                         WHERE CharId = @Id;
                     ";
-                    conn.Execute(sql, this, transaction: trans);
+                    await conn.ExecuteAsync(sql, this, transaction: trans);
                     character.Profile = VampireV5Profile.Load(conn, trans, (int)this.Id);
                     trans.Commit();
                 }

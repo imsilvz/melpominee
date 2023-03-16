@@ -14,10 +14,13 @@ import {
 import {
   Character,
   CharacterAttributes,
+  CharacterBeliefs,
   CharacterDisciplines,
   CharacterHeader,
+  CharacterProfile,
   CharacterSecondaryStats,
   CharacterSkills,
+  CharacterStat,
   MeritBackgroundFlaw,
 } from '../../../types/Character';
 
@@ -69,79 +72,265 @@ const CharacterSheet = () => {
         .configureLogging(signalR.LogLevel.Critical)
         .build();
 
-      conn.on('onHeaderUpdate', (charId: number, update: CharacterHeader) => {
-        console.log(`Header update for ${charId}`, update);
-        const cleaned = cleanUpdate(update) as CharacterHeader;
-        setCurrCharacter(
-          (char) =>
-            char && {
-              ...char,
-              ...cleaned,
-            },
-        );
-        setSavedCharacter(
-          (char) =>
-            char && {
-              ...char,
-              ...cleaned,
-            },
-        );
-      });
+      conn.on(
+        'onHeaderUpdate',
+        (charId: number, timestamp: string, update: CharacterHeader) => {
+          const cleaned = cleanUpdate(update) as CharacterHeader;
+          console.log(timestamp, `Header update for ${charId}`, cleaned);
+          setCurrCharacter(
+            (char) =>
+              char && {
+                ...char,
+                ...cleaned,
+              },
+          );
+          setSavedCharacter(
+            (char) =>
+              char && {
+                ...char,
+                ...cleaned,
+              },
+          );
+        },
+      );
 
-      conn.on('onAttributeUpdate', (charId: number, update: CharacterAttributes) => {
-        console.log(`Attribute update for ${charId}`, update);
-        const cleaned = cleanUpdate(update) as CharacterAttributes;
-        setCurrCharacter(
-          (char) =>
-            char && {
-              ...char,
-              attributes: {
-                ...char.attributes,
-                ...cleaned,
+      conn.on(
+        'onAttributeUpdate',
+        (charId: number, timestamp: string, update: CharacterAttributes) => {
+          const cleaned = cleanUpdate(update) as CharacterAttributes;
+          console.log(timestamp, `Attribute update for ${charId}`, cleaned);
+          setCurrCharacter(
+            (char) =>
+              char && {
+                ...char,
+                attributes: {
+                  ...char.attributes,
+                  ...cleaned,
+                },
               },
-            },
-        );
-        setSavedCharacter(
-          (char) =>
-            char && {
-              ...char,
-              attributes: {
-                ...char.attributes,
-                ...cleaned,
+          );
+          setSavedCharacter(
+            (char) =>
+              char && {
+                ...char,
+                attributes: {
+                  ...char.attributes,
+                  ...cleaned,
+                },
               },
-            },
-        );
-      });
+          );
+        },
+      );
 
-      conn.on('onSkillUpdate', (charId: number, update: CharacterSkills) => {
-        console.log(`Skill update for ${charId}`, update);
-        const cleaned = cleanUpdate(update) as CharacterSkills;
-        setCurrCharacter(
-          (char) =>
-            char && {
-              ...char,
-              skills: {
-                ...char.skills,
-                ...cleaned,
+      conn.on(
+        'onSkillUpdate',
+        (charId: number, timestamp: string, update: CharacterSkills) => {
+          const cleaned = cleanUpdate(update) as CharacterSkills;
+          console.log(timestamp, `Skill update for ${charId}`, cleaned);
+          setCurrCharacter(
+            (char) =>
+              char && {
+                ...char,
+                skills: {
+                  ...char.skills,
+                  ...cleaned,
+                },
               },
-            },
-        );
-        setSavedCharacter(
-          (char) =>
-            char && {
-              ...char,
-              skills: {
-                ...char.skills,
-                ...cleaned,
+          );
+          setSavedCharacter(
+            (char) =>
+              char && {
+                ...char,
+                skills: {
+                  ...char.skills,
+                  ...cleaned,
+                },
               },
-            },
-        );
-      });
+          );
+        },
+      );
+
+      conn.on(
+        'onSecondaryUpdate',
+        (charId: number, timestamp: string, update: CharacterSecondaryStats) => {
+          const cleaned = cleanUpdate(update) as CharacterSecondaryStats;
+          console.log(timestamp, `Secondary Stat update for ${charId}`, cleaned);
+          setCurrCharacter((char) => {
+            // handle null
+            if (!char) {
+              return char;
+            }
+            // we need to build a suitable object to handle this update
+            const newSecondaries = {
+              ...char.secondaryStats,
+            };
+            Object.keys(cleaned).forEach((statName) => {
+              newSecondaries[statName as keyof CharacterSecondaryStats] = {
+                ...char.secondaryStats[statName as keyof CharacterSecondaryStats],
+                ...cleaned[statName as keyof CharacterSecondaryStats],
+              };
+            });
+            return {
+              ...char,
+              secondaryStats: newSecondaries,
+            };
+          });
+        },
+      );
+
+      conn.on(
+        'onDisciplineUpdate',
+        (
+          charId: number,
+          timestamp: string,
+          update: { school: string; score: number },
+        ) => {
+          console.log(timestamp, `Discipline update for ${charId}`, update);
+          setCurrCharacter(
+            (char) =>
+              char && {
+                ...char,
+                disciplines: {
+                  ...char.disciplines,
+                  [update.school as keyof CharacterDisciplines]: update.score,
+                },
+              },
+          );
+          setSavedCharacter(
+            (char) =>
+              char && {
+                ...char,
+                disciplines: {
+                  ...char.disciplines,
+                  [update.school as keyof CharacterDisciplines]: update.score,
+                },
+              },
+          );
+        },
+      );
+
+      conn.on(
+        'onBeliefsUpdate',
+        (charId: number, timestamp: string, update: CharacterBeliefs) => {
+          const cleaned = cleanUpdate(update) as CharacterBeliefs;
+          console.log(timestamp, `Beliefs update for ${charId}`, cleaned);
+          setCurrCharacter(
+            (char) =>
+              char && {
+                ...char,
+                beliefs: {
+                  ...char.beliefs,
+                  ...cleaned,
+                },
+              },
+          );
+          setSavedCharacter(
+            (char) =>
+              char && {
+                ...char,
+                beliefs: {
+                  ...char.beliefs,
+                  ...cleaned,
+                },
+              },
+          );
+        },
+      );
+
+      conn.on(
+        'onBackgroundMeritFlawUpdate',
+        (
+          charId: number,
+          timestamp: string,
+          update: {
+            backgrounds: MeritBackgroundFlaw[];
+            merits: MeritBackgroundFlaw[];
+            flaws: MeritBackgroundFlaw[];
+          },
+        ) => {
+          const cleaned = cleanUpdate(update) as Character;
+          console.log(timestamp, `BMF update for ${charId}`, cleaned);
+          Object.keys(cleaned).forEach((name) => {
+            const nameUpdates = cleaned[name as keyof Character];
+            setCurrCharacter((char) => {
+              if (!char) {
+                return char;
+              }
+
+              // build update
+              let items = char[name as keyof Character] as MeritBackgroundFlaw[];
+              Object.values(nameUpdates).forEach(
+                (updateItem: MeritBackgroundFlaw) => {
+                  items = items.filter(
+                    (item) => item.sortOrder !== updateItem.sortOrder,
+                  );
+                  items.push(updateItem);
+                },
+              );
+
+              // insert into state
+              return {
+                ...char,
+                [name]: items,
+              };
+            });
+            setSavedCharacter((char) => {
+              if (!char) {
+                return char;
+              }
+
+              // build update
+              let items = char[name as keyof Character] as MeritBackgroundFlaw[];
+              Object.values(nameUpdates).forEach(
+                (updateItem: MeritBackgroundFlaw) => {
+                  items = items.filter(
+                    (item) => item.sortOrder !== updateItem.sortOrder,
+                  );
+                  items.push(updateItem);
+                },
+              );
+
+              // insert into state
+              return {
+                ...char,
+                [name]: items,
+              };
+            });
+          });
+        },
+      );
+
+      conn.on(
+        'onProfileUpdate',
+        (charId: number, timestamp: string, update: CharacterProfile) => {
+          const cleaned = cleanUpdate(update) as CharacterProfile;
+          console.log(timestamp, `Profile update for ${charId}`, cleaned);
+          setCurrCharacter(
+            (char) =>
+              char && {
+                ...char,
+                profile: {
+                  ...char.profile,
+                  ...cleaned,
+                },
+              },
+          );
+          setSavedCharacter(
+            (char) =>
+              char && {
+                ...char,
+                profile: {
+                  ...char.profile,
+                  ...cleaned,
+                },
+              },
+          );
+        },
+      );
 
       conn
         .start()
         .then(async () => {
-          console.log('Hello??');
           return conn.invoke('WatchCharacter', parseInt(id, 10));
         })
         .catch((err: Error) => {

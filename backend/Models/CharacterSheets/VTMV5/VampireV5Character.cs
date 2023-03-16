@@ -12,6 +12,8 @@ public class VampireV5Character : BaseCharacterSheet
     // meta
     [JsonIgnore]
     public bool Loaded = false;
+    [JsonIgnore]
+    public DateTime LoadedAt = DateTime.MinValue;
 
     // header items
     public string Name { get; set; } = "";
@@ -241,6 +243,7 @@ public class VampireV5Character : BaseCharacterSheet
                 }
             }
         }
+        user.LoadedAt = DateTime.UtcNow;
         user.Loaded = true;
         return user;
     }
@@ -287,6 +290,8 @@ public class VampireV5Character : BaseCharacterSheet
                     character.DisciplinePowers = disciplinePowers ?? character.DisciplinePowers;
                     character.Beliefs = beliefs ?? character.Beliefs;
                     character.Profile = profile ?? character.Profile;
+                    character.LoadedAt = DateTime.UtcNow;
+                    character.Loaded = true;
                 }
                 return charList;
             }

@@ -81,6 +81,7 @@ public class CharacterController : ControllerBase
     [HttpPut("{charId:int}", Name = "Update Character")]
     public async Task<VampireHeaderResponse> Update(int charId, [FromBody] VampireCharacterUpdate update)
     {
+        DateTime startTime = DateTime.UtcNow;
         VampireV5Character? character;
         if(charId > 0)
         {
@@ -89,7 +90,7 @@ public class CharacterController : ControllerBase
             {
                 await update.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnHeaderUpdate(charId, update);
+                    .OnHeaderUpdate(charId, startTime, update);
                 return new VampireHeaderResponse
                 {
                     Success = (character is not null),
@@ -161,6 +162,7 @@ public class CharacterController : ControllerBase
     [HttpPut("attributes/{charId:int}", Name = "Update Character Attributes")]
     public async Task<VampireAttributesResponse> UpdateAttributes(int charId, [FromBody] VampireAttributesUpdate update)
     {
+        DateTime startTime = DateTime.UtcNow;
         VampireV5Character? character;
         if(charId > 0)
         {
@@ -169,7 +171,7 @@ public class CharacterController : ControllerBase
             {
                 await update.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnAttributeUpdate(charId, update);
+                    .OnAttributeUpdate(charId, startTime, update);
                 return new VampireAttributesResponse
                 {
                     Success = true,
@@ -210,6 +212,7 @@ public class CharacterController : ControllerBase
     [HttpPut("skills/{charId:int}", Name = "Update Character Skills")]
     public async Task<VampireSkillsResponse> UpdateSkills(int charId, [FromBody] VampireSkillsUpdate update)
     {
+        DateTime startTime = DateTime.UtcNow;
         VampireV5Character? character;
         if(charId > 0)
         {
@@ -218,7 +221,7 @@ public class CharacterController : ControllerBase
             {
                 await update.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnSkillUpdate(charId, update);
+                    .OnSkillUpdate(charId, startTime, update);
                 return new VampireSkillsResponse
                 {
                     Success = true,
@@ -258,15 +261,18 @@ public class CharacterController : ControllerBase
     }
 
     [HttpPut("stats/{charId:int}", Name = "Update Character Stats")]
-    public VampireStatResponse UpdateSecondaryStats(int charId, [FromBody] VampireStatsUpdate update)
+    public async Task<VampireStatResponse> UpdateSecondaryStats(int charId, [FromBody] VampireStatsUpdate update)
     {
+        DateTime startTime = DateTime.UtcNow;
         VampireV5Character? character;
         if(charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId); 
             if(character is not null && character.Loaded)
             {
-                update.Apply(character);
+                await update.Apply(character);
+                _ = _characterHub.Clients.Group($"character_{charId}")
+                    .OnSecondaryUpdate(charId, startTime, update);
                 return new VampireStatResponse
                 {
                     Success = true,
@@ -305,15 +311,18 @@ public class CharacterController : ControllerBase
     }
     
     [HttpPut("disciplines/{charId:int}", Name = "Update Character Disciplines")]
-    public VampireDisciplinesResponse UpdateDisciplines(int charId, [FromBody] VampireDisciplinesUpdate update)
+    public async Task<VampireDisciplinesResponse> UpdateDisciplines(int charId, [FromBody] VampireDisciplinesUpdate update)
     {
+        DateTime startTime = DateTime.UtcNow;
         VampireV5Character? character;
         if(charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId); 
+            _ = _characterHub.Clients.Group($"character_{charId}")
+                .OnDisciplineUpdate(charId, startTime, update);
             if(character is not null && character.Loaded)
             {
-                update.Apply(character);
+                await update.Apply(character);
                 return new VampireDisciplinesResponse
                 {
                     Success = true,
@@ -352,15 +361,18 @@ public class CharacterController : ControllerBase
     }
     
     [HttpPut("powers/{charId:int}", Name = "Update Character Powers")]
-    public VampirePowersResponse UpdatePowers(int charId, [FromBody] VampirePowersUpdate update)
+    public async Task<VampirePowersResponse> UpdatePowers(int charId, [FromBody] VampirePowersUpdate update)
     {
+        DateTime startTime = DateTime.UtcNow;
         VampireV5Character? character;
         if(charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId); 
             if(character is not null && character.Loaded)
             {
-                update.Apply(character);
+                await update.Apply(character);
+                _ = _characterHub.Clients.Group($"character_{charId}")
+                    .OnPowerUpdate(charId, startTime, update);
                 return new VampirePowersResponse
                 {
                     Success = true,
@@ -399,15 +411,18 @@ public class CharacterController : ControllerBase
     }
 
     [HttpPut("beliefs/{charId:int}", Name = "Update Character Beliefs")]
-    public VampireBeliefsResponse UpdateBeliefs(int charId, [FromBody] VampireBeliefsUpdate update)
+    public async Task<VampireBeliefsResponse> UpdateBeliefs(int charId, [FromBody] VampireBeliefsUpdate update)
     {
+        DateTime startTime = DateTime.UtcNow;
         VampireV5Character? character;
         if(charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId); 
             if(character is not null && character.Loaded)
             {
-                update.Apply(character);
+                await update.Apply(character);
+                _ = _characterHub.Clients.Group($"character_{charId}")
+                    .OnBeliefsupdate(charId, startTime, update);
                 return new VampireBeliefsResponse
                 {
                     Success = true,
@@ -446,15 +461,18 @@ public class CharacterController : ControllerBase
     }
     
     [HttpPut("backgrounds/{charId:int}", Name = "Update Character Backgrounds")]
-    public VampireBackgroundMeritFlawResponse UpdateBackgrounds(int charId, [FromBody] VampireBackgroundMeritFlawUpdate update)
+    public async Task<VampireBackgroundMeritFlawResponse> UpdateBackgrounds(int charId, [FromBody] VampireBackgroundMeritFlawUpdate update)
     {
+        DateTime startTime = DateTime.UtcNow;
         VampireV5Character? character;
         if(charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId); 
             if(character is not null && character.Loaded)
             {
-                update.Apply(character);
+                await update.Apply(character);
+                _ = _characterHub.Clients.Group($"character_{charId}")
+                    .OnBackgroundMeritFlawUpdate(charId, startTime, update);
                 return new VampireBackgroundMeritFlawResponse
                 {
                     Success = true,
@@ -493,15 +511,18 @@ public class CharacterController : ControllerBase
     }
     
     [HttpPut("merits/{charId:int}", Name = "Update Character Merits")]
-    public VampireBackgroundMeritFlawResponse UpdateMerits(int charId, [FromBody] VampireBackgroundMeritFlawUpdate update)
+    public async Task<VampireBackgroundMeritFlawResponse> UpdateMerits(int charId, [FromBody] VampireBackgroundMeritFlawUpdate update)
     {
+        DateTime startTime = DateTime.UtcNow;
         VampireV5Character? character;
         if(charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId); 
             if(character is not null && character.Loaded)
             {
-                update.Apply(character);
+                await update.Apply(character);
+                _ = _characterHub.Clients.Group($"character_{charId}")
+                    .OnBackgroundMeritFlawUpdate(charId, startTime, update);
                 return new VampireBackgroundMeritFlawResponse
                 {
                     Success = true,
@@ -540,15 +561,18 @@ public class CharacterController : ControllerBase
     }
 
     [HttpPut("flaws/{charId:int}", Name = "Update Character Flaws")]
-    public VampireBackgroundMeritFlawResponse UpdateFlaws(int charId, [FromBody] VampireBackgroundMeritFlawUpdate update)
+    public async Task<VampireBackgroundMeritFlawResponse> UpdateFlaws(int charId, [FromBody] VampireBackgroundMeritFlawUpdate update)
     {
+        DateTime startTime = DateTime.UtcNow;
         VampireV5Character? character;
         if(charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId); 
             if(character is not null && character.Loaded)
             {
-                update.Apply(character);
+                await update.Apply(character);
+                _ = _characterHub.Clients.Group($"character_{charId}")
+                    .OnBackgroundMeritFlawUpdate(charId, startTime, update);
                 return new VampireBackgroundMeritFlawResponse
                 {
                     Success = true,
@@ -587,15 +611,18 @@ public class CharacterController : ControllerBase
     }
 
     [HttpPut("profile/{charId:int}", Name = "Update Character Profile")]
-    public VampireProfileResponse UpdateProfile(int charId, [FromBody] VampireProfileUpdate update)
+    public async Task<VampireProfileResponse> UpdateProfile(int charId, [FromBody] VampireProfileUpdate update)
     {
+        DateTime startTime = DateTime.UtcNow;
         VampireV5Character? character;
         if(charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId); 
             if(character is not null && character.Loaded)
             {
-                update.Apply(character);
+                await update.Apply(character);
+                _ = _characterHub.Clients.Group($"character_{charId}")
+                    .OnProfileUpdate(charId, startTime, update);
                 return new VampireProfileResponse
                 {
                     Success = true,

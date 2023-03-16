@@ -1,6 +1,7 @@
 using Melpominee.app.Hubs.VTMV5;
 using Melpominee.app.Utilities;
 using Melpominee.app.Utilities.Database;
+using Melpominee.app.Utilities.Hubs;
 using Melpominee.app.Models.CharacterSheets.VTMV5;
 
 // Load Secrets
@@ -24,6 +25,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+builder.Services.AddSingleton<ConnectionHelper>();
 
 // authentication details
 const string CookieScheme = "Melpominee.app.Auth";

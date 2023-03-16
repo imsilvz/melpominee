@@ -1,7 +1,7 @@
 import * as signalR from '@microsoft/signalr';
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { cleanUpdate } from '../../../util/character';
+import { cleanUpdate, handleUpdate } from '../../../util/character';
 
 // redux
 import { useAppSelector } from '../../../redux/hooks';
@@ -20,7 +20,6 @@ import {
   CharacterProfile,
   CharacterSecondaryStats,
   CharacterSkills,
-  CharacterStat,
   MeritBackgroundFlaw,
 } from '../../../types/Character';
 
@@ -243,57 +242,36 @@ const CharacterSheet = () => {
           charId: number,
           timestamp: string,
           update: {
-            backgrounds: MeritBackgroundFlaw[];
-            merits: MeritBackgroundFlaw[];
-            flaws: MeritBackgroundFlaw[];
+            backgrounds: {
+              [key: number]: MeritBackgroundFlaw;
+            };
+            merits: {
+              [key: number]: MeritBackgroundFlaw;
+            };
+            flaws: {
+              [key: number]: MeritBackgroundFlaw;
+            };
           },
         ) => {
           const cleaned = cleanUpdate(update) as Character;
           console.log(timestamp, `BMF update for ${charId}`, cleaned);
           Object.keys(cleaned).forEach((name) => {
-            const nameUpdates = cleaned[name as keyof Character];
+            const nameUpdates = cleaned[name as keyof Character] as {
+              [key: number]: MeritBackgroundFlaw;
+            };
             setCurrCharacter((char) => {
               if (!char) {
                 return char;
               }
-
-              // build update
-              let items = char[name as keyof Character] as MeritBackgroundFlaw[];
-              Object.values(nameUpdates).forEach(
-                (updateItem: MeritBackgroundFlaw) => {
-                  items = items.filter(
-                    (item) => item.sortOrder !== updateItem.sortOrder,
-                  );
-                  items.push(updateItem);
-                },
-              );
-
               // insert into state
               return {
                 ...char,
-                [name]: items,
-              };
-            });
-            setSavedCharacter((char) => {
-              if (!char) {
-                return char;
-              }
-
-              // build update
-              let items = char[name as keyof Character] as MeritBackgroundFlaw[];
-              Object.values(nameUpdates).forEach(
-                (updateItem: MeritBackgroundFlaw) => {
-                  items = items.filter(
-                    (item) => item.sortOrder !== updateItem.sortOrder,
-                  );
-                  items.push(updateItem);
+                [name as keyof Character]: {
+                  ...(char[name as keyof Character] as {
+                    [key: number]: MeritBackgroundFlaw;
+                  }),
+                  ...nameUpdates,
                 },
-              );
-
-              // insert into state
-              return {
-                ...char,
-                [name]: items,
               };
             });
           });
@@ -345,66 +323,6 @@ const CharacterSheet = () => {
       connectionRef.current?.stop().catch(console.error);
     };
   }, [id]);
-
-  const updateHeader = (field: string, value: string) => {
-    if (
-      currCharacter &&
-      Object.prototype.hasOwnProperty.call(currCharacter, field)
-    ) {
-      setCurrCharacter({
-        ...currCharacter,
-        [field]: value,
-      });
-      // this is a simple debounce system
-      // this will be used to prevent a network request occuring
-      // every single time that someone makes a change
-      if (debounceRef?.current?.has(field)) {
-        // clean up previous timeout
-        clearTimeout(debounceRef?.current?.get(field));
-        debounceRef?.current?.delete(field);
-      }
-      // create next timeout
-      debounceRef?.current?.set(
-        field,
-        setTimeout(() => {
-          // remove previous from map since it has triggered
-          debounceRef?.current?.delete(field);
-          // fire function
-          (async () => {
-            const updateResult = await fetch(
-              `/api/vtmv5/character/${currCharacter.id}/`,
-              {
-                method: 'PUT',
-                headers: {
-                  Accept: 'application/json',
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ [field]: value }),
-              },
-            );
-            if (updateResult.ok) {
-              const updateJson =
-                await (updateResult.json() as Promise<APICharacterUpdateResponse>);
-              if (savedCharacter && updateJson.success && updateJson.character) {
-                setSavedCharacter({
-                  ...savedCharacter,
-                  ...updateJson.character,
-                });
-              } else {
-                if (savedCharacter) {
-                  setCurrCharacter({
-                    ...savedCharacter,
-                  });
-                } else {
-                  setCurrCharacter(null);
-                }
-              }
-            }
-          })().catch(console.error);
-        }, 250),
-      );
-    }
-  };
 
   const updateGeneric = async <T extends APICharacterUpdateResponse>(
     endpoint: string,
@@ -484,107 +402,94 @@ const CharacterSheet = () => {
         <div className="charactersheet-panel">
           <HeaderSection
             character={currCharacter}
-            onChange={(field, value) => updateHeader(field, value)}
+            onChange={(field, value) =>
+              handleUpdate(
+                `/api/vtmv5/character/${currCharacter.id}/`,
+                currCharacter,
+                { [field]: value },
+                setCurrCharacter,
+                {
+                  debounceOptions: {
+                    enable: true,
+                    delay: 250,
+                  },
+                },
+              )
+            }
           />
           <AttributeSection
             attributes={currCharacter.attributes}
-            onChange={(attribute, value) => {
-              if (Object.keys(currCharacter.attributes).includes(attribute)) {
-                setCurrCharacter({
-                  ...currCharacter,
-                  attributes: {
-                    ...currCharacter.attributes,
-                    [attribute]: value,
-                  },
-                });
-                // fire network request
-                updateGeneric<APICharacterUpdateResponse>(
-                  `/api/vtmv5/character/attributes/${currCharacter.id}/`,
-                  'attributes',
-                  { [attribute]: value },
-                ).catch(console.error);
-              }
-            }}
+            onChange={(attribute, value) =>
+              handleUpdate(
+                `/api/vtmv5/character/attributes/${currCharacter.id}/`,
+                currCharacter,
+                { [attribute]: value },
+                setCurrCharacter,
+                {
+                  property: 'attributes',
+                },
+              )
+            }
           />
           <SkillsSection
             skills={currCharacter.skills}
-            onChange={(skill, skillData) => {
-              if (Object.keys(currCharacter.skills).includes(skill)) {
-                setCurrCharacter({
-                  ...currCharacter,
-                  skills: {
-                    ...currCharacter.skills,
-                    [skill]: skillData,
+            onChange={(skill, value) =>
+              handleUpdate(
+                `/api/vtmv5/character/skills/${currCharacter.id}/`,
+                currCharacter,
+                { [skill]: value },
+                setCurrCharacter,
+                {
+                  property: 'skills',
+                  debounceOptions: {
+                    enable: true,
+                    delay: 250,
                   },
-                });
-                if (debounceRef?.current?.has(`skills_${skill}`)) {
-                  // clean up previous timeout
-                  clearTimeout(debounceRef?.current?.get(`skills_${skill}`));
-                  debounceRef?.current?.delete(`skills_${skill}`);
-                }
-                // create next timeout
-                debounceRef?.current?.set(
-                  `skills_${skill}`,
-                  setTimeout(() => {
-                    // remove previous from map since it has triggered
-                    debounceRef?.current?.delete(`skills_${skill}`);
-                    // fire function
-                    updateGeneric<APICharacterUpdateResponse>(
-                      `/api/vtmv5/character/skills/${currCharacter.id}/`,
-                      'skills',
-                      { [skill]: skillData },
-                    ).catch(console.error);
-                  }, 250),
-                );
-              }
-            }}
+                },
+              )
+            }
           />
           <SecondarySection
             character={currCharacter}
-            onChangeHeaderField={(field, val) => updateHeader(field, val)}
-            onChangeSecondaryStat={(field, val) => {
-              setCurrCharacter({
-                ...currCharacter,
-                secondaryStats: {
-                  ...currCharacter.secondaryStats,
-                  [field as keyof CharacterSecondaryStats]: {
-                    ...currCharacter.secondaryStats[
-                      field as keyof CharacterSecondaryStats
-                    ],
-                    ...val,
+            onChangeHeaderField={(field, value) =>
+              handleUpdate(
+                `/api/vtmv5/character/${currCharacter.id}/`,
+                currCharacter,
+                { [field]: value },
+                setCurrCharacter,
+              )
+            }
+            onChangeSecondaryStat={(field, value) =>
+              handleUpdate(
+                `/api/vtmv5/character/stats/${currCharacter.id}/`,
+                currCharacter,
+                { [field]: value },
+                setCurrCharacter,
+                {
+                  property: 'secondaryStats',
+                  debounceOptions: {
+                    enable: true,
+                    delay: 250,
                   },
                 },
-              });
-              // fire network request
-              updateGeneric<APICharacterUpdateResponse>(
-                `/api/vtmv5/character/stats/${currCharacter.id}/`,
-                'secondaryStats',
-                { [field]: val },
-                'stats',
-              ).catch(console.error);
-            }}
+              )
+            }
           />
           <DisciplineSection
             characterId={currCharacter.id}
             levels={currCharacter.disciplines}
             powers={currCharacter.disciplinePowers}
-            onLevelChange={(school, oldVal, newVal) => {
-              if (Object.keys(disciplines).includes(school)) {
-                setCurrCharacter({
-                  ...currCharacter,
-                  disciplines: {
-                    ...currCharacter.disciplines,
-                    [school]: newVal,
-                  },
-                });
-                // fire network request
-                updateGeneric<APICharacterUpdateResponse>(
-                  `/api/vtmv5/character/disciplines/${currCharacter.id}/`,
-                  'disciplines',
-                  { school, score: newVal },
-                ).catch(console.error);
-              }
-            }}
+            onLevelChange={(school, oldVal, newVal) =>
+              handleUpdate(
+                `/api/vtmv5/character/disciplines/${currCharacter.id}/`,
+                currCharacter,
+                { [school]: newVal },
+                setCurrCharacter,
+                {
+                  property: 'disciplines',
+                },
+              )
+            }
             onPowerChange={(oldVal, newVal, schoolChange) => {
               if (schoolChange) {
                 // entire discipline changed
@@ -638,36 +543,21 @@ const CharacterSheet = () => {
           />
           <BeliefsSection
             beliefs={currCharacter.beliefs}
-            onChange={(field, val) => {
-              if (Object.keys(currCharacter.beliefs).includes(field)) {
-                setCurrCharacter({
-                  ...currCharacter,
-                  beliefs: {
-                    ...currCharacter.beliefs,
-                    [field]: val,
+            onChange={(field, value) =>
+              handleUpdate(
+                `/api/vtmv5/character/beliefs/${currCharacter.id}/`,
+                currCharacter,
+                { [field]: value },
+                setCurrCharacter,
+                {
+                  property: 'beliefs',
+                  debounceOptions: {
+                    enable: true,
+                    delay: 250,
                   },
-                });
-                if (debounceRef?.current?.has(`beliefs_${field}`)) {
-                  // clean up previous timeout
-                  clearTimeout(debounceRef?.current?.get(`beliefs_${field}`));
-                  debounceRef?.current?.delete(`beliefs_${field}`);
-                }
-                // create next timeout
-                debounceRef?.current?.set(
-                  `beliefs_${field}`,
-                  setTimeout(() => {
-                    // remove previous from map since it has triggered
-                    debounceRef?.current?.delete(`beliefs_${field}`);
-                    // fire network request
-                    updateGeneric<APICharacterUpdateResponse>(
-                      `/api/vtmv5/character/beliefs/${currCharacter.id}/`,
-                      'beliefs',
-                      { [field]: val },
-                    ).catch(console.error);
-                  }, 250),
-                );
-              }
-            }}
+                },
+              )
+            }
           />
           <div className="charactersheet-panel-split">
             <div className="charactersheet-panel-split-column">
@@ -675,38 +565,24 @@ const CharacterSheet = () => {
                 Backgrounds={currCharacter.backgrounds}
                 Merits={currCharacter.merits}
                 Flaws={currCharacter.flaws}
-                onChange={(field, val) => {
-                  if (Object.keys(currCharacter).includes(field)) {
-                    const items = currCharacter[field as keyof Character];
-                    const newItems = (items as MeritBackgroundFlaw[]).filter(
-                      (item) => item.sortOrder !== val.sortOrder,
-                    );
-                    setCurrCharacter({
-                      ...currCharacter,
-                      [field]: [...newItems, val],
-                    });
-                    if (debounceRef?.current?.has(`${field}_${val.sortOrder}`)) {
-                      // clean up previous timeout
-                      clearTimeout(
-                        debounceRef?.current?.get(`${field}_${val.sortOrder}`),
-                      );
-                      debounceRef?.current?.delete(`${field}_${val.sortOrder}`);
-                    }
-                    debounceRef?.current?.set(
-                      `${field}_${val.sortOrder}`,
-                      setTimeout(() => {
-                        // remove previous from map since it has triggered
-                        debounceRef?.current?.delete(`${field}_${val.sortOrder}`);
-                        // fire network request
-                        updateGeneric<APICharacterUpdateResponse>(
-                          `/api/vtmv5/character/${field}/${currCharacter.id}/`,
-                          field,
-                          { [field]: [val] },
-                        ).catch(console.error);
-                      }, 250),
-                    );
-                  }
-                }}
+                onChange={(field, value) =>
+                  handleUpdate(
+                    `/api/vtmv5/character/${field}/${currCharacter.id}/`,
+                    currCharacter,
+                    {
+                      [field]: {
+                        [value.sortOrder]: value,
+                      },
+                    },
+                    setCurrCharacter,
+                    {
+                      debounceOptions: {
+                        enable: true,
+                        delay: 250,
+                      },
+                    },
+                  )
+                }
               />
             </div>
             <div className="charactersheet-panel-split-column">
@@ -715,40 +591,32 @@ const CharacterSheet = () => {
                 BloodPotency={currCharacter.bloodPotency}
                 XpSpent={currCharacter.xpSpent}
                 XpTotal={currCharacter.xpTotal}
-                onChange={(field, val) => updateHeader(field, val)}
+                onChange={(field, value) =>
+                  handleUpdate(
+                    `/api/vtmv5/character/${currCharacter.id}/`,
+                    currCharacter,
+                    { [field]: value },
+                    setCurrCharacter,
+                  )
+                }
               />
               <ProfileSection
                 profile={currCharacter.profile}
-                onChange={(field, val) => {
-                  if (Object.keys(currCharacter.profile).includes(field)) {
-                    setCurrCharacter({
-                      ...currCharacter,
-                      profile: {
-                        ...currCharacter.profile,
-                        [field]: val,
+                onChange={(field, value) =>
+                  handleUpdate(
+                    `/api/vtmv5/character/profile/${currCharacter.id}/`,
+                    currCharacter,
+                    { [field]: value },
+                    setCurrCharacter,
+                    {
+                      property: 'profile',
+                      debounceOptions: {
+                        enable: true,
+                        delay: 250,
                       },
-                    });
-                    if (debounceRef?.current?.has(`profile_${field}`)) {
-                      // clean up previous timeout
-                      clearTimeout(debounceRef?.current?.get(`profile_${field}`));
-                      debounceRef?.current?.delete(`profile_${field}`);
-                    }
-                    // create next timeout
-                    debounceRef?.current?.set(
-                      `profile_${field}`,
-                      setTimeout(() => {
-                        // remove previous from map since it has triggered
-                        debounceRef?.current?.delete(`profile_${field}`);
-                        // fire network request
-                        updateGeneric<APICharacterUpdateResponse>(
-                          `/api/vtmv5/character/profile/${currCharacter.id}/`,
-                          'profile',
-                          { [field]: val },
-                        ).catch(console.error);
-                      }, 250),
-                    );
-                  }
-                }}
+                    },
+                  )
+                }
               />
             </div>
           </div>

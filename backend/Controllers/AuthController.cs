@@ -55,8 +55,8 @@ public class AuthController : ControllerBase
                 // create login claims
                 var claims = new List<Claim>
                 {
-                    new Claim("user", user.Email!),
-                    new Claim("role", "user")
+                    new Claim(ClaimTypes.NameIdentifier, user.Email!),
+                    new Claim(ClaimTypes.Role, "user")
                 };
 
                 // store it in the session
@@ -69,8 +69,8 @@ public class AuthController : ControllerBase
                         (
                             claims,
                             "Cookies",
-                            "user",
-                            "role"
+                            ClaimTypes.NameIdentifier,
+                            ClaimTypes.Role
                         )
                     )
                 );

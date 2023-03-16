@@ -54,7 +54,6 @@ const SecondarySection = ({
             stains={humanityStains}
             loss={humanityLoss}
             onChange={(loss, stains) => {
-              console.log(loss, stains);
               if (onChangeSecondaryStat) {
                 const newStat: CharacterStatPayload = {};
                 if (loss !== undefined) {

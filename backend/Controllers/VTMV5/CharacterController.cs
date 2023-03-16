@@ -6,6 +6,7 @@ using Melpominee.app.Hubs.VTMV5;
 using Melpominee.app.Hubs.Clients.VTMV5;
 using Melpominee.app.Models.Web.VTMV5;
 using Melpominee.app.Models.CharacterSheets.VTMV5;
+using Melpominee.app.Utilities.Hubs;
 namespace Melpominee.app.Controllers;
 
 [Authorize]
@@ -14,12 +15,17 @@ namespace Melpominee.app.Controllers;
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class CharacterController : ControllerBase
 {
+    private readonly ConnectionHelper _connectionHelper;
     private readonly IHubContext<CharacterHub, ICharacterClient> _characterHub;
     private readonly ILogger<CharacterController> _logger;
-    public CharacterController(ILogger<CharacterController> logger, IHubContext<CharacterHub, ICharacterClient> characterHub)
+    public CharacterController(
+        ILogger<CharacterController> logger, 
+        IHubContext<CharacterHub, ICharacterClient> characterHub, 
+        ConnectionHelper connectionHelper)
     {
         _logger = logger;
         _characterHub = characterHub;
+        _connectionHelper = connectionHelper;
     }
 
     [HttpGet("{charId:int}", Name = "Get Character")]
@@ -88,6 +94,8 @@ public class CharacterController : ControllerBase
             character = VampireV5Character.GetCharacter(charId); 
             if(character is not null && character.Loaded)
             {
+                Console.WriteLine(HttpContext.User.Identity.Name);
+                Console.WriteLine(_connectionHelper.GetUserConnections(HttpContext.User.Identity.Name).Count);
                 await update.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
                     .OnHeaderUpdate(charId, startTime, update);

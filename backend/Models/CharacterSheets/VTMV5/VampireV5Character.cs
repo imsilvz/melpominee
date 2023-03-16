@@ -4,6 +4,7 @@ using Microsoft.Data.Sqlite;
 using System.Text.Json.Serialization;
 using Melpominee.app.Utilities.Database;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Melpominee.app.Models.CharacterSheets.VTMV5;
 
@@ -43,7 +44,7 @@ public class VampireV5Character : BaseCharacterSheet
     public string Resonance { get; set; } = "";
     public int BloodPotency { get; set; } = 0;
     public int XpSpent { get; set; } = 0;
-    public int XpTotal { get; set; } = 0; 
+    public int XpTotal { get; set; } = 0;
 
     // additional related models
     public VampireV5Beliefs Beliefs { get; set; } = new VampireV5Beliefs();
@@ -90,7 +91,7 @@ public class VampireV5Character : BaseCharacterSheet
                     trans.Commit();
                     return result;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -126,7 +127,9 @@ public class VampireV5Character : BaseCharacterSheet
                 RETURNING Id;
             ";
             Id = conn.ExecuteScalar<int>(sql, this, transaction: trans);
-        } else {
+        }
+        else
+        {
             sql =
             @"
                 INSERT INTO melpominee_characters
@@ -166,7 +169,7 @@ public class VampireV5Character : BaseCharacterSheet
             ";
             conn.ExecuteScalar<int>(sql, this, transaction: trans);
         }
-        Attributes.Save(conn, trans, (int) Id);
+        Attributes.Save(conn, trans, (int)Id);
         Skills.Save(conn, trans, (int)Id);
         SecondaryStats.Save(conn, trans, (int)Id);
         Disciplines.Save(conn, trans, (int)Id);
@@ -236,7 +239,7 @@ public class VampireV5Character : BaseCharacterSheet
                     user.Save(conn, trans);
                     trans.Commit();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -268,7 +271,7 @@ public class VampireV5Character : BaseCharacterSheet
                     WHERE Owner = @Email;
                 ";
                 charList = conn.Query<VampireV5Character>(sql, new { Email = email }).ToList();
-                foreach(var character in charList)
+                foreach (var character in charList)
                 {
                     // fetch dependant objects
                     var attributes = VampireV5Attributes.Load(conn, trans, (int)character.Id!);
@@ -317,7 +320,7 @@ public class VampireV5Header
     public string Resonance { get; set; } = "";
     public int BloodPotency { get; set; } = 0;
     public int XpSpent { get; set; } = 0;
-    public int XpTotal { get; set; } = 0; 
+    public int XpTotal { get; set; } = 0;
 }
 
 public class VampireV5Attributes
@@ -345,7 +348,7 @@ public class VampireV5Attributes
                     trans.Commit();
                     return res;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -359,11 +362,11 @@ public class VampireV5Attributes
         // gather values
         List<object> rowList = new List<object>();
         var attrPropList = typeof(VampireV5Attributes).GetProperties();
-        for(int i=0; i<attrPropList.Length; i++)  
+        for (int i = 0; i < attrPropList.Length; i++)
         {
             var attributeProperty = attrPropList[i];
             var v5Attribute = (int)attributeProperty.GetValue(this, null)!;
-            rowList.Add(new { CharId = charId, Attr = attributeProperty.Name, Score = v5Attribute});
+            rowList.Add(new { CharId = charId, Attr = attributeProperty.Name, Score = v5Attribute });
         }
 
         // make sql query
@@ -394,7 +397,7 @@ public class VampireV5Attributes
                     trans.Commit();
                     return result;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -413,9 +416,9 @@ public class VampireV5Attributes
             WHERE CharId = @CharId;
         ";
         var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
-        foreach(var result in results)
+        foreach (var result in results)
         {
-            Type attrType = typeof(VampireV5Attributes);                   
+            Type attrType = typeof(VampireV5Attributes);
             var propInfo = attrType.GetProperty(result.Attribute);
             propInfo?.SetValue(attr, (int)result.Score, null);
         }
@@ -431,33 +434,33 @@ public class VampireV5Skill
 
 public class VampireV5Skills
 {
-    public VampireV5Skill Athletics { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Brawl { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Craft { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Drive { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Firearms { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Melee { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Larceny { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Stealth { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Survival { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill AnimalKen { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Ettiquette { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Insight { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Intimidation { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Leadership { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Performance { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Persuasion { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Streetwise { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Subterfuge { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Academics { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Awareness { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Finance { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Investigation { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Medicine { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Occult { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Politics { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Science { get; set; } = new VampireV5Skill {};
-    public VampireV5Skill Technology { get; set; } = new VampireV5Skill {};
+    public VampireV5Skill Athletics { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Brawl { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Craft { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Drive { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Firearms { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Melee { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Larceny { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Stealth { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Survival { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill AnimalKen { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Ettiquette { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Insight { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Intimidation { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Leadership { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Performance { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Persuasion { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Streetwise { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Subterfuge { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Academics { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Awareness { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Finance { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Investigation { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Medicine { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Occult { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Politics { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Science { get; set; } = new VampireV5Skill { };
+    public VampireV5Skill Technology { get; set; } = new VampireV5Skill { };
 
     public bool Save(int charId)
     {
@@ -472,7 +475,7 @@ public class VampireV5Skills
                     trans.Commit();
                     return res;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -486,13 +489,14 @@ public class VampireV5Skills
         // gather values
         List<object> rowList = new List<object>();
         var skillPropList = typeof(VampireV5Skills).GetProperties();
-        for(int i=0; i<skillPropList.Length; i++)  
+        for (int i = 0; i < skillPropList.Length; i++)
         {
             var skillProperty = skillPropList[i];
             var v5Skill = (VampireV5Skill)skillProperty.GetValue(this, null)!;
-            rowList.Add(new { 
-                CharId = charId, 
-                Skill = skillProperty.Name, 
+            rowList.Add(new
+            {
+                CharId = charId,
+                Skill = skillProperty.Name,
                 Speciality = v5Skill.Speciality,
                 Score = v5Skill.Score,
             });
@@ -527,7 +531,7 @@ public class VampireV5Skills
                     trans.Commit();
                     return result;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -546,7 +550,7 @@ public class VampireV5Skills
             WHERE CharId = @CharId;
         ";
         var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
-        foreach(var result in results)
+        foreach (var result in results)
         {
             VampireV5Skill skill = new VampireV5Skill()
             {
@@ -554,7 +558,7 @@ public class VampireV5Skills
                 Score = (int)result.Score,
             };
 
-            Type skillType = typeof(VampireV5Skills);                   
+            Type skillType = typeof(VampireV5Skills);
             var propInfo = skillType.GetProperty(result.Skill);
             propInfo?.SetValue(skills, skill, null);
         }
@@ -591,7 +595,7 @@ public class VampireV5SecondaryStats
                     trans.Commit();
                     return res;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -605,12 +609,13 @@ public class VampireV5SecondaryStats
         // gather values
         List<object> rowList = new List<object>();
         var statPropList = typeof(VampireV5SecondaryStats).GetProperties();
-        for(int i=0; i<statPropList.Length; i++)  
+        for (int i = 0; i < statPropList.Length; i++)
         {
             var statProperty = statPropList[i];
             var v5Stat = (VampireV5SecondaryStat)statProperty.GetValue(this, null)!;
-            rowList.Add(new { 
-                CharId = charId, 
+            rowList.Add(new
+            {
+                CharId = charId,
                 Stat = statProperty.Name,
                 BaseValue = v5Stat.BaseValue,
                 SuperficialDamage = v5Stat.SuperficialDamage,
@@ -653,7 +658,7 @@ public class VampireV5SecondaryStats
                     trans.Commit();
                     return result;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -674,7 +679,7 @@ public class VampireV5SecondaryStats
             WHERE CharId = @CharId;
         ";
         var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
-        foreach(var result in results)
+        foreach (var result in results)
         {
             VampireV5SecondaryStat stat = new VampireV5SecondaryStat()
             {
@@ -683,7 +688,7 @@ public class VampireV5SecondaryStats
                 AggravatedDamage = (int)result.AggravatedDamage,
             };
 
-            Type statsType = typeof(VampireV5SecondaryStats);                   
+            Type statsType = typeof(VampireV5SecondaryStats);
             var propInfo = statsType.GetProperty(result.StatName);
             propInfo?.SetValue(stats, stat, null);
         }
@@ -710,7 +715,7 @@ public class VampireV5Beliefs
                     trans.Commit();
                     return res;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -734,12 +739,12 @@ public class VampireV5Beliefs
                 Touchstones = @Touchstones
             RETURNING Id;
         ";
-        var res = conn.ExecuteScalar(sql, new 
-        { 
-            CharId = charId, 
-            Tenets = Tenets, 
-            Convictions = Convictions, 
-            Touchstones = Touchstones 
+        var res = conn.ExecuteScalar(sql, new
+        {
+            CharId = charId,
+            Tenets = Tenets,
+            Convictions = Convictions,
+            Touchstones = Touchstones
         }, transaction: trans);
         return true;
     }
@@ -757,7 +762,7 @@ public class VampireV5Beliefs
                     trans.Commit();
                     return result;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -807,7 +812,7 @@ public class VampireV5Profile
                     trans.Commit();
                     return res;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -841,14 +846,14 @@ public class VampireV5Profile
                 Notes = @Notes
             RETURNING Id;
         ";
-        var res = conn.ExecuteScalar(sql, new 
-        { 
-            CharId = charId, 
-            TrueAge = TrueAge, 
-            ApparentAge = ApparentAge, 
+        var res = conn.ExecuteScalar(sql, new
+        {
+            CharId = charId,
+            TrueAge = TrueAge,
+            ApparentAge = ApparentAge,
             DateOfBirth = DateOfBirth,
-            DateOfDeath = DateOfDeath, 
-            Description = Description, 
+            DateOfDeath = DateOfDeath,
+            Description = Description,
             History = History,
             Notes = Notes
         }, transaction: trans);
@@ -868,7 +873,7 @@ public class VampireV5Profile
                     trans.Commit();
                     return result;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -911,59 +916,68 @@ public class MeritFlawBackground
     public int Score { get; set; } = 0;
 }
 
-public class VampireV5MeritFlawBackground : IList<MeritFlawBackground>
+public class VampireV5BackgroundMeritFlaw : IDictionary<int, MeritFlawBackground>
 {
-    public List<MeritFlawBackground> data = new List<MeritFlawBackground>();
+    public Dictionary<int, MeritFlawBackground> data = new Dictionary<int, MeritFlawBackground>();
 
-    public MeritFlawBackground this[int index] { get => ((IList<MeritFlawBackground>)data)[index]; set => ((IList<MeritFlawBackground>)data)[index] = value; }
+    public MeritFlawBackground this[int key] { get => ((IDictionary<int, MeritFlawBackground>)data)[key]; set => ((IDictionary<int, MeritFlawBackground>)data)[key] = value; }
 
-    public int Count => ((ICollection<MeritFlawBackground>)data).Count;
+    public ICollection<int> Keys => ((IDictionary<int, MeritFlawBackground>)data).Keys;
 
-    public bool IsReadOnly => ((ICollection<MeritFlawBackground>)data).IsReadOnly;
+    public ICollection<MeritFlawBackground> Values => ((IDictionary<int, MeritFlawBackground>)data).Values;
 
-    public void Add(MeritFlawBackground item)
+    public int Count => ((ICollection<KeyValuePair<int, MeritFlawBackground>>)data).Count;
+
+    public bool IsReadOnly => ((ICollection<KeyValuePair<int, MeritFlawBackground>>)data).IsReadOnly;
+
+    public void Add(int key, MeritFlawBackground value)
     {
-        ((ICollection<MeritFlawBackground>)data).Add(item);
+        ((IDictionary<int, MeritFlawBackground>)data).Add(key, value);
+    }
+
+    public void Add(KeyValuePair<int, MeritFlawBackground> item)
+    {
+        ((ICollection<KeyValuePair<int, MeritFlawBackground>>)data).Add(item);
     }
 
     public void Clear()
     {
-        ((ICollection<MeritFlawBackground>)data).Clear();
+        ((ICollection<KeyValuePair<int, MeritFlawBackground>>)data).Clear();
     }
 
-    public bool Contains(MeritFlawBackground item)
+    public bool Contains(KeyValuePair<int, MeritFlawBackground> item)
     {
-        return ((ICollection<MeritFlawBackground>)data).Contains(item);
+        return ((ICollection<KeyValuePair<int, MeritFlawBackground>>)data).Contains(item);
     }
 
-    public void CopyTo(MeritFlawBackground[] array, int arrayIndex)
+    public bool ContainsKey(int key)
     {
-        ((ICollection<MeritFlawBackground>)data).CopyTo(array, arrayIndex);
+        return ((IDictionary<int, MeritFlawBackground>)data).ContainsKey(key);
     }
 
-    public IEnumerator<MeritFlawBackground> GetEnumerator()
+    public void CopyTo(KeyValuePair<int, MeritFlawBackground>[] array, int arrayIndex)
     {
-        return ((IEnumerable<MeritFlawBackground>)data).GetEnumerator();
+        ((ICollection<KeyValuePair<int, MeritFlawBackground>>)data).CopyTo(array, arrayIndex);
     }
 
-    public int IndexOf(MeritFlawBackground item)
+    public IEnumerator<KeyValuePair<int, MeritFlawBackground>> GetEnumerator()
     {
-        return ((IList<MeritFlawBackground>)data).IndexOf(item);
+        return ((IEnumerable<KeyValuePair<int, MeritFlawBackground>>)data).GetEnumerator();
     }
 
-    public void Insert(int index, MeritFlawBackground item)
+    public bool Remove(int key)
     {
-        ((IList<MeritFlawBackground>)data).Insert(index, item);
+        return ((IDictionary<int, MeritFlawBackground>)data).Remove(key);
     }
 
-    public bool Remove(MeritFlawBackground item)
+    public bool Remove(KeyValuePair<int, MeritFlawBackground> item)
     {
-        return ((ICollection<MeritFlawBackground>)data).Remove(item);
+        return ((ICollection<KeyValuePair<int, MeritFlawBackground>>)data).Remove(item);
     }
 
-    public void RemoveAt(int index)
+    public bool TryGetValue(int key, [MaybeNullWhen(false)] out MeritFlawBackground value)
     {
-        ((IList<MeritFlawBackground>)data).RemoveAt(index);
+        return ((IDictionary<int, MeritFlawBackground>)data).TryGetValue(key, out value);
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -984,7 +998,7 @@ public class VampireV5MeritFlawBackground : IList<MeritFlawBackground>
                     trans.Commit();
                     return res;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -996,12 +1010,12 @@ public class VampireV5MeritFlawBackground : IList<MeritFlawBackground>
     public bool Save(IDbConnection conn, IDbTransaction trans, int charId, string itemType)
     {
         // set character id for save
-        foreach(var item in this)
+        foreach (var item in this.Values)
         {
             item.CharId = charId;
             item.ItemType = itemType;
         }
-        
+
         var sql =
         @"
             INSERT INTO melpominee_character_meritflawbackgrounds
@@ -1013,12 +1027,12 @@ public class VampireV5MeritFlawBackground : IList<MeritFlawBackground>
                 Name = @Name,
                 Score = @Score;
         ";
-        var res = conn.Execute(sql, this, transaction: trans);
+        var res = conn.Execute(sql, this.Values, transaction: trans);
         return true;
     }
 }
 
-public class VampireV5Backgrounds : VampireV5MeritFlawBackground
+public class VampireV5Backgrounds : VampireV5BackgroundMeritFlaw
 {
     public static string ItemType { get; set; } = "background";
 
@@ -1045,7 +1059,7 @@ public class VampireV5Backgrounds : VampireV5MeritFlawBackground
                     trans.Commit();
                     return result;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -1064,9 +1078,11 @@ public class VampireV5Backgrounds : VampireV5MeritFlawBackground
             WHERE CharId = @CharId AND ItemType = @ItemType;
         ";
         var results = conn.Query(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
-        foreach(var result in results)
+        foreach (var result in results)
         {
-            backgrounds.Add(new MeritFlawBackground()
+            backgrounds.Add(
+            (int)result.SortOrder,
+            new MeritFlawBackground()
             {
                 SortOrder = (int)result.SortOrder,
                 Name = result.Name,
@@ -1077,7 +1093,7 @@ public class VampireV5Backgrounds : VampireV5MeritFlawBackground
     }
 }
 
-public class VampireV5Merits : VampireV5MeritFlawBackground
+public class VampireV5Merits : VampireV5BackgroundMeritFlaw
 {
     public static string ItemType { get; set; } = "merit";
 
@@ -1104,7 +1120,7 @@ public class VampireV5Merits : VampireV5MeritFlawBackground
                     trans.Commit();
                     return result;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -1123,9 +1139,11 @@ public class VampireV5Merits : VampireV5MeritFlawBackground
             WHERE CharId = @CharId AND ItemType = @ItemType;
         ";
         var results = conn.Query(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
-        foreach(var result in results)
+        foreach (var result in results)
         {
-            merits.Add(new MeritFlawBackground()
+            merits.Add(
+            (int)result.SortOrder,
+            new MeritFlawBackground()
             {
                 SortOrder = (int)result.SortOrder,
                 Name = result.Name,
@@ -1136,7 +1154,7 @@ public class VampireV5Merits : VampireV5MeritFlawBackground
     }
 }
 
-public class VampireV5Flaws : VampireV5MeritFlawBackground
+public class VampireV5Flaws : VampireV5BackgroundMeritFlaw
 {
     public static string ItemType { get; set; } = "flaw";
 
@@ -1163,7 +1181,7 @@ public class VampireV5Flaws : VampireV5MeritFlawBackground
                     trans.Commit();
                     return result;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -1182,9 +1200,11 @@ public class VampireV5Flaws : VampireV5MeritFlawBackground
             WHERE CharId = @CharId AND ItemType = @ItemType;
         ";
         var results = conn.Query(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
-        foreach(var result in results)
+        foreach (var result in results)
         {
-            merits.Add(new MeritFlawBackground()
+            merits.Add(
+            (int)result.SortOrder,
+            new MeritFlawBackground()
             {
                 SortOrder = (int)result.SortOrder,
                 Name = result.Name,

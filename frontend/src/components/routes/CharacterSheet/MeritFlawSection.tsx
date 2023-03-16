@@ -9,9 +9,15 @@ import './MeritFlawSection.scss';
 import StatDots from './StatDots';
 
 interface MeritFlawSectionProps {
-  Backgrounds: MeritBackgroundFlaw[];
-  Merits: MeritBackgroundFlaw[];
-  Flaws: MeritBackgroundFlaw[];
+  Backgrounds: {
+    [key: number]: MeritBackgroundFlaw;
+  };
+  Merits: {
+    [key: number]: MeritBackgroundFlaw;
+  };
+  Flaws: {
+    [key: number]: MeritBackgroundFlaw;
+  };
   onChange?: (field: string, val: MeritBackgroundFlaw) => void;
 }
 
@@ -30,7 +36,7 @@ const MeritFlawSection = ({
         <span>Backgrounds</span>
         <div className="meritflaw-list">
           {Array.from(Array(10), (_skip, i) => i).map((_skipRow, rowIdx) => {
-            const background = Backgrounds.find((item) => item.sortOrder === rowIdx);
+            const background = Backgrounds[rowIdx];
             return (
               <div key={`background-${rowIdx}`} className="meritflaw-row">
                 <input
@@ -68,7 +74,7 @@ const MeritFlawSection = ({
         <span>Merits</span>
         <div className="meritflaw-list">
           {Array.from(Array(10), (_skip, i) => i).map((_skipRow, rowIdx) => {
-            const merit = Merits.find((item) => item.sortOrder === rowIdx);
+            const merit = Merits[rowIdx];
             return (
               <div key={`merit-${rowIdx}`} className="meritflaw-row">
                 <input
@@ -106,7 +112,7 @@ const MeritFlawSection = ({
         <span>Flaws</span>
         <div className="meritflaw-list">
           {Array.from(Array(10), (_skip, i) => i).map((_skipRow, rowIdx) => {
-            const flaw = Flaws.find((item) => item.sortOrder === rowIdx);
+            const flaw = Flaws[rowIdx];
             return (
               <div key={`flaw-${rowIdx}`} className="meritflaw-row">
                 <input

@@ -26,9 +26,15 @@ export interface Character {
   xpTotal: number;
 
   beliefs: CharacterBeliefs;
-  backgrounds: MeritBackgroundFlaw[];
-  merits: MeritBackgroundFlaw[];
-  flaws: MeritBackgroundFlaw[];
+  backgrounds: {
+    [key: number]: MeritBackgroundFlaw;
+  };
+  merits: {
+    [key: number]: MeritBackgroundFlaw;
+  };
+  flaws: {
+    [key: number]: MeritBackgroundFlaw;
+  };
   profile: CharacterProfile;
 }
 

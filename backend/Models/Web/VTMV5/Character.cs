@@ -144,7 +144,7 @@ public class VampireCharacterUpdate
                     await conn.ExecuteAsync(sql, header, transaction: trans);
                     trans.Commit();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -154,7 +154,7 @@ public class VampireCharacterUpdate
     }
 }
 
-public class VampireAttributesResponse 
+public class VampireAttributesResponse
 {
     public bool Success { get; set; }
     public string? Error { get; set; }
@@ -163,8 +163,6 @@ public class VampireAttributesResponse
 
 public class VampireAttributesUpdate
 {
-    [JsonIgnore]
-    public int? Id { get; set; }
     public int? Strength { get; set; }
     public int? Dexterity { get; set; }
     public int? Stamina { get; set; }
@@ -177,19 +175,18 @@ public class VampireAttributesUpdate
     public async Task Apply(VampireV5Character character)
     {
         // Id is required!
-        Id = character.Id;
-        if (Id is null) 
-        { 
+        if (character.Id is null)
+        {
             throw new ArgumentNullException
             (
                 "VampireAttributesUpdate.Apply called with unsaved character. A full save must be performed first."
-            ); 
+            );
         }
 
         // build update query
         var updateList = new List<object>();
         var attrProps = typeof(VampireAttributesUpdate).GetProperties();
-        foreach(var attributeProperty in attrProps)  
+        foreach (var attributeProperty in attrProps)
         {
             // skip id
             if (attributeProperty.Name == "Id") { continue; }
@@ -197,16 +194,16 @@ public class VampireAttributesUpdate
             var v5Attribute = (int?)attributeProperty.GetValue(this, null);
             if (v5Attribute is not null)
             {
-                updateList.Add(new 
-                    { 
-                        CharId = Id, 
-                        Attr = attributeProperty.Name, 
-                        Score = v5Attribute
-                    }
+                updateList.Add(new
+                {
+                    CharId = character.Id,
+                    Attr = attributeProperty.Name,
+                    Score = v5Attribute
+                }
                 );
             }
         }
-        
+
         // don't proceed if there is nothing to update
         if (updateList.Count <= 0) { return; }
         using (var conn = DataContext.Instance.Connect())
@@ -227,10 +224,10 @@ public class VampireAttributesUpdate
                             Score = @Score;
                     ";
                     await conn.ExecuteAsync(update, updateList, transaction: trans);
-                    character.Attributes = VampireV5Attributes.Load(conn, trans, (int)Id);
+                    character.Attributes = VampireV5Attributes.Load(conn, trans, (int)character.Id);
                     trans.Commit();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -240,7 +237,7 @@ public class VampireAttributesUpdate
     }
 }
 
-public class VampireSkillsResponse 
+public class VampireSkillsResponse
 {
     public bool Success { get; set; }
     public string? Error { get; set; }
@@ -249,8 +246,6 @@ public class VampireSkillsResponse
 
 public class VampireSkillsUpdate
 {
-    [JsonIgnore]
-    public int? Id { get; set; }
     public VampireV5Skill? Athletics { get; set; }
     public VampireV5Skill? Brawl { get; set; }
     public VampireV5Skill? Craft { get; set; }
@@ -282,19 +277,18 @@ public class VampireSkillsUpdate
     public async Task Apply(VampireV5Character character)
     {
         // Id is required!
-        Id = character.Id;
-        if (Id is null) 
-        { 
+        if (character.Id is null)
+        {
             throw new ArgumentNullException
             (
                 "VampireSkillsUpdate.Apply called with unsaved character. A full save must be performed first."
-            ); 
+            );
         }
 
         // build update query
         var updateList = new List<object>();
         var skillProps = typeof(VampireSkillsUpdate).GetProperties();
-        foreach(var skillProperty in skillProps)  
+        foreach (var skillProperty in skillProps)
         {
             // skip id
             if (skillProperty.Name == "Id") { continue; }
@@ -305,17 +299,17 @@ public class VampireSkillsUpdate
                 // set new value for our character
                 typeof(VampireV5Skills).GetProperty(skillProperty.Name)!
                     .SetValue(character.Skills, v5Skill);
-                updateList.Add(new 
-                    { 
-                        CharId = Id, 
-                        Skill = skillProperty.Name, 
-                        Speciality = v5Skill.Speciality,
-                        Score = v5Skill.Score,
-                    }
+                updateList.Add(new
+                {
+                    CharId = character.Id,
+                    Skill = skillProperty.Name,
+                    Speciality = v5Skill.Speciality,
+                    Score = v5Skill.Score,
+                }
                 );
             }
         }
-        
+
         // don't proceed if there is nothing to update
         if (updateList.Count <= 0) { return; }
         using (var conn = DataContext.Instance.Connect())
@@ -339,7 +333,7 @@ public class VampireSkillsUpdate
                     await conn.ExecuteAsync(sql, updateList, transaction: trans);
                     trans.Commit();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -371,19 +365,19 @@ public class VampireStatUpdate
         // Id is required!
         CharId = character.Id;
         StatName = statName;
-        if (CharId is null) 
-        { 
+        if (CharId is null)
+        {
             throw new ArgumentNullException
             (
                 "VampireStatUpdate.Apply called with unsaved character. A full save must be performed first."
-            ); 
+            );
         }
 
         // grab object thru reflection
         VampireV5SecondaryStat statObject = (VampireV5SecondaryStat)typeof(VampireV5SecondaryStats)
             .GetProperty(statName)!
             .GetValue(character.SecondaryStats)!;
-        
+
         // make changes
         List<string> updList = new List<string>();
         if (BaseValue is not null)
@@ -415,21 +409,18 @@ public class VampireStatUpdate
 
 public class VampireStatsUpdate
 {
-    [JsonIgnore]
-    public int? Id { get; set; }
     public VampireStatUpdate? Health { get; set; }
     public VampireStatUpdate? Willpower { get; set; }
     public VampireStatUpdate? Humanity { get; set; }
     public async Task Apply(VampireV5Character character)
     {
         // Id is required!
-        Id = character.Id;
-        if (Id is null) 
-        { 
+        if (character.Id is null)
+        {
             throw new ArgumentNullException
             (
                 "VampireStatsUpdate.Apply called with unsaved character. A full save must be performed first."
-            ); 
+            );
         }
 
         using (var conn = DataContext.Instance.Connect())
@@ -447,7 +438,7 @@ public class VampireStatsUpdate
                         await Humanity.Apply(conn, trans, character, "Humanity");
                     trans.Commit();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -457,7 +448,7 @@ public class VampireStatsUpdate
     }
 }
 
-public class VampireDisciplinesResponse 
+public class VampireDisciplinesResponse
 {
     public bool Success { get; set; }
     public string? Error { get; set; }
@@ -466,24 +457,48 @@ public class VampireDisciplinesResponse
 
 public class VampireDisciplinesUpdate
 {
-    [JsonIgnore]
-    public int? Id { get; set; }
-    public string? School { get; set; }
-    public int Score { get; set; }
+    public int? Animalism { get; set; }
+    public int? Auspex { get; set; }
+    public int? BloodSorcery { get; set; }
+    public int? Celerity { get; set; }
+    public int? Dominate { get; set; }
+    public int? Fortitude { get; set; }
+    public int? Obfuscate { get; set; }
+    public int? Oblivion { get; set; }
+    public int? Potence { get; set; }
+    public int? Presence { get; set; }
+    public int? Protean { get; set; }
+    public int? ThinBloodAlchemy { get; set; }
     public async Task Apply(VampireV5Character character)
     {
         // Id is required!
-        Id = character.Id;
-        if (Id is null) 
-        { 
+        if (character.Id is null)
+        {
             throw new ArgumentNullException
             (
                 "VampireSkillsUpdate.Apply called with unsaved character. A full save must be performed first."
-            ); 
+            );
         }
-        
+
+        // create update listings
         var disc = character.Disciplines;
-        if (!string.IsNullOrEmpty(School)) 
+        List<object> updateList = new List<object>();
+        foreach(var prop in typeof(VampireDisciplinesUpdate).GetProperties())
+        {
+            if(prop.Name == "CharId") { continue; }
+            var Score = (int?)prop.GetValue(this);
+            if(Score is not null)
+            {
+                if(Score > 0)
+                    disc[prop.Name] = (int)Score;
+                else
+                    disc.Remove(prop.Name);
+                updateList.Add(new { CharId = character.Id, School = prop.Name, Score = Score });
+            }
+        }
+
+        // handle query
+        if (updateList.Count > 0)
         {
             using (var conn = DataContext.Instance.Connect())
             {
@@ -492,32 +507,24 @@ public class VampireDisciplinesUpdate
                 {
                     try
                     {
-                        string sql = "";
-                        if (Score <= 0) {
-                            sql =
-                            @"
-                                DELETE FROM melpominee_character_disciplines
-                                WHERE CharId = @CharId AND Discipline = @School;
-                            ";
-                            character.Disciplines.Remove(School);
-                        } else {
-                            // make sql query
-                            sql =
-                            @"
-                                INSERT INTO melpominee_character_disciplines
-                                    (CharId, Discipline, Score)
-                                VALUES
-                                    (@CharId, @School, @Score)
-                                ON CONFLICT DO UPDATE 
-                                SET
-                                    Score = @Score;
-                            ";
-                            character.Disciplines[School] = Score;
-                        }
-                        await conn.ExecuteAsync(sql, new { CharId = Id, School = School, Score = Score }, transaction: trans);
+                        string sql =
+                        @"
+                            INSERT INTO melpominee_character_disciplines
+                                (CharId, Discipline, Score)
+                            VALUES
+                                (@CharId, @School, @Score)
+                            ON CONFLICT DO UPDATE 
+                            SET
+                                Score = @Score;
+                            DELETE FROM melpominee_character_disciplines
+                            WHERE CharId = @CharId 
+                                AND Discipline = @School 
+                                AND Score <= 0;
+                        ";
+                        await conn.ExecuteAsync(sql, updateList, transaction: trans);
                         trans.Commit();
                     }
-                    catch(Exception)
+                    catch (Exception)
                     {
                         trans.Rollback();
                         throw;
@@ -528,7 +535,7 @@ public class VampireDisciplinesUpdate
     }
 }
 
-public class VampirePowersResponse 
+public class VampirePowersResponse
 {
     public bool Success { get; set; }
     public string? Error { get; set; }
@@ -543,22 +550,19 @@ public class VampirePowerUpdateItem
 
 public class VampirePowersUpdate
 {
-    [JsonIgnore]
-    public int? Id { get; set; }
     public List<VampirePowerUpdateItem>? PowerIds { get; set; }
     public async Task Apply(VampireV5Character character)
     {
         // Id is required!
-        Id = character.Id;
-        if (Id is null) 
-        { 
+        if (character.Id is null)
+        {
             throw new ArgumentNullException
             (
                 "VampirePowersUpdate.Apply called with unsaved character. A full save must be performed first."
-            ); 
+            );
         }
 
-        if (PowerIds is not null && PowerIds.Count > 0) 
+        if (PowerIds is not null && PowerIds.Count > 0)
         {
             // convert back to powers list
             var addItems = new List<object>();
@@ -566,15 +570,15 @@ public class VampirePowersUpdate
             var newPowers = new VampireV5DisciplinePowers();
             foreach (var powerId in PowerIds)
             {
-                if (powerId.Remove) 
+                if (powerId.Remove)
                 {
                     removeItems.Add(new
                     {
                         CharId = character.Id,
                         PowerId = powerId.PowerId,
                     });
-                } 
-                else 
+                }
+                else
                 {
                     addItems.Add(new
                     {
@@ -612,10 +616,10 @@ public class VampirePowersUpdate
                             ";
                             await conn.ExecuteAsync(sql, addItems, transaction: trans);
                         }
-                        character.DisciplinePowers = VampireV5DisciplinePowers.Load(conn, trans, (int)Id);
+                        character.DisciplinePowers = VampireV5DisciplinePowers.Load(conn, trans, (int)character.Id);
                         trans.Commit();
                     }
-                    catch(Exception)
+                    catch (Exception)
                     {
                         trans.Rollback();
                         throw;
@@ -626,7 +630,7 @@ public class VampirePowersUpdate
     }
 }
 
-public class VampireBeliefsResponse 
+public class VampireBeliefsResponse
 {
     public bool Success { get; set; }
     public string? Error { get; set; }
@@ -645,12 +649,12 @@ public class VampireBeliefsUpdate
     {
         // Id is required!
         Id = character.Id;
-        if (Id is null) 
-        { 
+        if (Id is null)
+        {
             throw new ArgumentNullException
             (
                 "VampireBeliefsUpdate.Apply called with unsaved character. A full save must be performed."
-            ); 
+            );
         }
 
         var updateList = new List<string>();
@@ -689,7 +693,7 @@ public class VampireBeliefsUpdate
                     await conn.ExecuteAsync(sql, this, transaction: trans);
                     trans.Commit();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -703,30 +707,28 @@ public class VampireBackgroundMeritFlawResponse
 {
     public bool Success { get; set; }
     public string? Error { get; set; }
-    public VampireV5MeritFlawBackground? Backgrounds { get; set; }
-    public VampireV5MeritFlawBackground? Merits { get; set; }
-    public VampireV5MeritFlawBackground? Flaws { get; set; }
+    public VampireV5BackgroundMeritFlaw? Backgrounds { get; set; }
+    public VampireV5BackgroundMeritFlaw? Merits { get; set; }
+    public VampireV5BackgroundMeritFlaw? Flaws { get; set; }
 }
 
 public class VampireBackgroundMeritFlawUpdate
 {
-    public int? Id { get; set; }
-    public VampireV5MeritFlawBackground? Backgrounds { get; set; }
-    public VampireV5MeritFlawBackground? Merits { get; set; }
-    public VampireV5MeritFlawBackground? Flaws { get; set; }
+    public VampireV5BackgroundMeritFlaw? Backgrounds { get; set; }
+    public VampireV5BackgroundMeritFlaw? Merits { get; set; }
+    public VampireV5BackgroundMeritFlaw? Flaws { get; set; }
 
     public async Task Apply(VampireV5Character character)
     {
         // Id is required!
-        Id = character.Id;
-        if (Id is null) 
-        { 
+        if (character.Id is null)
+        {
             throw new ArgumentNullException
             (
                 "VampireBackgroundMeritFlawUpdate.Apply called with unsaved character. A full save must be performed."
-            ); 
+            );
         }
-        
+
         if (Backgrounds is not null)
             await Apply(character, VampireV5Backgrounds.ItemType, Backgrounds);
         if (Merits is not null)
@@ -735,7 +737,7 @@ public class VampireBackgroundMeritFlawUpdate
             await Apply(character, VampireV5Flaws.ItemType, Flaws);
     }
 
-    private async Task Apply(VampireV5Character character, string ItemType, VampireV5MeritFlawBackground Items)
+    private async Task Apply(VampireV5Character character, string ItemType, VampireV5BackgroundMeritFlaw Items)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -745,7 +747,7 @@ public class VampireBackgroundMeritFlawUpdate
                 try
                 {
                     // set update fields
-                    foreach(var item in Items)
+                    foreach (var item in Items.Values)
                     {
                         item.CharId = character.Id;
                         item.ItemType = ItemType;
@@ -762,10 +764,10 @@ public class VampireBackgroundMeritFlawUpdate
                             Name = @Name,
                             Score = @Score;
                     ";
-                    await conn.ExecuteAsync(sql, Items, transaction: trans);
+                    await conn.ExecuteAsync(sql, Items.Values, transaction: trans);
                     trans.Commit();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;
@@ -775,7 +777,7 @@ public class VampireBackgroundMeritFlawUpdate
     }
 }
 
-public class VampireProfileResponse 
+public class VampireProfileResponse
 {
     public bool Success { get; set; }
     public string? Error { get; set; }
@@ -798,12 +800,12 @@ public class VampireProfileUpdate
     {
         // Id is required!
         Id = character.Id;
-        if (Id is null) 
-        { 
+        if (Id is null)
+        {
             throw new ArgumentNullException
             (
                 "VampireBeliefsUpdate.Apply called with unsaved character. A full save must be performed."
-            ); 
+            );
         }
 
         var updateList = new List<string>();
@@ -842,7 +844,7 @@ public class VampireProfileUpdate
                     character.Profile = VampireV5Profile.Load(conn, trans, (int)this.Id);
                     trans.Commit();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     trans.Rollback();
                     throw;

@@ -80,7 +80,7 @@ const CharacterSheet = () => {
           update: CharacterHeader,
         ) => {
           const cleaned = cleanUpdate(update) as CharacterHeader;
-          console.log(timestamp, `Header update for ${charId}`, cleaned);
+          console.log(updateId, timestamp, `Header update for ${charId}`, cleaned);
           setCurrCharacter(
             (char) =>
               char && {
@@ -107,7 +107,12 @@ const CharacterSheet = () => {
           update: CharacterAttributes,
         ) => {
           const cleaned = cleanUpdate(update) as CharacterAttributes;
-          console.log(timestamp, `Attribute update for ${charId}`, cleaned);
+          console.log(
+            updateId,
+            timestamp,
+            `Attribute update for ${charId}`,
+            cleaned,
+          );
           setCurrCharacter(
             (char) =>
               char && {
@@ -140,7 +145,7 @@ const CharacterSheet = () => {
           update: CharacterSkills,
         ) => {
           const cleaned = cleanUpdate(update) as CharacterSkills;
-          console.log(timestamp, `Skill update for ${charId}`, cleaned);
+          console.log(updateId, timestamp, `Skill update for ${charId}`, cleaned);
           setCurrCharacter(
             (char) =>
               char && {
@@ -173,7 +178,12 @@ const CharacterSheet = () => {
           update: CharacterSecondaryStats,
         ) => {
           const cleaned = cleanUpdate(update) as CharacterSecondaryStats;
-          console.log(timestamp, `Secondary Stat update for ${charId}`, cleaned);
+          console.log(
+            updateId,
+            timestamp,
+            `Secondary Stat update for ${charId}`,
+            cleaned,
+          );
           setCurrCharacter((char) => {
             // handle null
             if (!char) {
@@ -206,7 +216,12 @@ const CharacterSheet = () => {
           update: { school: string; score: number },
         ) => {
           const cleaned = cleanUpdate(update) as CharacterDisciplines;
-          console.log(timestamp, `Discipline update for ${charId}`, cleaned);
+          console.log(
+            updateId,
+            timestamp,
+            `Discipline update for ${charId}`,
+            cleaned,
+          );
           setCurrCharacter(
             (char) =>
               char && {
@@ -239,7 +254,7 @@ const CharacterSheet = () => {
           update: CharacterBeliefs,
         ) => {
           const cleaned = cleanUpdate(update) as CharacterBeliefs;
-          console.log(timestamp, `Beliefs update for ${charId}`, cleaned);
+          console.log(updateId, timestamp, `Beliefs update for ${charId}`, cleaned);
           setCurrCharacter(
             (char) =>
               char && {
@@ -282,7 +297,7 @@ const CharacterSheet = () => {
           },
         ) => {
           const cleaned = cleanUpdate(update) as Character;
-          console.log(timestamp, `BMF update for ${charId}`, cleaned);
+          console.log(updateId, timestamp, `BMF update for ${charId}`, cleaned);
           Object.keys(cleaned).forEach((name) => {
             const nameUpdates = cleaned[name as keyof Character] as {
               [key: number]: MeritBackgroundFlaw;
@@ -315,7 +330,7 @@ const CharacterSheet = () => {
           update: CharacterProfile,
         ) => {
           const cleaned = cleanUpdate(update) as CharacterProfile;
-          console.log(timestamp, `Profile update for ${charId}`, cleaned);
+          console.log(updateId, timestamp, `Profile update for ${charId}`, cleaned);
           setCurrCharacter(
             (char) =>
               char && {

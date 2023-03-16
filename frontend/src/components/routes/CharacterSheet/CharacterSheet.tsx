@@ -79,6 +79,13 @@ const CharacterSheet = () => {
               ...cleaned,
             },
         );
+        setSavedCharacter(
+          (char) =>
+            char && {
+              ...char,
+              ...cleaned,
+            },
+        );
       });
 
       conn.on('onAttributeUpdate', (charId: number, update: CharacterAttributes) => {
@@ -94,12 +101,32 @@ const CharacterSheet = () => {
               },
             },
         );
+        setSavedCharacter(
+          (char) =>
+            char && {
+              ...char,
+              attributes: {
+                ...char.attributes,
+                ...cleaned,
+              },
+            },
+        );
       });
 
       conn.on('onSkillUpdate', (charId: number, update: CharacterSkills) => {
         console.log(`Skill update for ${charId}`, update);
         const cleaned = cleanUpdate(update) as CharacterSkills;
         setCurrCharacter(
+          (char) =>
+            char && {
+              ...char,
+              skills: {
+                ...char.skills,
+                ...cleaned,
+              },
+            },
+        );
+        setSavedCharacter(
           (char) =>
             char && {
               ...char,

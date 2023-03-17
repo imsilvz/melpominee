@@ -121,8 +121,8 @@ const getDebounceKey = (item: object): string => {
 const DebounceMap = new Map<string, ReturnType<typeof setTimeout>>();
 export const handleUpdate = (
   endpoint: string | null,
-  updateId: string | null,
   charId: number,
+  updateId: string | null,
   payload: object,
   updateFunc: (value: React.SetStateAction<Character | null>) => void,
   opts?: UpdateOptions,

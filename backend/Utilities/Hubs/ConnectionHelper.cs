@@ -8,7 +8,6 @@ public class ConnectionHelper
     
     public void OnConnect(string identifier, string connectionId)
     {
-        Console.WriteLine("EEEEE");
         UserMap.AddOrUpdate
         (
             identifier, 
@@ -26,7 +25,6 @@ public class ConnectionHelper
 
     public void OnDisconnect(string identifier, string connectionId)
     {
-        Console.WriteLine("AAAAA");
         ConcurrentDictionary<string, bool>? connectionMap;
         if(UserMap.TryGetValue(identifier, out connectionMap))
         {

@@ -7,7 +7,7 @@ public interface ICharacterClient
     Task OnSkillUpdate(int charId, string? updateId, DateTime timestamp, VampireSkillsUpdate update);
     Task OnSecondaryUpdate(int charId, string? updateId, DateTime timestamp, VampireStatsUpdate update);
     Task OnDisciplineUpdate(int charId, string? updateId, DateTime timestamp, VampireDisciplinesUpdate update);
-    Task OnPowerUpdate(int charId, DateTime timestamp, VampirePowersUpdate update);
+    Task OnPowersUpdate(int charId, string? updateId, DateTime timestamp, VampirePowersUpdate update);
     Task OnBeliefsupdate(int charId, string? updateId, DateTime timestamp, VampireBeliefsUpdate update);
     Task OnBackgroundMeritFlawUpdate(int charId, string? updateId, DateTime timestamp, VampireBackgroundMeritFlawUpdate update);
     Task OnProfileUpdate(int charId, string? updateId, DateTime timestamp, VampireProfileUpdate update);

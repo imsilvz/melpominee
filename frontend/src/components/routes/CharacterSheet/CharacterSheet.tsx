@@ -5,10 +5,7 @@ import { cleanUpdate, handleUpdate } from '../../../util/character';
 
 // redux
 import { useAppSelector } from '../../../redux/hooks';
-import {
-  selectDisciplines,
-  selectDisciplinePowers,
-} from '../../../redux/reducers/masterdataReducer';
+import { selectDisciplinePowers } from '../../../redux/reducers/masterdataReducer';
 
 // types
 import {
@@ -42,24 +39,10 @@ interface APICharacterSheetResponse {
   character?: Character;
 }
 
-interface APICharacterUpdateResponse {
-  success: boolean;
-  error?: string;
-  character?: CharacterHeader;
-  attributes?: CharacterAttributes;
-  skills?: CharacterSkills;
-  disciplines?: CharacterDisciplines;
-  powers?: string[];
-}
-
 const CharacterSheet = () => {
   const { id } = useParams();
   const connectionRef = useRef<signalR.HubConnection | null>(null);
-  const debounceRef = useRef<Map<string, ReturnType<typeof setTimeout>> | null>(
-    new Map<string, ReturnType<typeof setTimeout>>(),
-  );
   const disciplinePowers = useAppSelector(selectDisciplinePowers);
-  const [savedCharacter, setSavedCharacter] = useState<Character | null>(null);
   const [currCharacter, setCurrCharacter] = useState<Character | null>(null);
 
   useEffect(() => {
@@ -100,7 +83,7 @@ const CharacterSheet = () => {
             cleaned,
           );
           handleUpdate(null, charId, updateId, cleaned, setCurrCharacter, {
-            property: 'skills',
+            property: 'attributes',
           });
         },
       );
@@ -159,6 +142,51 @@ const CharacterSheet = () => {
           );
           handleUpdate(null, charId, updateId, cleaned, setCurrCharacter, {
             property: 'disciplines',
+          });
+        },
+      );
+
+      conn.on(
+        'onPowersUpdate',
+        (
+          charId: number,
+          updateId: string | null,
+          timestamp: string,
+          update: {
+            powerIds: {
+              powerId: string;
+              remove: boolean;
+            }[];
+          },
+        ) => {
+          const cleaned = cleanUpdate(update) as CharacterDisciplines;
+          console.log(updateId, timestamp, `Powers update for ${charId}`, cleaned);
+          handleUpdate(null, charId, updateId, cleaned, setCurrCharacter, {
+            updateHandler: (char, payload) => {
+              if (!char) {
+                return char;
+              }
+              // build update
+              let powers = [...char.disciplinePowers];
+              const { powerIds } = payload as {
+                powerIds: {
+                  powerId: string;
+                  remove: boolean;
+                }[];
+              };
+              powerIds.forEach(({ powerId, remove }) => {
+                if (remove) {
+                  powers = powers.filter((val) => val !== powerId);
+                } else {
+                  powers.push(powerId);
+                }
+              });
+              console.log(char.disciplinePowers, powers);
+              return {
+                ...char,
+                disciplinePowers: powers,
+              };
+            },
           });
         },
       );
@@ -237,55 +265,6 @@ const CharacterSheet = () => {
     };
   }, [id]);
 
-  const updateGeneric = async <T extends APICharacterUpdateResponse>(
-    endpoint: string,
-    property: string,
-    value: unknown,
-    respProperty?: string,
-  ) => {
-    const result = await fetch(endpoint, {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(value),
-    });
-    if (result.ok) {
-      const updateJson = await (result.json() as Promise<T>);
-      if (
-        savedCharacter &&
-        updateJson.success &&
-        updateJson[(respProperty || property) as keyof T]
-      ) {
-        setSavedCharacter({
-          ...savedCharacter,
-          [property]: {
-            ...updateJson[(respProperty || property) as keyof T],
-          },
-        });
-      } else {
-        console.log(savedCharacter, updateJson.success, respProperty, property);
-        if (savedCharacter) {
-          setCurrCharacter({
-            ...savedCharacter,
-          });
-        } else {
-          setCurrCharacter(null);
-        }
-      }
-    } else {
-      console.log(savedCharacter, respProperty, property);
-      if (savedCharacter) {
-        setCurrCharacter({
-          ...savedCharacter,
-        });
-      } else {
-        setCurrCharacter(null);
-      }
-    }
-  };
-
   useEffect(() => {
     // on id change, try to update the character
     const fetchCharacter = async () => {
@@ -296,14 +275,12 @@ const CharacterSheet = () => {
           const characterJson: APICharacterSheetResponse =
             await (characterRequest.json() as Promise<APICharacterSheetResponse>);
           if (characterJson.character) {
-            setSavedCharacter(characterJson.character);
             setCurrCharacter(characterJson.character);
           }
         }
       }
     };
     // setup header text debounce
-    debounceRef.current = new Map<string, ReturnType<typeof setTimeout>>();
     fetchCharacter().catch(console.error);
   }, [id]);
 
@@ -431,32 +408,29 @@ const CharacterSheet = () => {
                   newPowers.push(newVal);
                   changeData.push({ powerId: newVal, remove: false });
                 }
-                // update local state
-                setCurrCharacter({
-                  ...currCharacter,
-                  disciplinePowers: newPowers.sort().sort((a, b) => {
-                    const aInfo = disciplinePowers[a];
-                    const bInfo = disciplinePowers[b];
-                    if (aInfo.level < bInfo.level) {
-                      return -1;
-                    }
-                    if (aInfo.level > bInfo.level) {
-                      return 1;
-                    }
-                    return 0;
-                  }),
+                newPowers = newPowers.sort().sort((a, b) => {
+                  const aInfo = disciplinePowers[a];
+                  const bInfo = disciplinePowers[b];
+                  if (aInfo.level < bInfo.level) {
+                    return -1;
+                  }
+                  if (aInfo.level > bInfo.level) {
+                    return 1;
+                  }
+                  return 0;
                 });
-                // configure payload and fire request
-                if (changeData.length > 0) {
-                  updateGeneric(
-                    `/api/vtmv5/character/powers/${currCharacter.id}/`,
-                    'disciplinePowers',
-                    {
+                handleUpdate(
+                  `/api/vtmv5/character/powers/${currCharacter.id}/`,
+                  currCharacter.id,
+                  null,
+                  { disciplinePowers: newPowers },
+                  setCurrCharacter,
+                  {
+                    apiPayload: {
                       PowerIds: changeData,
                     },
-                    'powers',
-                  ).catch(console.error);
-                }
+                  },
+                );
               }
             }}
           />

@@ -588,7 +588,6 @@ public class VampirePowersUpdate
             // convert back to powers list
             var addItems = new List<object>();
             var removeItems = new List<object>();
-            var newPowers = new VampireV5DisciplinePowers();
             foreach (var powerId in PowerIds)
             {
                 if (powerId.Remove)

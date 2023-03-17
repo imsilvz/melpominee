@@ -412,8 +412,17 @@ public class CharacterController : ControllerBase
     }
     
     [HttpPut("powers/{charId:int}", Name = "Update Character Powers")]
-    public async Task<VampirePowersResponse> UpdatePowers(int charId, [FromBody] VampirePowersUpdate update)
+    public async Task<VampirePowersResponse> UpdatePowers(int charId, [FromBody] CharacterUpdateWrapper<VampirePowersUpdate> update)
     {
+        if (update.UpdateData is null)
+        {
+            return new VampirePowersResponse
+            {
+                Success = false,
+                Error = "missing_payload"
+            };
+        }
+
         DateTime startTime = DateTime.UtcNow;
         VampireV5Character? character;
         if(charId > 0)
@@ -421,9 +430,9 @@ public class CharacterController : ControllerBase
             character = VampireV5Character.GetCharacter(charId); 
             if(character is not null && character.Loaded)
             {
-                await update.Apply(character);
+                await update.UpdateData.Apply(character);
                 _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnPowerUpdate(charId, startTime, update);
+                    .OnPowersUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampirePowersResponse
                 {
                     Success = true,

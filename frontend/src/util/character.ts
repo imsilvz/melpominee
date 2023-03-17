@@ -1,11 +1,13 @@
 import { Character } from '../types/Character';
 
 interface UpdateOptions {
-  property?: string;
+  apiPayload?: object;
   debounceOptions?: {
     enable: boolean;
     delay: number;
   };
+  property?: string;
+  updateHandler?: (char: Character | null, payload: object) => Character | null;
 }
 
 interface UpdateResponse {
@@ -20,14 +22,6 @@ export const toTitleCase = (str: string) => {
     .split(' ')
     .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
     .join(' ');
-};
-
-export const cleanUpdate = <T extends object>(obj: T): unknown => {
-  return Object.fromEntries(
-    Object.entries(obj)
-      .filter(([_, v]) => v != null)
-      .map(([k, v]) => [k, v === Object(v) ? cleanUpdate(v) : v]),
-  );
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -65,6 +59,14 @@ const deepMerge = (target: object, source: any): object => {
     });
   }
   return output;
+};
+
+export const cleanUpdate = <T extends object>(obj: T): unknown => {
+  return Object.fromEntries(
+    Object.entries(obj)
+      .filter(([_, v]) => v != null)
+      .map(([k, v]) => [k, isObject(v) ? cleanUpdate(v) : v]),
+  );
 };
 
 const UpdateQueue = new Map<number, string[]>();
@@ -139,22 +141,30 @@ export const handleUpdate = (
   }
   // clean update object of null and undefined
   const update = cleanUpdate(payload) as object;
-  // are we updating header fields, or property fields?
-  if (opts && opts.property) {
-    // handle property update
+  console.log(payload, update);
+  if (opts?.updateHandler) {
+    // run custom update function if available
     updateFunc(
-      (char) =>
-        char && {
-          ...char,
-          [opts.property as keyof Character]: deepMerge(
-            char[opts.property as keyof Character] as object,
-            update,
-          ),
-        },
+      (char) => (opts.updateHandler && opts.updateHandler(char, payload)) || char,
     );
   } else {
-    // handle header update
-    updateFunc((char) => char && (deepMerge(char, update) as Character));
+    // are we updating header fields, or property fields?
+    if (opts?.property) {
+      // handle property update
+      updateFunc(
+        (char) =>
+          char && {
+            ...char,
+            [opts.property as keyof Character]: deepMerge(
+              char[opts.property as keyof Character] as object,
+              update,
+            ),
+          },
+      );
+    } else {
+      // handle header update
+      updateFunc((char) => char && (deepMerge(char, update) as Character));
+    }
   }
   if (endpoint) {
     // send network request
@@ -171,11 +181,15 @@ export const handleUpdate = (
         debounceKey,
         setTimeout(() => {
           DebounceMap.delete(debounceKey);
-          handleUpdateAsync(endpoint, charId, payload).catch(console.error);
+          handleUpdateAsync(endpoint, charId, opts?.apiPayload || payload).catch(
+            console.error,
+          );
         }, opts?.debounceOptions?.delay || 0),
       );
     } else {
-      handleUpdateAsync(endpoint, charId, payload).catch(console.error);
+      handleUpdateAsync(endpoint, charId, opts?.apiPayload || payload).catch(
+        console.error,
+      );
     }
   }
 };

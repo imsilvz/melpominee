@@ -1,38 +1,48 @@
 @import "../../../global.scss";
+
 .statdots-container {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    > .statdots-dot {
-        display: grid;
-        place-content: center;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-        // disable default styles
-        -webkit-appearance: none;
-        appearance: none;
-        background-color: transparent;
-        margin: 0;
-        
-        // custom styles
-        font: inherit;
-        color: $text-secondary;
-        border-radius: 50%;
-        border: 2px solid $text-secondary;
-        width: 0.6em;
-        height: 0.6em;
-        
-        &:hover {
-            background-color: rgba(255, 255, 255, 0.12);
-        }
+  >.statdots-dot {
+    display: grid;
+    place-content: center;
 
-        &:checked {
-            border: none;
-            background-color: $text-secondary;
+    // disable default styles
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    margin: 0;
 
-            &:hover {
-                background-color: $text-primary;
-            }
-        }
+    // custom styles
+    font: inherit;
+    color: $text-secondary;
+    border-radius: 50%;
+    border: 1px solid $text-secondary;
+    width: 0.6em;
+    height: 0.6em;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.12);
     }
+
+    &:checked {
+      border: none;
+      background-color: $text-secondary;
+
+      &:hover {
+        background-color: $text-primary;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .statdots-container {
+    >.statdots-dot {
+      border: 2px solid $text-secondary;
+    }
+  }
 }

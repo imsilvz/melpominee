@@ -9,10 +9,10 @@
       border-radius: 0.5rem;
       background: #1f1f1f;
       box-shadow: 5px 5px 10px #0003;
-      padding: 1rem 2rem 2rem 2rem;
       margin: auto auto;
-      width: 1024px;
-      min-width: 1024px;
+      padding: 1rem;
+      width: 100%;
+      min-width: 360px;
 
       animation: fadeIn ease-in 0.5s;
       animation-iteration-count: 1;
@@ -70,11 +70,39 @@
     }
   }
   
-  @media screen and (max-width: 1024px) {
-    .characterlist-container {
-      >.characterlist-panel {
-        border-radius: 0;
-        margin: 0 auto;
-      }
+@media screen and (min-width: 428px) {
+  .characterlist-container {
+    >.characterlist-panel {
+      width: 428px;
+      min-width: 428px;
+      padding: 1rem 2rem 2rem 2rem;
     }
   }
+}
+
+@media screen and (min-width: 768px) {
+  .characterlist-container {
+    >.characterlist-panel {
+      width: 768px;
+      min-width: 768px;
+    }
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .characterlist-container {
+    >.characterlist-panel {
+      width: 1024px;
+      min-width: 1024px;
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .characterlist-container {
+    >.characterlist-panel {
+      border-radius: 0;
+      margin: 0 auto;
+    }
+  }
+}

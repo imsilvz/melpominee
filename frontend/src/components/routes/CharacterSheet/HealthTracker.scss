@@ -1,38 +1,40 @@
 @import "../../../global.scss";
+
 .healthtracker-container {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    > .healthtracker-dot {
-        display: grid;
-        place-content: center;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-        // disable default styles
-        -webkit-appearance: none;
-        appearance: none;
-        background-color: transparent;
-        margin: 2px;
-        
-        // custom styles
-        font: inherit;
-        color: $text-secondary;
-        border-radius: 0;
-        border: 1px solid $text-secondary;
-        width: 0.6em;
-        height: 0.6em;
-        
-        &:hover {
-            background-color: rgba(255, 255, 255, 0.12);
-        }
+  >.healthtracker-dot {
+    display: grid;
+    place-content: center;
 
-        &:checked {
-            border: 1px solid rgba(0, 0, 0, 0.4);
-            background-color: $text-secondary;
+    // disable default styles
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    margin: 2px;
 
-            &:hover {
-                background-color: $text-primary;
-            }
-        }
+    // custom styles
+    font: inherit;
+    color: $text-secondary;
+    border-radius: 0;
+    border: 1px solid $text-secondary;
+    width: 0.6em;
+    height: 0.6em;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.12);
     }
+
+    &:checked {
+      border: 1px solid rgba(0, 0, 0, 0.4);
+      background-color: $text-secondary;
+
+      &:hover {
+        background-color: $text-primary;
+      }
+    }
+  }
 }

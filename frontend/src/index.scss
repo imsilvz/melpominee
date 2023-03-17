@@ -72,7 +72,7 @@ html {
   }
 
   color: $text-primary;
-  font-size: 24px;
+  font-size: 10px;
   h1 {
     font-size: 2em;
     font-family: goudyOldStyle;
@@ -99,5 +99,18 @@ html {
   h6 {
     font-size: 0.7em;
     font-family: goudyOldStyle;
+  }
+  
+  @media screen and (min-width: 414px) {
+    font-size: 11px;
+  }
+  @media screen and (min-width: 428px) {
+    font-size: 11px;
+  }
+  @media screen and (min-width: 768px) {
+    font-size: 18px;
+  }
+  @media screen and (min-width: 1024px) {
+    font-size: 24px;
   }
 }

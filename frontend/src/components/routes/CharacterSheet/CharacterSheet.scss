@@ -8,10 +8,10 @@
     border-radius: 0.5rem;
     background: #1f1f1f;
     box-shadow: 5px 5px 10px #0003;
-    padding: 1rem 2rem 2rem 2rem;
+    padding: 1rem;
     margin: 2rem auto 2rem auto;
-    width: 1024px;
-    min-width: 1024px;
+    width: 100%;
+    min-width: 360px;
     animation: fadeIn ease-in 0.5s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
@@ -24,6 +24,34 @@
           flex: 1;
         }
       }
+    }
+  }
+}
+
+@media screen and (min-width: 428px) {
+  .charactersheet-container {
+    >.charactersheet-panel {
+      width: 428px;
+      min-width: 428px;
+      padding: 1rem 2rem 2rem 2rem;
+    }
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .charactersheet-container {
+    >.charactersheet-panel {
+      width: 768px;
+      min-width: 768px;
+    }
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .charactersheet-container {
+    >.charactersheet-panel {
+      width: 1024px;
+      min-width: 1024px;
     }
   }
 }

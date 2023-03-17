@@ -67,12 +67,24 @@ const deepMerge = (target: object, source: any): object => {
   return output;
 };
 
+const UpdateQueue = new Map<number, string[]>();
 const handleUpdateAsync = async (
   endpoint: string,
+  charId: number,
   payload: object,
-  opts?: UpdateOptions,
 ) => {
+  // create update ID
   const updateId = crypto.randomUUID();
+  if (!UpdateQueue.has(charId)) {
+    UpdateQueue.set(charId, []);
+  }
+  const charUpdateQueue = UpdateQueue.get(charId);
+  charUpdateQueue?.push(updateId);
+  if ((charUpdateQueue?.length || 0) > 50) {
+    charUpdateQueue?.shift();
+  }
+
+  // make request
   const result = await fetch(endpoint, {
     method: 'PUT',
     headers: {
@@ -108,24 +120,27 @@ const getDebounceKey = (item: object): string => {
 
 const DebounceMap = new Map<string, ReturnType<typeof setTimeout>>();
 export const handleUpdate = (
-  endpoint: string,
-  character: Character,
+  endpoint: string | null,
+  updateId: string | null,
+  charId: number,
   payload: object,
   updateFunc: (value: React.SetStateAction<Character | null>) => void,
   opts?: UpdateOptions,
 ) => {
-  // if the character is null, there is nothing to update
-  if (!character) {
+  // if the payload is null, there is nothing to update
+  if (!payload) {
+    return;
+  }
+  // if an updateId is attached,
+  // check if we have already added it
+  if (updateId && UpdateQueue.get(charId)?.includes(updateId)) {
+    // break out of update if it has already been applied
     return;
   }
   // clean update object of null and undefined
   const update = cleanUpdate(payload) as object;
   // are we updating header fields, or property fields?
-  if (
-    opts &&
-    opts.property &&
-    Object.prototype.hasOwnProperty.call(character, opts.property)
-  ) {
+  if (opts && opts.property) {
     // handle property update
     updateFunc(
       (char) =>
@@ -141,22 +156,26 @@ export const handleUpdate = (
     // handle header update
     updateFunc((char) => char && (deepMerge(char, update) as Character));
   }
-  // send network request
-  if (opts?.debounceOptions?.enable) {
-    const debounceKey = `${opts?.property || 'character'}-${getDebounceKey(update)}`;
-    if (DebounceMap.has(debounceKey)) {
-      // clear previous timer and hold updates
-      clearTimeout(DebounceMap.get(debounceKey));
-      DebounceMap.delete(debounceKey);
-    }
-    DebounceMap.set(
-      debounceKey,
-      setTimeout(() => {
+  if (endpoint) {
+    // send network request
+    if (opts?.debounceOptions?.enable) {
+      const debounceKey = `${opts?.property || 'character'}-${getDebounceKey(
+        update,
+      )}`;
+      if (DebounceMap.has(debounceKey)) {
+        // clear previous timer and hold updates
+        clearTimeout(DebounceMap.get(debounceKey));
         DebounceMap.delete(debounceKey);
-        handleUpdateAsync(endpoint, payload, opts).catch(console.error);
-      }, opts?.debounceOptions?.delay || 0),
-    );
-  } else {
-    handleUpdateAsync(endpoint, payload, opts).catch(console.error);
+      }
+      DebounceMap.set(
+        debounceKey,
+        setTimeout(() => {
+          DebounceMap.delete(debounceKey);
+          handleUpdateAsync(endpoint, charId, payload).catch(console.error);
+        }, opts?.debounceOptions?.delay || 0),
+      );
+    } else {
+      handleUpdateAsync(endpoint, charId, payload).catch(console.error);
+    }
   }
 };

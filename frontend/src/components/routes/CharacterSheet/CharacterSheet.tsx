@@ -81,20 +81,7 @@ const CharacterSheet = () => {
         ) => {
           const cleaned = cleanUpdate(update) as CharacterHeader;
           console.log(updateId, timestamp, `Header update for ${charId}`, cleaned);
-          setCurrCharacter(
-            (char) =>
-              char && {
-                ...char,
-                ...cleaned,
-              },
-          );
-          setSavedCharacter(
-            (char) =>
-              char && {
-                ...char,
-                ...cleaned,
-              },
-          );
+          handleUpdate(null, updateId, charId, cleaned, setCurrCharacter);
         },
       );
 
@@ -453,13 +440,14 @@ const CharacterSheet = () => {
             onChange={(field, value) =>
               handleUpdate(
                 `/api/vtmv5/character/${currCharacter.id}/`,
-                currCharacter,
+                null,
+                currCharacter.id,
                 { [field]: value },
                 setCurrCharacter,
                 {
                   debounceOptions: {
                     enable: true,
-                    delay: 250,
+                    delay: 100,
                   },
                 },
               )
@@ -470,7 +458,8 @@ const CharacterSheet = () => {
             onChange={(attribute, value) =>
               handleUpdate(
                 `/api/vtmv5/character/attributes/${currCharacter.id}/`,
-                currCharacter,
+                null,
+                currCharacter.id,
                 { [attribute]: value },
                 setCurrCharacter,
                 {
@@ -484,14 +473,15 @@ const CharacterSheet = () => {
             onChange={(skill, value) =>
               handleUpdate(
                 `/api/vtmv5/character/skills/${currCharacter.id}/`,
-                currCharacter,
+                null,
+                currCharacter.id,
                 { [skill]: value },
                 setCurrCharacter,
                 {
                   property: 'skills',
                   debounceOptions: {
                     enable: true,
-                    delay: 250,
+                    delay: 100,
                   },
                 },
               )
@@ -502,7 +492,8 @@ const CharacterSheet = () => {
             onChangeHeaderField={(field, value) =>
               handleUpdate(
                 `/api/vtmv5/character/${currCharacter.id}/`,
-                currCharacter,
+                null,
+                currCharacter.id,
                 { [field]: value },
                 setCurrCharacter,
               )
@@ -510,14 +501,15 @@ const CharacterSheet = () => {
             onChangeSecondaryStat={(field, value) =>
               handleUpdate(
                 `/api/vtmv5/character/stats/${currCharacter.id}/`,
-                currCharacter,
+                null,
+                currCharacter.id,
                 { [field]: value },
                 setCurrCharacter,
                 {
                   property: 'secondaryStats',
                   debounceOptions: {
                     enable: true,
-                    delay: 250,
+                    delay: 300,
                   },
                 },
               )
@@ -530,7 +522,8 @@ const CharacterSheet = () => {
             onLevelChange={(school, oldVal, newVal) =>
               handleUpdate(
                 `/api/vtmv5/character/disciplines/${currCharacter.id}/`,
-                currCharacter,
+                null,
+                currCharacter.id,
                 { [school]: newVal },
                 setCurrCharacter,
                 {
@@ -594,14 +587,15 @@ const CharacterSheet = () => {
             onChange={(field, value) =>
               handleUpdate(
                 `/api/vtmv5/character/beliefs/${currCharacter.id}/`,
-                currCharacter,
+                null,
+                currCharacter.id,
                 { [field]: value },
                 setCurrCharacter,
                 {
                   property: 'beliefs',
                   debounceOptions: {
                     enable: true,
-                    delay: 250,
+                    delay: 100,
                   },
                 },
               )
@@ -616,7 +610,8 @@ const CharacterSheet = () => {
                 onChange={(field, value) =>
                   handleUpdate(
                     `/api/vtmv5/character/${field}/${currCharacter.id}/`,
-                    currCharacter,
+                    null,
+                    currCharacter.id,
                     {
                       [field]: {
                         [value.sortOrder]: value,
@@ -626,7 +621,7 @@ const CharacterSheet = () => {
                     {
                       debounceOptions: {
                         enable: true,
-                        delay: 250,
+                        delay: 100,
                       },
                     },
                   )
@@ -642,7 +637,8 @@ const CharacterSheet = () => {
                 onChange={(field, value) =>
                   handleUpdate(
                     `/api/vtmv5/character/${currCharacter.id}/`,
-                    currCharacter,
+                    null,
+                    currCharacter.id,
                     { [field]: value },
                     setCurrCharacter,
                   )
@@ -653,14 +649,15 @@ const CharacterSheet = () => {
                 onChange={(field, value) =>
                   handleUpdate(
                     `/api/vtmv5/character/profile/${currCharacter.id}/`,
-                    currCharacter,
+                    null,
+                    currCharacter.id,
                     { [field]: value },
                     setCurrCharacter,
                     {
                       property: 'profile',
                       debounceOptions: {
                         enable: true,
-                        delay: 250,
+                        delay: 100,
                       },
                     },
                   )

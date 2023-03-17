@@ -21,6 +21,11 @@
             margin: 0;
             //text-transform: uppercase;
           }
+          >.healthrow-trackers {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+          }
         }
 
         >.charactersheet-secondary-hungerrow-item {
@@ -75,6 +80,16 @@
               background-color: gray;
               clip-path: polygon(100% 0%, 0 0%, 50% 100%);
               pointer-events: none;
+            }
+          }
+          >.statdots-container {
+            >.statdots-dot {
+              border: 1px solid $text-secondary;
+              border-radius: 0;
+              margin: 2px;
+              &:checked {
+                border: 1px solid rgba(0, 0, 0, 0.4);
+              }
             }
           }
         }

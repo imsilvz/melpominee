@@ -7,6 +7,7 @@
   align-items: center;
 
   >.healthtracker-dot {
+    position: relative;
     display: grid;
     place-content: center;
 
@@ -34,6 +35,51 @@
 
       &:hover {
         background-color: $text-primary;
+      }
+    }
+    
+    &.aggravated-damage {
+      border: 1px solid $text-secondary;
+      background-color: transparent;
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.12);
+      }
+      &:before {
+        content: " ";
+        position: absolute;
+        top: 50%;
+        left: 0%;
+        border-bottom: 1px solid #FFF;
+        width: 100%;
+        transform-origin: center;
+        transform: translate(0, -1px) rotate(45deg);
+      }
+      &:after {
+        content: " ";
+        position: absolute;
+        top: 50%;
+        left: 0%;
+        border-bottom: 1px solid #FFF;
+        width: 100%;
+        transform-origin: center;
+        transform: translate(0, -1px) rotate(-45deg);
+      }
+    }
+    &.superficial-damage {
+      border: 1px solid $text-secondary;
+      background-color: transparent;
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.12);
+      }
+      &:after {
+        content: " ";
+        position: absolute;
+        top: 50%;
+        left: 0%;
+        border-bottom: 1px solid #FFF;
+        width: 100%;
+        transform-origin: center;
+        transform: translate(0, -1px) rotate(-45deg);
       }
     }
   }

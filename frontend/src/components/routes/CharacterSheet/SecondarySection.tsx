@@ -9,6 +9,7 @@ import { Character, CharacterStat } from '../../../types/Character';
 import HealthTracker from './HealthTracker';
 import HumanityTracker from './HumanityTracker';
 import './SecondarySection.scss';
+import StatDots from './StatDots';
 
 interface CharacterStatPayload {
   baseValue?: number;
@@ -29,7 +30,11 @@ const SecondarySection = ({
 }: SecondarySectionProps) => {
   const resonances = useAppSelector(selectResonances);
   const maxHealth = character.attributes.stamina + 3;
+  const superficialHealth = character.secondaryStats.health.superficialDamage;
+  const aggravatedHealth = character.secondaryStats.health.aggravatedDamage;
   const maxWillpower = character.attributes.composure + character.attributes.resolve;
+  const superficialWillpower = character.secondaryStats.willpower.superficialDamage;
+  const aggravatedWillpower = character.secondaryStats.willpower.aggravatedDamage;
   const humanityValue = character.secondaryStats.humanity.baseValue;
   const humanityStains = character.secondaryStats.humanity.superficialDamage;
   const humanityLoss = character.secondaryStats.humanity.aggravatedDamage;
@@ -38,13 +43,51 @@ const SecondarySection = ({
       <div className="charactersheet-secondary-col">
         <div className="charactersheet-secondary-healthrow-item">
           <h4>Health</h4>
-          <HealthTracker rootKey="secondarystat-health" value={maxHealth} />
-          <HealthTracker rootKey="secondarystat-health-damage" value={0} />
+          <div className="healthrow-trackers">
+            <HealthTracker rootKey="secondarystat-health" health={maxHealth} />
+            <HealthTracker
+              rootKey="secondarystat-health-damage"
+              dotCount={maxHealth}
+              superficial={superficialHealth}
+              aggravated={aggravatedHealth}
+              onChange={(aggravated, superficial) => {
+                if (onChangeSecondaryStat) {
+                  const newStat: CharacterStatPayload = {};
+                  if (aggravated !== undefined) {
+                    newStat.aggravatedDamage = aggravated;
+                  }
+                  if (superficial !== undefined) {
+                    newStat.superficialDamage = superficial;
+                  }
+                  onChangeSecondaryStat('health', newStat);
+                }
+              }}
+            />
+          </div>
         </div>
         <div className="charactersheet-secondary-healthrow-item">
           <h4>Willpower</h4>
-          <HealthTracker rootKey="secondarystat-willpower" value={maxWillpower} />
-          <HealthTracker rootKey="secondarystat-willpower-damage" value={0} />
+          <div className="healthrow-trackers">
+            <HealthTracker rootKey="secondarystat-willpower" health={maxWillpower} />
+            <HealthTracker
+              rootKey="secondarystat-willpower-damage"
+              dotCount={maxWillpower}
+              superficial={superficialWillpower}
+              aggravated={aggravatedWillpower}
+              onChange={(aggravated, superficial) => {
+                if (onChangeSecondaryStat) {
+                  const newStat: CharacterStatPayload = {};
+                  if (aggravated !== undefined) {
+                    newStat.aggravatedDamage = aggravated;
+                  }
+                  if (superficial !== undefined) {
+                    newStat.superficialDamage = superficial;
+                  }
+                  onChangeSecondaryStat('willpower', newStat);
+                }
+              }}
+            />
+          </div>
         </div>
         <div className="charactersheet-secondary-healthrow-item">
           <h4>Humanity</h4>
@@ -103,7 +146,7 @@ const SecondarySection = ({
         </div>
         <div className="charactersheet-secondary-hungerrow-item">
           <h4>Hunger</h4>
-          <HealthTracker
+          <StatDots
             rootKey="secondarystat-hunger"
             dotCount={5}
             value={character.hunger}

@@ -187,88 +187,109 @@ const DisciplineSection = ({
     }
 
     // maintain layout in a ref
-    if (!sectionLayoutRef.current) {
-      // setup initial layout
-      const newSectionLayout: DisciplineSectionLayout = {};
-      // get count of powers in each character discipline
-      const discCountMap = powers.reduce((prev, curr) => {
-        // check power is valid
-        if (Object.prototype.hasOwnProperty.call(disciplinePowers, curr)) {
-          const power = disciplinePowers[curr];
-          if (!prev.has(power.school)) {
-            prev.set(power.school, 1);
-          } else {
-            prev.set(power.school, (prev.get(power.school) as number) + 1);
+    const newSectionLayout = { ...sectionLayoutRef.current };
+    // first, we handle disciplines. calculate number of tiles needed!
+    const countMap = new Map<string, number>();
+    const tileCountMap = new Map<string, number>();
+    Object.keys(levels).forEach((discipline) => {
+      const level = levels[discipline as keyof CharacterDisciplines];
+      if (level && level >= 1) {
+        countMap.set(discipline, 0);
+        // iterate powers!
+        powers.forEach((power) => {
+          const powerData = disciplinePowers[power];
+          if (powerData.school === discipline) {
+            countMap.set(discipline, (countMap.get(discipline) as number) + 1);
           }
-        }
-        return prev;
-      }, new Map<string, number>());
-      // check if the player has any disciplines unaccounted for by powers
-      const mappedDisciplines: string[] = Array.from(discCountMap.keys());
-      Array.from(Object.keys(levels)).forEach((discId) => {
-        const level = levels[discId as keyof CharacterDisciplines] as number;
-        if (level > 0) {
-          if (!mappedDisciplines.includes(discId)) {
-            discCountMap.set(discId, 0);
-          }
-        }
-      });
-      // assuming we have 5 rows, figure out how many tiles we need for each discipline
-      // then sort them in alphabetical order
-      const discTileList = Array.from(discCountMap.entries())
-        .reduce((output: string[], kvp) => {
-          output.push(kvp[0]);
-          for (let i = 1; i < Math.ceil(kvp[1] / 5); i++) {
-            output.push(kvp[0]);
-          }
-          return output;
-        }, [])
-        .sort();
-      // when we create the layout for the first time, it's just sequential
-      // keep a map of indexes for each power
-      const powerIndexMap = new Map<string, number>();
-      for (let i = 0; i < discTileList.length; i++) {
-        const tileLayout: DisciplineSectionTile = {
-          school: discTileList[i],
-          powers: [],
-          level: levels[discTileList[i] as keyof CharacterDisciplines] || 0,
-        };
-        // loop through powers
-        for (let j = 0; j < powers.length; j++) {
-          const power = powers[j];
-          const powerInfo = disciplinePowers[power];
-          if (powerInfo.school === tileLayout.school) {
-            tileLayout.powers.push(power);
-            if (!powerIndexMap.has(powerInfo.school)) {
-              powerIndexMap.set(powerInfo.school, 1);
-            } else {
-              const val = (powerIndexMap.get(powerInfo.school) as number) + 1;
-              powerIndexMap.set(powerInfo.school, val);
-              if (val % 5 === 0) {
-                // if we have filled all five rows,
-                // then we break out of the loop
-                break;
-              }
-            }
-          }
-        }
-        // sort powers by level, and then alphabetically
-        tileLayout.powers = tileLayout.powers.sort().sort((a, b) => {
-          const aInfo = disciplinePowers[a];
-          const bInfo = disciplinePowers[b];
-          if (aInfo.level < bInfo.level) {
-            return -1;
-          }
-          if (aInfo.level > bInfo.level) {
-            return 1;
-          }
-          return 0;
         });
-        newSectionLayout[i] = tileLayout;
       }
-      // add empty rows to fill remaining space
-      const offset = Object.keys(newSectionLayout).length;
-      const paddingRows = offset % 3;
+    });
+    // countmap now contains a count of every power where we have
+    // at least one dot. dividing count by rowcount (5) and using ceil
+    // will give the number of necessary tiles.
+    Array.from(countMap.keys()).forEach((discipline) => {
+      const tileCount = Math.ceil((countMap.get(discipline) as number) / 5);
+      // if we have points in a discipline, display at least one tile with it!
+      tileCountMap.set(discipline, tileCount > 0 ? tileCount : 1);
+    });
+
+    // with our tile counts, we should iterate all tiles.
+    // IF the discipline does not exist in tilecount, blank out the tile
+    // IF the discipline has more tiles than tilecount, remove the later ones
+    let layoutKeys = Object.keys(newSectionLayout);
+    layoutKeys.forEach((layoutKey) => {
+      const tileInfo = newSectionLayout[parseInt(layoutKey, 10)];
+      if (!tileCountMap.has(tileInfo.school)) {
+        // blank it out!
+        newSectionLayout[parseInt(layoutKey, 10)] = {
+          school: '',
+          powers: [],
+          level: 0,
+        };
+        return;
+      }
+      const allotment = tileCountMap.get(tileInfo.school) as number;
+      if (allotment > 0) {
+        // if we still have room for more tiles,
+        // reduce allotment by one and move to the next tile!
+        tileCountMap.set(tileInfo.school, allotment - 1);
+      } else {
+        // if we have no more tile budget, and this tile has no powers in it
+        if (tileInfo.powers.length <= 0) {
+          // blank the tile
+          newSectionLayout[parseInt(layoutKey, 10)] = {
+            school: '',
+            powers: [],
+            level: 0,
+          };
+        }
+      }
+    });
+    // next, we want to fill in empty tiles with needed ones
+    // when we find an empty tile, iterate our allotment map
+    // and adjust allocations accordingly
+    layoutKeys = Object.keys(newSectionLayout);
+    layoutKeys.forEach((layoutKey) => {
+      const tileInfo = newSectionLayout[parseInt(layoutKey, 10)];
+      if (tileInfo.school === '') {
+        let newDiscipline = '';
+        const tileCountKey = Array.from(tileCountMap.keys());
+        for (let i = 0; i < tileCountKey.length; i++) {
+          const allotment = tileCountMap.get(tileCountKey[i]) as number;
+          if (allotment > 0) {
+            newDiscipline = tileCountKey[i];
+            tileCountMap.set(tileCountKey[i], allotment - 1);
+            break;
+          }
+        }
+        if (newDiscipline !== '') {
+          newSectionLayout[parseInt(layoutKey, 10)] = {
+            school: newDiscipline,
+            powers: [],
+            level: levels[newDiscipline as keyof CharacterDisciplines] || 0,
+          };
+        }
+      }
+    });
+    // finally, we will iterate our allotment map to see if additional
+    // tiles will be required to meet demand. if they are, create them.
+    Array.from(tileCountMap.keys()).forEach((discipline) => {
+      let allotment = tileCountMap.get(discipline) as number;
+      while (allotment > 0) {
+        newSectionLayout[Object.keys(newSectionLayout).length] = {
+          school: discipline,
+          powers: [],
+          level: levels[discipline as keyof CharacterDisciplines] || 0,
+        };
+        allotment -= 1;
+        tileCountMap.set(discipline, allotment);
+      }
+    });
+    // and as a finishing touch, we will make sure there is a full row of tiles
+    // IF we have a non multiple of 3, add enough cells to finish the row
+    const offset = Object.keys(newSectionLayout).length;
+    const paddingRows = offset % 3;
+    if (paddingRows !== 0) {
       for (let i = 0; i < 3 - paddingRows; i++) {
         newSectionLayout[offset + i] = {
           school: '',
@@ -276,201 +297,85 @@ const DisciplineSection = ({
           level: 0,
         };
       }
-      sectionLayoutRef.current = newSectionLayout;
-    } else {
-      const newSectionLayout = { ...sectionLayoutRef.current };
-      // first, we handle disciplines. calculate number of tiles needed!
-      const countMap = new Map<string, number>();
-      const tileCountMap = new Map<string, number>();
-      Object.keys(levels).forEach((discipline) => {
-        const level = levels[discipline as keyof CharacterDisciplines];
-        if (level && level >= 1) {
-          countMap.set(discipline, 0);
-          // iterate powers!
-          powers.forEach((power) => {
-            const powerData = disciplinePowers[power];
-            if (powerData.school === discipline) {
-              countMap.set(discipline, (countMap.get(discipline) as number) + 1);
-            }
-          });
-        }
-      });
-      // countmap now contains a count of every power where we have
-      // at least one dot. dividing count by rowcount (5) and using ceil
-      // will give the number of necessary tiles.
-      Array.from(countMap.keys()).forEach((discipline) => {
-        const tileCount = Math.ceil((countMap.get(discipline) as number) / 5);
-        // if we have points in a discipline, display at least one tile with it!
-        tileCountMap.set(discipline, tileCount > 0 ? tileCount : 1);
-      });
-
-      // with our tile counts, we should iterate all tiles.
-      // IF the discipline does not exist in tilecount, blank out the tile
-      // IF the discipline has more tiles than tilecount, remove the later ones
-      let layoutKeys = Object.keys(newSectionLayout);
-      layoutKeys.forEach((layoutKey) => {
-        const tileInfo = newSectionLayout[parseInt(layoutKey, 10)];
-        if (!tileCountMap.has(tileInfo.school)) {
-          // blank it out!
-          newSectionLayout[parseInt(layoutKey, 10)] = {
-            school: '',
-            powers: [],
-            level: 0,
-          };
-          return;
-        }
-        const allotment = tileCountMap.get(tileInfo.school) as number;
-        if (allotment > 0) {
-          // if we still have room for more tiles,
-          // reduce allotment by one and move to the next tile!
-          tileCountMap.set(tileInfo.school, allotment - 1);
-        } else {
-          // if we have no more tile budget, and this tile has no powers in it
-          if (tileInfo.powers.length <= 0) {
-            // blank the tile
-            newSectionLayout[parseInt(layoutKey, 10)] = {
-              school: '',
-              powers: [],
-              level: 0,
-            };
-          }
-        }
-      });
-      // next, we want to fill in empty tiles with needed ones
-      // when we find an empty tile, iterate our allotment map
-      // and adjust allocations accordingly
-      layoutKeys = Object.keys(newSectionLayout);
-      layoutKeys.forEach((layoutKey) => {
-        const tileInfo = newSectionLayout[parseInt(layoutKey, 10)];
-        if (tileInfo.school === '') {
-          let newDiscipline = '';
-          const tileCountKey = Array.from(tileCountMap.keys());
-          for (let i = 0; i < tileCountKey.length; i++) {
-            const allotment = tileCountMap.get(tileCountKey[i]) as number;
-            if (allotment > 0) {
-              newDiscipline = tileCountKey[i];
-              tileCountMap.set(tileCountKey[i], allotment - 1);
-              break;
-            }
-          }
-          if (newDiscipline !== '') {
-            newSectionLayout[parseInt(layoutKey, 10)] = {
-              school: newDiscipline,
-              powers: [],
-              level: levels[newDiscipline as keyof CharacterDisciplines] || 0,
-            };
-          }
-        }
-      });
-      // finally, we will iterate our allotment map to see if additional
-      // tiles will be required to meet demand. if they are, create them.
-      Array.from(tileCountMap.keys()).forEach((discipline) => {
-        let allotment = tileCountMap.get(discipline) as number;
-        while (allotment > 0) {
-          newSectionLayout[Object.keys(newSectionLayout).length] = {
-            school: discipline,
-            powers: [],
-            level: levels[discipline as keyof CharacterDisciplines] || 0,
-          };
-          allotment -= 1;
-          tileCountMap.set(discipline, allotment);
-        }
-      });
-      // and as a finishing touch, we will make sure there is a full row of tiles
-      // IF we have a non multiple of 3, add enough cells to finish the row
-      const offset = Object.keys(newSectionLayout).length;
-      const paddingRows = offset % 3;
-      if (paddingRows !== 0) {
-        for (let i = 0; i < 3 - paddingRows; i++) {
-          newSectionLayout[offset + i] = {
-            school: '',
-            powers: [],
-            level: 0,
-          };
-        }
-      }
-      // alternatively, if we have too many empty tiles, remove a few!
-      // first, loop backwards from the last tile and find index
-      let firstIdx = 0;
-      for (let i = Object.keys(newSectionLayout).length - 1; i >= 0; i--) {
-        const tileInfo = newSectionLayout[i];
-        if (tileInfo.school !== '') {
-          firstIdx = i;
-          break;
-        }
-      }
-      // next, we find the end of that row using the mod operator
-      // and we can adjust the row count accordingly!
-      const finalRowIdx = firstIdx + (3 - ((firstIdx + 1) % 3));
-      for (let i = Object.keys(newSectionLayout).length - 1; i > finalRowIdx; i--) {
-        delete newSectionLayout[i];
-      }
-      for (let i = Object.keys(newSectionLayout).length; i <= finalRowIdx; i++) {
-        newSectionLayout[i] = {
-          school: '',
-          powers: [],
-          level: 0,
-        };
-      }
-      // now it's time to work on powers!!! iterate all tiles and
-      // get a list of whatever powers are currently assigned.
-      const layoutPowers: string[] = [];
-      layoutKeys = Object.keys(newSectionLayout);
-      layoutKeys.forEach((layoutKey) => {
-        const tileInfo = newSectionLayout[parseInt(layoutKey, 10)];
-        // and while we're here, make sure to adjust levels
-        if (tileInfo.school !== '') {
-          tileInfo.level =
-            levels[tileInfo.school as keyof CharacterDisciplines] || 0;
-          layoutPowers.push(...tileInfo.powers);
-        }
-      });
-      // create two lists
-      // toAdd contains all powers that need to be added
-      // toRemove contains all powers that need to be removed!
-      const toAdd = powers.filter((powerId) => !layoutPowers.includes(powerId));
-      const toRemove = layoutPowers.filter(
-        (powerId) => powerId && !powers.includes(powerId),
-      );
-      // remove powers that do not belong in our list
-      toRemove.forEach((removeVal) => {
-        for (let i = 0; i < layoutKeys.length; i++) {
-          const tileInfo = newSectionLayout[parseInt(layoutKeys[i], 10)];
-          tileInfo.powers = tileInfo.powers.filter(
-            (powerId) => powerId !== removeVal,
-          );
-        }
-      });
-      // add powers that do belong in our list
-      toAdd.forEach((addVal) => {
-        const powerInfo = disciplinePowers[addVal];
-        for (let i = 0; i < layoutKeys.length; i++) {
-          const tileInfo = newSectionLayout[parseInt(layoutKeys[i], 10)];
-          if (tileInfo.school === powerInfo.school) {
-            // do not insert into a tile where there is no room!
-            if (tileInfo.powers.length < 5) {
-              // add power,
-              // then sort by level,
-              // and then alphabetically
-              tileInfo.powers.push(addVal);
-              tileInfo.powers = tileInfo.powers.sort().sort((a, b) => {
-                const aInfo = disciplinePowers[a];
-                const bInfo = disciplinePowers[b];
-                if (aInfo.level < bInfo.level) {
-                  return -1;
-                }
-                if (aInfo.level > bInfo.level) {
-                  return 1;
-                }
-                return 0;
-              });
-              break;
-            }
-          }
-        }
-      });
-      sectionLayoutRef.current = newSectionLayout;
     }
+    // alternatively, if we have too many empty tiles, remove a few!
+    // first, loop backwards from the last tile and find index
+    let firstIdx = 0;
+    for (let i = Object.keys(newSectionLayout).length - 1; i >= 0; i--) {
+      const tileInfo = newSectionLayout[i];
+      if (tileInfo.school !== '') {
+        firstIdx = i;
+        break;
+      }
+    }
+    // next, we find the end of that row using the mod operator
+    // and we can adjust the row count accordingly!
+    const finalRowIdx = firstIdx + (3 - ((firstIdx + 1) % 3));
+    for (let i = Object.keys(newSectionLayout).length - 1; i > finalRowIdx; i--) {
+      delete newSectionLayout[i];
+    }
+    for (let i = Object.keys(newSectionLayout).length; i <= finalRowIdx; i++) {
+      newSectionLayout[i] = {
+        school: '',
+        powers: [],
+        level: 0,
+      };
+    }
+    // now it's time to work on powers!!! iterate all tiles and
+    // get a list of whatever powers are currently assigned.
+    const layoutPowers: string[] = [];
+    layoutKeys = Object.keys(newSectionLayout);
+    layoutKeys.forEach((layoutKey) => {
+      const tileInfo = newSectionLayout[parseInt(layoutKey, 10)];
+      // and while we're here, make sure to adjust levels
+      if (tileInfo.school !== '') {
+        tileInfo.level = levels[tileInfo.school as keyof CharacterDisciplines] || 0;
+        layoutPowers.push(...tileInfo.powers);
+      }
+    });
+    // create two lists
+    // toAdd contains all powers that need to be added
+    // toRemove contains all powers that need to be removed!
+    const toAdd = powers.filter((powerId) => !layoutPowers.includes(powerId));
+    const toRemove = layoutPowers.filter(
+      (powerId) => powerId && !powers.includes(powerId),
+    );
+    // remove powers that do not belong in our list
+    toRemove.forEach((removeVal) => {
+      for (let i = 0; i < layoutKeys.length; i++) {
+        const tileInfo = newSectionLayout[parseInt(layoutKeys[i], 10)];
+        tileInfo.powers = tileInfo.powers.filter((powerId) => powerId !== removeVal);
+      }
+    });
+    // add powers that do belong in our list
+    toAdd.forEach((addVal) => {
+      const powerInfo = disciplinePowers[addVal];
+      for (let i = 0; i < layoutKeys.length; i++) {
+        const tileInfo = newSectionLayout[parseInt(layoutKeys[i], 10)];
+        if (tileInfo.school === powerInfo.school) {
+          // do not insert into a tile where there is no room!
+          if (tileInfo.powers.length < 5) {
+            // add power,
+            // then sort by level,
+            // and then alphabetically
+            tileInfo.powers.push(addVal);
+            tileInfo.powers = tileInfo.powers.sort().sort((a, b) => {
+              const aInfo = disciplinePowers[a];
+              const bInfo = disciplinePowers[b];
+              if (aInfo.level < bInfo.level) {
+                return -1;
+              }
+              if (aInfo.level > bInfo.level) {
+                return 1;
+              }
+              return 0;
+            });
+            break;
+          }
+        }
+      }
+    });
+    sectionLayoutRef.current = newSectionLayout;
     setSectionLayout(sectionLayoutRef.current);
   }, [disciplinePowers, characterId, levels, powers]);
 

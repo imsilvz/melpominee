@@ -21,7 +21,7 @@ builder.Services.AddControllers();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSignalR()
     .AddStackExchangeRedis(
-        $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")}", 
+        $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false", 
         options => {
             options.Configuration.ChannelPrefix = "Melpominee";
         }

@@ -43,6 +43,7 @@ services:
     image: ghcr.io/imsilvz/melpominee-backend:master
     secrets:
       - pg-credentials
+      - redis-credentials
       - mail-secrets
     expose: 
       - 80

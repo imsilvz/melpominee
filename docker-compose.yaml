@@ -53,7 +53,7 @@ services:
     ports:
       - "5050:80"
       - target: 80
-        published: 5050
+        published: 8005
         protocol: tcp
         mode: host
     networks:

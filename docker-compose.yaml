@@ -61,7 +61,7 @@ services:
       - "traefik.http.services.backend.loadbalancer.server.port=80"
       - "traefik.http.services.backend.loadBalancer.sticky.cookie=true"
       - "traefik.http.services.backend.loadBalancer.sticky.cookie.secure=true"
-      - "traefik.http.services.backend.loadBalancer.sticky.cookie.name=melpominee.app-lb-session"
+      - "traefik.http.services.backend.loadBalancer.sticky.cookie.name=Melpominee.app.LB.Session"
       - "traefik.http.routers.backend.rule=HostRegexp(`{catchall:.*}`) && PathPrefix(`/backend`)"
       - "traefik.http.routers.backend.middlewares=backend-stripprefix"
       - "traefik.http.middlewares.backend-stripprefix.stripprefix.prefixes=/backend"

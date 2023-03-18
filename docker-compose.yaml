@@ -118,6 +118,8 @@ secrets:
     file: /secrets/pg-credentials.json
   pg-password:
     file: /secrets/pg-password.txt
+  redis-credentials:
+    file: /secrets/redis-credentials.json
 
 networks:
   lb-network:

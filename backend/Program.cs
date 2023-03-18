@@ -6,6 +6,7 @@ using Melpominee.app.Models.CharacterSheets.VTMV5;
 
 // Load Secrets
 SecretManager.Instance.LoadSecret("pg-credentials");
+SecretManager.Instance.LoadSecret("redis-credentials");
 SecretManager.Instance.LoadSecret("mail-secrets");
 
 // Create Initial Data Schema
@@ -18,7 +19,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR()
+    .AddStackExchangeRedis(
+        $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")}", 
+        options => {
+            options.Configuration.ChannelPrefix = "Melpominee";
+        }
+    );
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(60);

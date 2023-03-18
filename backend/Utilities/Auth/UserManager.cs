@@ -28,7 +28,7 @@ public class UserManager
 
         using (var conn = DataContext.Instance.Connect())
         {
-            string sql = "SELECT * FROM melpominee_users WHERE Email = @Email";
+            string sql = "SELECT * FROM melpominee_users WHERE email = @Email";
             user = conn.QueryFirstOrDefault<User>(sql, new { Email = email });
             if (user is null || (onlyActive && !user.Active))
             {

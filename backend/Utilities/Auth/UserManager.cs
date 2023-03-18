@@ -1,6 +1,6 @@
+using Npgsql;
 using Dapper;
 using System.Web;
-using Microsoft.Data.Sqlite;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Melpominee.app.Models.Auth;
@@ -97,7 +97,7 @@ public class UserManager
                     }
                     trans.Commit();
                 }
-                catch(SqliteException)
+                catch(NpgsqlException)
                 {
                     // foreign key failed, this user does not exist!
                     trans.Rollback();

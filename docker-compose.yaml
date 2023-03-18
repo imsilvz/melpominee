@@ -5,10 +5,15 @@ services:
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
+      - "--entrypoints.frontend.address=:9001"
+      - "--entrypoints.backend.address=:9002"
     ports:
-      - target: 80
-        published: 8010
+      - target: 9001
+        published: 8011
+        protocol: tcp
+        mode: host
+      - target: 9002
+        published: 8012
         protocol: tcp
         mode: host
       - target: 8080
@@ -34,10 +39,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
-      - "traefik.http.routers.frontend.rule=Host(`localhost`) && PathPrefix(`/frontend`)"
-      - "traefik.http.routers.frontend.middlewares=frontend-stripprefix"
-      - "traefik.http.middlewares.frontend-stripprefix.stripprefix.prefixes=/frontend"
-      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.routers.frontend.rule=Host(`localhost`)"
+      - "traefik.http.routers.frontend.entrypoints=frontend"
 
   backend:
     image: ghcr.io/imsilvz/melpominee-backend:master
@@ -58,10 +61,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.backend.loadbalancer.server.port=80"
-      - "traefik.http.routers.backend.rule=Host(`localhost`) && PathPrefix(`/backend`)"
-      - "traefik.http.routers.backend.middlewares=backend-stripprefix"
-      - "traefik.http.middlewares.backend-stripprefix.stripprefix.prefixes=/backend"
-      - "traefik.http.routers.backend.entrypoints=web"
+      - "traefik.http.routers.backend.rule=Host(`localhost`)"
+      - "traefik.http.routers.backend.entrypoints=backend"
   
   database:
     image: postgres

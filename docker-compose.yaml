@@ -81,6 +81,14 @@ services:
       - /srv/melpominee.app/postgresql:/var/lib/postgresql/data:rw
     restart: always
 
+  redis:
+    restart: always
+    image: redis
+    expose:
+      - "6379"
+    networks:
+      - backend-network
+
   pgadmin:
     restart: always
     user: root

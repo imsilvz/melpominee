@@ -24,6 +24,8 @@ services:
   
   frontend:
     image: ghcr.io/imsilvz/melpominee-frontend:master
+    expose: 
+      - 80
     networks:
       - lb-network
     restart: always

@@ -62,7 +62,7 @@ services:
       - "traefik.http.routers.backend.rule=HostRegexp(`{catchall:.*}`) && PathPrefix(`/backend`)"
       - "traefik.http.routers.backend.middlewares=backend-stripprefix"
       - "traefik.http.middlewares.backend-stripprefix.stripprefix.prefixes=/backend"
-      - "traefik.http.routers.backend.entrypoints=backend"
+      - "traefik.http.routers.backend.entrypoints=web"
   
   database:
     image: postgres

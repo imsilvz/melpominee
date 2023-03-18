@@ -76,7 +76,7 @@ services:
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     ports:
       - target: 80
-        published: 8005
+        published: 8006
         protocol: tcp
         mode: host
     networks:

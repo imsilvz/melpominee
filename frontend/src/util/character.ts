@@ -145,7 +145,12 @@ export const handleUpdate = (
   if (opts?.updateHandler) {
     // run custom update function if available
     updateFunc(
-      (char) => (opts.updateHandler && opts.updateHandler(char, payload)) || char,
+      (char) =>
+        (char &&
+          char.id === charId &&
+          opts.updateHandler &&
+          opts.updateHandler(char, payload)) ||
+        char,
     );
   } else {
     // are we updating header fields, or property fields?
@@ -153,17 +158,23 @@ export const handleUpdate = (
       // handle property update
       updateFunc(
         (char) =>
-          char && {
-            ...char,
-            [opts.property as keyof Character]: deepMerge(
-              char[opts.property as keyof Character] as object,
-              update,
-            ),
-          },
+          (char &&
+            char.id === charId && {
+              ...char,
+              [opts.property as keyof Character]: deepMerge(
+                char[opts.property as keyof Character] as object,
+                update,
+              ),
+            }) ||
+          char,
       );
     } else {
       // handle header update
-      updateFunc((char) => char && (deepMerge(char, update) as Character));
+      updateFunc(
+        (char) =>
+          (char && char.id === charId && (deepMerge(char, update) as Character)) ||
+          char,
+      );
     }
   }
   if (endpoint) {

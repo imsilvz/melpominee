@@ -30,8 +30,8 @@ services:
       - lb
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.pgadmin.rule=Host(`melpominee-frontend.localhost`)"
-      - "traefik.http.routers.pgadmin.entrypoints=web"
+      - "traefik.http.routers.frontend.rule=Host(`melpominee-frontend.localhost`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
 
   backend:
     image: ghcr.io/imsilvz/melpominee-backend:master
@@ -47,8 +47,8 @@ services:
       - database
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.pgadmin.rule=Host(`melpominee-backend.localhost`)"
-      - "traefik.http.routers.pgadmin.entrypoints=web"
+      - "traefik.http.routers.backend.rule=Host(`melpominee-backend.localhost`)"
+      - "traefik.http.routers.backend.entrypoints=web"
   
   database:
     image: postgres

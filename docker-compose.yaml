@@ -35,6 +35,7 @@ services:
 
   backend:
     image: ghcr.io/imsilvz/melpominee-backend:master
+    secrets:
       - pg-credentials
       - mail-secrets
     networks:

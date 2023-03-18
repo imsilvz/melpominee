@@ -16,7 +16,7 @@ services:
         protocol: tcp
         mode: host
     networks:
-      - frontend-network
+      - lb-network
       - backend-network
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -25,7 +25,7 @@ services:
   frontend:
     image: ghcr.io/imsilvz/melpominee-frontend:master
     networks:
-      - frontend-network
+      - lb-network
     restart: always
     depends_on: 
       - lb
@@ -40,6 +40,7 @@ services:
       - pg-credentials
       - mail-secrets
     networks:
+      - lb-network
       - backend-network
     volumes:
       - /srv/melpominee.app/data:/app/data:rw
@@ -97,6 +98,8 @@ secrets:
     file: /secrets/pg-password.txt
 
 networks:
+  lb-network:
+    driver: bridge
   frontend-network:
     driver: bridge
   backend-network:

@@ -110,11 +110,11 @@ public class VampireV5Character : BaseCharacterSheet
             @"
                 INSERT INTO melpominee_characters
                     (
-                        Owner, Name, Concept, Chronicle, 
-                        Ambition, Desire, Sire, 
-                        Generation, Clan, PredatorType,
-                        Hunger, Resonance, BloodPotency,
-                        XpSpent, XpTotal
+                        owner, name, concept, chronicle, 
+                        ambition, desire, sire, 
+                        generation, clan, predatortype,
+                        hunger, resonance, bloodpotency,
+                        xpspent, xptotal
                     )
                 VALUES
                     (
@@ -124,7 +124,7 @@ public class VampireV5Character : BaseCharacterSheet
                         @Hunger, @Resonance, @BloodPotency,
                         @XpSpent, @XpTotal
                     )
-                RETURNING Id;
+                RETURNING id;
             ";
             Id = conn.ExecuteScalar<int>(sql, this, transaction: trans);
         }
@@ -134,11 +134,11 @@ public class VampireV5Character : BaseCharacterSheet
             @"
                 INSERT INTO melpominee_characters
                     (
-                        Id, Owner, Name, Concept, Chronicle, 
-                        Ambition, Desire, Sire, 
-                        Generation, Clan, PredatorType,
-                        Hunger, Resonance, BloodPotency,
-                        XpSpent, XpTotal
+                        id, owner, name, concept, chronicle, 
+                        ambition, desire, sire, 
+                        generation, clan, predatortype,
+                        hunger, resonance, bloodpotency,
+                        xpspent, xptotal
                     )
                 VALUES
                     (
@@ -148,24 +148,24 @@ public class VampireV5Character : BaseCharacterSheet
                         @Hunger, @Resonance, @BloodPotency,
                         @XpSpent, @XpTotal
                     )
-                ON CONFLICT DO UPDATE 
+                ON CONFLICT(Id) DO UPDATE 
                 SET
-                    Owner = @Owner,
-                    Name = @Name,
-                    Concept = @Concept,
-                    Chronicle = @Chronicle,
-                    Ambition = @Ambition,
-                    Desire = @Desire,
-                    Sire = @Sire,
-                    Generation = @Generation,
-                    Clan = @Clan,
-                    PredatorType = @PredatorType,
-                    Hunger = @Hunger,
-                    Resonance = @Resonance,
-                    BloodPotency = @BloodPotency,
-                    XpSpent = @XpSpent,
-                    XpTotal = @XpTotal
-                RETURNING Id;
+                    owner = @Owner,
+                    name = @Name,
+                    concept = @Concept,
+                    chronicle = @Chronicle,
+                    ambition = @Ambition,
+                    desire = @Desire,
+                    sire = @Sire,
+                    generation = @Generation,
+                    clan = @Clan,
+                    predatortype = @PredatorType,
+                    hunger = @Hunger,
+                    resonance = @Resonance,
+                    bloodpotency = @BloodPotency,
+                    xpspent = @XpSpent,
+                    xptotal = @XpTotal
+                RETURNING id;
             ";
             conn.ExecuteScalar<int>(sql, this, transaction: trans);
         }
@@ -194,13 +194,13 @@ public class VampireV5Character : BaseCharacterSheet
                 var sql =
                 @"
                     SELECT
-                        Id, Owner, Name, Concept, 
-                        Chronicle, Ambition, Desire, Sire, 
-                        Generation, Clan, PredatorType,
-                        Hunger, Resonance, BloodPotency,
-                        XpSpent, XpTotal
+                        id, owner, name, concept, chronicle, 
+                        ambition, desire, sire, 
+                        generation, clan, predatortype,
+                        hunger, resonance, bloodpotency,
+                        xpspent, xptotal
                     FROM melpominee_characters
-                    WHERE Id = @Id;
+                    WHERE id = @Id;
                 ";
                 user = conn.QuerySingleOrDefault<VampireV5Character>(sql, new { Id = id });
 
@@ -373,12 +373,12 @@ public class VampireV5Attributes
         var sql =
         @"
             INSERT INTO melpominee_character_attributes
-                (CharId, Attribute, Score)
+                (charid, attribute, score)
             VALUES
                 (@CharId, @Attr, @Score)
-            ON CONFLICT DO UPDATE 
+            ON CONFLICT(charid, attribute) DO UPDATE 
             SET
-                Score = @Score;
+                score = @Score;
         ";
         conn.Execute(sql, rowList, transaction: trans);
         return true;
@@ -411,16 +411,16 @@ public class VampireV5Attributes
         VampireV5Attributes attr = new VampireV5Attributes();
         var sql =
         @"
-            SELECT Attribute, Score
+            SELECT attribute, score
             FROM melpominee_character_attributes
-            WHERE CharId = @CharId;
+            WHERE charid = @CharId;
         ";
         var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
         foreach (var result in results)
         {
             Type attrType = typeof(VampireV5Attributes);
-            var propInfo = attrType.GetProperty(result.Attribute);
-            propInfo?.SetValue(attr, (int)result.Score, null);
+            var propInfo = attrType.GetProperty(result.attribute);
+            propInfo?.SetValue(attr, (int)result.score, null);
         }
         return attr;
     }
@@ -506,13 +506,13 @@ public class VampireV5Skills
         var sql =
         @"
             INSERT INTO melpominee_character_skills
-                (CharId, Skill, Speciality, Score)
+                (charid, skill, speciality, score)
             VALUES
                 (@CharId, @Skill, @Speciality, @Score)
-            ON CONFLICT DO UPDATE 
+            ON CONFLICT(charid, skill) DO UPDATE 
             SET
-                Speciality = @Speciality,
-                Score = @Score;
+                speciality = @Speciality,
+                score = @Score;
         ";
         conn.Execute(sql, rowList, transaction: trans);
         return true;
@@ -545,21 +545,21 @@ public class VampireV5Skills
         VampireV5Skills skills = new VampireV5Skills();
         var sql =
         @"
-            SELECT Skill, Speciality, Score
+            SELECT skill, speciality, score
             FROM melpominee_character_skills
-            WHERE CharId = @CharId;
+            WHERE charid = @CharId;
         ";
         var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
         foreach (var result in results)
         {
             VampireV5Skill skill = new VampireV5Skill()
             {
-                Speciality = (string)result.Speciality,
-                Score = (int)result.Score,
+                Speciality = (string)result.speciality,
+                Score = (int)result.score,
             };
 
             Type skillType = typeof(VampireV5Skills);
-            var propInfo = skillType.GetProperty(result.Skill);
+            var propInfo = skillType.GetProperty(result.skill);
             propInfo?.SetValue(skills, skill, null);
         }
         return skills;
@@ -628,18 +628,18 @@ public class VampireV5SecondaryStats
         @"
             INSERT INTO melpominee_character_secondary
                 (
-                    CharId, StatName, BaseValue, 
-                    SuperficialDamage, AggravatedDamage
+                    charid, statname, basevalue, 
+                    superficialdamage, aggravateddamage
                 )
             VALUES
                 (
                     @CharId, @Stat, @BaseValue, 
                     @SuperficialDamage, @AggravatedDamage)
-            ON CONFLICT DO UPDATE 
+            ON CONFLICT(charid, statname) DO UPDATE 
             SET
-                BaseValue = @BaseValue,
-                SuperficialDamage = @SuperficialDamage,
-                AggravatedDamage = @AggravatedDamage;
+                basevalue = @BaseValue,
+                superficialdamage = @SuperficialDamage,
+                aggravateddamage = @AggravatedDamage;
         ";
         conn.Execute(sql, rowList, transaction: trans);
         return true;
@@ -673,23 +673,23 @@ public class VampireV5SecondaryStats
         var sql =
         @"
             SELECT 
-                StatName, BaseValue,
-                SuperficialDamage, AggravatedDamage
+                statname, basevalue,
+                superficialdamage, aggravateddamage
             FROM melpominee_character_secondary
-            WHERE CharId = @CharId;
+            WHERE charid = @CharId;
         ";
         var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
         foreach (var result in results)
         {
             VampireV5SecondaryStat stat = new VampireV5SecondaryStat()
             {
-                BaseValue = (int)result.BaseValue,
-                SuperficialDamage = (int)result.SuperficialDamage,
-                AggravatedDamage = (int)result.AggravatedDamage,
+                BaseValue = (int)result.basevalue,
+                SuperficialDamage = (int)result.superficialdamage,
+                AggravatedDamage = (int)result.aggravateddamage,
             };
 
             Type statsType = typeof(VampireV5SecondaryStats);
-            var propInfo = statsType.GetProperty(result.StatName);
+            var propInfo = statsType.GetProperty(result.statname);
             propInfo?.SetValue(stats, stat, null);
         }
         return stats;
@@ -729,15 +729,15 @@ public class VampireV5Beliefs
         var sql =
         @"
             INSERT INTO melpominee_character_beliefs
-                (CharId, Tenets, Convictions, Touchstones)
+                (charid, tenets, convictions, touchstones)
             VALUES
                 (@CharId, @Tenets, @Convictions, @Touchstones)
-            ON CONFLICT DO UPDATE 
+            ON CONFLICT(charid) DO UPDATE 
             SET
-                Tenets = @Tenets,
-                Convictions = @Convictions,
-                Touchstones = @Touchstones
-            RETURNING Id;
+                tenets = @Tenets,
+                convictions = @Convictions,
+                touchstones = @Touchstones
+            RETURNING id;
         ";
         var res = conn.ExecuteScalar(sql, new
         {
@@ -776,9 +776,9 @@ public class VampireV5Beliefs
         VampireV5Beliefs? beliefs;
         var sql =
         @"
-            SELECT Tenets, Convictions, Touchstones
+            SELECT tenets, convictions, touchstones
             FROM melpominee_character_beliefs
-            WHERE CharId = @Id;
+            WHERE charid = @Id;
         ";
         beliefs = conn.QuerySingleOrDefault<VampireV5Beliefs>(sql, new { Id = charId }, transaction: trans);
         if (beliefs is null)
@@ -827,24 +827,24 @@ public class VampireV5Profile
         @"
             INSERT INTO melpominee_character_profile
                 (
-                    CharId, TrueAge, ApparentAge, DateOfBirth, 
-                    DateOfDeath, Description, History, Notes
+                    charid, trueage, apparentage, dateofbirth, 
+                    dateofdeath, description, history, notes
                 )
             VALUES
                 (
                     @CharId, @TrueAge, @ApparentAge, @DateOfBirth, 
                     @DateOfDeath, @Description, @History, @Notes
                 )
-            ON CONFLICT DO UPDATE 
+            ON CONFLICT(charid) DO UPDATE 
             SET
-                TrueAge = @TrueAge, 
-                ApparentAge = @ApparentAge, 
-                DateOfBirth = @DateOfBirth, 
-                DateOfDeath = @DateOfDeath, 
-                Description = @Description, 
-                History = @History, 
-                Notes = @Notes
-            RETURNING Id;
+                trueage = @TrueAge, 
+                apparentage = @ApparentAge, 
+                dateofbirth = @DateOfBirth, 
+                dateofdeath = @DateOfDeath, 
+                description = @Description, 
+                history = @History, 
+                notes = @Notes
+            RETURNING id;
         ";
         var res = conn.ExecuteScalar(sql, new
         {
@@ -888,11 +888,11 @@ public class VampireV5Profile
         var sql =
         @"
             SELECT 
-                TrueAge, ApparentAge, DateOfBirth,
-                DateOfDeath, Description,
-                History, Notes
+                trueage, apparentage, dateofbirth,
+                dateofdeath, description,
+                history, notes
             FROM melpominee_character_profile
-            WHERE CharId = @Id;
+            WHERE charid = @Id;
         ";
         profile = conn.QuerySingleOrDefault<VampireV5Profile>(sql, new { Id = charId }, transaction: trans);
         if (profile is null)
@@ -1019,10 +1019,10 @@ public class VampireV5BackgroundMeritFlaw : IDictionary<int, MeritFlawBackground
         var sql =
         @"
             INSERT INTO melpominee_character_meritflawbackgrounds
-                (CharId, ItemType, SortOrder, Name, Score)
+                (charid, itemtype, sortorder, name, score)
             VALUES
                 (@CharId, @ItemType, @SortOrder, @Name, @Score)
-            ON CONFLICT DO UPDATE
+            ON CONFLICT(charid, itemtype, sortorder) DO UPDATE
             SET
                 Name = @Name,
                 Score = @Score;
@@ -1073,20 +1073,20 @@ public class VampireV5Backgrounds : VampireV5BackgroundMeritFlaw
         VampireV5Backgrounds backgrounds = new VampireV5Backgrounds();
         var sql =
         @"
-            SELECT SortOrder, Name, Score
+            SELECT sortorder, name, score
             FROM melpominee_character_meritflawbackgrounds
-            WHERE CharId = @CharId AND ItemType = @ItemType;
+            WHERE charid = @CharId AND itemtype = @ItemType;
         ";
         var results = conn.Query(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
         foreach (var result in results)
         {
             backgrounds.Add(
-            (int)result.SortOrder,
+            (int)result.sortorder,
             new MeritFlawBackground()
             {
-                SortOrder = (int)result.SortOrder,
-                Name = result.Name,
-                Score = (int)result.Score,
+                SortOrder = (int)result.sortorder,
+                Name = result.name,
+                Score = (int)result.score,
             });
         }
         return backgrounds;
@@ -1134,20 +1134,20 @@ public class VampireV5Merits : VampireV5BackgroundMeritFlaw
         VampireV5Merits merits = new VampireV5Merits();
         var sql =
         @"
-            SELECT SortOrder, Name, Score
+            SELECT sortorder, name, score
             FROM melpominee_character_meritflawbackgrounds
-            WHERE CharId = @CharId AND ItemType = @ItemType;
+            WHERE charid = @CharId AND itemtype = @ItemType;
         ";
         var results = conn.Query(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
         foreach (var result in results)
         {
             merits.Add(
-            (int)result.SortOrder,
+            (int)result.sortorder,
             new MeritFlawBackground()
             {
-                SortOrder = (int)result.SortOrder,
-                Name = result.Name,
-                Score = (int)result.Score,
+                SortOrder = (int)result.sortorder,
+                Name = result.name,
+                Score = (int)result.score,
             });
         }
         return merits;
@@ -1195,20 +1195,20 @@ public class VampireV5Flaws : VampireV5BackgroundMeritFlaw
         VampireV5Flaws merits = new VampireV5Flaws();
         var sql =
         @"
-            SELECT SortOrder, Name, Score
+            SELECT sortorder, name, score
             FROM melpominee_character_meritflawbackgrounds
-            WHERE CharId = @CharId AND ItemType = @ItemType;
+            WHERE charid = @CharId AND itemtype = @ItemType;
         ";
         var results = conn.Query(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
         foreach (var result in results)
         {
             merits.Add(
-            (int)result.SortOrder,
+            (int)result.sortorder,
             new MeritFlawBackground()
             {
-                SortOrder = (int)result.SortOrder,
-                Name = result.Name,
-                Score = (int)result.Score,
+                SortOrder = (int)result.sortorder,
+                Name = result.name,
+                Score = (int)result.score,
             });
         }
         return merits;

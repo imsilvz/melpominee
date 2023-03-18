@@ -18,16 +18,20 @@ services:
         protocol: tcp
         mode: host
     secrets:
+      - pg-credentials
       - mail-secrets
     networks:
       - backend-network
     volumes:
       - /srv/melpominee.app/data:/app/data:rw
     restart: always
+    depends_on: 
+      - database
 
   database:
     restart: always
     environment:
+      POSTGRES_USER: melpominee
       POSTGRES_PASSWORD_FILE: /run/secrets/pg-password
     expose:
       - "5432"
@@ -39,9 +43,32 @@ services:
       - /srv/melpominee.app/postgresql:/var/lib/postgresql/data:rw
     image: postgres
 
+  pgadmin:
+    restart: always
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@melpominee.app
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+      - target: 80
+        published: 5050
+        protocol: tcp
+        mode: host
+    networks:
+      - backend-network
+    volumes:
+       - /srv/melpominee.app/pgadmin/home:/home
+       - /srv/melpominee.app/pgadmin/data:/var/lib/pgadmin
+    depends_on: 
+      - database
+
 secrets:
   mail-secrets:
     file: /secrets/mail-secrets.json
+  pg-credentials:
+    file: /secrets/pg-credentials.json
   pg-password:
     file: /secrets/pg-password.txt
 

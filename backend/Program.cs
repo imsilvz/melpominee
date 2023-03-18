@@ -5,6 +5,7 @@ using Melpominee.app.Utilities.Hubs;
 using Melpominee.app.Models.CharacterSheets.VTMV5;
 
 // Load Secrets
+SecretManager.Instance.LoadSecret("pg-credentials");
 SecretManager.Instance.LoadSecret("mail-secrets");
 
 // Create Initial Data Schema

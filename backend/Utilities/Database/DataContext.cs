@@ -1,9 +1,7 @@
 using Dapper;
+using Npgsql;
 using System.Data;
-using Microsoft.Data.Sqlite;
-using Melpominee.app.Models;
 namespace Melpominee.app.Utilities.Database;
-
 
 public class DataContext
 {
@@ -14,7 +12,12 @@ public class DataContext
 
     public IDbConnection Connect()
     {
-        return new SqliteConnection("Data Source=data/melpominee.db");
+        // return new SqliteConnection("Data Source=data/melpominee.db");
+        var host = SecretManager.Instance.GetSecret("db_host");
+        var user = SecretManager.Instance.GetSecret("db_user");
+        var password = SecretManager.Instance.GetSecret("db_password");
+        var database = SecretManager.Instance.GetSecret("db_database");
+        return new NpgsqlConnection($"Host={host};Username={user};Password={password};Database={database}");
     }
 
     public void Initalize()
@@ -28,20 +31,20 @@ public class DataContext
                     Email TEXT NOT NULL PRIMARY KEY,
                     Password TEXT NOT NULL,
                     ActivationKey TEXT,
-                    ActivationRequested DATETIME,
-                    ActivationCompleted DATETIME,
+                    ActivationRequested TIMESTAMP,
+                    ActivationCompleted TIMESTAMP,
                     Active BOOL DEFAULT false
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_users_rescue (
-                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    Id BIGSERIAL NOT NULL PRIMARY KEY,
                     Email TEXT NOT NULL,
                     RescueKey TEXT,
-                    RescueRequested DATETIME,
-                    RescueCompleted DATETIME,
+                    RescueRequested TIMESTAMP,
+                    RescueCompleted TIMESTAMP,
                     FOREIGN KEY(Email) REFERENCES melpominee_users(Email)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_characters (
-                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    Id BIGSERIAL NOT NULL PRIMARY KEY,
                     Owner TEXT NOT NULL,
                     Name TEXT NOT NULL,
                     Concept TEXT NOT NULL,
@@ -59,7 +62,7 @@ public class DataContext
                     XpTotal INTEGER NOT NULL
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_attributes (
-                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    Id BIGSERIAL NOT NULL PRIMARY KEY,
                     CharId INTEGER NOT NULL,
                     Attribute TEXT NOT NULL,
                     Score INTEGER NOT NULL,
@@ -67,7 +70,7 @@ public class DataContext
                     FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_skills (
-                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    Id BIGSERIAL NOT NULL PRIMARY KEY,
                     CharId INTEGER NOT NULL,
                     Skill TEXT NOT NULL,
                     Speciality TEXT NOT NULL,
@@ -76,7 +79,7 @@ public class DataContext
                     FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_secondary (
-                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    Id BIGSERIAL NOT NULL PRIMARY KEY,
                     CharId INTEGER NOT NULL,
                     StatName TEXT NOT NULL,
                     BaseValue INTEGER NOT NULL,
@@ -86,7 +89,7 @@ public class DataContext
                     FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_disciplines (
-                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    Id BIGSERIAL NOT NULL PRIMARY KEY,
                     CharId INTEGER NOT NULL,
                     Discipline TEXT NOT NULL,
                     Score INTEGER NOT NULL,
@@ -94,14 +97,14 @@ public class DataContext
                     FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_discipline_powers (
-                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    Id BIGSERIAL NOT NULL PRIMARY KEY,
                     CharId INTEGER NOT NULL,
                     PowerId TEXT NOT NULL,
                     UNIQUE(CharId, PowerId),
                     FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_beliefs (
-                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    Id BIGSERIAL NOT NULL PRIMARY KEY,
                     CharId INTEGER NOT NULL,
                     Tenets TEXT NOT NULL,
                     Convictions TEXT NOT NULL,
@@ -110,7 +113,7 @@ public class DataContext
                     FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_meritflawbackgrounds (
-                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    Id BIGSERIAL NOT NULL PRIMARY KEY,
                     CharId INTEGER NOT NULL,
                     ItemType TEXT NOT NULL,
                     SortOrder INTEGER NOT NULL,
@@ -120,7 +123,7 @@ public class DataContext
                     FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_profile (
-                    Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    Id BIGSERIAL NOT NULL PRIMARY KEY,
                     CharId INTEGER NOT NULL,
                     TrueAge INTEGER NOT NULL,
                     ApparentAge INTEGER NOT NULL,

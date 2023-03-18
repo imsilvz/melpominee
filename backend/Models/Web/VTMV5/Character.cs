@@ -222,12 +222,12 @@ public class VampireAttributesUpdate
                     var update =
                     @"
                         INSERT INTO melpominee_character_attributes
-                            (CharId, Attribute, Score)
+                            (charid, attribute, score)
                         VALUES
                             (@CharId, @Attr, @Score)
-                        ON CONFLICT DO UPDATE 
+                        ON CONFLICT(charid, attribute) DO UPDATE 
                         SET
-                            Score = @Score;
+                            score = @Score;
                     ";
                     await conn.ExecuteAsync(update, updateList, transaction: trans);
                     character.Attributes = VampireV5Attributes.Load(conn, trans, (int)character.Id);
@@ -328,13 +328,13 @@ public class VampireSkillsUpdate
                     var sql =
                     @"
                         INSERT INTO melpominee_character_skills
-                            (CharId, Skill, Speciality, Score)
+                            (charid, skill, speciality, score)
                         VALUES
                             (@CharId, @Skill, @Speciality, @Score)
-                        ON CONFLICT DO UPDATE 
+                        ON CONFLICT(charid, skill) DO UPDATE 
                         SET
-                            Speciality = @Speciality,
-                            Score = @Score;
+                            speciality = @Speciality,
+                            score = @Score;
                     ";
                     await conn.ExecuteAsync(sql, updateList, transaction: trans);
                     trans.Commit();
@@ -407,7 +407,7 @@ public class VampireStatUpdate
             UPDATE melpominee_character_secondary
             SET
                 {String.Join(", ", updList.Select(i => $"{i} = @{i}"))}
-            WHERE CharId = @CharId AND StatName = @StatName;
+            WHERE charid = @CharId AND statname = @StatName;
         ";
         await conn.ExecuteAsync(sql, this, transaction: trans);
     }
@@ -531,16 +531,16 @@ public class VampireDisciplinesUpdate
                         string sql =
                         @"
                             INSERT INTO melpominee_character_disciplines
-                                (CharId, Discipline, Score)
+                                (charid, discipline, score)
                             VALUES
                                 (@CharId, @School, @Score)
-                            ON CONFLICT DO UPDATE 
+                            ON CONFLICT(charid, discipline) DO UPDATE 
                             SET
-                                Score = @Score;
+                                score = @Score;
                             DELETE FROM melpominee_character_disciplines
-                            WHERE CharId = @CharId 
-                                AND Discipline = @School 
-                                AND Score <= 0;
+                            WHERE charid = @CharId 
+                                AND discipline = @School 
+                                AND score <= 0;
                         ";
                         await conn.ExecuteAsync(sql, updateList, transaction: trans);
                         trans.Commit();
@@ -621,7 +621,7 @@ public class VampirePowersUpdate
                             string sql =
                             @"
                                 DELETE FROM melpominee_character_discipline_powers
-                                WHERE CharId = @CharId AND PowerId = @PowerId;
+                                WHERE charid = @CharId AND powerid = @PowerId;
                             ";
                             await conn.ExecuteAsync(sql, removeItems, transaction: trans);
                         }
@@ -629,10 +629,11 @@ public class VampirePowersUpdate
                         {
                             string sql =
                             @"
-                                INSERT OR IGNORE INTO melpominee_character_discipline_powers
-                                    (CharId, PowerId)
+                                INSERT INTO melpominee_character_discipline_powers
+                                    (charid, powerid)
                                 VALUES
-                                    (@CharId, @PowerId);
+                                    (@CharId, @PowerId)
+                                ON CONFLICT(charid, powerid) DO NOTHING;
                             ";
                             await conn.ExecuteAsync(sql, addItems, transaction: trans);
                         }
@@ -776,13 +777,13 @@ public class VampireBackgroundMeritFlawUpdate
                     var sql =
                     @"
                         INSERT INTO melpominee_character_meritflawbackgrounds
-                            (CharId, ItemType, SortOrder, Name, Score)
+                            (charid, itemtype, sortorder, name, score)
                         VALUES
                             (@CharId, @ItemType, @SortOrder, @Name, @Score)
-                        ON CONFLICT DO UPDATE
+                        ON CONFLICT(charid, itemtype, sortorder) DO UPDATE
                         SET
-                            Name = @Name,
-                            Score = @Score;
+                            name = @Name,
+                            score = @Score;
                     ";
                     await conn.ExecuteAsync(sql, Items.Values, transaction: trans);
                     trans.Commit();
@@ -858,7 +859,7 @@ public class VampireProfileUpdate
                         UPDATE melpominee_character_profile
                         SET
                             {String.Join(',', updateList.Select(prop => $"{prop} = @{prop}"))}
-                        WHERE CharId = @Id;
+                        WHERE charid = @Id;
                     ";
                     await conn.ExecuteAsync(sql, this, transaction: trans);
                     character.Profile = VampireV5Profile.Load(conn, trans, (int)this.Id);

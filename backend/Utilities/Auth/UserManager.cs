@@ -252,10 +252,11 @@ public class UserManager
                     // sync database
                     var sql = 
                     @"
-                        INSERT OR IGNORE INTO melpominee_users 
-                            (Email, Password, ActivationKey, ActivationRequested)
+                        INSERT INTO melpominee_users 
+                            (email, password, activationkey, activationrequested)
                         VALUES
-                            (@Email, @Password, @ActivationKey, CURRENT_TIMESTAMP);
+                            (@Email, @Password, @ActivationKey, CURRENT_TIMESTAMP)
+                        ON CONFLICT(email) DO NOTHING;
                     ";
                     if (conn.Execute(sql, user) <= 0) {
                         transaction.Rollback();

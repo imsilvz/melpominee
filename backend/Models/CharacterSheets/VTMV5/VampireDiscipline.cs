@@ -170,7 +170,7 @@ public class VampireV5Disciplines : IDictionary<string, int>
         @"
             DELETE FROM 
             melpominee_character_disciplines
-            WHERE CharId = @CharId;
+            WHERE charid = @CharId;
         ";
         conn.Execute(sql, new { CharId = charId }, transaction: trans);
 
@@ -178,12 +178,12 @@ public class VampireV5Disciplines : IDictionary<string, int>
         sql =
         @"
             INSERT INTO melpominee_character_disciplines
-                (CharId, Discipline, Score)
+                (charid, discipline, score)
             VALUES
                 (@CharId, @Discipline, @Score)
-            ON CONFLICT DO UPDATE 
+            ON CONFLICT(charid, discipline) DO UPDATE 
             SET
-                Score = @Score;
+                score = @Score;
         ";
         conn.Execute(sql, rowList, transaction: trans);
         return true;
@@ -216,14 +216,14 @@ public class VampireV5Disciplines : IDictionary<string, int>
         VampireV5Disciplines disciplines = new VampireV5Disciplines();
         var sql = 
         @"
-            SELECT Discipline, Score
+            SELECT discipline, score
             FROM melpominee_character_disciplines
-            WHERE CharId = @CharId;
+            WHERE charid = @CharId;
         ";
         var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
         foreach(var result in results)
         {
-            disciplines[(string)result.Discipline] = (int)result.Score;
+            disciplines[(string)result.discipline] = (int)result.score;
         }
         return disciplines;
     }
@@ -338,7 +338,7 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
         @"
             DELETE FROM 
             melpominee_character_discipline_powers
-            WHERE CharId = @CharId;
+            WHERE charid = @CharId;
         ";
         conn.Execute(sql, new { CharId = charId }, transaction: trans);
 
@@ -346,7 +346,7 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
         sql =
         @"
             INSERT INTO melpominee_character_discipline_powers
-                (CharId, PowerId)
+                (charid, powerid)
             VALUES
                 (@CharId, @PowerId);
         ";
@@ -381,14 +381,14 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
         VampireV5DisciplinePowers powers = new VampireV5DisciplinePowers();
         var sql = 
         @"
-            SELECT PowerId
+            SELECT powerid
             FROM melpominee_character_discipline_powers
-            WHERE CharId = @CharId;
+            WHERE charid = @CharId;
         ";
         var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
         foreach(var result in results)
         {
-            var power = VampirePower.GetDisciplinePower(result.PowerId);
+            var power = VampirePower.GetDisciplinePower(result.powerid);
             powers.Add(power);
         }
         return powers;

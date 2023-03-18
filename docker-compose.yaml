@@ -34,7 +34,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
-      - "traefik.http.routers.frontend.rule=Host(`localhost`)"
+      - "traefik.http.routers.frontend.rule=Host(`localhost`) && PathPrefix(`/frontend`)"
+      - "traefik.http.routers.frontend.middlewares=frontend-stripprefix"
+      - "traefik.http.middlewares.frontend-stripprefix.stripprefix.prefixes=/frontend"
       - "traefik.http.routers.frontend.entrypoints=web"
 
   backend:

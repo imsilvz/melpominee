@@ -16,6 +16,7 @@ services:
         protocol: tcp
         mode: host
     networks:
+      - frontend-network
       - backend-network
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"

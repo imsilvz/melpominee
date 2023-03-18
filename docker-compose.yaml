@@ -22,12 +22,26 @@ services:
     networks:
       - backend-network
     volumes:
-      - /srv/melpominee.app:/app/data:rw
+      - /srv/melpominee.app/data:/app/data:rw
     restart: always
+
+  database:
+    restart: always
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/pg-password
+    secrets:
+      - pg-password
+    networks:
+      - backend-network
+    volumes:
+      - /srv/melpominee.app/postgresql:/var/lib/postgresql/data:rw
+    image: postgres
 
 secrets:
   mail-secrets:
     file: /secrets/mail-secrets.json
+  pg-password:
+    file: /secrets/pg-password.txt
 
 networks:
   frontend-network:

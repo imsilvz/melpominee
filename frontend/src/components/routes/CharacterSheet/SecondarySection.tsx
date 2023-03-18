@@ -44,10 +44,15 @@ const SecondarySection = ({
         <div className="charactersheet-secondary-healthrow-item">
           <h4>Health</h4>
           <div className="healthrow-trackers">
-            <HealthTracker rootKey="secondarystat-health" health={maxHealth} />
+            <HealthTracker
+              rootKey="secondarystat-health"
+              health={maxHealth}
+              dotCount={maxHealth > 10 ? maxHealth : 10}
+            />
             <HealthTracker
               rootKey="secondarystat-health-damage"
-              dotCount={maxHealth}
+              dotCount={maxHealth > 10 ? maxHealth : 10}
+              health={maxHealth}
               superficial={superficialHealth}
               aggravated={aggravatedHealth}
               onChange={(aggravated, superficial) => {
@@ -71,7 +76,8 @@ const SecondarySection = ({
             <HealthTracker rootKey="secondarystat-willpower" health={maxWillpower} />
             <HealthTracker
               rootKey="secondarystat-willpower-damage"
-              dotCount={maxWillpower}
+              dotCount={maxWillpower > 10 ? maxWillpower : 10}
+              health={maxWillpower}
               superficial={superficialWillpower}
               aggravated={aggravatedWillpower}
               onChange={(aggravated, superficial) => {

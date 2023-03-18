@@ -52,7 +52,10 @@ const HealthTracker = ({
   return (
     <div className="healthtracker-container">
       {Array.from(Array(dotCount || 10), (_, i) => i).map((_, idx) => {
-        const filled = (health || superficialDamage + aggravatedDamage) >= idx + 1;
+        const filled =
+          (((superficial === undefined || aggravated === undefined) && health) ||
+            superficialDamage + aggravatedDamage) >=
+          idx + 1;
         const isAggravated = aggravatedDamage >= idx + 1;
         const isSuperficial = superficialDamage + aggravatedDamage >= idx + 1;
         let style = 'healthtracker-dot';
@@ -73,7 +76,11 @@ const HealthTracker = ({
               const clickMap = clickRef.current;
               // do not track damage on the same bar
               // as we track health!
-              if (health) {
+              if (aggravated === undefined || superficial === undefined) {
+                return;
+              }
+              // do not respond to clicks above max health
+              if (idx + 1 > (health || 10)) {
                 return;
               }
               // if we are not the health bar, track damage
@@ -81,30 +88,31 @@ const HealthTracker = ({
                 if (clickMap.has(idx)) {
                   // double click!
                   console.log('Double Click!');
+                  let newAgg;
+                  let newSuper;
                   if (aggravatedDamage === idx + 1) {
-                    if (onChange) {
-                      onChange(0);
-                    } else {
-                      setAggravatedDamage(0);
-                    }
+                    newAgg = 0;
                   } else {
-                    if (onChange) {
-                      onChange(idx + 1);
-                    } else {
-                      setAggravatedDamage(idx + 1);
-                    }
+                    newAgg = idx + 1;
                   }
-                  if (idx + 1 + prevSuperficial > (dotCount || 10)) {
-                    if (onChange) {
-                      onChange(undefined, (dotCount || 10) - aggravatedDamage);
-                    } else {
-                      setSuperficialDamage((dotCount || 10) - aggravatedDamage);
+                  // eslint-disable-next-line prefer-const
+                  newSuper = prevSuperficial;
+                  if (newAgg + newSuper > (health || 10)) {
+                    newSuper = (health || 10) - newAgg;
+                  }
+                  if (onChange) {
+                    if (newAgg !== undefined) {
+                      onChange(newAgg, undefined);
+                    }
+                    if (newSuper !== undefined) {
+                      onChange(undefined, newSuper);
                     }
                   } else {
-                    if (onChange) {
-                      onChange(undefined, prevSuperficial);
-                    } else {
-                      setSuperficialDamage(prevSuperficial);
+                    if (newAgg !== undefined) {
+                      setAggravatedDamage(newAgg);
+                    }
+                    if (newSuper !== undefined) {
+                      setSuperficialDamage(newSuper);
                     }
                   }
                   return;
@@ -119,29 +127,24 @@ const HealthTracker = ({
                 setPrevSuperficial(superficialDamage);
               }
               if (!isAggravated) {
+                let newSuper;
                 // this is not an aggravated damage tile
                 if (isSuperficial) {
                   // subtract superficial damage
-                  console.log(idx - aggravatedDamage + 1, superficialDamage);
                   if (idx - aggravatedDamage + 1 === superficialDamage) {
-                    if (onChange) {
-                      onChange(undefined, 0);
-                    } else {
-                      setSuperficialDamage(0);
-                    }
+                    newSuper = 0;
                   } else {
-                    if (onChange) {
-                      onChange(undefined, idx - aggravatedDamage + 1);
-                    } else {
-                      setSuperficialDamage(idx - aggravatedDamage + 1);
-                    }
+                    newSuper = idx - aggravatedDamage + 1;
                   }
                 } else {
                   // add superficial damage
+                  newSuper = idx - aggravatedDamage + 1;
+                }
+                if (newSuper !== undefined) {
                   if (onChange) {
-                    onChange(undefined, idx - aggravatedDamage + 1);
+                    onChange(undefined, newSuper);
                   } else {
-                    setSuperficialDamage(idx - aggravatedDamage + 1);
+                    setSuperficialDamage(newSuper);
                   }
                 }
               }

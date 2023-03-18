@@ -1,6 +1,6 @@
 services:
   lb:
-    image: "traefik"
+    image: traefik
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"
@@ -74,7 +74,6 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     ports:
-      - "5050:80"
       - target: 80
         published: 8005
         protocol: tcp

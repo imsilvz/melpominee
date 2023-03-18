@@ -1,23 +1,40 @@
 services:
-  frontend:
-    image: ghcr.io/imsilvz/melpominee-frontend:master
+  lb:
+    image: "traefik"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
     ports:
-      - target: 8011
-        published: 8011
+      - target: 80
+        published: 8010
+        protocol: tcp
+        mode: host
+      - target: 8080
+        published: 8005
         protocol: tcp
         mode: host
     networks:
+      - backend-network
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: always
+  
+  frontend:
+    image: ghcr.io/imsilvz/melpominee-frontend:master
+    networks:
       - frontend-network
     restart: always
+    depends_on: 
+      - lb
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pgadmin.rule=Host(`melpominee-frontend.localhost`)"
+      - "traefik.http.routers.pgadmin.entrypoints=web"
 
   backend:
     image: ghcr.io/imsilvz/melpominee-backend:master
-    ports:
-      - target: 80
-        published: 8012
-        protocol: tcp
-        mode: host
-    secrets:
       - pg-credentials
       - mail-secrets
     networks:
@@ -26,10 +43,15 @@ services:
       - /srv/melpominee.app/data:/app/data:rw
     restart: always
     depends_on: 
+      - lb
       - database
-
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pgadmin.rule=Host(`melpominee-backend.localhost`)"
+      - "traefik.http.routers.pgadmin.entrypoints=web"
+  
   database:
-    restart: always
+    image: postgres
     environment:
       POSTGRES_USER: melpominee
       POSTGRES_PASSWORD_FILE: /run/secrets/pg-password
@@ -41,7 +63,7 @@ services:
       - backend-network
     volumes:
       - /srv/melpominee.app/postgresql:/var/lib/postgresql/data:rw
-    image: postgres
+    restart: always
 
   pgadmin:
     restart: always

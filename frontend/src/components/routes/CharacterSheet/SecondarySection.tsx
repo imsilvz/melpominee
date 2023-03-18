@@ -29,7 +29,13 @@ const SecondarySection = ({
   onChangeSecondaryStat,
 }: SecondarySectionProps) => {
   const resonances = useAppSelector(selectResonances);
-  const maxHealth = character.attributes.stamina + 3;
+
+  // resilience adds additional HP equal to your rating in fortitude
+  const hasResilience = character.disciplinePowers.includes('resilience');
+  const fortitudeRating = character.disciplines.Fortitude;
+
+  const maxHealth =
+    character.attributes.stamina + 3 + (hasResilience ? fortitudeRating || 0 : 0);
   const superficialHealth = character.secondaryStats.health.superficialDamage;
   const aggravatedHealth = character.secondaryStats.health.aggravatedDamage;
   const maxWillpower = character.attributes.composure + character.attributes.resolve;

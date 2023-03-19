@@ -1,6 +1,7 @@
 using Dapper;
 using System.Data;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Caching.Distributed;
 using Melpominee.app.Services.Database;
 using Melpominee.app.Models.Characters.VTMV5;
 namespace Melpominee.app.Models.Web.VTMV5;
@@ -55,7 +56,7 @@ public class VampireCharacterUpdate
     public int? BloodPotency { get; set; }
     public int? XpSpent { get; set; }
     public int? XpTotal { get; set; }
-    public async Task Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character, IDistributedCache? cache = null)
     {
         VampireV5Header header;
         var updateList = new List<string>();
@@ -178,7 +179,7 @@ public class VampireAttributesUpdate
     public int? Intelligence { get; set; }
     public int? Wits { get; set; }
     public int? Resolve { get; set; }
-    public async Task Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character, IDistributedCache? cache = null)
     {
         // Id is required!
         if (character.Id is null)
@@ -280,7 +281,7 @@ public class VampireSkillsUpdate
     public VampireV5Skill? Science { get; set; }
     public VampireV5Skill? Technology { get; set; }
 
-    public async Task Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character, IDistributedCache? cache = null)
     {
         // Id is required!
         if (character.Id is null)
@@ -418,7 +419,7 @@ public class VampireStatsUpdate
     public VampireStatUpdate? Health { get; set; }
     public VampireStatUpdate? Willpower { get; set; }
     public VampireStatUpdate? Humanity { get; set; }
-    public async Task Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character, IDistributedCache? cache = null)
     {
         // Id is required!
         if (character.Id is null)
@@ -490,7 +491,7 @@ public class VampireDisciplinesUpdate
     public int? Protean { get; set; }
     [JsonPropertyName("ThinBloodAlchemy")]
     public int? ThinBloodAlchemy { get; set; }
-    public async Task Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character, IDistributedCache? cache = null)
     {
         // Id is required!
         if (character.Id is null)
@@ -572,7 +573,7 @@ public class VampirePowerUpdateItem
 public class VampirePowersUpdate
 {
     public List<VampirePowerUpdateItem>? PowerIds { get; set; }
-    public async Task Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character, IDistributedCache? cache = null)
     {
         // Id is required!
         if (character.Id is null)
@@ -666,7 +667,7 @@ public class VampireBeliefsUpdate
     public string? Convictions { get; set; }
     public string? Touchstones { get; set; }
 
-    public async Task Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character, IDistributedCache? cache = null)
     {
         // Id is required!
         Id = character.Id;
@@ -739,7 +740,7 @@ public class VampireBackgroundMeritFlawUpdate
     public VampireV5BackgroundMeritFlaw? Merits { get; set; }
     public VampireV5BackgroundMeritFlaw? Flaws { get; set; }
 
-    public async Task Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character, IDistributedCache? cache = null)
     {
         // Id is required!
         if (character.Id is null)
@@ -817,7 +818,7 @@ public class VampireProfileUpdate
     public string? History { get; set; }
     public string? Notes { get; set; }
 
-    public async Task Apply(VampireV5Character character)
+    public async Task Apply(VampireV5Character character, IDistributedCache? cache = null)
     {
         // Id is required!
         Id = character.Id;

@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.AspNetCore.SignalR;
 using Melpominee.app.Hubs.VTMV5;
 using Melpominee.app.Hubs.Clients.VTMV5;
@@ -19,18 +20,21 @@ namespace Melpominee.app.Controllers;
 public class CharacterController : ControllerBase
 {
     private readonly ILogger<CharacterController> _logger;
+    private readonly IDistributedCache _cache;
     private readonly ConnectionService _connectionHelper;
     private readonly IHubContext<CharacterHub, ICharacterClient> _characterHub;
     private readonly CharacterService _characterService;
     private readonly UserManager _userManager;
     public CharacterController(
         ILogger<CharacterController> logger,
+        IDistributedCache cache,
         ConnectionService connectionHelper,
         IHubContext<CharacterHub, ICharacterClient> characterHub,
         CharacterService characterService,
         UserManager userManager)
     {
         _logger = logger;
+        _cache = cache;
         _characterHub = characterHub;
         _connectionHelper = connectionHelper;
         _characterService = characterService;
@@ -145,7 +149,7 @@ public class CharacterController : ControllerBase
                 .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
-                await update.UpdateData.Apply(character!);
+                await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
                     .OnHeaderUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireHeaderResponse
@@ -266,7 +270,7 @@ public class CharacterController : ControllerBase
                 .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
-                await update.UpdateData.Apply(character!);
+                await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
                     .OnAttributeUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireAttributesResponse
@@ -359,7 +363,7 @@ public class CharacterController : ControllerBase
                 .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
-                await update.UpdateData.Apply(character!);
+                await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
                     .OnSkillUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireSkillsResponse
@@ -453,7 +457,7 @@ public class CharacterController : ControllerBase
                 .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
-                await update.UpdateData.Apply(character!);
+                await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
                     .OnSecondaryUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireStatResponse
@@ -546,7 +550,7 @@ public class CharacterController : ControllerBase
                 .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
-                await update.UpdateData.Apply(character!);
+                await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
                     .OnDisciplineUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireDisciplinesResponse
@@ -639,7 +643,7 @@ public class CharacterController : ControllerBase
                 .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
-                await update.UpdateData.Apply(character!);
+                await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
                     .OnPowersUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampirePowersResponse
@@ -732,7 +736,7 @@ public class CharacterController : ControllerBase
                 .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
-                await update.UpdateData.Apply(character!);
+                await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
                     .OnBeliefsupdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireBeliefsResponse
@@ -825,7 +829,7 @@ public class CharacterController : ControllerBase
                 .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
-                await update.UpdateData.Apply(character!);
+                await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
                     .OnBackgroundMeritFlawUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireBackgroundMeritFlawResponse
@@ -918,7 +922,7 @@ public class CharacterController : ControllerBase
                 .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
-                await update.UpdateData.Apply(character!);
+                await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
                     .OnBackgroundMeritFlawUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireBackgroundMeritFlawResponse
@@ -1011,7 +1015,7 @@ public class CharacterController : ControllerBase
                 .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
-                await update.UpdateData.Apply(character!);
+                await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
                     .OnBackgroundMeritFlawUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireBackgroundMeritFlawResponse
@@ -1104,7 +1108,7 @@ public class CharacterController : ControllerBase
                 .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
-                await update.UpdateData.Apply(character!);
+                await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
                     .OnProfileUpdate(charId, update.UpdateId, startTime, update.UpdateData);
                 return new VampireProfileResponse

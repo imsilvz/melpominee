@@ -41,7 +41,6 @@ public class CanViewCharacterHandler : AuthorizationHandler<CanViewCharacterRequ
             // load character data
             int charId = int.Parse((string)httpContext.Request.RouteValues["charId"]!);
             var character = _characterService.GetCharacterProperty<VampireV5Character>(charId);
-            Console.WriteLine(character is null || !character.Loaded);
             if (character is null || !character.Loaded)
                 return;
 

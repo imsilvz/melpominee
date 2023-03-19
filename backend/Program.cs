@@ -42,7 +42,7 @@ builder.Services.AddSignalR()
     );
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.IdleTimeout = TimeSpan.FromHours(24);
     options.Cookie.Name = "Melpominee.app.Session";
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
@@ -81,7 +81,7 @@ builder.Services.AddAuthentication(CookieScheme)
             context.Response.StatusCode = 403;
             return Task.CompletedTask;
         };
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+        options.ExpireTimeSpan = TimeSpan.FromHours(24);
         options.SlidingExpiration = true;
     });
 

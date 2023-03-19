@@ -223,10 +223,7 @@ public class AuthController : ControllerBase
             parameters.Add("redirect_uri", $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/auth/oauth/discord");
             parameters.Add("prompt", "none");
             uriBuilder.Query = parameters.ToString();
-            Console.WriteLine(uriBuilder.Uri.ToString());
-            Console.WriteLine(uriBuilder.Uri.ToString());
-            Console.WriteLine(uriBuilder.Uri.ToString());
-            return Redirect(uriBuilder.Uri.ToString(), true);
+            return Redirect(uriBuilder.Uri.ToString());
         }
 
         // build token request

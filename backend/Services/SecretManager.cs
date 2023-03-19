@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Collections.Concurrent;
-namespace Melpominee.app.Utilities;
+namespace Melpominee.app.Services;
 
 public class SecretManager
 {

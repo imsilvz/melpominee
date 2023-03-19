@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Melpominee.app.Utilities.Database;
+using Melpominee.app.Services.Database;
 namespace Melpominee.app.Models.CharacterSheets.VTMV5;
 
 public class VampirePowerAmalgam

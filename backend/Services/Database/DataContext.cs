@@ -1,7 +1,7 @@
 using Dapper;
 using Npgsql;
 using System.Data;
-namespace Melpominee.app.Utilities.Database;
+namespace Melpominee.app.Services.Database;
 
 public class DataContext
 {

@@ -3,15 +3,15 @@ using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Melpominee.app.Hubs.Clients.VTMV5;
-using Melpominee.app.Utilities.Hubs;
+using Melpominee.app.Services.Hubs;
 namespace Melpominee.app.Hubs.VTMV5;
 
 [Authorize]
 public class CharacterHub : Hub<ICharacterClient>
 {
     private readonly IServiceProvider _provider;
-    private readonly ConnectionHelper _connectionHelper;
-    public CharacterHub(IServiceProvider provider, ConnectionHelper connectionHelper)
+    private readonly ConnectionService _connectionHelper;
+    public CharacterHub(IServiceProvider provider, ConnectionService connectionHelper)
     {
         _provider = provider;
         _connectionHelper = connectionHelper;

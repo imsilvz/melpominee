@@ -4,8 +4,8 @@ using System.Web;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Melpominee.app.Models.Auth;
-using Melpominee.app.Utilities.Database;
-namespace Melpominee.app.Utilities.Auth;
+using Melpominee.app.Services.Database;
+namespace Melpominee.app.Services.Auth;
 
 public class UserManager
 {
@@ -112,7 +112,7 @@ public class UserManager
         }
 
         // send email
-        Utilities.MailManager.Instance.SendMail(
+        Services.MailService.Instance.SendMail(
             email,
             "Melpominee.app: Reset Password",
             $@"
@@ -273,7 +273,7 @@ public class UserManager
         }
         
         // send email
-        Utilities.MailManager.Instance.SendMail(
+        Services.MailService.Instance.SendMail(
             email,
             "Melpominee.app: Account Activation",
             $@"

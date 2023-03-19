@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Melpominee.app.Models.Auth;
 using Melpominee.app.Models.Web.Auth;
-using Melpominee.app.Utilities;
-using Melpominee.app.Utilities.Auth;
+using Melpominee.app.Services;
+using Melpominee.app.Services.Auth;
 namespace Melpominee.app.Controllers;
 
 [ApiController]

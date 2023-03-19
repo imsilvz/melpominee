@@ -7,8 +7,8 @@ using Melpominee.app.Hubs.Clients.VTMV5;
 using Melpominee.app.Models.Auth;
 using Melpominee.app.Models.Web.VTMV5;
 using Melpominee.app.Models.CharacterSheets.VTMV5;
-using Melpominee.app.Utilities.Hubs;
-using Melpominee.app.Utilities.Auth;
+using Melpominee.app.Services.Hubs;
+using Melpominee.app.Services.Auth;
 namespace Melpominee.app.Controllers;
 
 [Authorize]
@@ -17,13 +17,13 @@ namespace Melpominee.app.Controllers;
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class CharacterController : ControllerBase
 {
-    private readonly ConnectionHelper _connectionHelper;
+    private readonly ConnectionService _connectionHelper;
     private readonly IHubContext<CharacterHub, ICharacterClient> _characterHub;
     private readonly ILogger<CharacterController> _logger;
     public CharacterController(
         ILogger<CharacterController> logger,
         IHubContext<CharacterHub, ICharacterClient> characterHub,
-        ConnectionHelper connectionHelper)
+        ConnectionService connectionHelper)
     {
         _logger = logger;
         _characterHub = characterHub;

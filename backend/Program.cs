@@ -1,8 +1,8 @@
 using StackExchange.Redis;
 using Melpominee.app.Hubs.VTMV5;
-using Melpominee.app.Utilities;
-using Melpominee.app.Utilities.Database;
-using Melpominee.app.Utilities.Hubs;
+using Melpominee.app.Services;
+using Melpominee.app.Services.Database;
+using Melpominee.app.Services.Hubs;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
@@ -41,7 +41,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-builder.Services.AddSingleton<ConnectionHelper>();
+builder.Services.AddSingleton<ConnectionService>();
 
 // add data protection
 var redis = ConnectionMultiplexer

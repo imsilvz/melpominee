@@ -2,9 +2,9 @@ using System.Collections.Concurrent;
 using Microsoft.AspNetCore.SignalR;
 using Melpominee.app.Hubs.VTMV5;
 using Melpominee.app.Hubs.Clients.VTMV5;
-namespace Melpominee.app.Utilities.Hubs;
+namespace Melpominee.app.Services.Hubs;
 
-public class ConnectionHelper
+public class ConnectionService
 {
     public ConcurrentDictionary<string, string> ConnectionMap =
         new ConcurrentDictionary<string, string>();

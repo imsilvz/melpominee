@@ -1,14 +1,14 @@
 using System.Net;
 using System.Net.Mail;
-namespace Melpominee.app.Utilities;
+namespace Melpominee.app.Services;
 
-public class MailManager
+public class MailService
 {
-    private static Lazy<MailManager> _instance = new Lazy<MailManager>(() => new MailManager());
-    public static MailManager Instance => _instance.Value;
+    private static Lazy<MailService> _instance = new Lazy<MailService>(() => new MailService());
+    public static MailService Instance => _instance.Value;
 
     private SmtpClient _client;
-    public MailManager() {
+    public MailService() {
         _client = new SmtpClient(SecretManager.Instance.GetSecret("mail_host"))
         {
             Port = 587,

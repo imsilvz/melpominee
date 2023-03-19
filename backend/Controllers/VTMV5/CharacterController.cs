@@ -31,12 +31,35 @@ public class CharacterController : ControllerBase
     [HttpGet("{charId:int}", Name = "Get Character")]
     public VampireCharacterResponse Get(int charId)
     {
+        // get email of logged in user
+        string email = "";
+        var identity = HttpContext.User.Identity;
+        if (identity is null || 
+            !identity.IsAuthenticated || 
+            identity.Name is null)
+        {
+            return new VampireCharacterResponse()
+            {
+                Error = "auth_error"
+            };
+        }
+        email = identity.Name;
+
         VampireV5Character? character;
         if(charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId); 
             if(character is not null && character.Loaded)
             {
+                // check if allowed!
+                if (character.Owner != email)
+                {
+                    return new VampireCharacterResponse
+                    {
+                        Success = false,
+                        Error = "no_access"
+                    };
+                }
                 return new VampireCharacterResponse
                 {
                     Success = true,

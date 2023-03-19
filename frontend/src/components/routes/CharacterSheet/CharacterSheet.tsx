@@ -1,6 +1,6 @@
 import * as signalR from '@microsoft/signalr';
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { cleanUpdate, handleUpdate } from '../../../util/character';
 
 // redux
@@ -41,9 +41,11 @@ interface APICharacterSheetResponse {
 
 const CharacterSheet = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const connectionRef = useRef<signalR.HubConnection | null>(null);
   const disciplinePowers = useAppSelector(selectDisciplinePowers);
   const [currCharacter, setCurrCharacter] = useState<Character | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (id !== undefined) {
@@ -272,207 +274,50 @@ const CharacterSheet = () => {
   useEffect(() => {
     // on id change, try to update the character
     const fetchCharacter = async () => {
+      setLoading(true);
       setCurrCharacter(null);
       if (id) {
         const characterRequest = await fetch(`/api/vtmv5/character/${id}/`);
         if (characterRequest.ok) {
           const characterJson: APICharacterSheetResponse =
             await (characterRequest.json() as Promise<APICharacterSheetResponse>);
-          if (characterJson.character) {
+          if (characterJson.success && characterJson.character) {
+            setLoading(false);
             setCurrCharacter(characterJson.character);
+          } else {
+            if (characterJson.error === 'no_access') {
+              setLoading(false);
+              navigate('/', { replace: true });
+            }
           }
         }
       }
     };
     // setup header text debounce
     fetchCharacter().catch(console.error);
-  }, [id]);
+  }, [navigate, id]);
 
   return (
     <div className="charactersheet-container">
-      {!currCharacter ? (
+      {loading ? (
         <LoadingSpinner />
       ) : (
-        <div className="charactersheet-panel">
-          <HeaderSection
-            character={currCharacter}
-            onChange={(field, value) =>
-              handleUpdate(
-                `/api/vtmv5/character/${currCharacter.id}/`,
-                currCharacter.id,
-                null,
-                { [field]: value },
-                setCurrCharacter,
-                {
-                  debounceOptions: {
-                    enable: true,
-                    delay: 100,
-                  },
-                },
-              )
-            }
-          />
-          <AttributeSection
-            attributes={currCharacter.attributes}
-            onChange={(attribute, value) =>
-              handleUpdate(
-                `/api/vtmv5/character/attributes/${currCharacter.id}/`,
-                currCharacter.id,
-                null,
-                { [attribute]: value },
-                setCurrCharacter,
-                {
-                  property: 'attributes',
-                },
-              )
-            }
-          />
-          <SkillsSection
-            skills={currCharacter.skills}
-            onChange={(skill, value) =>
-              handleUpdate(
-                `/api/vtmv5/character/skills/${currCharacter.id}/`,
-                currCharacter.id,
-                null,
-                { [skill]: value },
-                setCurrCharacter,
-                {
-                  property: 'skills',
-                  debounceOptions: {
-                    enable: true,
-                    delay: 100,
-                  },
-                },
-              )
-            }
-          />
-          <SecondarySection
-            character={currCharacter}
-            onChangeHeaderField={(field, value) =>
-              handleUpdate(
-                `/api/vtmv5/character/${currCharacter.id}/`,
-                currCharacter.id,
-                null,
-                { [field]: value },
-                setCurrCharacter,
-              )
-            }
-            onChangeSecondaryStat={(field, value) =>
-              handleUpdate(
-                `/api/vtmv5/character/stats/${currCharacter.id}/`,
-                currCharacter.id,
-                null,
-                { [field]: value },
-                setCurrCharacter,
-                {
-                  property: 'secondaryStats',
-                  debounceOptions: {
-                    enable: true,
-                    delay: 300,
-                  },
-                },
-              )
-            }
-          />
-          <DisciplineSection
-            characterId={currCharacter.id}
-            levels={currCharacter.disciplines}
-            powers={currCharacter.disciplinePowers}
-            onLevelChange={(school, oldVal, newVal) =>
-              handleUpdate(
-                `/api/vtmv5/character/disciplines/${currCharacter.id}/`,
-                currCharacter.id,
-                null,
-                { [school]: newVal },
-                setCurrCharacter,
-                {
-                  property: 'disciplines',
-                },
-              )
-            }
-            onPowerChange={(oldVal, newVal, schoolChange) => {
-              if (schoolChange) {
-                // entire discipline changed
-                console.log(oldVal, newVal, schoolChange);
-              } else {
-                // single ability changed
-                let newPowers = [...currCharacter.disciplinePowers];
-                const changeData: { powerId: string; remove: boolean }[] = [];
-                if (newPowers.includes(oldVal) && newPowers.includes(newVal)) {
-                  // it's just an order swap, so take no action
-                  return;
-                }
-                if (newPowers.includes(oldVal)) {
-                  // remove old value
-                  newPowers = newPowers.filter((val) => val !== oldVal);
-                  changeData.push({ powerId: oldVal, remove: true });
-                }
-                if (newVal !== '' && !newPowers.includes(newVal)) {
-                  // add new value, if applicable
-                  newPowers.push(newVal);
-                  changeData.push({ powerId: newVal, remove: false });
-                }
-                newPowers = newPowers.sort().sort((a, b) => {
-                  const aInfo = disciplinePowers[a];
-                  const bInfo = disciplinePowers[b];
-                  if (aInfo.level < bInfo.level) {
-                    return -1;
-                  }
-                  if (aInfo.level > bInfo.level) {
-                    return 1;
-                  }
-                  return 0;
-                });
-                handleUpdate(
-                  `/api/vtmv5/character/powers/${currCharacter.id}/`,
-                  currCharacter.id,
-                  null,
-                  { disciplinePowers: newPowers },
-                  setCurrCharacter,
-                  {
-                    apiPayload: {
-                      PowerIds: changeData,
-                    },
-                  },
-                );
-              }
-            }}
-          />
-          <BeliefsSection
-            beliefs={currCharacter.beliefs}
-            onChange={(field, value) =>
-              handleUpdate(
-                `/api/vtmv5/character/beliefs/${currCharacter.id}/`,
-                currCharacter.id,
-                null,
-                { [field]: value },
-                setCurrCharacter,
-                {
-                  property: 'beliefs',
-                  debounceOptions: {
-                    enable: true,
-                    delay: 100,
-                  },
-                },
-              )
-            }
-          />
-          <div className="charactersheet-panel-split">
-            <div className="charactersheet-panel-split-column">
-              <MeritFlawSection
-                Backgrounds={currCharacter.backgrounds}
-                Merits={currCharacter.merits}
-                Flaws={currCharacter.flaws}
+        // eslint-disable-next-line react/jsx-no-useless-fragment
+        <>
+          {!currCharacter ? (
+            <div className="charactersheet-panel">
+              <p>hello</p>
+            </div>
+          ) : (
+            <div className="charactersheet-panel">
+              <HeaderSection
+                character={currCharacter}
                 onChange={(field, value) =>
                   handleUpdate(
-                    `/api/vtmv5/character/${field}/${currCharacter.id}/`,
+                    `/api/vtmv5/character/${currCharacter.id}/`,
                     currCharacter.id,
                     null,
-                    {
-                      [field]: {
-                        [value.sortOrder]: value,
-                      },
-                    },
+                    { [field]: value },
                     setCurrCharacter,
                     {
                       debounceOptions: {
@@ -483,14 +328,43 @@ const CharacterSheet = () => {
                   )
                 }
               />
-            </div>
-            <div className="charactersheet-panel-split-column">
-              <TheBloodSection
-                Clan={currCharacter.clan}
-                BloodPotency={currCharacter.bloodPotency}
-                XpSpent={currCharacter.xpSpent}
-                XpTotal={currCharacter.xpTotal}
-                onChange={(field, value) =>
+              <AttributeSection
+                attributes={currCharacter.attributes}
+                onChange={(attribute, value) =>
+                  handleUpdate(
+                    `/api/vtmv5/character/attributes/${currCharacter.id}/`,
+                    currCharacter.id,
+                    null,
+                    { [attribute]: value },
+                    setCurrCharacter,
+                    {
+                      property: 'attributes',
+                    },
+                  )
+                }
+              />
+              <SkillsSection
+                skills={currCharacter.skills}
+                onChange={(skill, value) =>
+                  handleUpdate(
+                    `/api/vtmv5/character/skills/${currCharacter.id}/`,
+                    currCharacter.id,
+                    null,
+                    { [skill]: value },
+                    setCurrCharacter,
+                    {
+                      property: 'skills',
+                      debounceOptions: {
+                        enable: true,
+                        delay: 100,
+                      },
+                    },
+                  )
+                }
+              />
+              <SecondarySection
+                character={currCharacter}
+                onChangeHeaderField={(field, value) =>
                   handleUpdate(
                     `/api/vtmv5/character/${currCharacter.id}/`,
                     currCharacter.id,
@@ -499,18 +373,98 @@ const CharacterSheet = () => {
                     setCurrCharacter,
                   )
                 }
-              />
-              <ProfileSection
-                profile={currCharacter.profile}
-                onChange={(field, value) =>
+                onChangeSecondaryStat={(field, value) =>
                   handleUpdate(
-                    `/api/vtmv5/character/profile/${currCharacter.id}/`,
+                    `/api/vtmv5/character/stats/${currCharacter.id}/`,
                     currCharacter.id,
                     null,
                     { [field]: value },
                     setCurrCharacter,
                     {
-                      property: 'profile',
+                      property: 'secondaryStats',
+                      debounceOptions: {
+                        enable: true,
+                        delay: 300,
+                      },
+                    },
+                  )
+                }
+              />
+              <DisciplineSection
+                characterId={currCharacter.id}
+                levels={currCharacter.disciplines}
+                powers={currCharacter.disciplinePowers}
+                onLevelChange={(school, oldVal, newVal) =>
+                  handleUpdate(
+                    `/api/vtmv5/character/disciplines/${currCharacter.id}/`,
+                    currCharacter.id,
+                    null,
+                    { [school]: newVal },
+                    setCurrCharacter,
+                    {
+                      property: 'disciplines',
+                    },
+                  )
+                }
+                onPowerChange={(oldVal, newVal, schoolChange) => {
+                  if (schoolChange) {
+                    // entire discipline changed
+                    console.log(oldVal, newVal, schoolChange);
+                  } else {
+                    // single ability changed
+                    let newPowers = [...currCharacter.disciplinePowers];
+                    const changeData: { powerId: string; remove: boolean }[] = [];
+                    if (newPowers.includes(oldVal) && newPowers.includes(newVal)) {
+                      // it's just an order swap, so take no action
+                      return;
+                    }
+                    if (newPowers.includes(oldVal)) {
+                      // remove old value
+                      newPowers = newPowers.filter((val) => val !== oldVal);
+                      changeData.push({ powerId: oldVal, remove: true });
+                    }
+                    if (newVal !== '' && !newPowers.includes(newVal)) {
+                      // add new value, if applicable
+                      newPowers.push(newVal);
+                      changeData.push({ powerId: newVal, remove: false });
+                    }
+                    newPowers = newPowers.sort().sort((a, b) => {
+                      const aInfo = disciplinePowers[a];
+                      const bInfo = disciplinePowers[b];
+                      if (aInfo.level < bInfo.level) {
+                        return -1;
+                      }
+                      if (aInfo.level > bInfo.level) {
+                        return 1;
+                      }
+                      return 0;
+                    });
+                    handleUpdate(
+                      `/api/vtmv5/character/powers/${currCharacter.id}/`,
+                      currCharacter.id,
+                      null,
+                      { disciplinePowers: newPowers },
+                      setCurrCharacter,
+                      {
+                        apiPayload: {
+                          PowerIds: changeData,
+                        },
+                      },
+                    );
+                  }
+                }}
+              />
+              <BeliefsSection
+                beliefs={currCharacter.beliefs}
+                onChange={(field, value) =>
+                  handleUpdate(
+                    `/api/vtmv5/character/beliefs/${currCharacter.id}/`,
+                    currCharacter.id,
+                    null,
+                    { [field]: value },
+                    setCurrCharacter,
+                    {
+                      property: 'beliefs',
                       debounceOptions: {
                         enable: true,
                         delay: 100,
@@ -519,9 +473,73 @@ const CharacterSheet = () => {
                   )
                 }
               />
+              <div className="charactersheet-panel-split">
+                <div className="charactersheet-panel-split-column">
+                  <MeritFlawSection
+                    Backgrounds={currCharacter.backgrounds}
+                    Merits={currCharacter.merits}
+                    Flaws={currCharacter.flaws}
+                    onChange={(field, value) =>
+                      handleUpdate(
+                        `/api/vtmv5/character/${field}/${currCharacter.id}/`,
+                        currCharacter.id,
+                        null,
+                        {
+                          [field]: {
+                            [value.sortOrder]: value,
+                          },
+                        },
+                        setCurrCharacter,
+                        {
+                          debounceOptions: {
+                            enable: true,
+                            delay: 100,
+                          },
+                        },
+                      )
+                    }
+                  />
+                </div>
+                <div className="charactersheet-panel-split-column">
+                  <TheBloodSection
+                    Clan={currCharacter.clan}
+                    BloodPotency={currCharacter.bloodPotency}
+                    XpSpent={currCharacter.xpSpent}
+                    XpTotal={currCharacter.xpTotal}
+                    onChange={(field, value) =>
+                      handleUpdate(
+                        `/api/vtmv5/character/${currCharacter.id}/`,
+                        currCharacter.id,
+                        null,
+                        { [field]: value },
+                        setCurrCharacter,
+                      )
+                    }
+                  />
+                  <ProfileSection
+                    profile={currCharacter.profile}
+                    onChange={(field, value) =>
+                      handleUpdate(
+                        `/api/vtmv5/character/profile/${currCharacter.id}/`,
+                        currCharacter.id,
+                        null,
+                        { [field]: value },
+                        setCurrCharacter,
+                        {
+                          property: 'profile',
+                          debounceOptions: {
+                            enable: true,
+                            delay: 100,
+                          },
+                        },
+                      )
+                    }
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          )}
+        </>
       )}
     </div>
   );

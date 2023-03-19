@@ -25,7 +25,7 @@ public class AuthController : ControllerBase
 
     [ActionName("")]
     [HttpGet(Name = "Index")]
-    public User Get()
+    public async Task<User> Get()
     {
         var identity = HttpContext.User.Identity;
         if (identity is null)
@@ -39,7 +39,7 @@ public class AuthController : ControllerBase
             {
                 return new User();
             }
-            user = UserManager.Instance.GetUser(identity.Name, true);
+            user = await UserManager.Instance.GetUser(identity.Name, true);
             return user is null ? new User() : user;
         }
     }
@@ -51,7 +51,7 @@ public class AuthController : ControllerBase
         // perform login
         if (!(string.IsNullOrEmpty(payload.Email) || string.IsNullOrEmpty(payload.Password)))
         {
-            User? user = UserManager.Instance.Login(payload.Email, payload.Password);
+            User? user = await UserManager.Instance.Login(payload.Email, payload.Password);
             if (user is not null)
             {
                 // create login claims
@@ -266,7 +266,7 @@ public class AuthController : ControllerBase
             return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/error?message=help");
 
         // now we can attempt a login!
-        var user = UserManager.Instance.GetUser(userData.email, true);
+        var user = await UserManager.Instance.GetUser(userData.email, true);
         if (user is null)
             user = UserManager.Instance.OAuthRegister(userData.email);
             

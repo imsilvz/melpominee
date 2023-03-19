@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="backend\Config\*.json" />
+    <EmbeddedResource Include="backend\Data\*.json" />
   </ItemGroup>
 
   <ItemGroup>

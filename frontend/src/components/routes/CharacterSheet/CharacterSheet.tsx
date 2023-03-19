@@ -284,12 +284,11 @@ const CharacterSheet = () => {
           if (characterJson.success && characterJson.character) {
             setLoading(false);
             setCurrCharacter(characterJson.character);
-          } else {
-            if (characterJson.error === 'access_error') {
-              setLoading(false);
-              navigate('/', { replace: true });
-            }
           }
+        } else if (characterRequest.status === 403) {
+          // not authorized!
+          setLoading(false);
+          navigate('/', { replace: true });
         }
       }
     };

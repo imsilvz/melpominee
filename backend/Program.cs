@@ -1,8 +1,10 @@
 using StackExchange.Redis;
+using Melpominee.app.Authorization;
 using Melpominee.app.Hubs.VTMV5;
 using Melpominee.app.Services;
 using Melpominee.app.Services.Database;
 using Melpominee.app.Services.Hubs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
@@ -78,6 +80,15 @@ builder.Services.AddAuthentication(CookieScheme)
         options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
         options.SlidingExpiration = true;
     });
+
+// authorization handlers
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<IAuthorizationHandler, CanViewCharacterHandler>();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CanViewCharacter", policy =>
+        policy.Requirements.Add(new CanViewCharacterRequirement()));
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

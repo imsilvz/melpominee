@@ -30,8 +30,9 @@ public class CharacterController : ControllerBase
         _connectionHelper = connectionHelper;
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("{charId:int}", Name = "Get Character")]
-    public VampireCharacterResponse Get(int charId)
+    public async Task<VampireCharacterResponse> Get(int charId)
     {
         // get email of logged in user
         User user;
@@ -45,14 +46,14 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         VampireV5Character? character;
         if (charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId);
             // check if allowed!
-            if (user.CanViewCharacter(character))
+            if (character is not null)
             {
                 return new VampireCharacterResponse
                 {
@@ -60,11 +61,6 @@ public class CharacterController : ControllerBase
                     Character = character
                 };
             }
-            return new VampireCharacterResponse
-            {
-                Success = false,
-                Error = "access_error"
-            };
         }
         return new VampireCharacterResponse
         {
@@ -74,7 +70,7 @@ public class CharacterController : ControllerBase
     }
 
     [HttpGet("", Name = "Get Character List")]
-    public VampireCharacterListResponse GetList()
+    public async Task<VampireCharacterListResponse> GetList()
     {
         // get email of logged in user
         User user;
@@ -89,7 +85,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         // fetch character data
         var charList = VampireV5Character.GetCharactersByUser(identity.Name);
@@ -107,6 +103,7 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("{charId:int}", Name = "Update Character")]
     public async Task<VampireHeaderResponse> Update(int charId, [FromBody] CharacterUpdateWrapper<VampireCharacterUpdate> update)
     {
@@ -122,7 +119,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -139,7 +136,7 @@ public class CharacterController : ControllerBase
         {
             character = VampireV5Character.GetCharacter(charId);
             // check if allowed!
-            if (user.CanViewCharacter(character))
+            if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -150,11 +147,6 @@ public class CharacterController : ControllerBase
                     Character = character!.GetHeader()
                 };
             }
-            return new VampireHeaderResponse
-            {
-                Success = false,
-                Error = "access_error"
-            };
         }
         return new VampireHeaderResponse
         {
@@ -164,7 +156,7 @@ public class CharacterController : ControllerBase
     }
 
     [HttpPost("", Name = "Create Character")]
-    public VampireCharacterCreateResponse CreateCharacter()
+    public async Task<VampireCharacterCreateResponse> CreateCharacter()
     {
         // get email of logged in user
         User user;
@@ -178,7 +170,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         var character = new VampireV5Character()
         {
@@ -193,8 +185,9 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("attributes/{charId:int}", Name = "Get Character Attributes")]
-    public VampireAttributesResponse GetAttributes(int charId)
+    public async Task<VampireAttributesResponse> GetAttributes(int charId)
     {
         // get email of logged in user
         User user;
@@ -208,30 +201,18 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         VampireV5Attributes? attributes;
         if (charId > 0)
         {
-            // check if allowed!
-            if (user.CanViewCharacter(VampireV5Character.GetCharacterHeader(charId)))
-            {
-                attributes = VampireV5Attributes.Load(charId);
-                if (attributes is not null)
-                {
-                    return new VampireAttributesResponse
-                    {
-                        Success = true,
-                        Attributes = attributes
-                    };
-                }
-            }
-            else
+            attributes = VampireV5Attributes.Load(charId);
+            if (attributes is not null)
             {
                 return new VampireAttributesResponse
                 {
-                    Success = false,
-                    Error = "access_error",
+                    Success = true,
+                    Attributes = attributes
                 };
             }
         }
@@ -242,6 +223,7 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("attributes/{charId:int}", Name = "Update Character Attributes")]
     public async Task<VampireAttributesResponse> UpdateAttributes(int charId, [FromBody] CharacterUpdateWrapper<VampireAttributesUpdate> update)
     {
@@ -257,7 +239,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -273,7 +255,7 @@ public class CharacterController : ControllerBase
         if (charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId);
-            if (user.CanViewCharacter(character))
+            if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -284,14 +266,6 @@ public class CharacterController : ControllerBase
                     Attributes = character!.Attributes
                 };
             }
-            else
-            {
-                return new VampireAttributesResponse()
-                {
-                    Success = false,
-                    Error = "access_error"
-                };
-            }
         }
         return new VampireAttributesResponse
         {
@@ -300,8 +274,9 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("skills/{charId:int}", Name = "Get Character Skills")]
-    public VampireSkillsResponse GetSkills(int charId)
+    public async Task<VampireSkillsResponse> GetSkills(int charId)
     {
         // get email of logged in user
         User user;
@@ -316,30 +291,18 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         VampireV5Skills? skills;
         if (charId > 0)
         {
-            // check if allowed!
-            if (user.CanViewCharacter(VampireV5Character.GetCharacterHeader(charId)))
-            {
-                skills = VampireV5Skills.Load(charId);
-                if (skills is not null)
-                {
-                    return new VampireSkillsResponse
-                    {
-                        Success = true,
-                        Skills = skills,
-                    };
-                }
-            }
-            else
+            skills = VampireV5Skills.Load(charId);
+            if (skills is not null)
             {
                 return new VampireSkillsResponse
                 {
-                    Success = false,
-                    Error = "access_error"
+                    Success = true,
+                    Skills = skills,
                 };
             }
         }
@@ -350,6 +313,7 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("skills/{charId:int}", Name = "Update Character Skills")]
     public async Task<VampireSkillsResponse> UpdateSkills(int charId, [FromBody] CharacterUpdateWrapper<VampireSkillsUpdate> update)
     {
@@ -366,7 +330,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -382,7 +346,7 @@ public class CharacterController : ControllerBase
         if (charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId);
-            if (user.CanViewCharacter(character))
+            if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -391,14 +355,6 @@ public class CharacterController : ControllerBase
                 {
                     Success = true,
                     Skills = character!.Skills
-                };
-            }
-            else
-            {
-                return new VampireSkillsResponse
-                {
-                    Success = false,
-                    Error = "access_error"
                 };
             }
         }
@@ -410,8 +366,9 @@ public class CharacterController : ControllerBase
     }
 
     // secondary stats
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("stats/{charId:int}", Name = "Get Character Stats")]
-    public VampireStatResponse GetSecondaryStats(int charId)
+    public async Task<VampireStatResponse> GetSecondaryStats(int charId)
     {
         // get email of logged in user
         User user;
@@ -426,30 +383,18 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         VampireV5SecondaryStats? stats;
         if (charId > 0)
         {
-            // check if allowed!
-            if (user.CanViewCharacter(VampireV5Character.GetCharacterHeader(charId)))
-            {
-                stats = VampireV5SecondaryStats.Load(charId);
-                if (stats is not null)
-                {
-                    return new VampireStatResponse
-                    {
-                        Success = true,
-                        Stats = stats
-                    };
-                }
-            }
-            else
+            stats = VampireV5SecondaryStats.Load(charId);
+            if (stats is not null)
             {
                 return new VampireStatResponse
                 {
-                    Success = false,
-                    Error = "access_error"
+                    Success = true,
+                    Stats = stats
                 };
             }
         }
@@ -460,6 +405,7 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("stats/{charId:int}", Name = "Update Character Stats")]
     public async Task<VampireStatResponse> UpdateSecondaryStats(int charId, [FromBody] CharacterUpdateWrapper<VampireStatsUpdate> update)
     {
@@ -476,7 +422,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -492,7 +438,7 @@ public class CharacterController : ControllerBase
         if (charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId);
-            if (user.CanViewCharacter(character))
+            if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -511,8 +457,9 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("disciplines/{charId:int}", Name = "Get Character Disciplines")]
-    public VampireDisciplinesResponse GetDisciplines(int charId)
+    public async Task<VampireDisciplinesResponse> GetDisciplines(int charId)
     {
         // get email of logged in user
         User user;
@@ -527,30 +474,18 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         VampireV5Disciplines? disciplines;
         if (charId > 0)
         {
-            // check if allowed!
-            if (user.CanViewCharacter(VampireV5Character.GetCharacterHeader(charId)))
-            {
-                disciplines = VampireV5Disciplines.Load(charId);
-                if (disciplines is not null)
-                {
-                    return new VampireDisciplinesResponse
-                    {
-                        Success = true,
-                        Disciplines = disciplines,
-                    };
-                }
-            }
-            else
+            disciplines = VampireV5Disciplines.Load(charId);
+            if (disciplines is not null)
             {
                 return new VampireDisciplinesResponse
                 {
-                    Success = false,
-                    Error = "access_error"
+                    Success = true,
+                    Disciplines = disciplines,
                 };
             }
         }
@@ -561,6 +496,7 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("disciplines/{charId:int}", Name = "Update Character Disciplines")]
     public async Task<VampireDisciplinesResponse> UpdateDisciplines(int charId, [FromBody] CharacterUpdateWrapper<VampireDisciplinesUpdate> update)
     {
@@ -577,7 +513,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -593,7 +529,7 @@ public class CharacterController : ControllerBase
         if (charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId);
-            if (user.CanViewCharacter(character))
+            if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -612,8 +548,9 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("powers/{charId:int}", Name = "Get Character Powers")]
-    public VampirePowersResponse GetPowers(int charId)
+    public async Task<VampirePowersResponse> GetPowers(int charId)
     {
         // get email of logged in user
         User user;
@@ -628,30 +565,18 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         VampireV5DisciplinePowers? powers;
         if (charId > 0)
         {
-            // check if allowed!
-            if (user.CanViewCharacter(VampireV5Character.GetCharacterHeader(charId)))
-            {
-                powers = VampireV5DisciplinePowers.Load(charId);
-                if (powers is not null)
-                {
-                    return new VampirePowersResponse
-                    {
-                        Success = true,
-                        Powers = powers.GetIdList(),
-                    };
-                }
-            }
-            else
+            powers = VampireV5DisciplinePowers.Load(charId);
+            if (powers is not null)
             {
                 return new VampirePowersResponse
                 {
-                    Success = false,
-                    Error = "access_error"
+                    Success = true,
+                    Powers = powers.GetIdList(),
                 };
             }
         }
@@ -662,6 +587,7 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("powers/{charId:int}", Name = "Update Character Powers")]
     public async Task<VampirePowersResponse> UpdatePowers(int charId, [FromBody] CharacterUpdateWrapper<VampirePowersUpdate> update)
     {
@@ -678,7 +604,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -694,7 +620,7 @@ public class CharacterController : ControllerBase
         if (charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId);
-            if (user.CanViewCharacter(character))
+            if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -713,8 +639,9 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("beliefs/{charId:int}", Name = "Get Character Beliefs")]
-    public VampireBeliefsResponse GetBeliefs(int charId)
+    public async Task<VampireBeliefsResponse> GetBeliefs(int charId)
     {
         // get email of logged in user
         User user;
@@ -729,30 +656,18 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         VampireV5Beliefs? beliefs;
         if (charId > 0)
         {
-            // check if allowed!
-            if (user.CanViewCharacter(VampireV5Character.GetCharacterHeader(charId)))
-            {
-                beliefs = VampireV5Beliefs.Load(charId);
-                if (beliefs is not null)
-                {
-                    return new VampireBeliefsResponse
-                    {
-                        Success = true,
-                        Beliefs = beliefs,
-                    };
-                }
-            }
-            else
+            beliefs = VampireV5Beliefs.Load(charId);
+            if (beliefs is not null)
             {
                 return new VampireBeliefsResponse
                 {
-                    Success = false,
-                    Error = "access_error"
+                    Success = true,
+                    Beliefs = beliefs,
                 };
             }
         }
@@ -763,6 +678,7 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("beliefs/{charId:int}", Name = "Update Character Beliefs")]
     public async Task<VampireBeliefsResponse> UpdateBeliefs(int charId, [FromBody] CharacterUpdateWrapper<VampireBeliefsUpdate> update)
     {
@@ -779,7 +695,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -795,7 +711,7 @@ public class CharacterController : ControllerBase
         if (charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId);
-            if (user.CanViewCharacter(character))
+            if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -814,8 +730,9 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("backgrounds/{charId:int}", Name = "Get Character Backgrounds")]
-    public VampireBackgroundMeritFlawResponse GetBackgrounds(int charId)
+    public async Task<VampireBackgroundMeritFlawResponse> GetBackgrounds(int charId)
     {
         // get email of logged in user
         User user;
@@ -830,30 +747,18 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         VampireV5Backgrounds? backgrounds;
         if (charId > 0)
         {
-            // check if allowed!
-            if (user.CanViewCharacter(VampireV5Character.GetCharacterHeader(charId)))
-            {
-                backgrounds = VampireV5Backgrounds.Load(charId);
-                if (backgrounds is not null)
-                {
-                    return new VampireBackgroundMeritFlawResponse
-                    {
-                        Success = true,
-                        Backgrounds = backgrounds,
-                    };
-                }
-            }
-            else
+            backgrounds = VampireV5Backgrounds.Load(charId);
+            if (backgrounds is not null)
             {
                 return new VampireBackgroundMeritFlawResponse
                 {
-                    Success = false,
-                    Error = "access_error"
+                    Success = true,
+                    Backgrounds = backgrounds,
                 };
             }
         }
@@ -864,6 +769,7 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("backgrounds/{charId:int}", Name = "Update Character Backgrounds")]
     public async Task<VampireBackgroundMeritFlawResponse> UpdateBackgrounds(int charId, [FromBody] CharacterUpdateWrapper<VampireBackgroundMeritFlawUpdate> update)
     {
@@ -880,7 +786,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -896,7 +802,7 @@ public class CharacterController : ControllerBase
         if (charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId);
-            if (user.CanViewCharacter(character))
+            if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -915,8 +821,9 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("merits/{charId:int}", Name = "Get Character Merits")]
-    public VampireBackgroundMeritFlawResponse GetMerits(int charId)
+    public async Task<VampireBackgroundMeritFlawResponse> GetMerits(int charId)
     {
         // get email of logged in user
         User user;
@@ -931,30 +838,18 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         VampireV5Merits? merits;
         if (charId > 0)
         {
-            // check if allowed!
-            if (user.CanViewCharacter(VampireV5Character.GetCharacterHeader(charId)))
-            {
-                merits = VampireV5Merits.Load(charId);
-                if (merits is not null)
-                {
-                    return new VampireBackgroundMeritFlawResponse
-                    {
-                        Success = true,
-                        Merits = merits,
-                    };
-                }
-            }
-            else
+            merits = VampireV5Merits.Load(charId);
+            if (merits is not null)
             {
                 return new VampireBackgroundMeritFlawResponse
                 {
-                    Success = false,
-                    Error = "access_error"
+                    Success = true,
+                    Merits = merits,
                 };
             }
         }
@@ -965,6 +860,7 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("merits/{charId:int}", Name = "Update Character Merits")]
     public async Task<VampireBackgroundMeritFlawResponse> UpdateMerits(int charId, [FromBody] CharacterUpdateWrapper<VampireBackgroundMeritFlawUpdate> update)
     {
@@ -981,7 +877,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -997,7 +893,7 @@ public class CharacterController : ControllerBase
         if (charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId);
-            if (user.CanViewCharacter(character))
+            if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -1016,8 +912,9 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("flaws/{charId:int}", Name = "Get Character Flaws")]
-    public VampireBackgroundMeritFlawResponse GetFlaws(int charId)
+    public async Task<VampireBackgroundMeritFlawResponse> GetFlaws(int charId)
     {
         // get email of logged in user
         User user;
@@ -1032,30 +929,18 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         VampireV5Flaws? flaws;
         if (charId > 0)
         {
-            // check if allowed!
-            if (user.CanViewCharacter(VampireV5Character.GetCharacterHeader(charId)))
-            {
-                flaws = VampireV5Flaws.Load(charId);
-                if (flaws is not null)
-                {
-                    return new VampireBackgroundMeritFlawResponse
-                    {
-                        Success = true,
-                        Flaws = flaws,
-                    };
-                }
-            }
-            else
+            flaws = VampireV5Flaws.Load(charId);
+            if (flaws is not null)
             {
                 return new VampireBackgroundMeritFlawResponse
                 {
-                    Success = false,
-                    Error = "access_error"
+                    Success = true,
+                    Flaws = flaws,
                 };
             }
         }
@@ -1066,6 +951,7 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("flaws/{charId:int}", Name = "Update Character Flaws")]
     public async Task<VampireBackgroundMeritFlawResponse> UpdateFlaws(int charId, [FromBody] CharacterUpdateWrapper<VampireBackgroundMeritFlawUpdate> update)
     {
@@ -1082,7 +968,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -1098,7 +984,7 @@ public class CharacterController : ControllerBase
         if (charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId);
-            if (user.CanViewCharacter(character))
+            if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -1117,8 +1003,9 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("profile/{charId:int}", Name = "Get Character Profile")]
-    public VampireProfileResponse GetProfile(int charId)
+    public async Task<VampireProfileResponse> GetProfile(int charId)
     {
         // get email of logged in user
         User user;
@@ -1133,30 +1020,18 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         VampireV5Profile? profile;
         if (charId > 0)
         {
-            // check if allowed!
-            if (user.CanViewCharacter(VampireV5Character.GetCharacterHeader(charId)))
-            {
-                profile = VampireV5Profile.Load(charId);
-                if (profile is not null)
-                {
-                    return new VampireProfileResponse
-                    {
-                        Success = true,
-                        Profile = profile,
-                    };
-                }
-            }
-            else
+            profile = VampireV5Profile.Load(charId);
+            if (profile is not null)
             {
                 return new VampireProfileResponse
                 {
-                    Success = false,
-                    Error = "access_error"
+                    Success = true,
+                    Profile = profile,
                 };
             }
         }
@@ -1167,6 +1042,7 @@ public class CharacterController : ControllerBase
         };
     }
 
+    [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("profile/{charId:int}", Name = "Update Character Profile")]
     public async Task<VampireProfileResponse> UpdateProfile(int charId, [FromBody] CharacterUpdateWrapper<VampireProfileUpdate> update)
     {
@@ -1183,7 +1059,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = UserManager.Instance.GetUser(identity.Name)!;
+        user = (await UserManager.Instance.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -1199,7 +1075,7 @@ public class CharacterController : ControllerBase
         if (charId > 0)
         {
             character = VampireV5Character.GetCharacter(charId);
-            if (user.CanViewCharacter(character))
+            if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
                 _ = _characterHub.Clients.Group($"character_{charId}")

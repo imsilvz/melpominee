@@ -18,7 +18,7 @@ public class UserManager
 
     public UserManager() {}
 
-    public User? GetUser(string? email, bool onlyActive = true)
+    public async Task<User?> GetUser(string? email, bool onlyActive = true)
     {
         User? user;
         if(string.IsNullOrEmpty(email)) 
@@ -29,7 +29,7 @@ public class UserManager
         using (var conn = DataContext.Instance.Connect())
         {
             string sql = "SELECT * FROM melpominee_users WHERE email = @Email";
-            user = conn.QueryFirstOrDefault<User>(sql, new { Email = email });
+            user = await conn.QueryFirstOrDefaultAsync<User>(sql, new { Email = email });
             if (user is null || (onlyActive && !user.Active))
             {
                 // unable to find this user!
@@ -39,7 +39,7 @@ public class UserManager
         return user;
     }
 
-    public User? Login(string email, string password)
+    public async Task<User?> Login(string email, string password)
     {
         // validate input
         if(string.IsNullOrEmpty(email)) 
@@ -48,7 +48,7 @@ public class UserManager
         }
 
         // get user object
-        User? user = GetUser(email, true);
+        User? user = await GetUser(email, true);
         if (user is null)
         {
             // unable to find this user!

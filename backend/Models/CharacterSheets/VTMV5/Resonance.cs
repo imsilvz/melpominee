@@ -15,7 +15,7 @@ public class Resonance
     static Resonance()
     {
         Assembly assembly = Assembly.GetExecutingAssembly();
-        string resourceName = "Melpominee.app.backend.Config.Resonance.json";
+        string resourceName = "Melpominee.app.backend.Data.Resonance.json";
         using (Stream? stream = assembly.GetManifestResourceStream(resourceName))
         {
             if (stream is not null)

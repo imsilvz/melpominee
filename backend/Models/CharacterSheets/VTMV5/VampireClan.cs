@@ -17,7 +17,7 @@ public class VampireClan
     static VampireClan()
     {
         Assembly assembly = Assembly.GetExecutingAssembly();
-        string resourceName = "Melpominee.app.backend.Config.Clans.json";
+        string resourceName = "Melpominee.app.backend.Data.Clans.json";
         using (Stream? stream = assembly.GetManifestResourceStream(resourceName))
         {
             if (stream is not null)

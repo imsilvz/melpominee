@@ -34,7 +34,7 @@ public class VampirePower
     static VampirePower()
     {
         Assembly assembly = Assembly.GetExecutingAssembly();
-        string resourceName = "Melpominee.app.backend.Config.DisciplinePowers.json";
+        string resourceName = "Melpominee.app.backend.Data.DisciplinePowers.json";
         using (Stream? stream = assembly.GetManifestResourceStream(resourceName))
         {
             if (stream is not null)

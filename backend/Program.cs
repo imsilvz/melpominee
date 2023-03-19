@@ -18,13 +18,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddStackExchangeRedisCache(options => {
+builder.Services.AddStackExchangeRedisCache(options =>
+{
     options.Configuration = $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false";
 });
 builder.Services.AddSignalR()
     .AddStackExchangeRedis(
-        $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false", 
-        options => {
+        $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false",
+        options =>
+        {
             options.Configuration.ChannelPrefix = "Melpominee";
         }
     );
@@ -49,7 +51,7 @@ builder.Services.AddAuthentication(CookieScheme)
             context.Response.StatusCode = 401;
             return Task.CompletedTask;
         };
-        options.Events.OnRedirectToAccessDenied = context => 
+        options.Events.OnRedirectToAccessDenied = context =>
         {
             context.Response.Clear();
             context.Response.StatusCode = 403;

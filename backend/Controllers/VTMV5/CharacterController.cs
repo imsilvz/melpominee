@@ -6,9 +6,10 @@ using Melpominee.app.Hubs.VTMV5;
 using Melpominee.app.Hubs.Clients.VTMV5;
 using Melpominee.app.Models.Auth;
 using Melpominee.app.Models.Web.VTMV5;
-using Melpominee.app.Models.CharacterSheets.VTMV5;
-using Melpominee.app.Services.Hubs;
+using Melpominee.app.Models.Characters.VTMV5;
 using Melpominee.app.Services.Auth;
+using Melpominee.app.Services.Characters;
+using Melpominee.app.Services.Hubs;
 namespace Melpominee.app.Controllers;
 
 [Authorize]
@@ -17,19 +18,22 @@ namespace Melpominee.app.Controllers;
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class CharacterController : ControllerBase
 {
+    private readonly ILogger<CharacterController> _logger;
     private readonly ConnectionService _connectionHelper;
     private readonly IHubContext<CharacterHub, ICharacterClient> _characterHub;
-    private readonly ILogger<CharacterController> _logger;
+    private readonly CharacterService _characterService;
     private readonly UserManager _userManager;
     public CharacterController(
         ILogger<CharacterController> logger,
-        IHubContext<CharacterHub, ICharacterClient> characterHub,
         ConnectionService connectionHelper,
+        IHubContext<CharacterHub, ICharacterClient> characterHub,
+        CharacterService characterService,
         UserManager userManager)
     {
         _logger = logger;
         _characterHub = characterHub;
         _connectionHelper = connectionHelper;
+        _characterService = characterService;
         _userManager = userManager;
     }
 
@@ -54,8 +58,8 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.GetCharacter(charId);
-            // check if allowed!
+            //character = VampireV5Character.GetCharacter(charId);
+            character = VampireV5Character.Load(charId);
             if (character is not null)
             {
                 return new VampireCharacterResponse
@@ -137,8 +141,7 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.GetCharacter(charId);
-            // check if allowed!
+            character = VampireV5Character.Load(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -257,7 +260,7 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.GetCharacter(charId);
+            character = VampireV5Character.Load(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -348,7 +351,7 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.GetCharacter(charId);
+            character = VampireV5Character.Load(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -440,7 +443,7 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.GetCharacter(charId);
+            character = VampireV5Character.Load(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -531,7 +534,7 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.GetCharacter(charId);
+            character = VampireV5Character.Load(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -622,7 +625,7 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.GetCharacter(charId);
+            character = VampireV5Character.Load(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -713,7 +716,7 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.GetCharacter(charId);
+            character = VampireV5Character.Load(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -804,7 +807,7 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.GetCharacter(charId);
+            character = VampireV5Character.Load(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -895,7 +898,7 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.GetCharacter(charId);
+            character = VampireV5Character.Load(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -986,7 +989,7 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.GetCharacter(charId);
+            character = VampireV5Character.Load(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -1077,7 +1080,7 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.GetCharacter(charId);
+            character = VampireV5Character.Load(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);

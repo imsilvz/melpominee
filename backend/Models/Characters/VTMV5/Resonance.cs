@@ -2,7 +2,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-namespace Melpominee.app.Models.CharacterSheets.VTMV5;
+namespace Melpominee.app.Models.Characters.VTMV5;
 public class Resonance
 {
     public string Id { get; set; } = "";

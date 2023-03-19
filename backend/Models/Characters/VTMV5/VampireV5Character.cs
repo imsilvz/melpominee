@@ -5,7 +5,7 @@ using Melpominee.app.Services.Database;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Melpominee.app.Models.CharacterSheets.VTMV5;
+namespace Melpominee.app.Models.Characters.VTMV5;
 
 public class VampireV5Character : BaseCharacter
 {
@@ -57,7 +57,13 @@ public class VampireV5Character : BaseCharacter
     {
         var header = new VampireV5Header()
         {
+            // base fields
+            Loaded = Loaded,
+            LoadedAt = LoadedAt,
             Id = Id,
+            Owner = Owner,
+
+            // class fields
             Name = Name,
             Concept = Concept,
             Chronicle = Chronicle,
@@ -78,6 +84,11 @@ public class VampireV5Character : BaseCharacter
 
     public override bool Save()
     {
+        return Save(Id);
+    }
+
+    public override bool Save(int? charId)
+    {
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();
@@ -85,7 +96,7 @@ public class VampireV5Character : BaseCharacter
             {
                 try
                 {
-                    var result = Save(conn, trans);
+                    var result = Save(Id, conn, trans);
                     trans.Commit();
                     return result;
                 }
@@ -98,7 +109,7 @@ public class VampireV5Character : BaseCharacter
         }
     }
 
-    public bool Save(IDbConnection conn, IDbTransaction trans)
+    public bool Save(int? charId, IDbConnection conn, IDbTransaction trans)
     {
         var sql = "";
         if (Id is null)
@@ -180,7 +191,7 @@ public class VampireV5Character : BaseCharacter
         return true;
     }
 
-    public static VampireV5Character? GetCharacter(int id)
+    public static VampireV5Character? Load(int id)
     {
         // make connection
         VampireV5Character? user;
@@ -234,7 +245,7 @@ public class VampireV5Character : BaseCharacter
 
                 try
                 {
-                    user.Save(conn, trans);
+                    user.Save(user.Id, conn, trans);
                     trans.Commit();
                 }
                 catch (Exception)
@@ -249,10 +260,10 @@ public class VampireV5Character : BaseCharacter
         return user;
     }
 
-    public static VampireV5Character? GetCharacterHeader(int id)
+    public static VampireV5Header? GetCharacterHeader(int id)
     {
         // make connection
-        VampireV5Character? user;
+        VampireV5Character? character;
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();
@@ -269,29 +280,18 @@ public class VampireV5Character : BaseCharacter
                     FROM melpominee_characters
                     WHERE id = @Id;
                 ";
-                user = conn.QuerySingleOrDefault<VampireV5Character>(sql, new { Id = id });
+                character = conn.QuerySingleOrDefault<VampireV5Character>(sql, new { Id = id });
 
                 // check status
-                if (user is null)
+                if (character is null)
                 {
                     return null;
                 }
-
-                try
-                {
-                    user.Save(conn, trans);
-                    trans.Commit();
-                }
-                catch (Exception)
-                {
-                    trans.Rollback();
-                    throw;
-                }
             }
         }
-        user.LoadedAt = DateTime.UtcNow;
-        user.Loaded = true;
-        return user;
+        character.LoadedAt = DateTime.UtcNow;
+        character.Loaded = true;
+        return character.GetHeader();
     }
 
     public static List<VampireV5Character> GetCharactersByUser(string email)
@@ -366,6 +366,11 @@ public class VampireV5Header : BaseCharacter
 
     public override bool Save()
     {
+        return Save(Id);
+    }
+
+    public override bool Save(int? charId)
+    {
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();
@@ -373,7 +378,7 @@ public class VampireV5Header : BaseCharacter
             {
                 try
                 {
-                    var result = Save(conn, trans);
+                    var result = Save(charId, conn, trans);
                     trans.Commit();
                     return result;
                 }
@@ -386,7 +391,7 @@ public class VampireV5Header : BaseCharacter
         }
     }
 
-    public bool Save(IDbConnection conn, IDbTransaction trans)
+    public bool Save(int? charId, IDbConnection conn, IDbTransaction trans)
     {
         var sql =
         @"
@@ -430,7 +435,7 @@ public class VampireV5Header : BaseCharacter
     }
 }
 
-public class VampireV5Attributes
+public class VampireV5Attributes : ICharacterSaveable
 {
     public int Strength { get; set; } = 0;
     public int Dexterity { get; set; } = 0;
@@ -442,7 +447,7 @@ public class VampireV5Attributes
     public int Wits { get; set; } = 0;
     public int Resolve { get; set; } = 0;
 
-    public bool Save(int charId)
+    public bool Save(int? charId)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -464,8 +469,13 @@ public class VampireV5Attributes
         }
     }
 
-    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int? charId)
     {
+        Console.WriteLine("AAAAAAAAA");
+        Console.WriteLine(charId);
+        Console.WriteLine(Strength);
+        Console.WriteLine("StackTrace: '{0}'", Environment.StackTrace);
+        Console.WriteLine("AAAAAAAAA");
         // gather values
         List<object> rowList = new List<object>();
         var attrPropList = typeof(VampireV5Attributes).GetProperties();

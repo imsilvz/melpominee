@@ -1,4 +1,4 @@
-namespace Melpominee.app.Models.CharacterSheets.VTMV5.PredatorTypes;
+namespace Melpominee.app.Models.Characters.VTMV5.PredatorTypes;
 
 public class DefaultPredator : VampirePredatorType
 {

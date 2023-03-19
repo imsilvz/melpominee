@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Melpominee.app.Models.Web.VTMV5;
-using Melpominee.app.Models.CharacterSheets.VTMV5;
+using Melpominee.app.Models.Characters.VTMV5;
 namespace Melpominee.app.Controllers;
 
 [Authorize]

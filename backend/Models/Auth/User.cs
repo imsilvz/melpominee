@@ -1,7 +1,7 @@
 using Dapper;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Melpominee.app.Models.CharacterSheets;
+using Melpominee.app.Models.Characters;
 namespace Melpominee.app.Models.Auth;
 
 public class User {

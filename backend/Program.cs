@@ -3,6 +3,7 @@ using Melpominee.app.Authorization;
 using Melpominee.app.Hubs.VTMV5;
 using Melpominee.app.Services;
 using Melpominee.app.Services.Auth;
+using Melpominee.app.Services.Characters;
 using Melpominee.app.Services.Database;
 using Melpominee.app.Services.Hubs;
 using Microsoft.AspNetCore.Authorization;
@@ -94,6 +95,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 // additional services
+builder.Services.AddScoped<CharacterService>();
 builder.Services.AddScoped<UserManager>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

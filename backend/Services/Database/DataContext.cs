@@ -22,8 +22,8 @@ public class DataContext
 
     public void Initalize()
     {
-        SqlMapper.AddTypeHandler(new Models.CharacterSheets.VTMV5.VampireClanTypeHandler());
-        SqlMapper.AddTypeHandler(new Models.CharacterSheets.VTMV5.VampirePredatorTypeHandler());
+        SqlMapper.AddTypeHandler(new Models.Characters.VTMV5.VampireClanTypeHandler());
+        SqlMapper.AddTypeHandler(new Models.Characters.VTMV5.VampirePredatorTypeHandler());
         using(var conn = Connect())
         {
             var sql = @"

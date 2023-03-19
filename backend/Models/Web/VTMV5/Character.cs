@@ -2,7 +2,7 @@ using Dapper;
 using System.Data;
 using System.Text.Json.Serialization;
 using Melpominee.app.Services.Database;
-using Melpominee.app.Models.CharacterSheets.VTMV5;
+using Melpominee.app.Models.Characters.VTMV5;
 namespace Melpominee.app.Models.Web.VTMV5;
 
 public class CharacterUpdateWrapper<T>

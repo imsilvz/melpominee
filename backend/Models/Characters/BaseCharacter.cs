@@ -1,7 +1,12 @@
 using System.Text.Json.Serialization;
-namespace Melpominee.app.Models.CharacterSheets;
+namespace Melpominee.app.Models.Characters;
 
-public abstract class BaseCharacter
+public interface ICharacterSaveable
+{
+    public bool Save(int? charId);
+}
+
+public abstract class BaseCharacter : ICharacterSaveable
 {
     // meta
     [JsonIgnore]
@@ -16,4 +21,5 @@ public abstract class BaseCharacter
     { }
 
     public abstract bool Save();
+    public abstract bool Save(int? charId);
 }

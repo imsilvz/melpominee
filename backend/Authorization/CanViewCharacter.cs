@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Melpominee.app.Services.Auth;
-using Melpominee.app.Models.CharacterSheets.VTMV5;
+using Melpominee.app.Models.Characters.VTMV5;
 
 namespace Melpominee.app.Authorization;
 
@@ -29,16 +29,13 @@ public class CanViewCharacterHandler : AuthorizationHandler<CanViewCharacterRequ
             var user = await _userManager.GetUser(userId);
 
             // check to confirm that we have the desired parameter
-            Console.WriteLine(httpContext.Request.QueryString);
-            Console.WriteLine(String.Join(' ', httpContext.Request.RouteValues.Keys));
             if (user is null || !httpContext.Request.RouteValues.ContainsKey("charId"))
                 return;
 
             // load character data
             int charId = int.Parse((string)httpContext.Request.RouteValues["charId"]!);
-            Console.WriteLine(charId);
             var character = VampireV5Character.GetCharacterHeader(charId);
-            Console.WriteLine(character?.Loaded);
+            Console.WriteLine(character is null || !character.Loaded);
             if (character is null || !character.Loaded)
                 return;
 

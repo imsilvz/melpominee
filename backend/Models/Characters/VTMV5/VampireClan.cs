@@ -3,7 +3,7 @@ using System.Data;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Reflection;
-namespace Melpominee.app.Models.CharacterSheets.VTMV5;
+namespace Melpominee.app.Models.Characters.VTMV5;
 
 public class VampireClan
 {

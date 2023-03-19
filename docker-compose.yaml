@@ -42,6 +42,7 @@ services:
   backend:
     image: ghcr.io/imsilvz/melpominee-backend:master
     secrets:
+      - discord-oauth
       - pg-credentials
       - redis-credentials
       - mail-secrets
@@ -113,6 +114,8 @@ services:
       - database
 
 secrets:
+  discord-oauth:
+    file: /secrets/discord-oauth.json
   mail-secrets:
     file: /secrets/mail-secrets.json
   pg-credentials:

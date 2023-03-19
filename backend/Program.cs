@@ -2,6 +2,7 @@ using StackExchange.Redis;
 using Melpominee.app.Authorization;
 using Melpominee.app.Hubs.VTMV5;
 using Melpominee.app.Services;
+using Melpominee.app.Services.Auth;
 using Melpominee.app.Services.Database;
 using Melpominee.app.Services.Hubs;
 using Microsoft.AspNetCore.Authorization;
@@ -28,6 +29,8 @@ builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false";
 });
+
+// signalR
 builder.Services.AddSignalR()
     .AddStackExchangeRedis(
         $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false",
@@ -89,6 +92,9 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("CanViewCharacter", policy =>
         policy.Requirements.Add(new CanViewCharacterRequirement()));
 });
+
+// additional services
+builder.Services.AddScoped<UserManager>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

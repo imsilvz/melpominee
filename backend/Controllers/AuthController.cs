@@ -17,10 +17,12 @@ public class AuthController : ControllerBase
 {
     private const string UserKey = "_UserData";
     private readonly ILogger<AuthController> _logger;
+    private readonly UserManager _userManager;
 
-    public AuthController(ILogger<AuthController> logger)
+    public AuthController(ILogger<AuthController> logger, UserManager userManager)
     {
         _logger = logger;
+        _userManager = userManager;
     }
 
     [ActionName("")]
@@ -39,7 +41,7 @@ public class AuthController : ControllerBase
             {
                 return new User();
             }
-            user = await UserManager.Instance.GetUser(identity.Name, true);
+            user = await _userManager.GetUser(identity.Name, true);
             return user is null ? new User() : user;
         }
     }
@@ -51,7 +53,7 @@ public class AuthController : ControllerBase
         // perform login
         if (!(string.IsNullOrEmpty(payload.Email) || string.IsNullOrEmpty(payload.Password)))
         {
-            User? user = await UserManager.Instance.Login(payload.Email, payload.Password);
+            User? user = await _userManager.Login(payload.Email, payload.Password);
             if (user is not null)
             {
                 // create login claims
@@ -103,7 +105,7 @@ public class AuthController : ControllerBase
 
     [ActionName("reset-password")]
     [HttpPost(Name = "Reset_Password")]
-    public ResetResponse ResetPassword([FromBody] ResetPayload payload)
+    public async Task<ResetResponse> ResetPassword([FromBody] ResetPayload payload)
     {
         if (string.IsNullOrEmpty(payload.Email))
         {
@@ -115,7 +117,7 @@ public class AuthController : ControllerBase
         }
 
         // trigger reset password logic
-        if (!UserManager.Instance.BeginResetPassword(payload.Email, $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}"))
+        if (!await _userManager.BeginResetPassword(payload.Email, $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}"))
         {
             return new ResetResponse
             {
@@ -132,7 +134,7 @@ public class AuthController : ControllerBase
 
     [ActionName("reset-password/confirmation")]
     [HttpPost(Name = "Reset_Password_Confirm")]
-    public ResetResponse ResetPasswordConfirm([FromBody] ConfirmResetPayload payload)
+    public async Task<ResetResponse> ResetPasswordConfirm([FromBody] ConfirmResetPayload payload)
     {
         if (string.IsNullOrEmpty(payload.Key)
             || string.IsNullOrEmpty(payload.Email)
@@ -145,7 +147,7 @@ public class AuthController : ControllerBase
             };
         }
 
-        if (!UserManager.Instance.FinishResetPassword(payload.Email, payload.Key, payload.Password))
+        if (!await _userManager.FinishResetPassword(payload.Email, payload.Key, payload.Password))
         {
             return new ResetResponse
             {
@@ -161,7 +163,7 @@ public class AuthController : ControllerBase
 
     [ActionName("register")]
     [HttpPost(Name = "Register")]
-    public RegisterResponse Register([FromBody] RegisterPayload payload)
+    public async Task<RegisterResponse> Register([FromBody] RegisterPayload payload)
     {
         // Check Parameters
         if (string.IsNullOrEmpty(payload.Email) || string.IsNullOrEmpty(payload.Password))
@@ -172,7 +174,7 @@ public class AuthController : ControllerBase
             };
         }
 
-        User? user = UserManager.Instance.Register(
+        User? user = await _userManager.Register(
             payload.Email, 
             payload.Password,
             $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}"
@@ -193,9 +195,9 @@ public class AuthController : ControllerBase
 
     [ActionName("register/confirmation")]
     [HttpGet(Name = "Register_Confirmation")]
-    public RedirectResult RegisterConfirmation([FromQuery] string email, [FromQuery] string activationKey)
+    public async Task<RedirectResult> RegisterConfirmation([FromQuery] string email, [FromQuery] string activationKey)
     {
-        User? user = UserManager.Instance.RegistrationFinish(email, activationKey);
+        User? user = await _userManager.RegistrationFinish(email, activationKey);
         if (user is null)
         {
             return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/error?message=help");
@@ -266,9 +268,9 @@ public class AuthController : ControllerBase
             return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/error?message=help");
 
         // now we can attempt a login!
-        var user = await UserManager.Instance.GetUser(userData.email, true);
+        var user = await _userManager.GetUser(userData.email, true);
         if (user is null)
-            user = UserManager.Instance.OAuthRegister(userData.email);
+            user = await _userManager.OAuthRegister(userData.email);
             
         // create login claims
         var claims = new List<Claim>

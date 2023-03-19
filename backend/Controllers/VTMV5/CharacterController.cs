@@ -20,14 +20,17 @@ public class CharacterController : ControllerBase
     private readonly ConnectionService _connectionHelper;
     private readonly IHubContext<CharacterHub, ICharacterClient> _characterHub;
     private readonly ILogger<CharacterController> _logger;
+    private readonly UserManager _userManager;
     public CharacterController(
         ILogger<CharacterController> logger,
         IHubContext<CharacterHub, ICharacterClient> characterHub,
-        ConnectionService connectionHelper)
+        ConnectionService connectionHelper,
+        UserManager userManager)
     {
         _logger = logger;
         _characterHub = characterHub;
         _connectionHelper = connectionHelper;
+        _userManager = userManager;
     }
 
     [Authorize(Policy = "CanViewCharacter")]
@@ -46,7 +49,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         VampireV5Character? character;
         if (charId > 0)
@@ -85,7 +88,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         // fetch character data
         var charList = VampireV5Character.GetCharactersByUser(identity.Name);
@@ -119,7 +122,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -170,7 +173,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         var character = new VampireV5Character()
         {
@@ -201,7 +204,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         VampireV5Attributes? attributes;
         if (charId > 0)
@@ -239,7 +242,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -291,7 +294,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         VampireV5Skills? skills;
         if (charId > 0)
@@ -330,7 +333,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -383,7 +386,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         VampireV5SecondaryStats? stats;
         if (charId > 0)
@@ -422,7 +425,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -474,7 +477,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         VampireV5Disciplines? disciplines;
         if (charId > 0)
@@ -513,7 +516,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -565,7 +568,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         VampireV5DisciplinePowers? powers;
         if (charId > 0)
@@ -604,7 +607,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -656,7 +659,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         VampireV5Beliefs? beliefs;
         if (charId > 0)
@@ -695,7 +698,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -747,7 +750,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         VampireV5Backgrounds? backgrounds;
         if (charId > 0)
@@ -786,7 +789,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -838,7 +841,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         VampireV5Merits? merits;
         if (charId > 0)
@@ -877,7 +880,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -929,7 +932,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         VampireV5Flaws? flaws;
         if (charId > 0)
@@ -968,7 +971,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {
@@ -1020,7 +1023,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         VampireV5Profile? profile;
         if (charId > 0)
@@ -1059,7 +1062,7 @@ public class CharacterController : ControllerBase
                 Error = "auth_error"
             };
         }
-        user = (await UserManager.Instance.GetUser(identity.Name))!;
+        user = (await _userManager.GetUser(identity.Name))!;
 
         if (update.UpdateData is null)
         {

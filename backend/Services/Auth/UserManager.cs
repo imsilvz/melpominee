@@ -1,40 +1,53 @@
 using Npgsql;
 using Dapper;
 using System.Web;
+using System.Text.Json;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.Extensions.Caching.Distributed;
 using Melpominee.app.Models.Auth;
 using Melpominee.app.Services.Database;
 namespace Melpominee.app.Services.Auth;
 
 public class UserManager
 {
-    private static Lazy<UserManager> _instance = new Lazy<UserManager>(() => new UserManager());
-    public static UserManager Instance => _instance.Value;
-
     private static int _saltSize = 128 / 8;
     private static int _iterCount = 10000;
     private static int _passwordBytes = 512 / 8;
 
-    public UserManager() {}
+    private readonly IDistributedCache _cache;
+    public UserManager(IDistributedCache cache) 
+    {
+        _cache = cache;
+    }
 
-    public async Task<User?> GetUser(string? email, bool onlyActive = true)
+    public async Task<User?> GetUser(string? email, bool onlyActive = true, bool cached = true)
     {
         User? user;
         if(string.IsNullOrEmpty(email)) 
-        { 
-            return null; 
-        }
+            return null;
 
-        using (var conn = DataContext.Instance.Connect())
+        var cacheKey = $"melpominee:user:{email}";
+        var cacheData = cached ? await _cache.GetStringAsync(cacheKey) : "";
+        if (cached && !string.IsNullOrEmpty(cacheData))
         {
-            string sql = "SELECT * FROM melpominee_users WHERE email = @Email";
-            user = await conn.QueryFirstOrDefaultAsync<User>(sql, new { Email = email });
-            if (user is null || (onlyActive && !user.Active))
-            {
-                // unable to find this user!
+            user = JsonSerializer.Deserialize<User>(cacheData);
+            if (user is null)
                 return null;
+        }
+        else
+        {
+            using (var conn = DataContext.Instance.Connect())
+            {
+                string sql = "SELECT * FROM melpominee_users WHERE email = @Email";
+                user = await conn.QueryFirstOrDefaultAsync<User>(sql, new { Email = email });
+                if (user is null || (onlyActive && !user.Active))
+                {
+                    // unable to find this user!
+                    return null;
+                }
             }
+            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(user));
         }
         return user;
     }
@@ -48,7 +61,7 @@ public class UserManager
         }
 
         // get user object
-        User? user = await GetUser(email, true);
+        User? user = await GetUser(email, true, false);
         if (user is null)
         {
             // unable to find this user!
@@ -64,7 +77,7 @@ public class UserManager
         return null;
     }
 
-    public bool BeginResetPassword(string email, string origin)
+    public async Task<bool> BeginResetPassword(string email, string origin)
     {
         // quick check validity of object
         if(string.IsNullOrEmpty(email)) 
@@ -76,6 +89,7 @@ public class UserManager
         byte[] confirmKeyBytes = RandomNumberGenerator.GetBytes(64);
         string rescueKey = Convert.ToBase64String(confirmKeyBytes);
 
+        var cacheKey = $"melpominee:user:{email}";
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();
@@ -109,6 +123,7 @@ public class UserManager
                     throw;
                 }
             }
+            await _cache.RemoveAsync(cacheKey);
         }
 
         // send email
@@ -137,7 +152,7 @@ public class UserManager
         return true;
     }
 
-    public bool FinishResetPassword(string email, string key, string password)
+    public async Task<bool> FinishResetPassword(string email, string key, string password)
     {
         // quick check validity of object
         if (string.IsNullOrEmpty(email) || 
@@ -148,6 +163,7 @@ public class UserManager
         }
 
         // handle database actions
+        var cacheKey = $"melpominee:user:{email}";
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();
@@ -214,12 +230,13 @@ public class UserManager
                     trans.Rollback();
                     throw;
                 }
+                await _cache.RemoveAsync(cacheKey);
             }
         }
         return true;
     }
 
-    public User? Register(string email, string password, string origin)
+    public async Task<User?> Register(string email, string password, string origin)
     {
         // quick check validity of object
         User? user = null;
@@ -233,6 +250,7 @@ public class UserManager
         string activationKey = Convert.ToBase64String(confirmKeyBytes);
 
         // create new entry
+        var cacheKey = $"melpominee:user:{email}";
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();
@@ -271,6 +289,7 @@ public class UserManager
                 }
             }
         }
+        await _cache.RemoveAsync(cacheKey);
         
         // send email
         Services.MailService.Instance.SendMail(
@@ -298,7 +317,7 @@ public class UserManager
         return user;
     }
 
-    public User? RegistrationFinish(string email, string key)
+    public async Task<User?> RegistrationFinish(string email, string key)
     {
         User? user = null;
         // quick check validity of object
@@ -307,6 +326,7 @@ public class UserManager
             return user; 
         }
 
+        var cacheKey = $"melpominee:user:{email}";
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();
@@ -371,16 +391,18 @@ public class UserManager
                 }
             }
         }
+        await _cache.RemoveAsync(cacheKey);
         return user;
     }
 
-    public User OAuthRegister(string email)
+    public async Task<User> OAuthRegister(string email)
     {
         // quick check validity of object
         User user;
         if(string.IsNullOrEmpty(email))
             throw new ArgumentException("UserManager.OAuthRegister called with bad email address!");
         
+        var cacheKey = $"melpominee:user:{email}";
         using (var conn = DataContext.Instance.Connect())
         {
             conn.Open();
@@ -427,6 +449,7 @@ public class UserManager
                 }
             }
         }
+        await _cache.RemoveAsync(cacheKey);
         return user;
     }
 

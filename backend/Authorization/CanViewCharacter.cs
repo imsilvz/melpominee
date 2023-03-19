@@ -10,9 +10,11 @@ public class CanViewCharacterRequirement : IAuthorizationRequirement { }
 
 public class CanViewCharacterHandler : AuthorizationHandler<CanViewCharacterRequirement>
 {
+    private readonly UserManager _userManager;
     private readonly IHttpContextAccessor? _httpContextAccessor;
-    public CanViewCharacterHandler(IHttpContextAccessor httpContextAccessor) 
+    public CanViewCharacterHandler(UserManager userManager, IHttpContextAccessor httpContextAccessor) 
     { 
+        _userManager = userManager;
         _httpContextAccessor = httpContextAccessor;
     }
 
@@ -24,7 +26,7 @@ public class CanViewCharacterHandler : AuthorizationHandler<CanViewCharacterRequ
 
         if (userIdentity.IsAuthenticated && httpContext is not null)
         {
-            var user = await UserManager.Instance.GetUser(userId);
+            var user = await _userManager.GetUser(userId);
 
             // check to confirm that we have the desired parameter
             Console.WriteLine(httpContext.Request.QueryString);

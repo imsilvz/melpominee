@@ -10,7 +10,6 @@ public class User {
     public string? Password { get; set; }
     [JsonIgnore]
     public string? ActivationKey { get; set; }
-    [JsonIgnore]
     public DateTime? ActivationRequested { get; set; }
     public DateTime? ActivationCompleted { get; set; }
     public bool Active { get; set; }

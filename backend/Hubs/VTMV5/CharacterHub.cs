@@ -33,7 +33,6 @@ public class CharacterHub : Hub<ICharacterClient>
             var watcherDict = new Dictionary<string, bool>();
             foreach(var conn in connList)
                 watcherDict.Add(_connectionHelper.GetConnectedUser(conn), true);
-            Console.WriteLine($"({watcherDict.Count}) {groupId}: {string.Join(',', watcherDict.Keys)}");
             await Clients.Group(groupId).WatcherUpdate(charId, watcherDict.Keys.ToList());
         }
     }

@@ -90,6 +90,8 @@ services:
       - "6379"
     networks:
       - backend-network
+    volumes:
+      - /srv/melpominee.app/redis/data:/data
     restart: always
 
   pgadmin:

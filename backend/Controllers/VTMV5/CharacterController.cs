@@ -58,8 +58,8 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            //character = VampireV5Character.GetCharacter(charId);
-            character = VampireV5Character.Load(charId);
+            character = _characterService
+                .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null)
             {
                 return new VampireCharacterResponse
@@ -141,7 +141,8 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.Load(charId);
+            character = _characterService
+                .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -212,7 +213,8 @@ public class CharacterController : ControllerBase
         VampireV5Attributes? attributes;
         if (charId > 0)
         {
-            attributes = VampireV5Attributes.Load(charId);
+            attributes = _characterService
+                .GetCharacterProperty<VampireV5Attributes>(charId);
             if (attributes is not null)
             {
                 return new VampireAttributesResponse
@@ -260,7 +262,8 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.Load(charId);
+            character = _characterService
+                .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -302,7 +305,8 @@ public class CharacterController : ControllerBase
         VampireV5Skills? skills;
         if (charId > 0)
         {
-            skills = VampireV5Skills.Load(charId);
+            skills = _characterService
+                .GetCharacterProperty<VampireV5Skills>(charId);
             if (skills is not null)
             {
                 return new VampireSkillsResponse
@@ -351,7 +355,8 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.Load(charId);
+            character = _characterService
+                .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -394,7 +399,8 @@ public class CharacterController : ControllerBase
         VampireV5SecondaryStats? stats;
         if (charId > 0)
         {
-            stats = VampireV5SecondaryStats.Load(charId);
+            stats = _characterService
+                .GetCharacterProperty<VampireV5SecondaryStats>(charId);
             if (stats is not null)
             {
                 return new VampireStatResponse
@@ -443,7 +449,8 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.Load(charId);
+            character = _characterService
+                .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -485,7 +492,8 @@ public class CharacterController : ControllerBase
         VampireV5Disciplines? disciplines;
         if (charId > 0)
         {
-            disciplines = VampireV5Disciplines.Load(charId);
+            disciplines = _characterService
+                .GetCharacterProperty<VampireV5Disciplines>(charId);
             if (disciplines is not null)
             {
                 return new VampireDisciplinesResponse
@@ -534,7 +542,8 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.Load(charId);
+            character = _characterService
+                .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -576,7 +585,8 @@ public class CharacterController : ControllerBase
         VampireV5DisciplinePowers? powers;
         if (charId > 0)
         {
-            powers = VampireV5DisciplinePowers.Load(charId);
+            powers = _characterService
+                .GetCharacterProperty<VampireV5DisciplinePowers>(charId);
             if (powers is not null)
             {
                 return new VampirePowersResponse
@@ -625,7 +635,8 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.Load(charId);
+            character = _characterService
+                .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -667,7 +678,8 @@ public class CharacterController : ControllerBase
         VampireV5Beliefs? beliefs;
         if (charId > 0)
         {
-            beliefs = VampireV5Beliefs.Load(charId);
+            beliefs = _characterService
+                .GetCharacterProperty<VampireV5Beliefs>(charId);
             if (beliefs is not null)
             {
                 return new VampireBeliefsResponse
@@ -716,7 +728,8 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.Load(charId);
+            character = _characterService
+                .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -758,7 +771,8 @@ public class CharacterController : ControllerBase
         VampireV5Backgrounds? backgrounds;
         if (charId > 0)
         {
-            backgrounds = VampireV5Backgrounds.Load(charId);
+            backgrounds = _characterService
+                .GetCharacterProperty<VampireV5Backgrounds>(charId);
             if (backgrounds is not null)
             {
                 return new VampireBackgroundMeritFlawResponse
@@ -807,7 +821,8 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.Load(charId);
+            character = _characterService
+                .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -849,7 +864,8 @@ public class CharacterController : ControllerBase
         VampireV5Merits? merits;
         if (charId > 0)
         {
-            merits = VampireV5Merits.Load(charId);
+            merits = _characterService
+                .GetCharacterProperty<VampireV5Merits>(charId);
             if (merits is not null)
             {
                 return new VampireBackgroundMeritFlawResponse
@@ -898,7 +914,8 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.Load(charId);
+            character = _characterService
+                .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -940,7 +957,8 @@ public class CharacterController : ControllerBase
         VampireV5Flaws? flaws;
         if (charId > 0)
         {
-            flaws = VampireV5Flaws.Load(charId);
+            flaws = _characterService
+                .GetCharacterProperty<VampireV5Flaws>(charId);
             if (flaws is not null)
             {
                 return new VampireBackgroundMeritFlawResponse
@@ -989,7 +1007,8 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.Load(charId);
+            character = _characterService
+                .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);
@@ -1031,7 +1050,8 @@ public class CharacterController : ControllerBase
         VampireV5Profile? profile;
         if (charId > 0)
         {
-            profile = VampireV5Profile.Load(charId);
+            profile = _characterService
+                .GetCharacterProperty<VampireV5Profile>(charId);
             if (profile is not null)
             {
                 return new VampireProfileResponse
@@ -1080,7 +1100,8 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = VampireV5Character.Load(charId);
+            character = _characterService
+                .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null && character.Loaded)
             {
                 await update.UpdateData.Apply(character!);

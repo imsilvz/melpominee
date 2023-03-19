@@ -61,7 +61,7 @@ public class VampirePower
     }
 }
 
-public class VampireV5Disciplines : IDictionary<string, int>
+public class VampireV5Disciplines : IDictionary<string, int>, ICharacterSaveable
 {
     public int this[string key] { get => ((IDictionary<string, int>)_data)[key]; set => ((IDictionary<string, int>)_data)[key] = value; }
 
@@ -130,7 +130,7 @@ public class VampireV5Disciplines : IDictionary<string, int>
         return ((IEnumerable)_data).GetEnumerator();
     }
 
-    public bool Save(int charId)
+    public bool Save(int? charId)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -152,7 +152,7 @@ public class VampireV5Disciplines : IDictionary<string, int>
         }
     }
 
-    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int? charId)
     {
         // gather values
         List<object> rowList = new List<object>();
@@ -229,7 +229,7 @@ public class VampireV5Disciplines : IDictionary<string, int>
     }
 }
 
-public class VampireV5DisciplinePowers : IList<VampirePower>
+public class VampireV5DisciplinePowers : IList<VampirePower>, ICharacterSaveable
 {
     public VampirePower this[int index] { get => ((IList<VampirePower>)_data)[index]; set => ((IList<VampirePower>)_data)[index] = value; }
 
@@ -289,7 +289,7 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
         return ((IEnumerable)_data).GetEnumerator();
     }
 
-    public bool Save(int charId)
+    public bool Save(int? charId)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -321,7 +321,7 @@ public class VampireV5DisciplinePowers : IList<VampirePower>
         return ret;
     }
 
-    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int? charId)
     {
         // gather values
         List<object> rowList = new List<object>();

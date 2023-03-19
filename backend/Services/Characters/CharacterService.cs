@@ -11,7 +11,7 @@ public class CharacterService
     public T? GetCharacterProperty<T>(int charId) where T : ICharacterSaveable
     {
         // get static load method
-        var loadMethod = typeof(T).GetMethod("Load");
+        var loadMethod = typeof(T).GetMethod("Load", new Type[] { typeof(int) });
         if (loadMethod is null)
             return default;
 

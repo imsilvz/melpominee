@@ -471,11 +471,6 @@ public class VampireV5Attributes : ICharacterSaveable
 
     public bool Save(IDbConnection conn, IDbTransaction trans, int? charId)
     {
-        Console.WriteLine("AAAAAAAAA");
-        Console.WriteLine(charId);
-        Console.WriteLine(Strength);
-        Console.WriteLine("StackTrace: '{0}'", Environment.StackTrace);
-        Console.WriteLine("AAAAAAAAA");
         // gather values
         List<object> rowList = new List<object>();
         var attrPropList = typeof(VampireV5Attributes).GetProperties();
@@ -549,7 +544,7 @@ public class VampireV5Skill
     public int Score { get; set; } = 0;
 }
 
-public class VampireV5Skills
+public class VampireV5Skills : ICharacterSaveable
 {
     public VampireV5Skill Athletics { get; set; } = new VampireV5Skill { };
     public VampireV5Skill Brawl { get; set; } = new VampireV5Skill { };
@@ -579,7 +574,7 @@ public class VampireV5Skills
     public VampireV5Skill Science { get; set; } = new VampireV5Skill { };
     public VampireV5Skill Technology { get; set; } = new VampireV5Skill { };
 
-    public bool Save(int charId)
+    public bool Save(int? charId)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -601,7 +596,7 @@ public class VampireV5Skills
         }
     }
 
-    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int? charId)
     {
         // gather values
         List<object> rowList = new List<object>();
@@ -690,7 +685,7 @@ public class VampireV5SecondaryStat
     public int AggravatedDamage { get; set; } = 0;
 }
 
-public class VampireV5SecondaryStats
+public class VampireV5SecondaryStats : ICharacterSaveable
 {
     public VampireV5SecondaryStat Health { get; set; } = new VampireV5SecondaryStat();
     public VampireV5SecondaryStat Willpower { get; set; } = new VampireV5SecondaryStat();
@@ -699,7 +694,7 @@ public class VampireV5SecondaryStats
         BaseValue = 7,
     };
 
-    public bool Save(int charId)
+    public bool Save(int? charId)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -721,7 +716,7 @@ public class VampireV5SecondaryStats
         }
     }
 
-    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int? charId)
     {
         // gather values
         List<object> rowList = new List<object>();
@@ -813,13 +808,13 @@ public class VampireV5SecondaryStats
     }
 }
 
-public class VampireV5Beliefs
+public class VampireV5Beliefs : ICharacterSaveable
 {
     public string Tenets { get; set; } = "";
     public string Convictions { get; set; } = "";
     public string Touchstones { get; set; } = "";
 
-    public bool Save(int charId)
+    public bool Save(int? charId)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -841,7 +836,7 @@ public class VampireV5Beliefs
         }
     }
 
-    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int? charId)
     {
         var sql =
         @"
@@ -906,7 +901,7 @@ public class VampireV5Beliefs
     }
 }
 
-public class VampireV5Profile
+public class VampireV5Profile : ICharacterSaveable
 {
     public int TrueAge { get; set; } = 0;
     public int ApparentAge { get; set; } = 0;
@@ -916,7 +911,7 @@ public class VampireV5Profile
     public string History { get; set; } = "";
     public string Notes { get; set; } = "";
 
-    public bool Save(int charId)
+    public bool Save(int? charId)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -938,7 +933,7 @@ public class VampireV5Profile
         }
     }
 
-    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int? charId)
     {
         var sql =
         @"
@@ -1102,7 +1097,7 @@ public class VampireV5BackgroundMeritFlaw : IDictionary<int, MeritFlawBackground
         return ((IEnumerable)data).GetEnumerator();
     }
 
-    public bool Save(int charId, string itemType)
+    public bool Save(int? charId, string itemType)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -1124,7 +1119,7 @@ public class VampireV5BackgroundMeritFlaw : IDictionary<int, MeritFlawBackground
         }
     }
 
-    public bool Save(IDbConnection conn, IDbTransaction trans, int charId, string itemType)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int? charId, string itemType)
     {
         // set character id for save
         foreach (var item in this.Values)
@@ -1149,16 +1144,16 @@ public class VampireV5BackgroundMeritFlaw : IDictionary<int, MeritFlawBackground
     }
 }
 
-public class VampireV5Backgrounds : VampireV5BackgroundMeritFlaw
+public class VampireV5Backgrounds : VampireV5BackgroundMeritFlaw, ICharacterSaveable
 {
     public static string ItemType { get; set; } = "background";
 
-    public bool Save(int charId)
+    public bool Save(int? charId)
     {
         return Save(charId, ItemType);
     }
 
-    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int? charId)
     {
         return Save(conn, trans, charId, ItemType);
     }
@@ -1210,16 +1205,16 @@ public class VampireV5Backgrounds : VampireV5BackgroundMeritFlaw
     }
 }
 
-public class VampireV5Merits : VampireV5BackgroundMeritFlaw
+public class VampireV5Merits : VampireV5BackgroundMeritFlaw, ICharacterSaveable
 {
     public static string ItemType { get; set; } = "merit";
 
-    public bool Save(int charId)
+    public bool Save(int? charId)
     {
         return Save(charId, ItemType);
     }
 
-    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int? charId)
     {
         return Save(conn, trans, charId, ItemType);
     }
@@ -1271,16 +1266,16 @@ public class VampireV5Merits : VampireV5BackgroundMeritFlaw
     }
 }
 
-public class VampireV5Flaws : VampireV5BackgroundMeritFlaw
+public class VampireV5Flaws : VampireV5BackgroundMeritFlaw, ICharacterSaveable
 {
     public static string ItemType { get; set; } = "flaw";
 
-    public bool Save(int charId)
+    public bool Save(int? charId)
     {
         return Save(charId, ItemType);
     }
 
-    public bool Save(IDbConnection conn, IDbTransaction trans, int charId)
+    public bool Save(IDbConnection conn, IDbTransaction trans, int? charId)
     {
         return Save(conn, trans, charId, ItemType);
     }

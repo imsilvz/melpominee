@@ -210,7 +210,7 @@ public class AuthController : ControllerBase
     private const string DISCORD_API_URL = "https://discord.com/api/v10";
     [ActionName("oauth/discord")]
     [HttpGet(Name = "Discord OAuth Flow")]
-    public async Task<RedirectResult> DiscordOAuth(string? code)
+    public async Task<IActionResult> DiscordOAuth(string? code)
     {
         // if we do not have code, begin the process
         if (code is null)
@@ -223,8 +223,10 @@ public class AuthController : ControllerBase
             parameters.Add("redirect_uri", $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/auth/oauth/discord");
             parameters.Add("prompt", "none");
             uriBuilder.Query = parameters.ToString();
-            Console.WriteLine(uriBuilder.Uri);
-            return Redirect(uriBuilder.Uri.ToString());
+            Console.WriteLine(uriBuilder.Uri.ToString());
+            Console.WriteLine(uriBuilder.Uri.ToString());
+            Console.WriteLine(uriBuilder.Uri.ToString());
+            return Redirect(uriBuilder.Uri.ToString(), true);
         }
 
         // build token request

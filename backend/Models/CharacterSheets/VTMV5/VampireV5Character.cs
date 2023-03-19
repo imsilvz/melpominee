@@ -7,14 +7,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Melpominee.app.Models.CharacterSheets.VTMV5;
 
-public class VampireV5Character : BaseCharacterSheet
+public class VampireV5Character : BaseCharacter
 {
-    // meta
-    [JsonIgnore]
-    public bool Loaded = false;
-    [JsonIgnore]
-    public DateTime LoadedAt = DateTime.MinValue;
-
     // header items
     public string Name { get; set; } = "";
     public string Concept { get; set; } = "";
@@ -53,6 +47,11 @@ public class VampireV5Character : BaseCharacterSheet
     public VampireV5Profile Profile { get; set; } = new VampireV5Profile();
 
     public VampireV5Character() : base() { }
+
+    public bool CanView(string userId)
+    {
+        return false;
+    }
 
     public VampireV5Header GetHeader()
     {
@@ -250,6 +249,51 @@ public class VampireV5Character : BaseCharacterSheet
         return user;
     }
 
+    public static VampireV5Character? GetCharacterHeader(int id)
+    {
+        // make connection
+        VampireV5Character? user;
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                var sql =
+                @"
+                    SELECT
+                        id, owner, name, concept, chronicle, 
+                        ambition, desire, sire, 
+                        generation, clan, predatortype,
+                        hunger, resonance, bloodpotency,
+                        xpspent, xptotal
+                    FROM melpominee_characters
+                    WHERE id = @Id;
+                ";
+                user = conn.QuerySingleOrDefault<VampireV5Character>(sql, new { Id = id });
+
+                // check status
+                if (user is null)
+                {
+                    return null;
+                }
+
+                try
+                {
+                    user.Save(conn, trans);
+                    trans.Commit();
+                }
+                catch (Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+        user.LoadedAt = DateTime.UtcNow;
+        user.Loaded = true;
+        return user;
+    }
+
     public static List<VampireV5Character> GetCharactersByUser(string email)
     {
         List<VampireV5Character> charList;
@@ -301,9 +345,8 @@ public class VampireV5Character : BaseCharacterSheet
     }
 }
 
-public class VampireV5Header
+public class VampireV5Header : BaseCharacter
 {
-    public int? Id { get; set; }
     public string Name { get; set; } = "";
     public string Concept { get; set; } = "";
     public string Chronicle { get; set; } = ""; // inherit from GameId
@@ -320,6 +363,71 @@ public class VampireV5Header
     public int BloodPotency { get; set; } = 0;
     public int XpSpent { get; set; } = 0;
     public int XpTotal { get; set; } = 0;
+
+    public override bool Save()
+    {
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    var result = Save(conn, trans);
+                    trans.Commit();
+                    return result;
+                }
+                catch (Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+    }
+
+    public bool Save(IDbConnection conn, IDbTransaction trans)
+    {
+        var sql =
+        @"
+            INSERT INTO melpominee_characters
+                (
+                    id, owner, name, concept, chronicle, 
+                    ambition, desire, sire, 
+                    generation, clan, predatortype,
+                    hunger, resonance, bloodpotency,
+                    xpspent, xptotal
+                )
+            VALUES
+                (
+                    @Id, @Owner, @Name, @Concept, 
+                    @Chronicle, @Ambition, @Desire, @Sire,
+                    @Generation, @Clan, @PredatorType,
+                    @Hunger, @Resonance, @BloodPotency,
+                    @XpSpent, @XpTotal
+                )
+            ON CONFLICT(Id) DO UPDATE 
+            SET
+                owner = @Owner,
+                name = @Name,
+                concept = @Concept,
+                chronicle = @Chronicle,
+                ambition = @Ambition,
+                desire = @Desire,
+                sire = @Sire,
+                generation = @Generation,
+                clan = @Clan,
+                predatortype = @PredatorType,
+                hunger = @Hunger,
+                resonance = @Resonance,
+                bloodpotency = @BloodPotency,
+                xpspent = @XpSpent,
+                xptotal = @XpTotal
+            RETURNING id;
+        ";
+        conn.ExecuteScalar<int>(sql, this, transaction: trans);
+        return true;
+    }
 }
 
 public class VampireV5Attributes

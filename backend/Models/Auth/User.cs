@@ -1,6 +1,7 @@
 using Dapper;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Melpominee.app.Models.CharacterSheets;
 namespace Melpominee.app.Models.Auth;
 
 public class User {
@@ -13,6 +14,17 @@ public class User {
     public DateTime? ActivationRequested { get; set; }
     public DateTime? ActivationCompleted { get; set; }
     public bool Active { get; set; }
+
+    public bool CanViewCharacter(BaseCharacter? character)
+    {
+        if (!string.IsNullOrEmpty(character?.Owner) &&
+            character.Loaded &&
+            character.Owner == Email)
+        {
+            return true;
+        }
+        return false;
+    }
 }
 
 public class UserRescue {

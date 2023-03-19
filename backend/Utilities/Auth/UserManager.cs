@@ -18,7 +18,7 @@ public class UserManager
 
     public UserManager() {}
 
-    public User? GetUser(string? email, bool onlyActive = false)
+    public User? GetUser(string? email, bool onlyActive = true)
     {
         User? user;
         if(string.IsNullOrEmpty(email)) 

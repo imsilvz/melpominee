@@ -1,8 +1,6 @@
 services:
   lb:
     image: traefik
-    deploy:
-      replicas: 1
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"
@@ -43,8 +41,6 @@ services:
 
   backend:
     image: ghcr.io/imsilvz/melpominee-backend:master
-    deploy:
-      replicas: 4
     secrets:
       - pg-credentials
       - redis-credentials
@@ -74,8 +70,6 @@ services:
   
   database:
     image: postgres
-    deploy:
-      replicas: 1
     environment:
       POSTGRES_USER: melpominee
       POSTGRES_PASSWORD_FILE: /run/secrets/pg-password
@@ -91,8 +85,6 @@ services:
 
   redis:
     image: redis
-    deploy:
-      replicas: 1
     expose:
       - "6379"
     networks:
@@ -100,10 +92,9 @@ services:
     restart: always
 
   pgadmin:
+    restart: always
     user: root
     image: dpage/pgadmin4
-    deploy:
-      replicas: 1
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@melpominee.app
       PGADMIN_DEFAULT_PASSWORD: admin
@@ -120,7 +111,6 @@ services:
        - /srv/melpominee.app/pgadmin/data:/var/lib/pgadmin
     depends_on: 
       - database
-    restart: always
 
 secrets:
   mail-secrets:

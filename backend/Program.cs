@@ -18,7 +18,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddDistributedMemoryCache();
+builder.Services.AddStackExchangeRedisCache(options => {
+    options.Configuration = $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false";
+});
 builder.Services.AddSignalR()
     .AddStackExchangeRedis(
         $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false", 

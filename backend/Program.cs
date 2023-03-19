@@ -1,10 +1,14 @@
+using StackExchange.Redis;
 using Melpominee.app.Hubs.VTMV5;
 using Melpominee.app.Utilities;
 using Melpominee.app.Utilities.Database;
 using Melpominee.app.Utilities.Hubs;
-using Melpominee.app.Models.CharacterSheets.VTMV5;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 
 // Load Secrets
+SecretManager.Instance.LoadSecret("discord-oauth");
 SecretManager.Instance.LoadSecret("pg-credentials");
 SecretManager.Instance.LoadSecret("redis-credentials");
 SecretManager.Instance.LoadSecret("mail-secrets");
@@ -38,6 +42,20 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 builder.Services.AddSingleton<ConnectionHelper>();
+
+// add data protection
+var redis = ConnectionMultiplexer
+    .Connect($"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false");
+builder.Services
+    .AddDataProtection()
+    .PersistKeysToStackExchangeRedis(redis, "DataProtectionKeys")
+    .UseCryptographicAlgorithms(
+        new AuthenticatedEncryptorConfiguration
+        {
+            EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+            ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+        }
+    );
 
 // authentication details
 const string CookieScheme = "Melpominee.app.Auth";

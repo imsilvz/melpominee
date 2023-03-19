@@ -374,6 +374,62 @@ public class UserManager
         return user;
     }
 
+    public User OAuthRegister(string email)
+    {
+        // quick check validity of object
+        User user;
+        if(string.IsNullOrEmpty(email))
+            throw new ArgumentException("UserManager.OAuthRegister called with bad email address!");
+        
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                try
+                {
+                    user = new User()
+                    {
+                        Email = email,
+                        Password = null,
+                        ActivationKey = null,
+                        ActivationRequested = null,
+                        ActivationCompleted = DateTime.UtcNow,
+                        Active = true
+                    };
+                    var sql =
+                    @"
+                        INSERT INTO melpominee_users
+                            (
+                                email, password, activationkey,
+                                activationrequested, activationcompleted, active
+                            )
+                        VALUES
+                            (
+                                @Email, @Password, @ActivationKey,
+                                @ActivationRequested, @ActivationCompleted, @Active
+                            )
+                        ON CONFLICT(email) DO UPDATE
+                        SET
+                            password = @Password,
+                            activationkey = @ActivationKey,
+                            activationrequested = @ActivationRequested,
+                            activationcompleted = @ActivationCompleted,
+                            active = @Active;
+                    ";
+                    conn.Execute(sql, user);
+                    trans.Commit();
+                }
+                catch(Exception)
+                {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
+        return user;
+    }
+
     public static string HashPassword(string password)
     {
         byte[] salt = RandomNumberGenerator.GetBytes(_saltSize);

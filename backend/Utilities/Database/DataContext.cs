@@ -29,7 +29,7 @@ public class DataContext
             var sql = @"
                 CREATE TABLE IF NOT EXISTS melpominee_users (
                     Email TEXT NOT NULL PRIMARY KEY,
-                    Password TEXT NOT NULL,
+                    Password TEXT,
                     ActivationKey TEXT,
                     ActivationRequested TIMESTAMP,
                     ActivationCompleted TIMESTAMP,

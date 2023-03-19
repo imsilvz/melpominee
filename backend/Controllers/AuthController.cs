@@ -1,11 +1,13 @@
+using System.Web;
 using System.Text.Json;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Melpominee.app.Models.Auth;
 using Melpominee.app.Models.Web.Auth;
+using Melpominee.app.Utilities;
 using Melpominee.app.Utilities.Auth;
-using System.Diagnostics;
 namespace Melpominee.app.Controllers;
 
 [ApiController]
@@ -199,5 +201,100 @@ public class AuthController : ControllerBase
             return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/error?message=help");
         }
         return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/login?notice=confirmed&email={user.Email}");
+    }
+
+    private const string DISCORD_AUTHORIZE_URL = "https://discord.com/oauth2/authorize";
+    private const string DISCORD_TOKEN_URL = "https://discord.com/api/oauth2/token";
+    private const string DISCORD_TOKEN_REVOKE_URL = "https://discord.com/api/oauth2/token/revoke";
+    private const string DISCORD_SCOPES = "email identify";
+    private const string DISCORD_API_URL = "https://discord.com/api/v10";
+    [ActionName("oauth/discord")]
+    [HttpGet(Name = "Discord OAuth Flow")]
+    public async Task<RedirectResult> DiscordOAuth(string? code)
+    {
+        // if we do not have code, begin the process
+        if (code is null)
+        {
+            var uriBuilder = new UriBuilder(DISCORD_AUTHORIZE_URL);
+            var parameters = HttpUtility.ParseQueryString(string.Empty);
+            parameters.Add("response_type", "code");
+            parameters.Add("client_id", SecretManager.Instance.GetSecret("discord_clientid"));
+            parameters.Add("scope", DISCORD_SCOPES);
+            parameters.Add("redirect_uri", $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/auth/oauth/discord");
+            parameters.Add("prompt", "none");
+            uriBuilder.Query = parameters.ToString();
+            Console.WriteLine(uriBuilder.Uri);
+            return Redirect(uriBuilder.Uri.ToString());
+        }
+
+        // build token request
+        var client = new HttpClient();
+        var tokenRequestContent = new Dictionary<string, string?>();
+        tokenRequestContent.Add("client_id", SecretManager.Instance.GetSecret("discord_clientid"));
+        tokenRequestContent.Add("client_secret", SecretManager.Instance.GetSecret("discord_clientsecret"));
+        tokenRequestContent.Add("grant_type", "authorization_code");
+        tokenRequestContent.Add("code", code);
+        tokenRequestContent.Add("redirect_uri", $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/auth/oauth/discord");
+        var tokenRequest = new HttpRequestMessage(HttpMethod.Post, DISCORD_TOKEN_URL)
+        {
+            Content = new FormUrlEncodedContent(tokenRequestContent)
+        };
+
+        // make token request
+        var tokenResponse = await client.SendAsync(tokenRequest);
+        if (!tokenResponse.IsSuccessStatusCode)
+            return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/error?message=help");
+        
+        // parse token response
+        var oauthToken = await tokenResponse.Content.ReadFromJsonAsync<DiscordOAuthTokenResponse>();
+        if (oauthToken is null)
+            return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/error?message=help");
+
+        // request user data
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", oauthToken.access_token);
+        var userResponse = await client.GetAsync($"{DISCORD_API_URL}/users/@me");
+        if (!userResponse.IsSuccessStatusCode)
+            return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/error?message=help");
+
+        // parse user data
+        var userData = await userResponse.Content.ReadFromJsonAsync<DiscordOAuthUserResponse>();
+        if (userData is null)
+            return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/error?message=help");
+
+        // validate response data
+        if (!userData.verified || string.IsNullOrEmpty(userData.email))
+            return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/error?message=help");
+
+        // now we can attempt a login!
+        var user = UserManager.Instance.GetUser(userData.email, true);
+        if (user is null)
+            user = UserManager.Instance.OAuthRegister(userData.email);
+            
+        // create login claims
+        var claims = new List<Claim>
+        {
+            // assert not null as we have performed registration in the previous step
+            new Claim(ClaimTypes.NameIdentifier, user!.Email!),
+            new Claim(ClaimTypes.Role, "user")
+        };
+
+        // store it in the cookie
+        await HttpContext.SignInAsync
+        (
+            "Melpominee.app.Auth",
+            new ClaimsPrincipal
+            (
+                new ClaimsIdentity
+                (
+                    claims,
+                    "Cookies",
+                    ClaimTypes.NameIdentifier,
+                    ClaimTypes.Role
+                )
+            )
+        );
+        HttpContext.Session.Clear();
+        return Redirect($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}");
     }
 }

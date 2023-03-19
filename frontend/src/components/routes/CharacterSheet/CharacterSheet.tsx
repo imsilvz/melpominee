@@ -285,7 +285,7 @@ const CharacterSheet = () => {
             setLoading(false);
             setCurrCharacter(characterJson.character);
           } else {
-            if (characterJson.error === 'no_access') {
+            if (characterJson.error === 'access_error') {
               setLoading(false);
               navigate('/', { replace: true });
             }

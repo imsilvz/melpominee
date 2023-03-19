@@ -2,6 +2,7 @@ using Melpominee.app.Models.Web.VTMV5;
 namespace Melpominee.app.Hubs.Clients.VTMV5;
 public interface ICharacterClient
 {
+    Task WatcherUpdate(int charId, List<string> watchers);
     Task OnHeaderUpdate(int charId, string? updateId, DateTime timestamp, VampireCharacterUpdate update);
     Task OnAttributeUpdate(int charId, string? updateId, DateTime timestamp, VampireAttributesUpdate update);
     Task OnSkillUpdate(int charId, string? updateId, DateTime timestamp, VampireSkillsUpdate update);

@@ -53,6 +53,10 @@ const CharacterSheet = () => {
         .configureLogging(signalR.LogLevel.Critical)
         .build();
 
+      conn.on('WatcherUpdate', (charId: number, watchers: string[]) => {
+        console.log(charId, watchers);
+      });
+
       conn.on(
         'onHeaderUpdate',
         (

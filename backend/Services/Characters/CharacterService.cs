@@ -49,7 +49,9 @@ public class CharacterService
         character = await (Task<T?>)loadMethod.Invoke(null, methodArgs)!;
         if (character is not null)
         {
-            await _cache.SetStringAsync(keyName, JsonSerializer.Serialize<T>(character));
+            var cacheOptions = new DistributedCacheEntryOptions();
+            cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(1));
+            await _cache.SetStringAsync(keyName, JsonSerializer.Serialize<T>(character), cacheOptions);
         }
         return character;
     }

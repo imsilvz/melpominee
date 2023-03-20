@@ -47,7 +47,9 @@ public class UserManager
                     return null;
                 }
             }
-            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(user));
+            var cacheOptions = new DistributedCacheEntryOptions();
+            cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(1));
+            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(user), cacheOptions);
         }
         return user;
     }

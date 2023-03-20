@@ -5,13 +5,13 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 namespace Melpominee.app.Models.Characters.VTMV5;
 
-public abstract class VampirePredatorType
+public class VampirePredatorType
 {
-    public abstract string Id { get; }
-    public abstract string Name { get; }
-    public abstract string Description { get; }
-    public abstract string RollInfo { get; }
-    public abstract List<string> EffectList { get; }
+    public string Id { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string Description { get; set; } = "";
+    public string RollInfo { get; set; } = "";
+    public List<string> EffectList { get; set; } = new List<string>();
 
     public static Dictionary<string, VampirePredatorType> TypeDict = new Dictionary<string, VampirePredatorType>();
     static VampirePredatorType()
@@ -24,13 +24,10 @@ public abstract class VampirePredatorType
             using (StreamReader reader = new StreamReader(stream))
             {
                 string json = reader.ReadToEnd();
-                var predDict = JsonSerializer.Deserialize<List<VampirePredatorType>>(json);
+                var predDict = JsonSerializer.Deserialize<Dictionary<string, VampirePredatorType>>(json);
                 if (predDict is not null)
                 {
-                    foreach(var predType in predDict)
-                    {
-                        TypeDict.Add(predType.Id, predType);
-                    }
+                    TypeDict = predDict;
                 }
             }
         }

@@ -1,5 +1,12 @@
-[
-    {
+{
+    "": {
+        "id": "",
+        "name": "N/A",
+        "description": "",
+        "rollInfo": "",
+        "effectList": []
+    },
+    "alleycat": {
         "id": "alleycat",
         "name": "Alleycat",
         "description": "Those who find violence to be the quickest way to get what they want might gravitate towards this hunting style. Alleycats are a vampire who feeds by brute force and outright attack and feeds from whomever they can when they can. Intimidation is a route easily taken to make their victims cower or even Dominating the victims to not report the attack or mask it as something else entirely.",
@@ -11,7 +18,7 @@
             "Gain three dots of Criminal Contacts"
         ]
     },
-    {
+    "bagger": {
         "id": "bagger",
         "name": "Bagger",
         "description": "Sometimes the best blood doesn't come from a live body. Baggers are kindred who take an approach most are unable to with their ability to consume preserved, defractionated or rancid blood through (•••) Iron Gullet, allowing them to feed from unusual sources such as blood bags or corpses. Perhaps they work in a hospital or blood bank or they might even have enough knowledge about the black market to obtain their blood. Ventrue are unable to pick this Predator type.",
@@ -23,7 +30,7 @@
             "Gain an Enemy Flaw (••) of someone who believes this vampire owes them something or there's another reason to hunt them down"
         ]
     },
-    {
+    "blood_leech": {
         "id": "blood_leech",
         "name": "Blood Leech",
         "description": "Some Kindred might see feeding from mortals as inherently wrong or disgusting regardless of others' rationale. Blood Leech is a feeding style that is not looked upon kindly by many vampires making it risky unless the Kindred has a position of power and can keep their little secret secure. Regardless, with their rejection of mortal blood, they instead feed upon the vitae of other vampires through hunting those weaker than them, coercion, or taking Blood as payment.",
@@ -37,7 +44,7 @@
             "Gain the Feeding Flaw: (••) Prey Exclusion (Mortals)"
         ]
     },
-    {
+    "cleaver": {
         "id": "cleaver",
         "name": "Cleaver",
         "description": "The sweetest blood might be from those closest to them, the Cleaver takes advantage of that idea while taking blood from either their own close family and friends or even those close to someone else. Covertly stealing the blood from their victims while still maintaining ties to them. Cleavers will go to extreme lengths to keep their condition a secret from their victims but some may instead take a less than pleasant route. The Camarilla forbids the practice of taking a human family in this fashion, as it's a breach waiting to happen.",
@@ -49,7 +56,7 @@
             "Gain the Herd Advantage (••)"
         ]
     },
-    {
+    "consensualist": {
         "id": "consensualist",
         "name": "Consensualist",
         "description": "Consent is a dangerous thing to gather when they're a blood-sucking monster, but Consensualists make do. They never feed against the victim's free will, instead pretending to be a representative of a charity blood drive, someone with a blood kink within the kink community, or blatantly admitting to their victims what they are and getting their permission to feed. To the Camarilla, the last method is considered a masquerade breach but perhaps to a philosophical Anarch, it might be an acceptable risk to take.",
@@ -62,14 +69,7 @@
             "Gain the Feeding Flaw: (•) Prey Exclusion (Non-consenting)"
         ]
     },
-    {
-        "id": "",
-        "name": "N/A",
-        "description": "",
-        "rollInfo": "",
-        "effectList": []
-    },
-    {
+    "extortionist": {
         "id": "extortionist",
         "name": "Extortionist",
         "description": "On the surface, Extortionists acquire their blood in exchange for services such as protection, security, or surveillance. Though, for as many times as the service might be genuine, there are many more times when the service has been offered from fabricated information to make the deal feel that much sweeter.",
@@ -81,7 +81,7 @@
             "Gain the Enemy Flaw (••) The police or a victim who escaped the character's extortion and wants revenge"
         ]
     },
-    {
+    "farmer": {
         "id": "farmer",
         "name": "Farmer",
         "description": "Perhaps this vampire was once someone who worked as an activist or an aid worker, regardless of their reasoning the Farmer only feed from animals as their primary source of blood. The beast may gnaw at them with its throes of hunger, but they've successfully managed to avoid killing mortals except on the occasional bad night. Ventrue may not pick this Predator type and it cannot be taken on characters with Blood Potency 3 or higher.",
@@ -93,7 +93,7 @@
             "Gain the Feeding Flaw: (••) Farmer"
         ]
     },
-    {
+    "graverobber": {
         "id": "graverobber",
         "name": "Graverobber",
         "description": "Similar to Baggers these kindred understand there's no good in wasting good blood, even if others cannot consume it. Often they find themselves digging up corpses or working or mortuaries to obtain their bodies, yet regardless of what the name suggests, they prefer feeding from mourners at a gravesite or a hospital. This Predator Type often requires a haven or other connections to a church, hospital, or morgue as a way to obtain the bodies.",
@@ -106,7 +106,7 @@
             "Gain the Herd Flaw: (••) Obvious Predator"
         ]
     },
-    {
+    "osiris": {
         "id": "osiris",
         "name": "Osiris",
         "description": "More than not, Osiris are celebrities within mortal society. Musicians, writers, priests, and even cult leaders may find an easy time finding their blood by utilizing those already around them. They tend to feed from their fans or worshippers which means they have easy access to blood, but followers tend to attract their own problems with the local authority or worse.",
@@ -118,7 +118,7 @@
             "Spend two dots between Enemies and Mythic Flaws"
         ]
     },
-    {
+    "roadside_killer": {
         "id": "roadside_killer",
         "name": "Roadside Killer",
         "description": "These Kindred never stay in one spot for too long and are always on the move, hunting those who won't be missed if they disappear alongside the road. Roadside Killers know the risk is just as worth as the reward. Perhaps this Kindred was once a truck driver themselves or maybe they met their fate alongside the road as well.",
@@ -130,7 +130,7 @@
             "Gain the Feeding Flaw: Prey Exclusion (locals)"
         ]
     },
-    {
+    "sandman": {
         "id": "sandman",
         "name": "Sandman",
         "description": "If they never wake during the feed it never happened, right? Sandman prefers to hunt on sleeping mortals than anyone else by using stealth or Disciplines to feed from their victims they are rarely caught in the act, though when they are, problems are sure to occur. Maybe they were anti-social in life or perhaps they find the route of seduction or violence too much for them and find comfort in the silence of this feeding style.",
@@ -141,7 +141,7 @@
             "Gain one dot of Resources"
         ]
     },
-    {
+    "scene_queen": {
         "id": "scene_queen",
         "name": "Scene Queen",
         "description": "Similar to Osiris these Kindred find comfort in a particular subculture rather than a wider audience. Hunting in or around a subculture they likely belonged to in their previous life, their victims adore them for their status, and those who have an inkling of what they are disbelieved. The scene itself could be anything, from street culture to high fashion, and the unifying trait is the use of those around them.",
@@ -154,7 +154,7 @@
             "Gain either the Influence Flaw: (•) Disliked (outside their subculture) or the Feeding Flaw: (•) Prey Exclusion (a different subculture than theirs)"
         ]
     },
-    {
+    "siren": {
         "id": "siren",
         "name": "Siren",
         "description": "Everyone knows that sex sells and the Siren uses this to their advantage. Almost exclusively feeding while feigning sex or sexual interest, they utilize Disciplines and seduction to lure away a possible meal. Moving through clubs and one-night stands are skills they've mastered and regardless of how sexy they feel, deep in their darkest moments, they realize at best they are problematic and at worst a serial sexual assaulter. In life, they might have been a scriptwriter, a small time actor who never reached the big screen, a well-known kinkster or even a virgin looking to make up for the lost time.",
@@ -166,4 +166,4 @@
             "Gain the Enemy Flaw (•) A spurned lover or jealous partner"
         ]
     }
-]
+}

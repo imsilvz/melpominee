@@ -1,9 +1,10 @@
 using Dapper;
 using System.Data;
-using System.Text.Json.Serialization;
-using Melpominee.app.Services.Database;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
+using Melpominee.app.Services.Characters;
+using Melpominee.app.Services.Database;
 
 namespace Melpominee.app.Models.Characters.VTMV5;
 
@@ -191,7 +192,7 @@ public class VampireV5Character : BaseCharacter
         return true;
     }
 
-    public static VampireV5Character? Load(int id)
+    public static async Task<VampireV5Character?> Load(int id, CharacterService? characterService = null)
     {
         // make connection
         VampireV5Character? user;
@@ -220,28 +221,66 @@ public class VampireV5Character : BaseCharacter
                 }
 
                 // fetch dependant objects
-                var attributes = VampireV5Attributes.Load(conn, trans, id);
-                var skills = VampireV5Skills.Load(conn, trans, id);
-                var secondaryStats = VampireV5SecondaryStats.Load(conn, trans, id);
-                var disciplines = VampireV5Disciplines.Load(conn, trans, id);
-                var disciplinePowers = VampireV5DisciplinePowers.Load(conn, trans, id);
-                var beliefs = VampireV5Beliefs.Load(conn, trans, id);
-                var profile = VampireV5Profile.Load(conn, trans, id);
-                var backgrounds = VampireV5Backgrounds.Load(conn, trans, id);
-                var merits = VampireV5Merits.Load(conn, trans, id);
-                var flaws = VampireV5Flaws.Load(conn, trans, id);
+                if (characterService is not null)
+                {
+                    var attributes = await characterService
+                        .GetCharacterProperty<VampireV5Attributes>(conn, trans, id);
+                    var skills = await characterService
+                        .GetCharacterProperty<VampireV5Skills>(conn, trans, id);
+                    var secondaryStats = await characterService
+                        .GetCharacterProperty<VampireV5SecondaryStats>(conn, trans, id);
+                    var disciplines = await characterService
+                        .GetCharacterProperty<VampireV5Disciplines>(conn, trans, id);
+                    var disciplinePowers = await characterService
+                        .GetCharacterProperty<VampireV5DisciplinePowers>(conn, trans, id);
+                    var beliefs = await characterService
+                        .GetCharacterProperty<VampireV5Beliefs>(conn, trans, id);
+                    var profile = await characterService
+                        .GetCharacterProperty<VampireV5Profile>(conn, trans, id);
+                    var backgrounds = await characterService
+                        .GetCharacterProperty<VampireV5Backgrounds>(conn, trans, id);
+                    var merits = await characterService
+                        .GetCharacterProperty<VampireV5Merits>(conn, trans, id);
+                    var flaws = await characterService
+                        .GetCharacterProperty<VampireV5Flaws>(conn, trans, id);
 
-                // if any fail to load, keep defaults
-                user.Attributes = attributes ?? user.Attributes;
-                user.Skills = skills ?? user.Skills;
-                user.SecondaryStats = secondaryStats ?? user.SecondaryStats;
-                user.Disciplines = disciplines ?? user.Disciplines;
-                user.DisciplinePowers = disciplinePowers ?? user.DisciplinePowers;
-                user.Beliefs = beliefs ?? user.Beliefs;
-                user.Profile = profile ?? user.Profile;
-                user.Backgrounds = backgrounds ?? user.Backgrounds;
-                user.Merits = merits ?? user.Merits;
-                user.Flaws = flaws ?? user.Flaws;
+                    // if any fail to load, keep defaults
+                    user.Attributes = attributes ?? user.Attributes;
+                    user.Skills = skills ?? user.Skills;
+                    user.SecondaryStats = secondaryStats ?? user.SecondaryStats;
+                    user.Disciplines = disciplines ?? user.Disciplines;
+                    user.DisciplinePowers = disciplinePowers ?? user.DisciplinePowers;
+                    user.Beliefs = beliefs ?? user.Beliefs;
+                    user.Profile = profile ?? user.Profile;
+                    user.Backgrounds = backgrounds ?? user.Backgrounds;
+                    user.Merits = merits ?? user.Merits;
+                    user.Flaws = flaws ?? user.Flaws;
+                }
+                else
+                {
+                    var attributes = await VampireV5Attributes.Load(conn, trans, id);
+                    var skills = await VampireV5Skills.Load(conn, trans, id);
+                    var secondaryStats = await VampireV5SecondaryStats.Load(conn, trans, id);
+                    var disciplines = await VampireV5Disciplines.Load(conn, trans, id);
+                    var disciplinePowers = await VampireV5DisciplinePowers.Load(conn, trans, id);
+                    var beliefs = await VampireV5Beliefs.Load(conn, trans, id);
+                    var profile = await VampireV5Profile.Load(conn, trans, id);
+                    var backgrounds = await VampireV5Backgrounds.Load(conn, trans, id);
+                    var merits = await VampireV5Merits.Load(conn, trans, id);
+                    var flaws = await VampireV5Flaws.Load(conn, trans, id);
+
+                    // if any fail to load, keep defaults
+                    user.Attributes = attributes ?? user.Attributes;
+                    user.Skills = skills ?? user.Skills;
+                    user.SecondaryStats = secondaryStats ?? user.SecondaryStats;
+                    user.Disciplines = disciplines ?? user.Disciplines;
+                    user.DisciplinePowers = disciplinePowers ?? user.DisciplinePowers;
+                    user.Beliefs = beliefs ?? user.Beliefs;
+                    user.Profile = profile ?? user.Profile;
+                    user.Backgrounds = backgrounds ?? user.Backgrounds;
+                    user.Merits = merits ?? user.Merits;
+                    user.Flaws = flaws ?? user.Flaws;
+                }
 
                 try
                 {
@@ -290,7 +329,7 @@ public class VampireV5Character : BaseCharacter
         return character.GetHeader();
     }
 
-    public static List<VampireV5Character> GetCharactersByUser(string email)
+    public static async Task<List<VampireV5Character>> GetCharactersByUser(string email)
     {
         List<VampireV5Character> charList;
         using (var conn = DataContext.Instance.Connect())
@@ -313,16 +352,16 @@ public class VampireV5Character : BaseCharacter
                 foreach (var character in charList)
                 {
                     // fetch dependant objects
-                    var attributes = VampireV5Attributes.Load(conn, trans, (int)character.Id!);
-                    var skills = VampireV5Skills.Load(conn, trans, (int)character.Id!);
-                    var secondaryStats = VampireV5SecondaryStats.Load(conn, trans, (int)character.Id!);
-                    var disciplines = VampireV5Disciplines.Load(conn, trans, (int)character.Id!);
-                    var disciplinePowers = VampireV5DisciplinePowers.Load(conn, trans, (int)character.Id!);
-                    var beliefs = VampireV5Beliefs.Load(conn, trans, (int)character.Id!);
-                    var profile = VampireV5Profile.Load(conn, trans, (int)character.Id!);
-                    var backgrounds = VampireV5Backgrounds.Load(conn, trans, (int)character.Id!);
-                    var merits = VampireV5Merits.Load(conn, trans, (int)character.Id!);
-                    var flaws = VampireV5Flaws.Load(conn, trans, (int)character.Id!);
+                    var attributes = await VampireV5Attributes.Load(conn, trans, (int)character.Id!);
+                    var skills = await VampireV5Skills.Load(conn, trans, (int)character.Id!);
+                    var secondaryStats = await VampireV5SecondaryStats.Load(conn, trans, (int)character.Id!);
+                    var disciplines = await VampireV5Disciplines.Load(conn, trans, (int)character.Id!);
+                    var disciplinePowers = await VampireV5DisciplinePowers.Load(conn, trans, (int)character.Id!);
+                    var beliefs = await VampireV5Beliefs.Load(conn, trans, (int)character.Id!);
+                    var profile = await VampireV5Profile.Load(conn, trans, (int)character.Id!);
+                    var backgrounds = await VampireV5Backgrounds.Load(conn, trans, (int)character.Id!);
+                    var merits = await VampireV5Merits.Load(conn, trans, (int)character.Id!);
+                    var flaws = await VampireV5Flaws.Load(conn, trans, (int)character.Id!);
 
                     // if any fail to load, keep defaults
                     character.Attributes = attributes ?? character.Attributes;
@@ -332,6 +371,9 @@ public class VampireV5Character : BaseCharacter
                     character.DisciplinePowers = disciplinePowers ?? character.DisciplinePowers;
                     character.Beliefs = beliefs ?? character.Beliefs;
                     character.Profile = profile ?? character.Profile;
+                    character.Backgrounds = backgrounds ?? character.Backgrounds;
+                    character.Merits = merits ?? character.Merits;
+                    character.Flaws = flaws ?? character.Flaws;
                 }
                 return charList;
             }
@@ -490,7 +532,7 @@ public class VampireV5Attributes : ICharacterSaveable
         return true;
     }
 
-    public static VampireV5Attributes Load(int charId)
+    public static async Task<VampireV5Attributes> Load(int charId, CharacterService? characterService = null)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -499,7 +541,7 @@ public class VampireV5Attributes : ICharacterSaveable
             {
                 try
                 {
-                    var result = Load(conn, trans, charId);
+                    var result = await Load(conn, trans, charId, characterService);
                     trans.Commit();
                     return result;
                 }
@@ -512,7 +554,7 @@ public class VampireV5Attributes : ICharacterSaveable
         }
     }
 
-    public static VampireV5Attributes Load(IDbConnection conn, IDbTransaction trans, int charId)
+    public static async Task<VampireV5Attributes> Load(IDbConnection conn, IDbTransaction trans, int charId, CharacterService? characterService = null)
     {
         VampireV5Attributes attr = new VampireV5Attributes();
         var sql =
@@ -521,7 +563,7 @@ public class VampireV5Attributes : ICharacterSaveable
             FROM melpominee_character_attributes
             WHERE charid = @CharId;
         ";
-        var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
+        var results = await conn.QueryAsync(sql, new { CharId = charId }, transaction: trans);
         foreach (var result in results)
         {
             Type attrType = typeof(VampireV5Attributes);
@@ -624,7 +666,7 @@ public class VampireV5Skills : ICharacterSaveable
         return true;
     }
 
-    public static VampireV5Skills Load(int charId)
+    public static async Task<VampireV5Skills> Load(int charId, CharacterService? characterService = null)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -633,7 +675,7 @@ public class VampireV5Skills : ICharacterSaveable
             {
                 try
                 {
-                    var result = Load(conn, trans, charId);
+                    var result = await Load(conn, trans, charId, characterService);
                     trans.Commit();
                     return result;
                 }
@@ -646,7 +688,7 @@ public class VampireV5Skills : ICharacterSaveable
         }
     }
 
-    public static VampireV5Skills Load(IDbConnection conn, IDbTransaction trans, int charId)
+    public static async Task<VampireV5Skills> Load(IDbConnection conn, IDbTransaction trans, int charId, CharacterService? characterService = null)
     {
         VampireV5Skills skills = new VampireV5Skills();
         var sql =
@@ -655,7 +697,7 @@ public class VampireV5Skills : ICharacterSaveable
             FROM melpominee_character_skills
             WHERE charid = @CharId;
         ";
-        var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
+        var results = await conn.QueryAsync(sql, new { CharId = charId }, transaction: trans);
         foreach (var result in results)
         {
             VampireV5Skill skill = new VampireV5Skill()
@@ -751,7 +793,7 @@ public class VampireV5SecondaryStats : ICharacterSaveable
         return true;
     }
 
-    public static VampireV5SecondaryStats Load(int charId)
+    public static async Task<VampireV5SecondaryStats> Load(int charId, CharacterService? characterService = null)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -760,7 +802,7 @@ public class VampireV5SecondaryStats : ICharacterSaveable
             {
                 try
                 {
-                    var result = Load(conn, trans, charId);
+                    var result = await Load(conn, trans, charId, characterService);
                     trans.Commit();
                     return result;
                 }
@@ -773,7 +815,7 @@ public class VampireV5SecondaryStats : ICharacterSaveable
         }
     }
 
-    public static VampireV5SecondaryStats Load(IDbConnection conn, IDbTransaction trans, int charId)
+    public static async Task<VampireV5SecondaryStats> Load(IDbConnection conn, IDbTransaction trans, int charId, CharacterService? characterService = null)
     {
         VampireV5SecondaryStats stats = new VampireV5SecondaryStats();
         var sql =
@@ -784,7 +826,7 @@ public class VampireV5SecondaryStats : ICharacterSaveable
             FROM melpominee_character_secondary
             WHERE charid = @CharId;
         ";
-        var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
+        var results = await conn.QueryAsync(sql, new { CharId = charId }, transaction: trans);
         foreach (var result in results)
         {
             VampireV5SecondaryStat stat = new VampireV5SecondaryStat()
@@ -855,7 +897,7 @@ public class VampireV5Beliefs : ICharacterSaveable
         return true;
     }
 
-    public static VampireV5Beliefs Load(int charId)
+    public static async Task<VampireV5Beliefs> Load(int charId, CharacterService? characterService = null)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -864,7 +906,7 @@ public class VampireV5Beliefs : ICharacterSaveable
             {
                 try
                 {
-                    var result = Load(conn, trans, charId);
+                    var result = await Load(conn, trans, charId, characterService);
                     trans.Commit();
                     return result;
                 }
@@ -877,7 +919,7 @@ public class VampireV5Beliefs : ICharacterSaveable
         }
     }
 
-    public static VampireV5Beliefs Load(IDbConnection conn, IDbTransaction trans, int charId)
+    public static async Task<VampireV5Beliefs> Load(IDbConnection conn, IDbTransaction trans, int charId, CharacterService? characterService = null)
     {
         VampireV5Beliefs? beliefs;
         var sql =
@@ -886,7 +928,7 @@ public class VampireV5Beliefs : ICharacterSaveable
             FROM melpominee_character_beliefs
             WHERE charid = @Id;
         ";
-        beliefs = conn.QuerySingleOrDefault<VampireV5Beliefs>(sql, new { Id = charId }, transaction: trans);
+        beliefs = await conn.QuerySingleOrDefaultAsync<VampireV5Beliefs>(sql, new { Id = charId }, transaction: trans);
         if (beliefs is null)
         {
             return new VampireV5Beliefs();
@@ -966,7 +1008,7 @@ public class VampireV5Profile : ICharacterSaveable
         return true;
     }
 
-    public static VampireV5Profile Load(int charId)
+    public static async Task<VampireV5Profile> Load(int charId, CharacterService? characterService = null)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -975,7 +1017,7 @@ public class VampireV5Profile : ICharacterSaveable
             {
                 try
                 {
-                    var result = Load(conn, trans, charId);
+                    var result = await Load(conn, trans, charId, characterService);
                     trans.Commit();
                     return result;
                 }
@@ -988,7 +1030,7 @@ public class VampireV5Profile : ICharacterSaveable
         }
     }
 
-    public static VampireV5Profile Load(IDbConnection conn, IDbTransaction trans, int charId)
+    public static async Task<VampireV5Profile> Load(IDbConnection conn, IDbTransaction trans, int charId, CharacterService? characterService = null)
     {
         VampireV5Profile? profile;
         var sql =
@@ -1000,7 +1042,7 @@ public class VampireV5Profile : ICharacterSaveable
             FROM melpominee_character_profile
             WHERE charid = @Id;
         ";
-        profile = conn.QuerySingleOrDefault<VampireV5Profile>(sql, new { Id = charId }, transaction: trans);
+        profile = await conn.QuerySingleOrDefaultAsync<VampireV5Profile>(sql, new { Id = charId }, transaction: trans);
         if (profile is null)
         {
             return new VampireV5Profile();
@@ -1152,7 +1194,7 @@ public class VampireV5Backgrounds : VampireV5BackgroundMeritFlaw, ICharacterSave
         return Save(conn, trans, charId, ItemType);
     }
 
-    public static VampireV5Backgrounds Load(int charId)
+    public static async Task<VampireV5Backgrounds> Load(int charId, CharacterService? characterService = null)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -1161,7 +1203,7 @@ public class VampireV5Backgrounds : VampireV5BackgroundMeritFlaw, ICharacterSave
             {
                 try
                 {
-                    var result = Load(conn, trans, charId);
+                    var result = await Load(conn, trans, charId, characterService);
                     trans.Commit();
                     return result;
                 }
@@ -1174,7 +1216,7 @@ public class VampireV5Backgrounds : VampireV5BackgroundMeritFlaw, ICharacterSave
         }
     }
 
-    public static VampireV5Backgrounds Load(IDbConnection conn, IDbTransaction trans, int charId)
+    public static async Task<VampireV5Backgrounds> Load(IDbConnection conn, IDbTransaction trans, int charId, CharacterService? characterService = null)
     {
         VampireV5Backgrounds backgrounds = new VampireV5Backgrounds();
         var sql =
@@ -1183,7 +1225,7 @@ public class VampireV5Backgrounds : VampireV5BackgroundMeritFlaw, ICharacterSave
             FROM melpominee_character_meritflawbackgrounds
             WHERE charid = @CharId AND itemtype = @ItemType;
         ";
-        var results = conn.Query(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
+        var results = await conn.QueryAsync(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
         foreach (var result in results)
         {
             backgrounds.Add(
@@ -1213,7 +1255,7 @@ public class VampireV5Merits : VampireV5BackgroundMeritFlaw, ICharacterSaveable
         return Save(conn, trans, charId, ItemType);
     }
 
-    public static VampireV5Merits Load(int charId)
+    public static async Task<VampireV5Merits> Load(int charId, CharacterService? characterService = null)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -1222,7 +1264,7 @@ public class VampireV5Merits : VampireV5BackgroundMeritFlaw, ICharacterSaveable
             {
                 try
                 {
-                    var result = Load(conn, trans, charId);
+                    var result = await Load(conn, trans, charId, characterService);
                     trans.Commit();
                     return result;
                 }
@@ -1235,7 +1277,7 @@ public class VampireV5Merits : VampireV5BackgroundMeritFlaw, ICharacterSaveable
         }
     }
 
-    public static VampireV5Merits Load(IDbConnection conn, IDbTransaction trans, int charId)
+    public static async Task<VampireV5Merits> Load(IDbConnection conn, IDbTransaction trans, int charId, CharacterService? characterService = null)
     {
         VampireV5Merits merits = new VampireV5Merits();
         var sql =
@@ -1244,7 +1286,7 @@ public class VampireV5Merits : VampireV5BackgroundMeritFlaw, ICharacterSaveable
             FROM melpominee_character_meritflawbackgrounds
             WHERE charid = @CharId AND itemtype = @ItemType;
         ";
-        var results = conn.Query(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
+        var results = await conn.QueryAsync(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
         foreach (var result in results)
         {
             merits.Add(
@@ -1274,7 +1316,7 @@ public class VampireV5Flaws : VampireV5BackgroundMeritFlaw, ICharacterSaveable
         return Save(conn, trans, charId, ItemType);
     }
 
-    public static VampireV5Flaws Load(int charId)
+    public static async Task<VampireV5Flaws> Load(int charId, CharacterService? characterService = null)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -1283,7 +1325,7 @@ public class VampireV5Flaws : VampireV5BackgroundMeritFlaw, ICharacterSaveable
             {
                 try
                 {
-                    var result = Load(conn, trans, charId);
+                    var result = await Load(conn, trans, charId, characterService);
                     trans.Commit();
                     return result;
                 }
@@ -1296,7 +1338,7 @@ public class VampireV5Flaws : VampireV5BackgroundMeritFlaw, ICharacterSaveable
         }
     }
 
-    public static VampireV5Flaws Load(IDbConnection conn, IDbTransaction trans, int charId)
+    public static async Task<VampireV5Flaws> Load(IDbConnection conn, IDbTransaction trans, int charId, CharacterService? characterService = null)
     {
         VampireV5Flaws merits = new VampireV5Flaws();
         var sql =
@@ -1305,7 +1347,7 @@ public class VampireV5Flaws : VampireV5BackgroundMeritFlaw, ICharacterSaveable
             FROM melpominee_character_meritflawbackgrounds
             WHERE charid = @CharId AND itemtype = @ItemType;
         ";
-        var results = conn.Query(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
+        var results = await conn.QueryAsync(sql, new { CharId = charId, ItemType = ItemType }, transaction: trans);
         foreach (var result in results)
         {
             merits.Add(

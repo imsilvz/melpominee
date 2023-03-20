@@ -99,7 +99,7 @@ public class CharacterController : ControllerBase
         user = (await _userManager.GetUser(identity.Name))!;
 
         // fetch character data
-        var charList = VampireV5Character.GetCharactersByUser(identity.Name);
+        var charList = await VampireV5Character.GetCharactersByUser(identity.Name);
         var headerList = new List<VampireV5Header>();
         foreach (var character in charList)
         {

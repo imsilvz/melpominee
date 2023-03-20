@@ -17,31 +17,39 @@ public class CharacterService
         return true;
     }
 
-    public async Task<T?> GetCharacterProperty<T>(int charId) where T : ICharacterSaveable
+    public async Task<T?> GetCharacterProperty<T>(params object[] args) where T : ICharacterSaveable
     {
+        List<Type> typeList = new List<Type>();
+        foreach(var arg in args)
+        {
+            typeList.Add(arg.GetType());
+        }
+        typeList.Add(typeof(CharacterService));
+
         // get static load method
-        var loadMethod = typeof(T).GetMethod("Load", new Type[] { typeof(int) });
+        var loadMethod = typeof(T).GetMethod("Load", typeList.ToArray());
         if (loadMethod is null)
             return default;
 
         T? character = default;
-        var keyName = $"melpominee:character:{charId}:{typeof(T).Name}";
+        var keyName = $"melpominee:character:{args[args.Length - 1]}:{typeof(T).Name}";
         var cacheData = await _cache.GetStringAsync(keyName);
         if (!string.IsNullOrEmpty(cacheData))
         {
             character = JsonSerializer.Deserialize<T>(cacheData);
-            Console.WriteLine(character);
             if (character is not null)
             {
                 return character;
             }
         }
 
-        character = (T?)loadMethod.Invoke(null, new object[] { charId });
+        object[] methodArgs = new object[args.Length + 1];
+        Array.Copy(args, methodArgs, args.Length);
+        methodArgs[methodArgs.Length - 1] = this;
+        character = await (Task<T?>)loadMethod.Invoke(null, methodArgs)!;
         if (character is not null)
         {
             await _cache.SetStringAsync(keyName, JsonSerializer.Serialize<T>(character));
-            Console.WriteLine(await _cache.GetStringAsync(keyName));
         }
         return character;
     }

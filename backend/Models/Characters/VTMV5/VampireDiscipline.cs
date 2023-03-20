@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Melpominee.app.Services.Characters;
 using Melpominee.app.Services.Database;
 namespace Melpominee.app.Models.Characters.VTMV5;
 
@@ -189,7 +190,7 @@ public class VampireV5Disciplines : IDictionary<string, int>, ICharacterSaveable
         return true;
     }
 
-    public static VampireV5Disciplines Load(int charId)
+    public static async Task<VampireV5Disciplines> Load(int charId, CharacterService? characterService = null)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -198,7 +199,7 @@ public class VampireV5Disciplines : IDictionary<string, int>, ICharacterSaveable
             {
                 try
                 {
-                    var result = Load(conn, trans, charId);
+                    var result = await Load(conn, trans, charId, characterService);
                     trans.Commit();
                     return result;
                 }
@@ -211,7 +212,7 @@ public class VampireV5Disciplines : IDictionary<string, int>, ICharacterSaveable
         }
     }
 
-    public static VampireV5Disciplines Load(IDbConnection conn, IDbTransaction trans, int charId)
+    public static async Task<VampireV5Disciplines> Load(IDbConnection conn, IDbTransaction trans, int charId, CharacterService? characterService = null)
     {
         VampireV5Disciplines disciplines = new VampireV5Disciplines();
         var sql = 
@@ -220,7 +221,7 @@ public class VampireV5Disciplines : IDictionary<string, int>, ICharacterSaveable
             FROM melpominee_character_disciplines
             WHERE charid = @CharId;
         ";
-        var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
+        var results = await conn.QueryAsync(sql, new { CharId = charId }, transaction: trans);
         foreach(var result in results)
         {
             disciplines[(string)result.discipline] = (int)result.score;
@@ -354,7 +355,7 @@ public class VampireV5DisciplinePowers : IList<VampirePower>, ICharacterSaveable
         return true;
     }
 
-    public static VampireV5DisciplinePowers Load(int charId)
+    public static async Task<VampireV5DisciplinePowers> Load(int charId, CharacterService? characterService = null)
     {
         using (var conn = DataContext.Instance.Connect())
         {
@@ -363,7 +364,7 @@ public class VampireV5DisciplinePowers : IList<VampirePower>, ICharacterSaveable
             {
                 try
                 {
-                    var result = Load(conn, trans, charId);
+                    var result = await Load(conn, trans, charId, characterService);
                     trans.Commit();
                     return result;
                 }
@@ -376,7 +377,7 @@ public class VampireV5DisciplinePowers : IList<VampirePower>, ICharacterSaveable
         }
     }
 
-    public static VampireV5DisciplinePowers Load(IDbConnection conn, IDbTransaction trans, int charId)
+    public static async Task<VampireV5DisciplinePowers> Load(IDbConnection conn, IDbTransaction trans, int charId, CharacterService? characterService = null)
     {
         VampireV5DisciplinePowers powers = new VampireV5DisciplinePowers();
         var sql = 
@@ -385,7 +386,7 @@ public class VampireV5DisciplinePowers : IList<VampirePower>, ICharacterSaveable
             FROM melpominee_character_discipline_powers
             WHERE charid = @CharId;
         ";
-        var results = conn.Query(sql, new { CharId = charId }, transaction: trans);
+        var results = await conn.QueryAsync(sql, new { CharId = charId }, transaction: trans);
         foreach(var result in results)
         {
             var power = VampirePower.GetDisciplinePower(result.powerid);

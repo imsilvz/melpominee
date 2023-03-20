@@ -238,7 +238,7 @@ public class VampireAttributesUpdate
                             score = @Score;
                     ";
                     await conn.ExecuteAsync(update, updateList, transaction: trans);
-                    character.Attributes = VampireV5Attributes.Load(conn, trans, (int)character.Id);
+                    character.Attributes = await VampireV5Attributes.Load(conn, trans, (int)character.Id);
                     trans.Commit();
                 }
                 catch (Exception)
@@ -677,7 +677,7 @@ public class VampirePowersUpdate
                             ";
                             await conn.ExecuteAsync(sql, addItems, transaction: trans);
                         }
-                        character.DisciplinePowers = VampireV5DisciplinePowers.Load(conn, trans, (int)character.Id);
+                        character.DisciplinePowers = await VampireV5DisciplinePowers.Load(conn, trans, (int)character.Id);
                         trans.Commit();
                     }
                     catch (Exception)
@@ -935,7 +935,7 @@ public class VampireProfileUpdate
                         WHERE charid = @Id;
                     ";
                     await conn.ExecuteAsync(sql, this, transaction: trans);
-                    character.Profile = VampireV5Profile.Load(conn, trans, (int)this.Id);
+                    character.Profile = await VampireV5Profile.Load(conn, trans, (int)this.Id);
                     trans.Commit();
                 }
                 catch (Exception)

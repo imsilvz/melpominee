@@ -147,22 +147,10 @@ public class MasterdataController : ControllerBase
     [HttpGet(Name = "Get Predator Type List")]
     public PredatorTypeListResponse GetPredatorTypeList()
     {
-        List<VampirePredatorType> predatorList = new List<VampirePredatorType>();
-        foreach(var asm in AppDomain.CurrentDomain.GetAssemblies())
-        {
-            foreach (var type in asm.GetTypes())
-            {
-                if (type.BaseType == typeof(VampirePredatorType))
-                {
-                    VampirePredatorType reflectType = (VampirePredatorType)Activator.CreateInstance(type)!;
-                    predatorList.Add(reflectType);
-                }
-            }
-        }
         return new PredatorTypeListResponse
         {
             Success = true,
-            PredatorTypes = predatorList
+            PredatorTypes = VampirePredatorType.TypeDict.Values.ToList()
         };
     }
 

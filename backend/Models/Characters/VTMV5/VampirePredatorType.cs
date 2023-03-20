@@ -1,5 +1,6 @@
 using Dapper;
 using System.Data;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 namespace Melpominee.app.Models.Characters.VTMV5;
@@ -11,26 +12,33 @@ public abstract class VampirePredatorType
     public abstract string Description { get; }
     public abstract string RollInfo { get; }
     public abstract List<string> EffectList { get; }
-    private static Dictionary<string, VampirePredatorType>? TypeDict;
-    public static VampirePredatorType GetPredatorType(string id)
+
+    public static Dictionary<string, VampirePredatorType> TypeDict = new Dictionary<string, VampirePredatorType>();
+    static VampirePredatorType()
     {
-        VampirePredatorType? predatorType = null;
-        if (TypeDict is null)
+        Assembly assembly = Assembly.GetExecutingAssembly();
+        string resourceName = "Melpominee.app.backend.Data.PredatorTypes.json";
+        using (Stream? stream = assembly.GetManifestResourceStream(resourceName))
         {
-            // first run
-            TypeDict = new Dictionary<string, VampirePredatorType>();
-            foreach(var asm in AppDomain.CurrentDomain.GetAssemblies())
+            if (stream is not null)
+            using (StreamReader reader = new StreamReader(stream))
             {
-                foreach (var type in asm.GetTypes())
+                string json = reader.ReadToEnd();
+                var predDict = JsonSerializer.Deserialize<List<VampirePredatorType>>(json);
+                if (predDict is not null)
                 {
-                    if (type.BaseType == typeof(VampirePredatorType))
+                    foreach(var predType in predDict)
                     {
-                        VampirePredatorType reflectType = (VampirePredatorType)Activator.CreateInstance(type)!;
-                        TypeDict.Add(reflectType.Id, reflectType);
+                        TypeDict.Add(predType.Id, predType);
                     }
                 }
             }
         }
+    }
+
+    public static VampirePredatorType GetPredatorType(string id)
+    {
+        VampirePredatorType? predatorType = null;
         if (TypeDict.TryGetValue(id, out predatorType))
         {
             return predatorType;

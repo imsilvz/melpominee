@@ -158,6 +158,13 @@ public class VampireCharacterUpdate
                 }
             }
         }
+
+        // handle cache
+        if (cache is not null)
+        {
+            var charKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Character).Name}";
+            await cache.RemoveAsync(charKey);
+        }
     }
 }
 
@@ -240,6 +247,14 @@ public class VampireAttributesUpdate
                     throw;
                 }
             }
+        }
+
+        // handle cache
+        if (cache is not null)
+        {
+            var charKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Character).Name}";
+            var propKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Attributes).Name}";
+            await Task.WhenAll(new Task[] { cache.RemoveAsync(charKey), cache.RemoveAsync(propKey) } );
         }
     }
 }
@@ -347,6 +362,14 @@ public class VampireSkillsUpdate
                 }
             }
         }
+
+        // handle cache
+        if (cache is not null)
+        {
+            var charKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Character).Name}";
+            var propKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Skills).Name}";
+            await Task.WhenAll(new Task[] { cache.RemoveAsync(charKey), cache.RemoveAsync(propKey) } );
+        }
     }
 }
 
@@ -452,6 +475,14 @@ public class VampireStatsUpdate
                 }
             }
         }
+
+        // handle cache
+        if (cache is not null)
+        {
+            var charKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Character).Name}";
+            var propKey = $"melpominee:character:{character.Id}:{typeof(VampireV5SecondaryStats).Name}";
+            await Task.WhenAll(new Task[] { cache.RemoveAsync(charKey), cache.RemoveAsync(propKey) } );
+        }
     }
 }
 
@@ -554,6 +585,14 @@ public class VampireDisciplinesUpdate
                 }
             }
         }
+
+        // handle cache
+        if (cache is not null)
+        {
+            var charKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Character).Name}";
+            var propKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Disciplines).Name}";
+            await Task.WhenAll(new Task[] { cache.RemoveAsync(charKey), cache.RemoveAsync(propKey) } );
+        }
     }
 }
 
@@ -648,6 +687,14 @@ public class VampirePowersUpdate
                     }
                 }
             }
+
+            // handle cache
+            if (cache is not null)
+            {
+                var charKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Character).Name}";
+                var propKey = $"melpominee:character:{character.Id}:{typeof(VampireV5DisciplinePowers).Name}";
+                await Task.WhenAll(new Task[] { cache.RemoveAsync(charKey), cache.RemoveAsync(propKey) } );
+            }
         }
     }
 }
@@ -722,6 +769,14 @@ public class VampireBeliefsUpdate
                 }
             }
         }
+
+        // handle cache
+        if (cache is not null)
+        {
+            var charKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Character).Name}";
+            var propKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Beliefs).Name}";
+            await Task.WhenAll(new Task[] { cache.RemoveAsync(charKey), cache.RemoveAsync(propKey) } );
+        }
     }
 }
 
@@ -757,6 +812,23 @@ public class VampireBackgroundMeritFlawUpdate
             await Apply(character, VampireV5Merits.ItemType, Merits);
         if (Flaws is not null)
             await Apply(character, VampireV5Flaws.ItemType, Flaws);
+
+        // handle cache
+        if (cache is not null)
+        {
+            var charKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Character).Name}";
+            var propKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Backgrounds).Name}";
+            var prop2Key = $"melpominee:character:{character.Id}:{typeof(VampireV5Merits).Name}";
+            var prop3Key = $"melpominee:character:{character.Id}:{typeof(VampireV5Flaws).Name}";
+            await Task.WhenAll(new Task[] 
+                { 
+                    cache.RemoveAsync(charKey), 
+                    cache.RemoveAsync(propKey), 
+                    cache.RemoveAsync(prop2Key), 
+                    cache.RemoveAsync(prop3Key) 
+                } 
+            );
+        }
     }
 
     private async Task Apply(VampireV5Character character, string ItemType, VampireV5BackgroundMeritFlaw Items)
@@ -872,6 +944,14 @@ public class VampireProfileUpdate
                     throw;
                 }
             }
+        }
+
+        // handle cache
+        if (cache is not null)
+        {
+            var charKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Character).Name}";
+            var propKey = $"melpominee:character:{character.Id}:{typeof(VampireV5Profile).Name}";
+            await Task.WhenAll(new Task[] { cache.RemoveAsync(charKey), cache.RemoveAsync(propKey) } );
         }
     }
 }

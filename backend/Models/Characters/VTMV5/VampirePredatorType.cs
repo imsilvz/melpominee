@@ -43,7 +43,12 @@ public class VampirePredatorTypeJsonConverter : JsonConverter<VampirePredatorTyp
 {
     public override VampirePredatorType? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        throw new NotImplementedException();
+        string? predId = reader.GetString();
+        if (predId is not null)
+        {
+            return VampirePredatorType.GetPredatorType(predId);
+        }
+        return VampirePredatorType.GetPredatorType("");
     }
 
     public override void Write(Utf8JsonWriter writer, VampirePredatorType value, JsonSerializerOptions options)

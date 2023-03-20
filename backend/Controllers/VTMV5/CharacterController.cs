@@ -62,7 +62,7 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = _characterService
+            character = await _characterService
                 .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null)
             {
@@ -145,9 +145,9 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = _characterService
+            character = await _characterService
                 .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null && character.Loaded)
+            if (character is not null)
             {
                 await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -217,7 +217,7 @@ public class CharacterController : ControllerBase
         VampireV5Attributes? attributes;
         if (charId > 0)
         {
-            attributes = _characterService
+            attributes = await _characterService
                 .GetCharacterProperty<VampireV5Attributes>(charId);
             if (attributes is not null)
             {
@@ -266,9 +266,9 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = _characterService
+            character = await _characterService
                 .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null && character.Loaded)
+            if (character is not null)
             {
                 await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -309,7 +309,7 @@ public class CharacterController : ControllerBase
         VampireV5Skills? skills;
         if (charId > 0)
         {
-            skills = _characterService
+            skills = await _characterService
                 .GetCharacterProperty<VampireV5Skills>(charId);
             if (skills is not null)
             {
@@ -359,9 +359,9 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = _characterService
+            character = await _characterService
                 .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null && character.Loaded)
+            if (character is not null)
             {
                 await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -403,7 +403,7 @@ public class CharacterController : ControllerBase
         VampireV5SecondaryStats? stats;
         if (charId > 0)
         {
-            stats = _characterService
+            stats = await _characterService
                 .GetCharacterProperty<VampireV5SecondaryStats>(charId);
             if (stats is not null)
             {
@@ -453,9 +453,9 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = _characterService
+            character = await _characterService
                 .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null && character.Loaded)
+            if (character is not null)
             {
                 await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -496,7 +496,7 @@ public class CharacterController : ControllerBase
         VampireV5Disciplines? disciplines;
         if (charId > 0)
         {
-            disciplines = _characterService
+            disciplines = await _characterService
                 .GetCharacterProperty<VampireV5Disciplines>(charId);
             if (disciplines is not null)
             {
@@ -546,9 +546,9 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = _characterService
+            character = await _characterService
                 .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null && character.Loaded)
+            if (character is not null)
             {
                 await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -589,7 +589,7 @@ public class CharacterController : ControllerBase
         VampireV5DisciplinePowers? powers;
         if (charId > 0)
         {
-            powers = _characterService
+            powers = await _characterService
                 .GetCharacterProperty<VampireV5DisciplinePowers>(charId);
             if (powers is not null)
             {
@@ -639,9 +639,9 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = _characterService
+            character = await _characterService
                 .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null && character.Loaded)
+            if (character is not null)
             {
                 await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -682,7 +682,7 @@ public class CharacterController : ControllerBase
         VampireV5Beliefs? beliefs;
         if (charId > 0)
         {
-            beliefs = _characterService
+            beliefs = await _characterService
                 .GetCharacterProperty<VampireV5Beliefs>(charId);
             if (beliefs is not null)
             {
@@ -732,9 +732,9 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = _characterService
+            character = await _characterService
                 .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null && character.Loaded)
+            if (character is not null)
             {
                 await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -775,7 +775,7 @@ public class CharacterController : ControllerBase
         VampireV5Backgrounds? backgrounds;
         if (charId > 0)
         {
-            backgrounds = _characterService
+            backgrounds = await _characterService
                 .GetCharacterProperty<VampireV5Backgrounds>(charId);
             if (backgrounds is not null)
             {
@@ -825,9 +825,9 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = _characterService
+            character = await _characterService
                 .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null && character.Loaded)
+            if (character is not null)
             {
                 await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -868,7 +868,7 @@ public class CharacterController : ControllerBase
         VampireV5Merits? merits;
         if (charId > 0)
         {
-            merits = _characterService
+            merits = await _characterService
                 .GetCharacterProperty<VampireV5Merits>(charId);
             if (merits is not null)
             {
@@ -918,9 +918,9 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = _characterService
+            character = await _characterService
                 .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null && character.Loaded)
+            if (character is not null)
             {
                 await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -961,7 +961,7 @@ public class CharacterController : ControllerBase
         VampireV5Flaws? flaws;
         if (charId > 0)
         {
-            flaws = _characterService
+            flaws = await _characterService
                 .GetCharacterProperty<VampireV5Flaws>(charId);
             if (flaws is not null)
             {
@@ -1011,9 +1011,9 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = _characterService
+            character = await _characterService
                 .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null && character.Loaded)
+            if (character is not null)
             {
                 await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")
@@ -1054,7 +1054,7 @@ public class CharacterController : ControllerBase
         VampireV5Profile? profile;
         if (charId > 0)
         {
-            profile = _characterService
+            profile = await _characterService
                 .GetCharacterProperty<VampireV5Profile>(charId);
             if (profile is not null)
             {
@@ -1104,9 +1104,9 @@ public class CharacterController : ControllerBase
         VampireV5Character? character;
         if (charId > 0)
         {
-            character = _characterService
+            character = await _characterService
                 .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null && character.Loaded)
+            if (character is not null)
             {
                 await update.UpdateData.Apply(character!, _cache);
                 _ = _characterHub.Clients.Group($"character_{charId}")

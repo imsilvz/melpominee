@@ -48,7 +48,12 @@ public class VampireClanJsonConverter : JsonConverter<VampireClan>
 {
     public override VampireClan? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        throw new NotImplementedException();
+        string? clanId = reader.GetString();
+        if (clanId is not null)
+        {
+            return VampireClan.GetClan(clanId);
+        }
+        return VampireClan.GetClan("");
     }
 
     public override void Write(Utf8JsonWriter writer, VampireClan value, JsonSerializerOptions options)

@@ -255,8 +255,6 @@ public class VampireV5Character : BaseCharacter
                 }
             }
         }
-        user.LoadedAt = DateTime.UtcNow;
-        user.Loaded = true;
         return user;
     }
 
@@ -289,8 +287,6 @@ public class VampireV5Character : BaseCharacter
                 }
             }
         }
-        character.LoadedAt = DateTime.UtcNow;
-        character.Loaded = true;
         return character.GetHeader();
     }
 
@@ -336,8 +332,6 @@ public class VampireV5Character : BaseCharacter
                     character.DisciplinePowers = disciplinePowers ?? character.DisciplinePowers;
                     character.Beliefs = beliefs ?? character.Beliefs;
                     character.Profile = profile ?? character.Profile;
-                    character.LoadedAt = DateTime.UtcNow;
-                    character.Loaded = true;
                 }
                 return charList;
             }

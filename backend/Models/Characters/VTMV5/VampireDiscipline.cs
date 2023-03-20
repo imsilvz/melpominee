@@ -399,7 +399,19 @@ public class VampirePowerListJsonConverter : JsonConverter<VampireV5DisciplinePo
 {
     public override VampireV5DisciplinePowers? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        throw new NotImplementedException();
+        var powerList = JsonSerializer.Deserialize<List<string>>(ref reader, options);
+        VampireV5DisciplinePowers powers = new VampireV5DisciplinePowers();
+
+        // default
+        if (powerList is null)
+            return powers;
+
+        // iterate and get
+        foreach(var powerId in powerList)
+        {
+            powers.Add(VampirePower.GetDisciplinePower(powerId));
+        }
+        return powers;
     }
 
     public override void Write(Utf8JsonWriter writer, VampireV5DisciplinePowers value, JsonSerializerOptions options)

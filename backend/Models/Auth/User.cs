@@ -17,7 +17,6 @@ public class User {
     public bool CanViewCharacter(BaseCharacter? character)
     {
         if (!string.IsNullOrEmpty(character?.Owner) &&
-            character.Loaded &&
             character.Owner == Email)
         {
             return true;

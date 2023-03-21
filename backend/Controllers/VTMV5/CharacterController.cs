@@ -237,7 +237,7 @@ public class CharacterController : ControllerBase
 
     [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("attributes/{charId:int}", Name = "Update Character Attributes")]
-    public async Task<VampireAttributesResponse> UpdateAttributes(int charId, [FromBody] CharacterUpdateWrapper<VampireAttributesUpdate> update)
+    public async Task<VampireAttributesResponse> UpdateAttributes(int charId, [FromBody] CharacterUpdateWrapper<VampireAttributeUpdate> update)
     {
         // get email of logged in user
         User user;
@@ -329,7 +329,7 @@ public class CharacterController : ControllerBase
 
     [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("skills/{charId:int}", Name = "Update Character Skills")]
-    public async Task<VampireSkillsResponse> UpdateSkills(int charId, [FromBody] CharacterUpdateWrapper<VampireSkillsUpdate> update)
+    public async Task<VampireSkillsResponse> UpdateSkills(int charId, [FromBody] CharacterUpdateWrapper<VampireSkillUpdate> update)
     {
         // get email of logged in user
         User user;
@@ -516,7 +516,7 @@ public class CharacterController : ControllerBase
 
     [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("disciplines/{charId:int}", Name = "Update Character Disciplines")]
-    public async Task<VampireDisciplinesResponse> UpdateDisciplines(int charId, [FromBody] CharacterUpdateWrapper<VampireDisciplinesUpdate> update)
+    public async Task<VampireDisciplinesResponse> UpdateDisciplines(int charId, [FromBody] CharacterUpdateWrapper<VampireDisciplineUpdate> update)
     {
         // get email of logged in user
         User user;

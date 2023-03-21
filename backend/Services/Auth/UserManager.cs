@@ -39,7 +39,11 @@ public class UserManager
         {
             using (var conn = DataContext.Instance.Connect())
             {
-                string sql = "SELECT * FROM melpominee_users WHERE email = @Email";
+                string sql = @"
+                SELECT 
+                    email, password, role, activationkey, 
+                    activationrequested, activationcompleted, active 
+                FROM melpominee_users WHERE email = @Email";
                 user = await conn.QueryFirstOrDefaultAsync<User>(sql, new { Email = email });
                 if (user is null || (onlyActive && !user.Active))
                 {
@@ -340,7 +344,9 @@ public class UserManager
                     // fetch user object
                     var sql =
                     @"
-                        SELECT *
+                        SELECT 
+                            email, password, role, activationkey, 
+                            activationrequested, activationcompleted, active
                         FROM melpominee_users
                         WHERE email = @Email;
                     ";

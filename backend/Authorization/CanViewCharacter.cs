@@ -46,7 +46,7 @@ public class CanViewCharacterHandler : AuthorizationHandler<CanViewCharacterRequ
                 return;
 
             // check ownership
-            if (user.Email == character.Owner) 
+            if (user.Email == character.Owner || user.Role == "admin") 
             {
                 context.Succeed(requirement);
             }

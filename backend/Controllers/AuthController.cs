@@ -60,7 +60,7 @@ public class AuthController : ControllerBase
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Email!),
-                    new Claim(ClaimTypes.Role, "user")
+                    new Claim(ClaimTypes.Role, user.Role!)
                 };
 
                 // store it in the session
@@ -277,7 +277,7 @@ public class AuthController : ControllerBase
         {
             // assert not null as we have performed registration in the previous step
             new Claim(ClaimTypes.NameIdentifier, user!.Email!),
-            new Claim(ClaimTypes.Role, "user")
+            new Claim(ClaimTypes.Role, user.Role!)
         };
 
         // store it in the cookie

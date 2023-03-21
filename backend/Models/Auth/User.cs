@@ -8,6 +8,7 @@ public class User {
     public string? Email { get; set; }
     [JsonIgnore]
     public string? Password { get; set; }
+    public string? Role { get; set; }
     [JsonIgnore]
     public string? ActivationKey { get; set; }
     public DateTime? ActivationRequested { get; set; }

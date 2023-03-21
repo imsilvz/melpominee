@@ -263,6 +263,7 @@ public class UserManager
                 {
                     Email = email, 
                     Password = HashPassword(password), 
+                    Role = "user",
                     ActivationKey = activationKey,
                     ActivationRequested = DateTime.UtcNow,
                 };
@@ -273,9 +274,9 @@ public class UserManager
                     var sql = 
                     @"
                         INSERT INTO melpominee_users 
-                            (email, password, activationkey, activationrequested)
+                            (email, password, role, activationkey, activationrequested)
                         VALUES
-                            (@Email, @Password, @ActivationKey, CURRENT_TIMESTAMP)
+                            (@Email, @Password, @Role, @ActivationKey, CURRENT_TIMESTAMP)
                         ON CONFLICT(email) DO NOTHING;
                     ";
                     if (conn.Execute(sql, user) <= 0) {
@@ -416,6 +417,7 @@ public class UserManager
                     {
                         Email = email,
                         Password = null,
+                        Role = "user",
                         ActivationKey = null,
                         ActivationRequested = null,
                         ActivationCompleted = DateTime.UtcNow,
@@ -425,17 +427,18 @@ public class UserManager
                     @"
                         INSERT INTO melpominee_users
                             (
-                                email, password, activationkey,
+                                email, password, role, activationkey,
                                 activationrequested, activationcompleted, active
                             )
                         VALUES
                             (
-                                @Email, @Password, @ActivationKey,
+                                @Email, @Password, @Role, @ActivationKey,
                                 @ActivationRequested, @ActivationCompleted, @Active
                             )
                         ON CONFLICT(email) DO UPDATE
                         SET
                             password = @Password,
+                            role = @Role,
                             activationkey = @ActivationKey,
                             activationrequested = @ActivationRequested,
                             activationcompleted = @ActivationCompleted,

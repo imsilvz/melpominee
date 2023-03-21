@@ -30,6 +30,7 @@ public class DataContext
                 CREATE TABLE IF NOT EXISTS melpominee_users (
                     Email TEXT NOT NULL PRIMARY KEY,
                     Password TEXT,
+                    Role TEXT NOT NULL DEFAULT 'user',
                     ActivationKey TEXT,
                     ActivationRequested TIMESTAMP,
                     ActivationCompleted TIMESTAMP,

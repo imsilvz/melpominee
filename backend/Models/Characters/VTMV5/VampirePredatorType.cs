@@ -24,7 +24,11 @@ public class VampirePredatorType
             using (StreamReader reader = new StreamReader(stream))
             {
                 string json = reader.ReadToEnd();
-                var predDict = JsonSerializer.Deserialize<Dictionary<string, VampirePredatorType>>(json);
+                JsonSerializerOptions jsonOptions = new()
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                var predDict = JsonSerializer.Deserialize<Dictionary<string, VampirePredatorType>>(json, jsonOptions);
                 if (predDict is not null)
                 {
                     TypeDict = predDict;

@@ -296,6 +296,16 @@ const CharacterSheet = () => {
     fetchCharacter().catch(console.error);
   }, [navigate, id]);
 
+  useEffect(() => {
+    const prevTitle = document.title;
+    if (currCharacter) {
+      document.title = `Melpominee - ${currCharacter.name || ''}`;
+    }
+    return () => {
+      document.title = prevTitle;
+    };
+  }, [currCharacter]);
+
   return (
     <div className="charactersheet-container">
       {loading ? (

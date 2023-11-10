@@ -66,13 +66,13 @@ spec:
           projected:
             sources:
               - secret:
-                name: melpominee-discord
+                  name: melpominee-discord
               - secret:
-                name: melpominee-email
+                  name: melpominee-email
               - secret:
-                name: melpominee-postgres
+                  name: melpominee-postgres
               - secret:
-                name: melpominee-redis
+                  name: melpominee-redis
       containers:
       - name: backend
         image: ghcr.io/imsilvz/melpominee-backend:master

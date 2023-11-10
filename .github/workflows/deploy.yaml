@@ -66,12 +66,14 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_SECRET }}
-        
-      - name: Install Kubectl
+
+      - name: Authenticate with AKS
         run: |
           az aks install-cli
-
-      - name: Azure Kubectl Login
-        run: |
           az aks get-credentials --resource-group ${{ vars.AZURE_GROUP }} --name ${{ vars.AZURE_CLUSTER }}
     
+      - name: Apply Manifests
+        run: |
+          kubectl apply -f ./manifests/deploy.yaml
+          kubectl rollout restart deployment melpominee-frontend --namespace=melpominee
+          kubectl rollout restart deployment melpominee-backend --namespace=melpominee

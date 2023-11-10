@@ -20,7 +20,7 @@ public class SecretManager
         if(Directory.Exists("/etc/melpominee/secrets/"))
         {
             // load as docker secret
-            filePath = $"/etc/melpominee/secrets/{filename}";
+            filePath = $"/etc/melpominee/secrets/{filename}.json";
         } 
         else
         {

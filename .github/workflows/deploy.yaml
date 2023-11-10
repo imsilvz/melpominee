@@ -67,6 +67,11 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_SECRET }}
         
-      - run: |
-          az webapp list --query "[?state=='Running']"
+      - name: Install Kubectl
+        run: |
+          az aks install-cli
+
+      - name: Azure Kubectl Login
+        run: |
+          az aks get-credentials --resource-group ${{ vars.AZURE_GROUP }} --name ${{ vars.AZURE_CLUSTER }}
     

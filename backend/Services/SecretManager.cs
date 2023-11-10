@@ -17,10 +17,10 @@ public class SecretManager
     {
         // check docker directory
         string filePath;
-        if(Directory.Exists("/run/secrets/"))
+        if(Directory.Exists("/etc/melpominee/secrets/"))
         {
             // load as docker secret
-            filePath = $"/run/secrets/{filename}";
+            filePath = $"/etc/melpominee/secrets/{filename}";
         } 
         else
         {

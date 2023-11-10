@@ -1,0 +1,164 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: melpominee-frontend
+  namespace: melpominee
+  labels:
+    app: melpominee-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: melpominee-frontend
+  template:
+    metadata:
+      labels:
+        app: melpominee-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ghcr.io/imsilvz/melpominee-frontend:master
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 250m
+          limits:
+            memory: 256Mi
+            cpu: 250m
+      imagePullSecrets:
+      - name: dockerconfigjson-github-com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: melpominee-frontend
+  namespace: melpominee
+spec:
+  selector:
+    app.kubernetes.io/name: melpominee-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: melpominee-backend
+  namespace: melpominee
+  labels:
+    app: melpominee-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: melpominee-backend
+  template:
+    metadata:
+      labels:
+        app: melpominee-backend
+    spec:
+      volumes:
+        - name: secret-volume
+          projected:
+            sources:
+              - secret:
+                name: melpominee-discord
+              - secret:
+                name: melpominee-email
+              - secret:
+                name: melpominee-postgres
+              - secret:
+                name: melpominee-redis
+      containers:
+      - name: backend
+        image: ghcr.io/imsilvz/melpominee-backend:master
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 250m
+          limits:
+            memory: 256Mi
+            cpu: 250m
+        volumeMounts:
+        - name: secret-volume
+          mountPath: "/etc/melpominee/secrets"
+          readOnly: true
+      imagePullSecrets:
+      - name: dockerconfigjson-github-com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: melpominee-backend
+  namespace: melpominee
+spec:
+  selector:
+    app.kubernetes.io/name: melpominee-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: cluster-issuer
+  name: ingress-pgadmin4
+  namespace: default
+spec:
+  rules:
+  - host: pgadmin.melpominee.app
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: pgadmin4
+            port:
+              number: 80
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - pgadmin.melpominee.app
+    secretName: pgadmin-cert
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: cluster-issuer
+  name: ingress-melpominee
+  namespace: default
+spec:
+  rules:
+  - host: melpominee.app
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: melpominee-backend
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: melpominee-frontend
+            port:
+              number: 80
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - melpominee.app
+    secretName: melpominee-cert

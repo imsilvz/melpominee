@@ -61,16 +61,12 @@ jobs:
           file: ./frontend/Dockerfile
           tags: ${{ steps.meta-frontend.outputs.tags }}
           labels: ${{ steps.meta-frontend.outputs.labels }}
-      
-      - name: Azure Login
-        uses: azure/login@14a755a4e2fd6dff25794233def4f2cf3f866955
-        with:
-          creds: ${{ secrets.AZURE_SECRET }}
 
-      - name: Gets K8s context
-        uses: azure/aks-set-context@94ccc775c1997a3fcfbfbce3c459fec87e0ab188
+      - name: Azure Login
+        uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_SECRET }}
-          resource-group: ${{ vars.AZURE_GROUP }}
-          cluster-name: ${{ vars.AZURE_CLUSTER }}
-        id: login
+        
+      - run: |
+          az webapp list --query "[?state=='Running']"
+    

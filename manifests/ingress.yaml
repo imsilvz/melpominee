@@ -28,22 +28,24 @@ kind: Ingress
 metadata:
   annotations:
     cert-manager.io/cluster-issuer: cluster-issuer
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
   name: ingress-melpominee
-  namespace: default
+  namespace: melpominee
 spec:
   rules:
   - host: melpominee.app
     http:
       paths:
-      - path: /api
-        pathType: Prefix
+      - path: /api/(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: melpominee-backend
             port:
               number: 80
-      - path: /
-        pathType: Prefix
+      - path: /(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: melpominee-frontend

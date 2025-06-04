@@ -82,14 +82,15 @@ jobs:
             cluster-name: ${{ vars.AZURE_CLUSTER }}
         id: login
       
-      - name: Rollout Restart
-        run: |
-          kubectl rollout restart deployment melpominee-frontend --namespace=melpominee
-          kubectl rollout restart deployment melpominee-backend --namespace=melpominee
+      #- name: Rollout Restart
+      #  run: |
+      #    kubectl rollout restart deployment melpominee-frontend --namespace=melpominee
+      #    kubectl rollout restart deployment melpominee-backend --namespace=melpominee
 
       - name: Deploy Manifests
         uses: Azure/k8s-deploy@v5
         with:
+          action: 'deploy'
           namespace: 'melpominee'
           manifests: |
             manifests

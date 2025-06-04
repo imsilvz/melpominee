@@ -351,28 +351,31 @@ public class VampireV5Character : BaseCharacter
                 foreach (var character in charList)
                 {
                     // fetch dependant objects
-                    var attributes = await VampireV5Attributes.Load(conn, trans, (int)character.Id!);
-                    var skills = await VampireV5Skills.Load(conn, trans, (int)character.Id!);
-                    var secondaryStats = await VampireV5SecondaryStats.Load(conn, trans, (int)character.Id!);
-                    var disciplines = await VampireV5Disciplines.Load(conn, trans, (int)character.Id!);
-                    var disciplinePowers = await VampireV5DisciplinePowers.Load(conn, trans, (int)character.Id!);
-                    var beliefs = await VampireV5Beliefs.Load(conn, trans, (int)character.Id!);
-                    var profile = await VampireV5Profile.Load(conn, trans, (int)character.Id!);
-                    var backgrounds = await VampireV5Backgrounds.Load(conn, trans, (int)character.Id!);
-                    var merits = await VampireV5Merits.Load(conn, trans, (int)character.Id!);
-                    var flaws = await VampireV5Flaws.Load(conn, trans, (int)character.Id!);
+                    var attributes = VampireV5Attributes.Load((int)character.Id!);
+                    var skills = VampireV5Skills.Load((int)character.Id!);
+                    var secondaryStats = VampireV5SecondaryStats.Load((int)character.Id!);
+                    var disciplines = VampireV5Disciplines.Load((int)character.Id!);
+                    var disciplinePowers = VampireV5DisciplinePowers.Load((int)character.Id!);
+                    var beliefs = VampireV5Beliefs.Load((int)character.Id!);
+                    var profile = VampireV5Profile.Load((int)character.Id!);
+                    var backgrounds = VampireV5Backgrounds.Load((int)character.Id!);
+                    var merits = VampireV5Merits.Load((int)character.Id!);
+                    var flaws = VampireV5Flaws.Load((int)character.Id!);
+
+                    // await
+                    await Task.WhenAll(attributes, skills, secondaryStats, disciplines, disciplinePowers, beliefs, profile, backgrounds, merits, flaws);
 
                     // if any fail to load, keep defaults
-                    character.Attributes = attributes ?? character.Attributes;
-                    character.Skills = skills ?? character.Skills;
-                    character.SecondaryStats = secondaryStats ?? character.SecondaryStats;
-                    character.Disciplines = disciplines ?? character.Disciplines;
-                    character.DisciplinePowers = disciplinePowers ?? character.DisciplinePowers;
-                    character.Beliefs = beliefs ?? character.Beliefs;
-                    character.Profile = profile ?? character.Profile;
-                    character.Backgrounds = backgrounds ?? character.Backgrounds;
-                    character.Merits = merits ?? character.Merits;
-                    character.Flaws = flaws ?? character.Flaws;
+                    character.Attributes = await attributes ?? character.Attributes;
+                    character.Skills = await skills ?? character.Skills;
+                    character.SecondaryStats = await secondaryStats ?? character.SecondaryStats;
+                    character.Disciplines = await disciplines ?? character.Disciplines;
+                    character.DisciplinePowers = await disciplinePowers ?? character.DisciplinePowers;
+                    character.Beliefs = await beliefs ?? character.Beliefs;
+                    character.Profile = await profile ?? character.Profile;
+                    character.Backgrounds = await backgrounds ?? character.Backgrounds;
+                    character.Merits = await merits ?? character.Merits;
+                    character.Flaws = await flaws ?? character.Flaws;
                 }
                 return charList;
             }
@@ -402,28 +405,31 @@ public class VampireV5Character : BaseCharacter
                 foreach (var character in charList)
                 {
                     // fetch dependant objects
-                    var attributes = await VampireV5Attributes.Load(conn, trans, (int)character.Id!);
-                    var skills = await VampireV5Skills.Load(conn, trans, (int)character.Id!);
-                    var secondaryStats = await VampireV5SecondaryStats.Load(conn, trans, (int)character.Id!);
-                    var disciplines = await VampireV5Disciplines.Load(conn, trans, (int)character.Id!);
-                    var disciplinePowers = await VampireV5DisciplinePowers.Load(conn, trans, (int)character.Id!);
-                    var beliefs = await VampireV5Beliefs.Load(conn, trans, (int)character.Id!);
-                    var profile = await VampireV5Profile.Load(conn, trans, (int)character.Id!);
-                    var backgrounds = await VampireV5Backgrounds.Load(conn, trans, (int)character.Id!);
-                    var merits = await VampireV5Merits.Load(conn, trans, (int)character.Id!);
-                    var flaws = await VampireV5Flaws.Load(conn, trans, (int)character.Id!);
+                    var attributes = VampireV5Attributes.Load((int)character.Id!);
+                    var skills = VampireV5Skills.Load((int)character.Id!);
+                    var secondaryStats = VampireV5SecondaryStats.Load((int)character.Id!);
+                    var disciplines = VampireV5Disciplines.Load((int)character.Id!);
+                    var disciplinePowers = VampireV5DisciplinePowers.Load((int)character.Id!);
+                    var beliefs = VampireV5Beliefs.Load((int)character.Id!);
+                    var profile = VampireV5Profile.Load((int)character.Id!);
+                    var backgrounds = VampireV5Backgrounds.Load((int)character.Id!);
+                    var merits = VampireV5Merits.Load((int)character.Id!);
+                    var flaws = VampireV5Flaws.Load((int)character.Id!);
+
+                    // await
+                    await Task.WhenAll(attributes, skills, secondaryStats, disciplines, disciplinePowers, beliefs, profile, backgrounds, merits, flaws);
 
                     // if any fail to load, keep defaults
-                    character.Attributes = attributes ?? character.Attributes;
-                    character.Skills = skills ?? character.Skills;
-                    character.SecondaryStats = secondaryStats ?? character.SecondaryStats;
-                    character.Disciplines = disciplines ?? character.Disciplines;
-                    character.DisciplinePowers = disciplinePowers ?? character.DisciplinePowers;
-                    character.Beliefs = beliefs ?? character.Beliefs;
-                    character.Profile = profile ?? character.Profile;
-                    character.Backgrounds = backgrounds ?? character.Backgrounds;
-                    character.Merits = merits ?? character.Merits;
-                    character.Flaws = flaws ?? character.Flaws;
+                    character.Attributes = await attributes ?? character.Attributes;
+                    character.Skills = await skills ?? character.Skills;
+                    character.SecondaryStats = await secondaryStats ?? character.SecondaryStats;
+                    character.Disciplines = await disciplines ?? character.Disciplines;
+                    character.DisciplinePowers = await disciplinePowers ?? character.DisciplinePowers;
+                    character.Beliefs = await beliefs ?? character.Beliefs;
+                    character.Profile = await profile ?? character.Profile;
+                    character.Backgrounds = await backgrounds ?? character.Backgrounds;
+                    character.Merits = await merits ?? character.Merits;
+                    character.Flaws = await flaws ?? character.Flaws;
                 }
                 return charList;
             }

@@ -54,7 +54,7 @@ const CharacterList = () => {
   const [characterList, setCharacterList] = useState<CharacterHeader[] | null>(null);
   const GetCharacterList = async (adminMode: boolean) => {
     let url = '/api/vtmv5/character/';
-    if (adminMode) { url = `${url}?adminView` }
+    if (adminMode) { url = `${url}?adminView=true` }
     const listRequest = await fetch(url);
     if (listRequest.ok) {
       const listJson = await (listRequest.json() as Promise<CharacterListResponse>);

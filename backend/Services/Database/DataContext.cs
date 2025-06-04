@@ -34,7 +34,8 @@ public class DataContext
                     ActivationKey TEXT,
                     ActivationRequested TIMESTAMP,
                     ActivationCompleted TIMESTAMP,
-                    Active BOOL DEFAULT false
+                    Active BOOL DEFAULT false,
+                    Nickname TEXT DEFAULT ''
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_users_rescue (
                     Id BIGSERIAL NOT NULL PRIMARY KEY,
@@ -60,7 +61,8 @@ public class DataContext
                     Resonance TEXT NOT NULL,
                     BloodPotency INTEGER NOT NULL,
                     XpSpent INTEGER NOT NULL,
-                    XpTotal INTEGER NOT NULL
+                    XpTotal INTEGER NOT NULL,
+                    FOREIGN KEY(Owner) REFERENCES melpominee_users(Email)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_attributes (
                     Id BIGSERIAL NOT NULL PRIMARY KEY,
@@ -134,6 +136,13 @@ public class DataContext
                     History TEXT NOT NULL,
                     Notes TEXT NOT NULL,
                     UNIQUE(CharId),
+                    FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
+                );
+                CREATE TABLE IF NOT EXISTS melpominee_users_favorites (
+                    Id BIGSERIAL NOT NULL PRIMARY KEY,
+                    Email TEXT NOT NULL,
+                    CharId BIGINT NOT NULL,
+                    FOREIGN KEY(Email) REFERENCES melpominee_users(Email),
                     FOREIGN KEY(CharId) REFERENCES melpominee_characters(Id)
                 );
             ";

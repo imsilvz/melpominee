@@ -62,6 +62,7 @@ public class DataContext
                     BloodPotency INTEGER NOT NULL,
                     XpSpent INTEGER NOT NULL,
                     XpTotal INTEGER NOT NULL,
+                    Active BOOL DEFAULT false,
                     FOREIGN KEY(Owner) REFERENCES melpominee_users(Email)
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_character_attributes (

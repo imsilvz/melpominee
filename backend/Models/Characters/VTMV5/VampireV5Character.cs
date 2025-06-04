@@ -40,6 +40,9 @@ public class VampireV5Character : BaseCharacter
     public int XpSpent { get; set; } = 0;
     public int XpTotal { get; set; } = 0;
 
+    // misc
+    public bool Active { get; set; } = true;
+
     // additional related models
     public VampireV5Beliefs Beliefs { get; set; } = new VampireV5Beliefs();
     public VampireV5Backgrounds Backgrounds { get; set; } = new VampireV5Backgrounds();
@@ -79,6 +82,7 @@ public class VampireV5Character : BaseCharacter
             BloodPotency = BloodPotency,
             XpSpent = XpSpent,
             XpTotal = XpTotal,
+            Active = Active
         };
         return header;
     }
@@ -124,7 +128,7 @@ public class VampireV5Character : BaseCharacter
                         ambition, desire, sire, 
                         generation, clan, predatortype,
                         hunger, resonance, bloodpotency,
-                        xpspent, xptotal
+                        xpspent, xptotal, active
                     )
                 VALUES
                     (
@@ -132,7 +136,7 @@ public class VampireV5Character : BaseCharacter
                         @Ambition, @Desire, @Sire,
                         @Generation, @Clan, @PredatorType,
                         @Hunger, @Resonance, @BloodPotency,
-                        @XpSpent, @XpTotal
+                        @XpSpent, @XpTotal, @Active
                     )
                 RETURNING id;
             ";
@@ -148,7 +152,7 @@ public class VampireV5Character : BaseCharacter
                         ambition, desire, sire, 
                         generation, clan, predatortype,
                         hunger, resonance, bloodpotency,
-                        xpspent, xptotal
+                        xpspent, xptotal, active
                     )
                 VALUES
                     (
@@ -156,7 +160,7 @@ public class VampireV5Character : BaseCharacter
                         @Chronicle, @Ambition, @Desire, @Sire,
                         @Generation, @Clan, @PredatorType,
                         @Hunger, @Resonance, @BloodPotency,
-                        @XpSpent, @XpTotal
+                        @XpSpent, @XpTotal, @Active
                     )
                 ON CONFLICT(Id) DO UPDATE 
                 SET
@@ -174,7 +178,8 @@ public class VampireV5Character : BaseCharacter
                     resonance = @Resonance,
                     bloodpotency = @BloodPotency,
                     xpspent = @XpSpent,
-                    xptotal = @XpTotal
+                    xptotal = @XpTotal,
+                    active = @Active
                 RETURNING id;
             ";
             conn.ExecuteScalar<int>(sql, this, transaction: trans);
@@ -208,7 +213,7 @@ public class VampireV5Character : BaseCharacter
                         ambition, desire, sire, 
                         generation, clan, predatortype,
                         hunger, resonance, bloodpotency,
-                        xpspent, xptotal
+                        xpspent, xptotal, active
                     FROM melpominee_characters
                     WHERE id = @Id;
                 ";
@@ -313,7 +318,7 @@ public class VampireV5Character : BaseCharacter
                         ambition, desire, sire, 
                         generation, clan, predatortype,
                         hunger, resonance, bloodpotency,
-                        xpspent, xptotal
+                        xpspent, xptotal, active
                     FROM melpominee_characters
                     WHERE id = @Id;
                 ";
@@ -344,8 +349,9 @@ public class VampireV5Character : BaseCharacter
                         Chronicle, Ambition, Desire, Sire, 
                         Generation, Clan, PredatorType,
                         Hunger, Resonance, BloodPotency,
-                        XpSpent, XpTotal
-                    FROM melpominee_characters;
+                        XpSpent, XpTotal, Active
+                    FROM melpominee_characters
+                    WHERE Active = true;
                 ";
                 charList = conn.Query<VampireV5Character>(sql).ToList();
                 foreach (var character in charList)
@@ -397,9 +403,9 @@ public class VampireV5Character : BaseCharacter
                         Chronicle, Ambition, Desire, Sire, 
                         Generation, Clan, PredatorType,
                         Hunger, Resonance, BloodPotency,
-                        XpSpent, XpTotal
+                        XpSpent, XpTotal, Active
                     FROM melpominee_characters
-                    WHERE Owner = @Email;
+                    WHERE Owner = @Email AND Active = true;
                 ";
                 charList = conn.Query<VampireV5Character>(sql, new { Email = email }).ToList();
                 foreach (var character in charList)
@@ -455,6 +461,7 @@ public class VampireV5Header : BaseCharacter
     public int BloodPotency { get; set; } = 0;
     public int XpSpent { get; set; } = 0;
     public int XpTotal { get; set; } = 0;
+    public bool Active { get; set; } = true;
 
     public override bool Save()
     {
@@ -493,7 +500,7 @@ public class VampireV5Header : BaseCharacter
                     ambition, desire, sire, 
                     generation, clan, predatortype,
                     hunger, resonance, bloodpotency,
-                    xpspent, xptotal
+                    xpspent, xptotal, active
                 )
             VALUES
                 (
@@ -501,7 +508,7 @@ public class VampireV5Header : BaseCharacter
                     @Chronicle, @Ambition, @Desire, @Sire,
                     @Generation, @Clan, @PredatorType,
                     @Hunger, @Resonance, @BloodPotency,
-                    @XpSpent, @XpTotal
+                    @XpSpent, @XpTotal, @Active
                 )
             ON CONFLICT(Id) DO UPDATE 
             SET
@@ -519,7 +526,8 @@ public class VampireV5Header : BaseCharacter
                 resonance = @Resonance,
                 bloodpotency = @BloodPotency,
                 xpspent = @XpSpent,
-                xptotal = @XpTotal
+                xptotal = @XpTotal,
+                active = @Active
             RETURNING id;
         ";
         conn.ExecuteScalar<int>(sql, this, transaction: trans);

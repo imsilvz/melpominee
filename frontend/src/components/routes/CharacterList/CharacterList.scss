@@ -39,12 +39,16 @@
               background-color: rgba(255, 255, 255, 0.12);
               cursor: pointer;
           }
+          &:focus {
+            outline: none;
+          }
           >.characterlist-listitem-id {
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 0 0.5rem 0 0.25rem;
           }
+          caret-color: transparent;
         }
         >.characterlist-additem {
           display: flex;
@@ -60,6 +64,7 @@
               background-color: rgba(255, 255, 255, 0.12);
               cursor: pointer;
           }
+          caret-color: transparent;
         }
         >.characterlist-listitem,.characterlist-additem {
           animation: fadeIn ease-in 0.25s;

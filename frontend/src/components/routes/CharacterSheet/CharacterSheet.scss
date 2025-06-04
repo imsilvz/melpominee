@@ -1,4 +1,4 @@
-@import "../../../global.scss";
+@use "../../../global.scss" as *;
 .charactersheet-container {
   position: relative;
   width: 100%;

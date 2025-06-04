@@ -1,4 +1,5 @@
-@import "./global.scss";
+@use "node_modules/normalize-scss/sass/normalize" as *;
+@use "./global.scss" as *;
 
 @font-face {
   font-family: caslonAntique;

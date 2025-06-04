@@ -27,6 +27,7 @@
     "@microsoft/signalr": "^7.0.14",
     "@reduxjs/toolkit": "^1.9.7",
     "@types/signalr": "^2.4.3",
+    "normalize-scss": "^8.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-redux": "^8.1.3",

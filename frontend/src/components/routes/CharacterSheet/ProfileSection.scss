@@ -1,4 +1,4 @@
-@import "../../../global.scss";
+@use "../../../global.scss" as *;
 
 .charactersheet-section {
   >.charactersheet-profile-inner {
@@ -22,6 +22,7 @@
           flex-wrap: nowrap;
 
           >textarea {
+            flex: 1;
             border: none;
             outline: none;
             border-bottom: 1px dotted $text-primary;
@@ -33,6 +34,7 @@
             text-align: center;
             resize: none;
             overflow: hidden;
+            overflow-x: hidden;
           }
 
           >span {

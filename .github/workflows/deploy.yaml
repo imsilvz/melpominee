@@ -13,20 +13,18 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 permissions:
-  id-token: write
-  contents: read
   actions: read
+  contents: read
+  packages: write
+  id-token: write
 
 jobs:
   docker-build-push:
     name: Melpominee.app Build & Push
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
+    runs-on: melpominee-runner
     
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -67,10 +65,16 @@ jobs:
           tags: ${{ steps.meta-frontend.outputs.tags }}
           labels: ${{ steps.meta-frontend.outputs.labels }}
 
+      - name: Setup Azure CLI
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+        
       - name: Azure Login
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_SECRET }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - uses: azure/setup-kubectl@v4
         id: install
@@ -81,16 +85,17 @@ jobs:
             resource-group: ${{ vars.AZURE_GROUP }}
             cluster-name: ${{ vars.AZURE_CLUSTER }}
         id: login
-      
-      #- name: Rollout Restart
-      #  run: |
-      #    kubectl rollout restart deployment melpominee-frontend --namespace=melpominee
-      #    kubectl rollout restart deployment melpominee-backend --namespace=melpominee
 
       - name: Deploy Manifests
         uses: Azure/k8s-deploy@v5
         with:
           action: 'deploy'
-          namespace: 'melpominee'
           manifests: |
-            manifests
+            manifests/deploy.yaml
+            manifests/ingress.yaml
+          namespace: 'melpominee'
+
+      - name: Rollout Restart
+        run: |
+          kubectl rollout restart deployment melpominee-frontend --namespace=melpominee
+          kubectl rollout restart deployment melpominee-backend --namespace=melpominee

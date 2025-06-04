@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: cluster-issuer
+  name: ingress-pgadmin4
+  namespace: default
+spec:
+  rules:
+  - host: pgadmin.melpominee.app
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: pgadmin4
+            port:
+              number: 80
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - pgadmin.melpominee.app
+    secretName: pgadmin-cert

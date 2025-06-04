@@ -4,7 +4,7 @@
         "Name": "Bond Famulus",
         "School": "Animalism",
         "Level": 1,
-        "Cost": "Feed the animal a Rouse Check of the vampire's blood on three different nights, if this is purchased at character creation it is considered already done and the player may select an animal to be the famulus.",
+        "Cost": "Free",
         "Duration": "Only death releases the famulus.",
         "DicePool": "Charisma + Animal Ken",
         "OpposingPool": "N/A",
@@ -24,23 +24,6 @@
         "Effect": "Sense hostility and supernatural traits.",
         "AdditionalNotes": "This power can also be used actively.",
         "Source": "Corebook, page 245"
-    },
-    "animal_messenger": {
-        "Id": "animal_messenger",
-        "Name": "Animal Messenger",
-        "School": "Animalism",
-        "Level": 2,
-        "Cost": "One Rouse Check per night",
-        "Duration": "One or more nights based on how long it takes to search",
-        "DicePool": "None",
-        "OpposingPool": "None",
-        "Effect": "Use a Famulus to send a message to someone.",
-        "AdditionalNotes": "The Famulus must test Resolve + Streetwise/Survival if target\u2019s location is unknown against a diff 2 or Intelligence + Streetwise/Survival if the target is actively hiding.",
-        "Source": "Players Guide, page 69",
-        "Amalgam": {
-            "Level": 1,
-            "School": "Auspex"
-        }
     },
     "atavism": {
         "Id": "atavism",
@@ -68,24 +51,6 @@
         "AdditionalNotes": "The cost is free if used on their Famulus.",
         "Source": "Corebook, page 246"
     },
-    "messengers_command": {
-        "Id": "messengers_command",
-        "Name": "Messenger's Command",
-        "School": "Animalism",
-        "Level": 3,
-        "Cost": "None",
-        "Duration": "See Animal Messenger",
-        "DicePool": "See Compel or Mesmerize",
-        "OpposingPool": "See Compel or Mesmerize",
-        "Effect": "Use Compel or Mesmerize through a Famulus.",
-        "AdditionalNotes": "Dominate rating cannot exceed the Animalism rating.",
-        "Source": "Players Guide, page 69",
-        "Prerequisite": "Animal Messenger  and Compel or Mesmerize",
-        "Amalgam": {
-            "Level": 1,
-            "School": "Dominate"
-        }
-    },
     "animal_succulence": {
         "Id": "animal_succulence",
         "Name": "Animal Succulence",
@@ -99,19 +64,6 @@
         "AdditionalNotes": "This will never let the character slake to 0.",
         "Source": "Corebook, page 246"
     },
-    "plague_of_beasts": {
-        "Id": "plague_of_beasts",
-        "Name": "Plague of Beasts",
-        "School": "Animalism",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "One Night",
-        "DicePool": "Manipulation + Animalism",
-        "OpposingPool": "Composure + Animal Ken",
-        "Effect": "Mark an individual as a target of animal attention.",
-        "AdditionalNotes": "The target takes the margin of the win as a penalty against Skill pools except Physical, this also makes them easier to track down.",
-        "Source": "Players Guide, page 69"
-    },
     "quell_the_beast": {
         "Id": "quell_the_beast",
         "Name": "Quell the Beast",
@@ -120,7 +72,7 @@
         "Cost": "One Rouse Check",
         "Duration": "One scene",
         "DicePool": "Charisma + Animalism",
-        "OpposingPool": "Stamina + Resolve",
+        "OpposingPool": "Stamina + Animalism",
         "Effect": "Force a vampire's beast to slumber or make a mortal lethargic.",
         "AdditionalNotes": "Against Vampires this lasts several turns equal to test margin +1.",
         "Source": "Corebook, page 246"
@@ -168,19 +120,6 @@
         "AdditionalNotes": "The cost is free if used on their Famulus.",
         "Source": "Corebook, page 247"
     },
-    "sway_the_flock": {
-        "Id": "sway_the_flock",
-        "Name": "Sway the Flock",
-        "School": "Animalism",
-        "Level": 4,
-        "Cost": "One or more Rouse Checks",
-        "Duration": "One night",
-        "DicePool": "Composure + Animalism",
-        "OpposingPool": "N/A",
-        "Effect": "Influence animals within an area to behave a certain way.",
-        "AdditionalNotes": "The amount of successes determine how influenced the animals are, the Discipline\u2019s range can be increased per Rouse Check.",
-        "Source": "Players Guide, page 69"
-    },
     "animal_dominion": {
         "Id": "animal_dominion",
         "Name": "Animal Dominion",
@@ -194,19 +133,6 @@
         "AdditionalNotes": "This power does not summon animals, instead utilizing those already present.",
         "Source": "Corebook, page 247"
     },
-    "coax_the_bestial_temper": {
-        "Id": "coax_the_bestial_temper",
-        "Name": "Coax the Bestial Temper",
-        "School": "Animalism",
-        "Level": 5,
-        "Cost": "One Rouse Check",
-        "Duration": "As long as the user keeps humming",
-        "DicePool": "Manipulation + Animalism",
-        "OpposingPool": "N/A",
-        "Effect": "Either increase or decrease the Difficulty to resist Frenzy for vampires nearby.",
-        "AdditionalNotes": "Each success of margin increases or decreases the difficulty",
-        "Source": "Players Guide, page 70"
-    },
     "drawing_out_the_beast": {
         "Id": "drawing_out_the_beast",
         "Name": "Drawing Out the Beast",
@@ -219,20 +145,6 @@
         "Effect": "Transfer their terror or fury frenzy to a nearby victim.",
         "AdditionalNotes": "This power cannot transfer Hunger Frenzy.",
         "Source": "Corebook, page 247"
-    },
-    "spirit_walk": {
-        "Id": "spirit_walk",
-        "Name": "Spirit Walk",
-        "School": "Animalism",
-        "Level": 5,
-        "Cost": "None",
-        "Duration": "Indefinite",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Extends Subsume the Spirit to transfer the vampire's consciousness from one animal to another without retreating to their own body.",
-        "AdditionalNotes": "The duration is as though a critical success was rolled.",
-        "Source": "Gehenna War, page 46",
-        "Prerequisite": "Subsume the Spirit"
     },
     "heightened_senses": {
         "Id": "heightened_senses",
@@ -260,9 +172,9 @@
         "AdditionalNotes": "If the target is using Obfuscate they oppose using Wits + Obfuscate vs the user's Wits + Auspex, normal searches use Resolve.",
         "Source": "Corebook, page 249"
     },
-    "panacea_errata": {
-        "Id": "panacea_errata",
-        "Name": "Panacea Errata",
+    "obeah": {
+        "Id": "obeah",
+        "Name": "Obeah",
         "School": "Auspex",
         "Level": 2,
         "Cost": "One Rouse Check",
@@ -271,7 +183,7 @@
         "OpposingPool": "N/A",
         "Effect": "Heals Willpower and calms nerves.",
         "AdditionalNotes": "If the user uses this on more than one subject on the same night, the cost increases to spend Willpower equal to half the number of successes in the margin per additional target.",
-        "Source": "Companion, page 24 Players Guide, page 70",
+        "Source": "Companion, page 24",
         "Amalgam": {
             "Level": 1,
             "School": "Fortitude"
@@ -290,19 +202,6 @@
         "AdditionalNotes": "The Storyteller may activate this power passively with no cost, when used actively the user must make a Rouse Check and roll Resolve + Auspex.",
         "Source": "Corebook, page 249"
     },
-    "reveal_temperament": {
-        "Id": "reveal_temperament",
-        "Name": "Reveal Temperament",
-        "School": "Auspex",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "Intelligence + Auspex",
-        "OpposingPool": "Composure + Subterfuge",
-        "Effect": "Smell the Resonance of a target and/or if Dyscrasia is present.",
-        "AdditionalNotes": "When used on Kindred this reveals information about their last feed.",
-        "Source": "Players Guide, page 71"
-    },
     "unerring_pursuit": {
         "Id": "unerring_pursuit",
         "Name": "Unerring Pursuit",
@@ -320,38 +219,21 @@
             "School": "Dominate"
         }
     },
-    "vermin_visionerrata": {
-        "Id": "vermin_visionerrata",
-        "Name": "Vermin VisionErrata",
+    "eyes_of_beasts": {
+        "Id": "eyes_of_beasts",
+        "Name": "Eyes of Beasts",
         "School": "Auspex",
         "Level": 3,
         "Cost": "One Rouse Check",
-        "Duration": "One scene Errata",
-        "DicePool": "Resolve + Animalism Errata",
+        "Duration": "N/A",
+        "DicePool": "N/A",
         "OpposingPool": "N/A",
         "Effect": "Share the senses with animals.",
         "AdditionalNotes": "This power works through groups of animals.",
-        "Source": "Fall of London, page 30 Errata",
+        "Source": "Fall of London, page 148",
         "Amalgam": {
             "Level": 2,
             "School": "Animalism"
-        }
-    },
-    "fatal_flaw": {
-        "Id": "fatal_flaw",
-        "Name": "Fatal Flaw",
-        "School": "Auspex",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "Intelligence + Auspex",
-        "OpposingPool": "Composure/Stamina + Subterfuge",
-        "Effect": "Find the weakness of a target",
-        "AdditionalNotes": "It can be defended against with Composure for mental weaknesses or with Stamina for physical.",
-        "Source": "Players Guide, page 71",
-        "Amalgam": {
-            "Level": 1,
-            "School": "Oblivion"
         }
     },
     "scry_the_soul": {
@@ -447,8 +329,8 @@
         "OpposingPool": "N/A",
         "Effect": "Stain removal or protection from Stains",
         "AdditionalNotes": "This power only works on vampires with a lower Humanity rating.",
-        "Source": "Companion, page 24 Players Guide, page 71",
-        "Prerequisite": "Panacea Errata",
+        "Source": "Companion, page 24",
+        "Prerequisite": "Obeah",
         "Amalgam": {
             "Level": 3,
             "School": "Dominate"
@@ -476,9 +358,9 @@
         "Duration": "One Scene unless deactivated",
         "DicePool": "Manipulation + Blood Sorcery",
         "OpposingPool": "N/A",
-        "Effect": "Shape blood into a shape or image. Errata",
+        "Effect": "Shape blood into a shape or image.",
         "AdditionalNotes": "If the user uses their vitae, it costs one Rouse Check.",
-        "Source": "Winter's Teeth #3 / Book of Nod Apocrypha, page 33"
+        "Source": "Winter's Teeth #3"
     },
     "a_taste_for_blood": {
         "Id": "a_taste_for_blood",
@@ -493,33 +375,6 @@
         "AdditionalNotes": "N/A",
         "Source": "Corebook, page 272"
     },
-    "koldunic_sorcery": {
-        "Id": "koldunic_sorcery",
-        "Name": "Koldunic Sorcery",
-        "School": "Blood Sorcery",
-        "Level": 1,
-        "Cost": "One Rouse Check and Aggravated Health Damage",
-        "Duration": "One Scene, Can be renewed",
-        "DicePool": "Resolve + Blood Sorcery",
-        "OpposingPool": "Wits or Resolve + Obfuscate",
-        "Effect": "Attune with and sense through an element, e.g. Water",
-        "AdditionalNotes": "Can be taken multiple times to attune to other elements",
-        "Source": "Blood Sigils, page 61",
-        "Prerequisite": "Tzimisce"
-    },
-    "bloods_curse": {
-        "Id": "bloods_curse",
-        "Name": "Blood's Curse",
-        "School": "Blood Sorcery",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "Until dawn",
-        "DicePool": "Intelligence + Blood Sorcery",
-        "OpposingPool": "Stamina + Occult / Fortitude",
-        "Effect": "Temporary increase another vampire's Bane Severity.",
-        "AdditionalNotes": "If the target is a ghoul, thinblood, or Caitiff they get a clan bane.",
-        "Source": "Gehenna War, page 48"
-    },
     "extinguish_vitae": {
         "Id": "extinguish_vitae",
         "Name": "Extinguish Vitae",
@@ -529,22 +384,9 @@
         "Duration": "N/A",
         "DicePool": "Intelligence + Blood Sorcery",
         "OpposingPool": "Stamina + Composure",
-        "Effect": "In use, this increases another Kindred\u2019s Hunger.",
+        "Effect": "In use, this increases another Kindred’s Hunger.",
         "AdditionalNotes": "The victim can determine who used this power against them if they can see them and win an Intelligence + Occult vs Wits + Subterfuge roll.",
         "Source": "Corebook, page 272"
-    },
-    "scour_secrets": {
-        "Id": "scour_secrets",
-        "Name": "Scour Secrets",
-        "School": "Blood Sorcery",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "One night or till the information is found or there\u2019s a dead-end",
-        "DicePool": "Intelligence + Blood Sorcery",
-        "OpposingPool": "N/A",
-        "Effect": "Pore through a large amount of content within minutes. Errata",
-        "AdditionalNotes": "This power does not allow the user to parse things written in a language they cannot understand.",
-        "Source": "Players Guide, page 98 / Book of Nod Apocrypha, page 34"
     },
     "blood_of_potency": {
         "Id": "blood_of_potency",
@@ -559,9 +401,9 @@
         "AdditionalNotes": "This power can allow a Kindred to bypass the Blood Potency limit set by their generation.",
         "Source": "Corebook, page 273"
     },
-    "scorpion\u2019s_touch": {
-        "Id": "scorpion\u2019s_touch",
-        "Name": "Scorpion\u2019s Touch",
+    "scorpions_touch": {
+        "Id": "scorpions_touch",
+        "Name": "Scorpion’s Touch",
         "School": "Blood Sorcery",
         "Level": 3,
         "Cost": "One or more Rouse Check",
@@ -585,19 +427,6 @@
         "AdditionalNotes": "This power was developed originally by the Tremere to combat their bane to only resurface within the Sabbat.",
         "Source": "Sabbat, page 49"
     },
-    "ripples_of_the_heart": {
-        "Id": "ripples_of_the_heart",
-        "Name": "Ripples of the Heart",
-        "School": "Blood Sorcery",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "N/A",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Manipulate the blood or Blood of others.",
-        "AdditionalNotes": "This power can inflict Compulsions on others who feed from the infected or alter the Resonance of a mortal.",
-        "Source": "Blood Stained Love, page 153"
-    },
     "theft_of_vitae": {
         "Id": "theft_of_vitae",
         "Name": "Theft of Vitae",
@@ -611,22 +440,9 @@
         "AdditionalNotes": "When in use the victim is under the same influence as a standard Kiss.",
         "Source": "Corebook, page 274"
     },
-    "blood_aegis": {
-        "Id": "blood_aegis",
-        "Name": "Blood Aegis",
-        "School": "Blood Sorcery",
-        "Level": 4,
-        "Cost": "One or more Rouse Checks",
-        "Duration": "One scene or until damage is spent",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Form a protective Blood barrier.",
-        "AdditionalNotes": "For each Rouse Check, the user can reduce the damage taken by five points.",
-        "Source": "Players Guide, page 98"
-    },
-    "baal\u2019s_caress": {
-        "Id": "baal\u2019s_caress",
-        "Name": "Baal\u2019s Caress",
+    "baals_caress": {
+        "Id": "baals_caress",
+        "Name": "Baal’s Caress",
         "School": "Blood Sorcery",
         "Level": 5,
         "Cost": "One or more Rouse Checks",
@@ -663,9 +479,9 @@
         "AdditionalNotes": "Those outside of the Sabbat take stains upon use.",
         "Source": "Sabbat, page 50"
     },
-    "cat\u2019s_grace": {
-        "Id": "cat\u2019s_grace",
-        "Name": "Cat\u2019s Grace",
+    "cats_grace": {
+        "Id": "cats_grace",
+        "Name": "Cat’s Grace",
         "School": "Celerity",
         "Level": 1,
         "Cost": "Free",
@@ -675,19 +491,6 @@
         "Effect": "Automatically pass balance tests.",
         "AdditionalNotes": "Does not work on objects that cannot support their weight.",
         "Source": "Corebook, page 252"
-    },
-    "fluent_swiftness": {
-        "Id": "fluent_swiftness",
-        "Name": "Fluent Swiftness",
-        "School": "Celerity",
-        "Level": 1,
-        "Cost": "Free",
-        "Duration": "Once",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Reroll Blood Surge on a Dexterity or Celerity test.",
-        "AdditionalNotes": "N/A",
-        "Source": "Gehenna War, page 46"
     },
     "rapid_reflexes": {
         "Id": "rapid_reflexes",
@@ -708,25 +511,12 @@
         "School": "Celerity",
         "Level": 2,
         "Cost": "One Rouse Check",
-        "Duration": "One scene",
+        "Duration": "One Scene",
         "DicePool": "N/A",
         "OpposingPool": "N/A",
         "Effect": "Add Celerity rating for non-combat Dexterity test or defending.",
         "AdditionalNotes": "This may be used once per turn when defending with associated pools.",
         "Source": "Corebook, page 253"
-    },
-    "rush_job": {
-        "Id": "rush_job",
-        "Name": "Rush Job",
-        "School": "Celerity",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Perform a Skill-related task that would take a long time in mere seconds.",
-        "AdditionalNotes": "This power does not speed up attacks or defenses.",
-        "Source": "Players Guide, page 72"
     },
     "blink": {
         "Id": "blink",
@@ -734,7 +524,7 @@
         "School": "Celerity",
         "Level": 3,
         "Cost": "One Rouse Check",
-        "Duration": "One turn",
+        "Duration": "One Turn",
         "DicePool": "Dexterity + Athletics",
         "OpposingPool": "N/A",
         "Effect": "Closes the distance as if teleporting.",
@@ -747,39 +537,12 @@
         "School": "Celerity",
         "Level": 3,
         "Cost": "One Rouse Check",
-        "Duration": "One turn",
+        "Duration": "One Turn",
         "DicePool": "Dexterity + Athletics",
         "OpposingPool": "N/A",
         "Effect": "Move fast enough to move up vertical surfaces or liquid surfaces.",
         "AdditionalNotes": "The Storyteller should inform the user beforehand if the target is too far away",
         "Source": "Corebook, page 253"
-    },
-    "weaving": {
-        "Id": "weaving",
-        "Name": "Weaving",
-        "School": "Celerity",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Remove the penalty from dodging multiple ranged opponents.",
-        "AdditionalNotes": "The user can all add their Celerity rating to ranged dodging attempts.",
-        "Source": "Players Guide, page 72",
-        "Prerequisite": "Rapid Reflexes"
-    },
-    "blurred_momentum": {
-        "Id": "blurred_momentum",
-        "Name": "Blurred Momentum",
-        "School": "Celerity",
-        "Level": 4,
-        "Cost": "One Rouse Check per turn",
-        "Duration": "Until the user lets it lapse",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Attacks against the user with fewer successes than their Celerity rating miss.",
-        "AdditionalNotes": "This works against powers that do not allow defense tests.",
-        "Source": "Players Guide, page 72"
     },
     "draught_of_elegance": {
         "Id": "draught_of_elegance",
@@ -809,24 +572,6 @@
         "Amalgam": {
             "Level": 2,
             "School": "Auspex"
-        }
-    },
-    "unseen_strike": {
-        "Id": "unseen_strike",
-        "Name": "Unseen Strike",
-        "School": "Celerity",
-        "Level": 4,
-        "Cost": "Two Rouse Checks",
-        "Duration": "One turn",
-        "DicePool": "Dexterity + Celerity",
-        "OpposingPool": "Wits + Awareness",
-        "Effect": "Disappear then reappear to surprise attack an enemy.",
-        "AdditionalNotes": "If the test is won, the attack is treated as a surprise attack. Else it follows the same attack/movement rules as Blink.",
-        "Source": "Players Guide, page 73",
-        "Prerequisite": "Blink",
-        "Amalgam": {
-            "Level": 4,
-            "School": "Obfuscate"
         }
     },
     "lightning_strike": {
@@ -881,23 +626,6 @@
         "AdditionalNotes": "No rolls are needed when the target is an unprepared mortal. However, mortals who have been Dominated in this scene already or this goes against their nature may roll to resist.",
         "Source": "Corebook, page 256"
     },
-    "slavish_devotion": {
-        "Id": "slavish_devotion",
-        "Name": "Slavish Devotion",
-        "School": "Dominate",
-        "Level": 1,
-        "Cost": "Free",
-        "Duration": "Passive",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Those already underneath Dominate find it easier to resist other kindred's Dominate.",
-        "AdditionalNotes": "Attempts by a third party take a dice penalty equal to the other vampire\u2019s Fortitude rating.Errata",
-        "Source": "Cults of the Blood Gods, page 104 Players Guide, page 73",
-        "Amalgam": {
-            "Level": 1,
-            "School": "Fortitude \u25cf Errata"
-        }
-    },
     "mesmerize": {
         "Id": "mesmerize",
         "Name": "Mesmerize",
@@ -909,11 +637,7 @@
         "OpposingPool": "Intelligence + Resolve",
         "Effect": "Issue complex commands.",
         "AdditionalNotes": "No rolls are needed when the target is an unprepared mortal. However, if this goes against their nature they may roll to resist.",
-        "Source": "Corebook, page 256",
-        "Amalgam": {
-            "Level": 0,
-            "School": "None"
-        }
+        "Source": "Corebook, page 256"
     },
     "dementation": {
         "Id": "dementation",
@@ -943,10 +667,24 @@
         "OpposingPool": "N/A",
         "Effect": "Make defiance while under a Blood Bond more difficult.",
         "AdditionalNotes": "Total fail on defiance rolls means the bond does not weaken that month.",
-        "Source": "Companion, page 25 Players Guide, page 74",
+        "Source": "Companion, page 25"
+    },
+    "slavish_devotion": {
+        "Id": "slavish_devotion",
+        "Name": "Slavish Devotion",
+        "School": "Dominate",
+        "Level": 2,
+        "Cost": "Free",
+        "Duration": "Passive",
+        "DicePool": "N/A",
+        "OpposingPool": "N/A",
+        "Effect": "Those already underneath Dominate find it easier to resist other kindred's Dominate.",
+        "AdditionalNotes": "Difficulty cannot rise above 7.",
+        "Source": "Cults of the Blood Gods, page 104",
+        "Prerequisite": "Mithras",
         "Amalgam": {
-            "Level": 0,
-            "School": "None"
+            "Level": 1,
+            "School": "Presence"
         }
     },
     "forgetful_mind": {
@@ -982,33 +720,16 @@
         "School": "Dominate",
         "Level": 4,
         "Cost": "One Rouse Check",
-        "Duration": "Until the command is carried out or the scene ends",
+        "Duration": "One scene or when the directive is fulfilled",
         "DicePool": "Manipulation + Dominate",
         "OpposingPool": "Intelligence + Resolve",
-        "Effect": "Urge a descendant to act even if against their own opinion.",
-        "AdditionalNotes": "For each generation separating them, the target gains an additional die to resist. Errata",
-        "Source": "Cults of the Blood Gods, page 104 Players Guide, page 74",
-        "Prerequisite": "Mesmerize Errata",
+        "Effect": "Compel a descendant to act even if against their own opinion.",
+        "AdditionalNotes": "For each generation after the first separating them, the target gains an additional die to resist.",
+        "Source": "Cults of the Blood Gods, page 104",
+        "Prerequisite": "Mithras",
         "Amalgam": {
-            "Level": 2,
-            "School": "Blood Sorcery \u25cf\u25cf Errata"
-        }
-    },
-    "implant_suggestion": {
-        "Id": "implant_suggestion",
-        "Name": "Implant Suggestion",
-        "School": "Dominate",
-        "Level": 4,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "Manipulation + Dominate",
-        "OpposingPool": "Composure + Resolve",
-        "Effect": "Change another\u2019s personality or opinion temporarily.",
-        "AdditionalNotes": "No test required for unprepared mortals unless it\u2019s a change that opposes their core beliefs.",
-        "Source": "Players Guide, page 74",
-        "Amalgam": {
-            "Level": 1,
-            "School": "Presence"
+            "Level": null,
+            "School": "Blood Sorcery ●●●"
         }
     },
     "rationalize": {
@@ -1035,21 +756,8 @@
         "OpposingPool": "Composure + Resolve",
         "Effect": "Erase the victim's memory to the point they don't know who they are.",
         "AdditionalNotes": "Following this power's use is generally a string of lies and Path Indoctrination.",
-        "Source": "Sabbat, page 47"
-    },
-    "lethes_call": {
-        "Id": "lethes_call",
-        "Name": "Lethe's Call",
-        "School": "Dominate",
-        "Level": 5,
-        "Cost": "One Rouse Check",
-        "Duration": "Indefinitely",
-        "DicePool": "Manipulation + Dominate",
-        "OpposingPool": "Intelligence + Resolve",
-        "Effect": "Erase weeks' worth of memory.",
-        "AdditionalNotes": "Unprepared mortals cannot test to resist the power. With a verbal command only memories surrounding the spoken subject will be erased.",
-        "Source": "Gehenna War, page 46",
-        "Prerequisite": "Cloud Memory or Forgetful Mind"
+        "Source": "Sabbat, page 47",
+        "Prerequisite": "Sabbat"
     },
     "mass_manipulation": {
         "Id": "mass_manipulation",
@@ -1077,19 +785,6 @@
         "AdditionalNotes": "Terminal commands are always resisted instead of auto failing.",
         "Source": "Corebook, page 257"
     },
-    "fluent_endurance": {
-        "Id": "fluent_endurance",
-        "Name": "Fluent Endurance",
-        "School": "Fortitude",
-        "Level": 1,
-        "Cost": "Free",
-        "Duration": "Once",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Reroll the Blood Surge rouse check on a Stamina or Fortitude test.",
-        "AdditionalNotes": "N/A",
-        "Source": "Gehenna War, page 46"
-    },
     "resilience": {
         "Id": "resilience",
         "Name": "Resilience",
@@ -1116,19 +811,6 @@
         "AdditionalNotes": "N/A",
         "Source": "Corebook, page 258"
     },
-    "earth\u2019s_perseverance": {
-        "Id": "earth\u2019s_perseverance",
-        "Name": "Earth\u2019s Perseverance",
-        "School": "Fortitude",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene or until let go by user",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Become impossible to move from that spot",
-        "AdditionalNotes": "While they cannot be moved, they can still be harmed and so can the floor beneath them.",
-        "Source": "Players Guide, page 74"
-    },
     "enduring_beasts": {
         "Id": "enduring_beasts",
         "Name": "Enduring Beasts",
@@ -1144,23 +826,6 @@
         "Amalgam": {
             "Level": 1,
             "School": "Animalism"
-        }
-    },
-    "invigorating_vitae": {
-        "Id": "invigorating_vitae",
-        "Name": "Invigorating Vitae",
-        "School": "Fortitude",
-        "Level": 2,
-        "Cost": "None other than the Rouse Checks to give Blood",
-        "Duration": "Passive",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Heal mortals faster with the Blood.",
-        "AdditionalNotes": "The risk of ghouling or blood bonding remains present.",
-        "Source": "Players Guide, page 75",
-        "Amalgam": {
-            "Level": 1,
-            "School": "Auspex"
         }
     },
     "obdurate": {
@@ -1193,6 +858,23 @@
         "AdditionalNotes": "This occurs before halving the damage but cannot reduce it below one.",
         "Source": "Corebook, page 258"
     },
+    "valeren": {
+        "Id": "valeren",
+        "Name": "Valeren",
+        "School": "Fortitude",
+        "Level": 2,
+        "Cost": "One Rouse Check",
+        "Duration": "N/A",
+        "DicePool": "Intelligence + Fortitude",
+        "OpposingPool": "N/A",
+        "Effect": "Mend an injured vampire.",
+        "AdditionalNotes": "A subject can be affected by the power only once a night.",
+        "Source": "Companion, page 25",
+        "Amalgam": {
+            "Level": 1,
+            "School": "Auspex"
+        }
+    },
     "defy_bane": {
         "Id": "defy_bane",
         "Name": "Defy Bane",
@@ -1206,9 +888,9 @@
         "AdditionalNotes": "They may not heal the superficial damage for the rest of the scene.",
         "Source": "Corebook, page 259"
     },
-    "fortify_the_inner_fa\u00e7ade": {
-        "Id": "fortify_the_inner_fa\u00e7ade",
-        "Name": "Fortify the Inner Fa\u00e7ade",
+    "fortify_the_inner_façade": {
+        "Id": "fortify_the_inner_façade",
+        "Name": "Fortify the Inner Façade",
         "School": "Fortitude",
         "Level": 3,
         "Cost": "Free",
@@ -1230,24 +912,8 @@
         "OpposingPool": "N/A",
         "Effect": "A vampire can ignore the effects of hunger if they do not increase hunger from the two Rouse Checks, but reduce their dice pools.",
         "AdditionalNotes": "If a dice pool reduces to 0, a Fury Frenzy test is made.",
-        "Source": "Forbidden Religions, page 44"
-    },
-    "valeren": {
-        "Id": "valeren",
-        "Name": "Valeren",
-        "School": "Fortitude",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "N/A",
-        "DicePool": "Intelligence + Fortitude",
-        "OpposingPool": "N/A",
-        "Effect": "Mend an injured vampire.",
-        "AdditionalNotes": "A subject can be affected by the power only once a night.",
-        "Source": "Companion, page 25 Players Guide, page 75",
-        "Amalgam": {
-            "Level": 1,
-            "School": "Auspex"
-        }
+        "Source": "Forbidden Religions, page 44",
+        "Prerequisite": "Eremites"
     },
     "draught_of_endurance": {
         "Id": "draught_of_endurance",
@@ -1261,19 +927,6 @@
         "Effect": "Turn their vitae into a Fortitude boost for others.",
         "AdditionalNotes": "Each drinker must take one Rouse Checks worth.",
         "Source": "Corebook, page 259"
-    },
-    "gorgon\u2019s_scales": {
-        "Id": "gorgon\u2019s_scales",
-        "Name": "Gorgon\u2019s Scales",
-        "School": "Fortitude",
-        "Level": 4,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene or until the Resonance is lost",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Resonances give the Kindred different bonuses.",
-        "AdditionalNotes": "Choleric frees vampires from being staked, Melancholy reduces fire damage, Phlegmatic strengthens against Auspex and, Sanguine reduces damage from sunlight.",
-        "Source": "Players Guide, page 75"
     },
     "shatter": {
         "Id": "shatter",
@@ -1328,19 +981,6 @@
         "AdditionalNotes": "Follows the general rules for Obfuscate.",
         "Source": "Corebook, page 261"
     },
-    "ensconce": {
-        "Id": "ensconce",
-        "Name": "Ensconce",
-        "School": "Obfuscate",
-        "Level": 1,
-        "Cost": "Free",
-        "Duration": "One scene",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Make others ignore small objects that are held on the vampire's body.",
-        "AdditionalNotes": "Sense Unseen can pierce this power.",
-        "Source": "Gehenna War, page 46"
-    },
     "silence_of_death": {
         "Id": "silence_of_death",
         "Name": "Silence of Death",
@@ -1352,21 +992,7 @@
         "OpposingPool": "N/A",
         "Effect": "Nullifies the sounds a user makes.",
         "AdditionalNotes": "This power does not eliminate powers made outside of the user's personal space.",
-        "Source": "* /  Corebook, page 261"
-    },
-    "cache": {
-        "Id": "cache",
-        "Name": "Cache",
-        "School": "Obfuscate",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene or until dawn",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Hide objects that are not held by the vampire.",
-        "AdditionalNotes": "This can be extended for the duration of the night with an extra rouse check.",
-        "Source": "Gehenna War, page 47",
-        "Prerequisite": "Ensconce"
+        "Source": "*  Corebook, page 261"
     },
     "chimerstry": {
         "Id": "chimerstry",
@@ -1378,8 +1004,8 @@
         "DicePool": "Manipulation + Obfuscate",
         "OpposingPool": "Composure + Wits",
         "Effect": "Create brief but realistic hallucinations.",
-        "AdditionalNotes": "This can be used in combat but can only affect targets once per conflict. Errata",
-        "Source": "Companion, page 25 Players Guide, page 76",
+        "AdditionalNotes": "These hallucinations can never be recorded or sent through transmissions.",
+        "Source": "Companion, page 25",
         "Amalgam": {
             "Level": 1,
             "School": "Presence"
@@ -1394,7 +1020,7 @@
         "Duration": "One session",
         "DicePool": "N/A",
         "OpposingPool": "N/A",
-        "Effect": "The user can bestow Obfuscate onto an animal's tracks.",
+        "Effect": "The user can bestow Obfuscate onto an animal.",
         "AdditionalNotes": "Sense the Unseen can discern signs as per general Obfuscate rules",
         "Source": "Forbidden Religions, page 18",
         "Amalgam": {
@@ -1421,31 +1047,14 @@
         "School": "Obfuscate",
         "Level": 2,
         "Cost": "One Rouse Check",
-        "Duration": "One scene Errata",
+        "Duration": "One turn",
         "DicePool": "Wits + Obfuscate",
         "OpposingPool": "Resolve + Composure",
         "Effect": "Throw their voice so only the intended recipient can hear it.",
         "AdditionalNotes": "Can be used on anyone in line of sight.",
-        "Source": "Fall of London, page 31 Errata",
+        "Source": "Fall of London, page 148",
         "Amalgam": {
             "Level": 2,
-            "School": "Auspex"
-        }
-    },
-    "doubletalk": {
-        "Id": "doubletalk",
-        "Name": "Doubletalk",
-        "School": "Obfuscate",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "One utterance",
-        "DicePool": "Composure + Obfuscate",
-        "OpposingPool": "Wits + Auspex",
-        "Effect": "Say one thing but convey something else in secret.",
-        "AdditionalNotes": "Others present can contest.",
-        "Source": "Blood Stained Love, page 152",
-        "Amalgam": {
-            "Level": 1,
             "School": "Auspex"
         }
     },
@@ -1459,8 +1068,8 @@
         "DicePool": "Manipulation + Obfuscate",
         "OpposingPool": "N/A",
         "Effect": "Elaborate hallucinations.",
-        "AdditionalNotes": "If the hallucination can trigger Frenzy, give the test at 1 diff lower than the real thing. Errata",
-        "Source": "Companion, page 26 Players Guide, page 77",
+        "AdditionalNotes": "These hallucinations cannot cause damage or appear to affect the surrounding reality. They cannot blind or deafen through sensory overloading.",
+        "Source": "Companion, page 26",
         "Amalgam": {
             "Level": 2,
             "School": "Presence"
@@ -1520,27 +1129,10 @@
         "DicePool": "Charisma + Obfuscate",
         "OpposingPool": "Wits + Resolve",
         "Effect": "Remove all sense of direction and location from a victim in a location.",
-        "AdditionalNotes": "Eye contact is required to active the power. Errata",
-        "Source": "Cults of the Blood Gods, page 85 Players Guide, page 77",
+        "AdditionalNotes": "The resistance roll can only be made by the supernatural but cannot be teamworked.",
+        "Source": "Cults of the Blood Gods, page 85",
         "Amalgam": {
             "Level": 1,
-            "School": "Dominate"
-        }
-    },
-    "mind_masque": {
-        "Id": "mind_masque",
-        "Name": "Mind Masque",
-        "School": "Obfuscate",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "Intelligence + Obfuscate",
-        "OpposingPool": "N/A",
-        "Effect": "Hide and replace emotions and thoughts against those who wish to read them through supernatural means.",
-        "AdditionalNotes": "The difficulty to mask their emotion depends on how complicated they want the ruse to be.",
-        "Source": "Players Guide, page 78",
-        "Amalgam": {
-            "Level": 2,
             "School": "Dominate"
         }
     },
@@ -1588,9 +1180,9 @@
         "AdditionalNotes": "This power extends to a number of people equal to the user's Wits, plus additional Rouse Checks.",
         "Source": "Corebook, page 263"
     },
-    "impostors_guise": {
-        "Id": "impostors_guise",
-        "Name": "Impostor's Guise",
+    "imposters_guise": {
+        "Id": "imposters_guise",
+        "Name": "Imposter's Guise",
         "School": "Obfuscate",
         "Level": 5,
         "Cost": "One Rouse Check",
@@ -1613,7 +1205,7 @@
         "OpposingPool": "Stamina + Medicine/Fortitude",
         "Effect": "Destroy a corpse by dissolving it.",
         "AdditionalNotes": "If the body is not animated it will dissolve throughout three turns with no test needed.",
-        "Source": "Cults of the Blood Gods, page 204 Players Guide, page 85"
+        "Source": "Cults of the Blood Gods, page 204"
     },
     "binding_fetter": {
         "Id": "binding_fetter",
@@ -1622,11 +1214,11 @@
         "Level": 1,
         "Cost": "Free",
         "Duration": "One scene",
-        "DicePool": "Wits + Oblivion Errata",
+        "DicePool": "N/A",
         "OpposingPool": "N/A",
         "Effect": "Allow users to be able to identify a fetter by use of their senses.",
         "AdditionalNotes": "During its use the user receives a -2 penalty to all Awareness, Wits, and Resolve rolls.",
-        "Source": "Cults of the Blood Gods, page 204 Players Guide, page 85"
+        "Source": "Cults of the Blood Gods, page 204"
     },
     "oblivion_sight": {
         "Id": "oblivion_sight",
@@ -1638,8 +1230,8 @@
         "DicePool": "N/A",
         "OpposingPool": "N/A",
         "Effect": "See in darkness clearly and see ghosts present.",
-        "AdditionalNotes": "While in use there is a two-dice penalty to social interactions with mortals.Errata",
-        "Source": "Chicago by Night, page 293 Players Guide, page 85"
+        "AdditionalNotes": "This does not give the ability to make physical contact with ghosts.",
+        "Source": "Chicago by Night, page 293"
     },
     "shadow_cloak": {
         "Id": "shadow_cloak",
@@ -1652,7 +1244,7 @@
         "OpposingPool": "N/A",
         "Effect": "+2 bonus to stealth rolls and intimidation against mortals.",
         "AdditionalNotes": "N/A",
-        "Source": "Chicago by Night, page 293 Players Guide, page 85 Fall of London, page 264"
+        "Source": "Chicago by Night, page 293"
     },
     "arms_of_ahriman": {
         "Id": "arms_of_ahriman",
@@ -1664,28 +1256,11 @@
         "DicePool": "Wits + Oblivion",
         "OpposingPool": "N/A",
         "Effect": "Conjures shadow appendages that the user can control but the user is unable to do anything else.",
-        "AdditionalNotes": "Arms do not have a health tracker and do not require Composure + Resolve to escape. Errata",
-        "Source": "Chicago by Night, page 294 Players Guide, page 86",
+        "AdditionalNotes": "The shadow can be extended up to twice the user's Oblivion rating in yards/meters.",
+        "Source": "Chicago by Night, page 294",
         "Amalgam": {
             "Level": 2,
             "School": "Potence"
-        }
-    },
-    "fatal_prediction": {
-        "Id": "fatal_prediction",
-        "Name": "Fatal Prediction",
-        "School": "Oblivion",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "24 hours",
-        "DicePool": "Resolve + Oblivion",
-        "OpposingPool": "Wits + Occult",
-        "Effect": "Increase the chances of a mortal being harmed by exterior forces.",
-        "AdditionalNotes": "For every success over margin the victim takes 1 Aggravated damage throughout the duration. The vampire cannot interact with the victim directly or indirectly. This is an updated version of Fatal Precognition.",
-        "Source": "Players Guide, page 87",
-        "Amalgam": {
-            "Level": 2,
-            "School": "Auspex"
         }
     },
     "fatal_precognition": {
@@ -1716,20 +1291,20 @@
         "OpposingPool": "N/A",
         "Effect": "Conjure shadows from the user's body.",
         "AdditionalNotes": "The shadow can be extended up to twice the user's Oblivion rating in yards/meters. Those standing in the shadow take more Willpower damage from social conflict",
-        "Source": "Chicago by Night, page 293  Players Guide, page 87"
+        "Source": "Chicago by Night, page 293"
     },
-    "where_the_veil_thinserrata": {
-        "Id": "where_the_veil_thinserrata",
-        "Name": "Where the Veil ThinsErrata",
+    "where_the_shroud_thins": {
+        "Id": "where_the_shroud_thins",
+        "Name": "Where the Shroud Thins",
         "School": "Oblivion",
         "Level": 2,
         "Cost": "One Rouse Check",
-        "Duration": "One turn Errata",
-        "DicePool": "Intelligence + Oblivion Errata",
+        "Duration": "One scene",
+        "DicePool": "Wits + Oblivion",
         "OpposingPool": "N/A",
         "Effect": "Determine the density of the Shroud in their area.",
         "AdditionalNotes": "The book lists a chart stating the possible different densities and causes, as well as their effects.",
-        "Source": "Cults of the Blood Gods, page 205  Players Guide, page 87"
+        "Source": "Cults of the Blood Gods, page 205"
     },
     "aura_of_decay": {
         "Id": "aura_of_decay",
@@ -1741,8 +1316,8 @@
         "DicePool": "Stamina + Oblivion",
         "OpposingPool": "Stamina + Medicine/Fortitude",
         "Effect": "Harnessing their connection to Oblivion can make plants wilt, animals and humans sick, and food spoil.",
-        "AdditionalNotes": "All social rolls the vampire makes when this power is active takes a two dice penalty. Any contaminated food eaten gives two Superficial Damage.Errata",
-        "Source": "Cults of the Blood Gods, page 205  Players Guide, page 88"
+        "AdditionalNotes": "Repeated use of this power within the same scene does not affect Mortals already damaged by it.",
+        "Source": "Cults of the Blood Gods, page 205"
     },
     "passion_feast": {
         "Id": "passion_feast",
@@ -1754,8 +1329,8 @@
         "DicePool": "Resolve + Oblivion",
         "OpposingPool": "Resolve + Composure",
         "Effect": "Allows a vampire to slake Hunger on the passion of wraiths.",
-        "AdditionalNotes": "The hunger consumed does not return the following night. Errata",
-        "Source": "Cults of the Blood Gods, page 206  Players Guide, page 89",
+        "AdditionalNotes": "Feeding from wraiths may merit a Stain at the Storytellers discretion.",
+        "Source": "Cults of the Blood Gods, page 206",
         "Amalgam": {
             "Level": 2,
             "School": "Fortitude"
@@ -1772,24 +1347,7 @@
         "OpposingPool": "N/A",
         "Effect": "Projects their senses into a shadow within line of sight.",
         "AdditionalNotes": "The use of this power is undetectable in the shadow other than by supernatural means such as Sense the Unseen.",
-        "Source": "Chicago by Night, page 294  Players Guide, page 89"
-    },
-    "shadow_servant": {
-        "Id": "shadow_servant",
-        "Name": "Shadow Servant",
-        "School": "Oblivion",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Use a shadow to spy on or scare others.",
-        "AdditionalNotes": "The servant has no mind of its own and cannot endure bright lights able to be destroyed by them.",
-        "Source": "Players Guide, page 89",
-        "Amalgam": {
-            "Level": 1,
-            "School": "Auspex"
-        }
+        "Source": "Chicago by Night, page 294"
     },
     "touch_of_oblivion": {
         "Id": "touch_of_oblivion",
@@ -1800,22 +1358,22 @@
         "Duration": "One turn",
         "DicePool": "N/A",
         "OpposingPool": "N/A",
-        "Effect": "Withers a body part on touch.",
-        "AdditionalNotes": "Inflicting such damage may warrant Stains up to Storyteller discretion. The user must grip the target. Errata",
-        "Source": "Chicago by Night, page 294  Players Guide, page 89"
+        "Effect": "Wither's a body part on touch.",
+        "AdditionalNotes": "If the victim is attempting to avoid the vampire it may require a contested Strength + Brawl roll.",
+        "Source": "Chicago by Night, page 294"
     },
     "necrotic_plague": {
         "Id": "necrotic_plague",
         "Name": "Necrotic Plague",
         "School": "Oblivion",
         "Level": 4,
-        "Cost": "One Rouse CheckErrata",
+        "Cost": "One Rouse Check, Two Stains",
         "Duration": "One turn to activate, variable length of the condition",
         "DicePool": "Intelligence + Oblivion",
         "OpposingPool": "Stamina + Medicine/Fortitude",
         "Effect": "Manifest illness in victims.",
-        "AdditionalNotes": "This illness cannot be treated in a medical setting as it's supernaturally inflicted, instead only healed by drinking vitae. There is no outcome on Total Failures. Errata",
-        "Source": "Cults of the Blood Gods, page 206  Players Guide, page 89"
+        "AdditionalNotes": "This illness cannot be treated in a medical setting as it's supernaturally inflicted, instead only healed by drinking vitae.",
+        "Source": "Cults of the Blood Gods, page 206"
     },
     "stygian_shroud": {
         "Id": "stygian_shroud",
@@ -1828,7 +1386,7 @@
         "OpposingPool": "N/A",
         "Effect": "Darkness spews out of a nearby shadow and covers the area.",
         "AdditionalNotes": "The shadow can be extended up to twice the user's Oblivion rating in yards/meters.",
-        "Source": "Chicago by Night, page 295  Players Guide, page 90"
+        "Source": "Chicago by Night, page 295"
     },
     "umbrous_clutch": {
         "Id": "umbrous_clutch",
@@ -1854,7 +1412,7 @@
         "OpposingPool": "N/A",
         "Effect": "The user can step into one shadow and appear in another within their sight.",
         "AdditionalNotes": "A willing person may be taken through the Shadow Step but should the user stain, so does the passenger.",
-        "Source": "Chicago by Night, page 295  Players Guide, page 90"
+        "Source": "Chicago by Night, page 295"
     },
     "skuld_fulfilled": {
         "Id": "skuld_fulfilled",
@@ -1864,10 +1422,10 @@
         "Cost": "Two Rouse Checks",
         "Duration": "Variable, depending on if the condition is treatable",
         "DicePool": "Stamina + Oblivion",
-        "OpposingPool": "Stamina + Stamina/FortitudeErrata",
+        "OpposingPool": "Stamina + Medicine/Fortitude",
         "Effect": "Reintroduce illnesses someone has recovered from.",
         "AdditionalNotes": "If the victim is a ghoul their immunity to aging is removed and eliminates any vitae in their system.",
-        "Source": "Cults of the Blood Gods, page 207  Players Guide, page 91"
+        "Source": "Cults of the Blood Gods, page 207"
     },
     "tenebrous_avatar": {
         "Id": "tenebrous_avatar",
@@ -1880,7 +1438,7 @@
         "OpposingPool": "N/A",
         "Effect": "Changes their body into a shadow able to move over any surface or through small spaces.",
         "AdditionalNotes": "The user takes no damage except sunlight and fire while in this form.",
-        "Source": "Chicago by Night, page 295  Players Guide, page 91"
+        "Source": "Chicago by Night, page 295"
     },
     "withering_spirit": {
         "Id": "withering_spirit",
@@ -1894,19 +1452,6 @@
         "Effect": "Erode a victim's spirit till they are a husk.",
         "AdditionalNotes": "If the target is Impaired, they will not return as a wraith.",
         "Source": "Cults of the Blood Gods, page 208"
-    },
-    "fluent_strength": {
-        "Id": "fluent_strength",
-        "Name": "Fluent Strength",
-        "School": "Potence",
-        "Level": 1,
-        "Cost": "Free",
-        "Duration": "Once",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Reroll Blood Surge rouse checks on Strength or Potence rolls.",
-        "AdditionalNotes": "N/A",
-        "Source": "Gehenna War, page 47"
     },
     "lethal_body": {
         "Id": "lethal_body",
@@ -1946,19 +1491,6 @@
         "Effect": "Add Potence rating to their unarmed damage and to feats of Strength, add half their Potence rating (Rounded up) to Melee damage.",
         "AdditionalNotes": "N/A",
         "Source": "Corebook, page 264"
-    },
-    "relentless_grasp": {
-        "Id": "relentless_grasp",
-        "Name": "Relentless Grasp",
-        "School": "Potence",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Gain supernatural grip strength.",
-        "AdditionalNotes": "Does not benefit the initial grapple test.",
-        "Source": "Players Guide, page 79"
     },
     "brutal_feed": {
         "Id": "brutal_feed",
@@ -2003,20 +1535,6 @@
         "AdditionalNotes": "The use of this power leaves obvious traces from the damage caused.",
         "Source": "Corebook, page 265"
     },
-    "wrecker": {
-        "Id": "wrecker",
-        "Name": "Wrecker",
-        "School": "Potence",
-        "Level": 3,
-        "Cost": "Free",
-        "Duration": "Refer Prowess",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Double Potence rating when used for feats of strength",
-        "AdditionalNotes": "It cannot be used against living targets.",
-        "Source": "Players Guide, page 79",
-        "Prerequisite": "Prowess"
-    },
     "draught_of_might": {
         "Id": "draught_of_might",
         "Name": "Draught of Might",
@@ -2029,20 +1547,6 @@
         "Effect": "Turn their vitae into a Potence boost for others.",
         "AdditionalNotes": "Each drinker must take one Rouse Checks worth.",
         "Source": "Corebook, page 265"
-    },
-    "crash_down": {
-        "Id": "crash_down",
-        "Name": "Crash Down",
-        "School": "Potence",
-        "Level": 4,
-        "Cost": "One Rouse Check",
-        "Duration": "N/A",
-        "DicePool": "Strength + Potence",
-        "OpposingPool": "Dexterity + Athletics",
-        "Effect": "Deal damage to a small area when using Soaring Leap.",
-        "AdditionalNotes": "If opponents total fail or take 3 or more levels of damage they are knocked down.",
-        "Source": "Players Guide, page 79",
-        "Prerequisite": "Soaring Leap"
     },
     "earth_shock": {
         "Id": "earth_shock",
@@ -2069,19 +1573,6 @@
         "Effect": "Inflict Aggravated Health damage to mortals and supernatural creatures alike.",
         "AdditionalNotes": "N/A",
         "Source": "Corebook, page 266"
-    },
-    "subtle_hammer": {
-        "Id": "subtle_hammer",
-        "Name": "Subtle Hammer",
-        "School": "Potence",
-        "Level": 5,
-        "Cost": "Free",
-        "Duration": "Passive",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Project the vampire\u2019s power in a specific body part.",
-        "AdditionalNotes": "You cannot make another attack in the same move, but body parts that have limited movement receive a four-dice bonus or more.",
-        "Source": "Players Guide, page 79"
     },
     "awe": {
         "Id": "awe",
@@ -2120,7 +1611,7 @@
         "OpposingPool": "Wits + Composure",
         "Effect": "Immobilize a victim by making eye contact.",
         "AdditionalNotes": "A vampire victim can break this by spending Willpower any turn after the first.",
-        "Source": "Anarch, page 185 Players Guide, page 80",
+        "Source": "Anarch, page 185",
         "Amalgam": {
             "Level": 1,
             "School": "Protean"
@@ -2136,21 +1627,8 @@
         "DicePool": "N/A",
         "OpposingPool": "N/A",
         "Effect": "Usable during feedings, the victim gains a bonus to Social attribute for one night.",
-        "AdditionalNotes": "A withdrawal follows where the victim takes a penalty equal to the original bonus when not actively working towards the next fix. It cannot be used on those under a Blood Bond. Unbondable cannot take this discipline power. Errata",
-        "Source": "Corebook, page 267  Companion page 62"
-    },
-    "melpominee": {
-        "Id": "melpominee",
-        "Name": "Melpominee",
-        "School": "Presence",
-        "Level": 2,
-        "Cost": "Free",
-        "Duration": "N/A",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Use Presence without seeing the target, only having them within earshot.",
-        "AdditionalNotes": "This works with Awe, Daunt, Dread Gaze, Entrance, and Majesty.",
-        "Source": "Players Guide, page 80"
+        "AdditionalNotes": "A withdrawal follows where the victim takes a penalty equal to the original bonus when not actively working towards the next fix. It cannot be used on those under a Blood Bond. Unbondable cannot take this discipline power. [Errata]",
+        "Source": "Corebook, page 267 Companion page 62"
     },
     "clear_the_field": {
         "Id": "clear_the_field",
@@ -2160,10 +1638,10 @@
         "Cost": "One Rouse Check",
         "Duration": "N/A",
         "DicePool": "Composure + Presence",
-        "OpposingPool": "Wits + Composure",
+        "OpposingPool": "N/A",
         "Effect": "Clear a space in a calm and orderly manner.",
-        "AdditionalNotes": "They can exempt a number of people equal to their Composure. Errata",
-        "Source": "Fall of London, page 31Errata",
+        "AdditionalNotes": "Opposed individually with Wits + Composure",
+        "Source": "Fall of London, page 177",
         "Amalgam": {
             "Level": 3,
             "School": "Dominate"
@@ -2195,23 +1673,6 @@
         "AdditionalNotes": "If the request is harmful to the victim or their loved ones, or opposes their tenets the test must be made again or Entrancement fails.",
         "Source": "Corebook, page 268"
     },
-    "thrown_voice": {
-        "Id": "thrown_voice",
-        "Name": "Thrown Voice",
-        "School": "Presence",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Throw their voice from any point within sight and leave the voice there.",
-        "AdditionalNotes": "A roll is only needed if being used in combination with Irresistible Voice, Melpominee or similar powers.",
-        "Source": "Players Guide, page 80",
-        "Amalgam": {
-            "Level": 1,
-            "School": "Auspex"
-        }
-    },
     "true_loves_face": {
         "Id": "true_loves_face",
         "Name": "True Love's Face",
@@ -2224,6 +1685,7 @@
         "Effect": "The victim will perceive the user as a mortal they have strong emotional ties with, be it hatred or love.",
         "AdditionalNotes": "Can net stains for the victim if the perceived target is their touchstone.",
         "Source": "Cults of the Blood Gods, page 85",
+        "Prerequisite": "Church of Set",
         "Amalgam": {
             "Level": 3,
             "School": "Obfuscate"
@@ -2263,19 +1725,6 @@
             "School": "Auspex"
         }
     },
-    "suffuse_the_edifice": {
-        "Id": "suffuse_the_edifice",
-        "Name": "Suffuse the Edifice",
-        "School": "Presence",
-        "Level": 4,
-        "Cost": "N/A",
-        "Duration": "As power transmitted",
-        "DicePool": "As power transmitted",
-        "OpposingPool": "As power transmitted",
-        "Effect": "Extend Presence onto a building.",
-        "AdditionalNotes": "If the vampire is present they become the focus instead of the building.",
-        "Source": "Players Guide, page 80"
-    },
     "summon": {
         "Id": "summon",
         "Name": "Summon",
@@ -2288,19 +1737,6 @@
         "Effect": "Call someone to them who has had certain Presence powers used on them or tasted the user's vitae.",
         "AdditionalNotes": "The victim will not physically or financially harm themselves to reach the user.",
         "Source": "Corebook, page 268"
-    },
-    "wingman": {
-        "Id": "wingman",
-        "Name": "Wingman",
-        "School": "Presence",
-        "Level": 4,
-        "Cost": "One Rouse Check plus additional powers",
-        "Duration": "As power used.",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Extend Presence onto another character to use.",
-        "AdditionalNotes": "The same Presence power used by both does not double the bonus.",
-        "Source": "Blood Stained Love, page 152"
     },
     "majesty": {
         "Id": "majesty",
@@ -2378,40 +1814,10 @@
         "OpposingPool": "N/A",
         "Effect": "Sculpt the flesh of bodies allowing changes to their own bodies.",
         "AdditionalNotes": "Each success on the roll allows a single change to be made.",
-        "Source": "Companion, page 27 Players Guide, page 81",
+        "Source": "Companion, page 27",
         "Amalgam": {
             "Level": 2,
             "School": "Dominate"
-        }
-    },
-    "serpents_kiss": {
-        "Id": "serpents_kiss",
-        "Name": "Serpent's Kiss",
-        "School": "Protean",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "When biting someone, inject their own vitae into them.",
-        "AdditionalNotes": "This can also be used to transport powers like Scorpion's Touch.",
-        "Source": "Blood Stained Love, page 153"
-    },
-    "the_false_sip": {
-        "Id": "the_false_sip",
-        "Name": "The False Sip",
-        "School": "Protean",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene or more",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Prevent any blood or Blood from entering their system.",
-        "AdditionalNotes": "They must vomit it back up within the scene or extend to an additional scene by making another Rouse Check.",
-        "Source": "Blood Stained Love, page 153",
-        "Amalgam": {
-            "Level": 1,
-            "School": "Fortitude"
         }
     },
     "earth_meld": {
@@ -2438,7 +1844,7 @@
         "OpposingPool": "Stamina + Resolve",
         "Effect": "Extends the mastery over the flesh to be used on others.",
         "AdditionalNotes": "An unwilling subject may resist with the margin of the user's role counting as the number of changes able to be made.",
-        "Source": "Companion, page 27 Players Guide, page 82",
+        "Source": "Companion, page 27",
         "Prerequisite": "Vicissitude",
         "Amalgam": {
             "Level": 2,
@@ -2471,8 +1877,8 @@
         "AdditionalNotes": "Hunger can be reduced by one per body, up to the level of their Blood Sorcery rating but cannot reduce to 0.",
         "Source": "Sabbat, page 49",
         "Amalgam": {
-            "Level": 2,
-            "School": "Blood Sorcery"
+            "Level": null,
+            "School": "Blood Sorcery ●●"
         }
     },
     "horrid_form": {
@@ -2486,7 +1892,7 @@
         "OpposingPool": "N/A",
         "Effect": "Take on a monstrous shape.",
         "AdditionalNotes": "Grants several changes equal to the user's Protean rating. Any critical scores are counted as messy criticals and Frenzy checks are made with +2 Difficulty.",
-        "Source": "Companion, page 28 Players Guide, page 83",
+        "Source": "Companion, page 28",
         "Prerequisite": "Vicissitude",
         "Amalgam": {
             "Level": 2,
@@ -2507,23 +1913,6 @@
         "Source": "Corebook, page 271",
         "Prerequisite": "Shapechange"
     },
-    "blood_form": {
-        "Id": "blood_form",
-        "Name": "Blood Form",
-        "School": "Protean",
-        "Level": 5,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene, or until the effect is voluntarily ended.",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Turn into an amorphous mass of blood.",
-        "AdditionalNotes": "Can be consumed, creating blood bonds as normal.",
-        "Source": "Gehenna War, page 47",
-        "Amalgam": {
-            "Level": 2,
-            "School": "Blood Sorcery"
-        }
-    },
     "the_heart_of_darkness": {
         "Id": "the_heart_of_darkness",
         "Name": "The Heart of Darkness",
@@ -2536,24 +1925,11 @@
         "Effect": "Allows a vampire to remove their own heart and store it outside of their body.",
         "AdditionalNotes": "If the heart is dealt aggravated damage equal to or greater than the user's health tracker, they fall into torpor. It can only be destroyed through fire or sunlight.",
         "Source": "Cults of the Blood Gods, page 85",
+        "Prerequisite": "Church of Set",
         "Amalgam": {
             "Level": 2,
             "School": "Fortitude"
         }
-    },
-    "master_of_forms": {
-        "Id": "master_of_forms",
-        "Name": "Master of Forms",
-        "School": "Protean",
-        "Level": 5,
-        "Cost": "None, but rouse for Shapechange as normal.",
-        "Duration": "As Shapechange or Metamorphosis",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Allows the vampire to take on any animal shape, rather than just one.",
-        "AdditionalNotes": "All other limitations of Shapechange and Metamorphosis apply.",
-        "Source": "Gehenna War, page 48",
-        "Prerequisite": "Shapechange"
     },
     "mist_form": {
         "Id": "mist_form",
@@ -2579,7 +1955,7 @@
         "OpposingPool": "N/A",
         "Effect": "Sink into the earth of their Domain.",
         "AdditionalNotes": "Same system as Earth Meld however they are not limited by the material.",
-        "Source": "Companion, page 28 Players Guide, page 83",
+        "Source": "Companion, page 28",
         "Prerequisite": "Earth Meld",
         "Amalgam": {
             "Level": 2,
@@ -2599,57 +1975,6 @@
         "AdditionalNotes": "Only upon a critical win does the stake penetrate when in melee combat.",
         "Source": "Corebook, page 271"
     },
-    "body_paint": {
-        "Id": "body_paint",
-        "Name": "Body Paint",
-        "School": "Thin-Blood Alchemy",
-        "Level": 1,
-        "Cost": "One Rouse Check",
-        "Duration": "Permanent, unless erased by skin coloured Body Paint",
-        "DicePool": "Dexterity + Craft",
-        "OpposingPool": "None",
-        "Effect": "Create tattoos with personal touches beyond regular tattoos",
-        "AdditionalNotes": "After a week, the roll to alter the tattoo is Stamina + Resolve",
-        "Source": "Blood Sigils, page 73",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Choleric"
-        }
-    },
-    "checkout_time": {
-        "Id": "checkout_time",
-        "Name": "Checkout Time",
-        "School": "Thin-Blood Alchemy",
-        "Level": 1,
-        "Cost": "One Rouse Check",
-        "Duration": "A number of nights written during creation. This cannot exceed 9 nights",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Enter a deep torpor where there is no difference between you or a corpse",
-        "AdditionalNotes": "Coming out of this Torpor does not require a Rouse Check. In this state, they have no aura, require no rouse checks and take no damage from sunlight or other banes",
-        "Source": "Blood Sigils, page 74",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Phlegmatic"
-        }
-    },
-    "elevate": {
-        "Id": "elevate",
-        "Name": "Elevate",
-        "School": "Thin-Blood Alchemy",
-        "Level": 1,
-        "Cost": "One Rouse Check",
-        "Duration": "One Scene",
-        "DicePool": "Stamina + Alchemy",
-        "OpposingPool": "N/A",
-        "Effect": "Get high regardless of Humanity or Blush of Life. Temporarily enhances Dexterity if well made",
-        "AdditionalNotes": "Badly made Elevate still feels great but degrades Dexterity",
-        "Source": "Blood Sigils, page 74",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Sanguine"
-        }
-    },
     "far_reach": {
         "Id": "far_reach",
         "Name": "Far Reach",
@@ -2663,25 +1988,8 @@
         "AdditionalNotes": "Keeping something held in the air requires a check each turn of Resolve + Alchemy Difficulty 3.",
         "Source": "Corebook, page 284",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Choleric"
-        }
-    },
-    "food_stain": {
-        "Id": "food_stain",
-        "Name": "Food Stain",
-        "School": "Thin-Blood Alchemy",
-        "Level": 1,
-        "Cost": "One Rouse Check",
-        "Duration": "Persists until consumed or applied",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Mark someone so anyone who drinks from them becomes obvious to the alchemist when they encounter them",
-        "AdditionalNotes": "If the alchemist has Auspex 2, they become aware as soon as the feeding occurs",
-        "Source": "Blood Sigils, page 74",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Melancholic"
         }
     },
     "gaolers_bane": {
@@ -2697,7 +2005,7 @@
         "AdditionalNotes": "N/A",
         "Source": "Winter's Teeth, Page 10",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Sanguine"
         }
     },
@@ -2714,42 +2022,8 @@
         "AdditionalNotes": "This can be extended to encompass up to five people with an additional Rouse Check.",
         "Source": "Corebook, page 285",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Phlegmatic"
-        }
-    },
-    "mercurian_tongue": {
-        "Id": "mercurian_tongue",
-        "Name": "Mercurian Tongue",
-        "School": "Thin-Blood Alchemy",
-        "Level": 1,
-        "Cost": "One Rouse Check",
-        "Duration": "One night or till they feed from someone with the same native language as themselves.",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Speak other languages than their own.",
-        "AdditionalNotes": "The alchemist can spend Willpower and feed from another person to swap the language the alchemist currently knows.",
-        "Source": "Players Guide, page 103",
-        "Amalgam": {
-            "Level": 0,
-            "School": "N/A"
-        }
-    },
-    "plugin": {
-        "Id": "plugin",
-        "Name": "Plug-In",
-        "School": "Thin-Blood Alchemy",
-        "Level": 1,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene if lighting one room, till half battery if charging a device.",
-        "DicePool": "Resolve + Alchemy",
-        "OpposingPool": "N/A",
-        "Effect": "Produce low-level electrical current from their body.",
-        "AdditionalNotes": "It powers through touch and will stop if the connection is lost.",
-        "Source": "Players Guide, page 103",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Sanguine"
         }
     },
     "portable_shade": {
@@ -2766,59 +2040,8 @@
         "Source": "Sabbat, page 53",
         "Prerequisite": "Sabbat",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Sanguine"
-        }
-    },
-    "speak_from_the_heart": {
-        "Id": "speak_from_the_heart",
-        "Name": "Speak From the Heart",
-        "School": "Thin-Blood Alchemy",
-        "Level": 1,
-        "Cost": "One Rouse Check",
-        "Duration": "Messages take 1 minute. Lasts until death or blood is drunk",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Place a message into someone's blood. The next vampire to drink from them gets the message",
-        "AdditionalNotes": "Different drinks used in the creation affect the message",
-        "Source": "Blood Sigils, page 75",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Melancholic"
-        }
-    },
-    "advanced_torpor": {
-        "Id": "advanced_torpor",
-        "Name": "Advanced Torpor",
-        "School": "Thin-Blood Alchemy",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "Until target awakens from Torpor",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Immediately cause Torpor",
-        "AdditionalNotes": "Always heal as a vampire, regardless of flaws. Unlike regular torpor, the vampire always has a Rouse Check re-roll",
-        "Source": "Blood Sigils, page 75",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Choleric,\nPhlegmatic"
-        }
-    },
-    "blacklight_surprise": {
-        "Id": "blacklight_surprise",
-        "Name": "Blacklight Surprise",
-        "School": "Thin-Blood Alchemy",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "At least one hour. Light source breaking ends the effect",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Makes UV light damage vampires",
-        "AdditionalNotes": "Kindred who already take damage from UV light, take an extra point",
-        "Source": "Blood Sigils, page 75",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Sanguine,\nCholeric"
         }
     },
     "blood_of_mandagloire": {
@@ -2835,25 +2058,8 @@
         "Source": "Second Inquisition, 46",
         "Prerequisite": "Second Inquisition",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Melancholic"
-        }
-    },
-    "blue_state": {
-        "Id": "blue_state",
-        "Name": "Blue State",
-        "School": "Thin-Blood Alchemy",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "The Stain remains until the people involved, at least, have an uncomfortable talk",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Forces a target to contemplate obsessively over an ally's failure",
-        "AdditionalNotes": "Kindred gain stains if an ally violates their convictions. Mortals just hold a grudge",
-        "Source": "Blood Sigils, page 76",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Melancholic,\nPhlegmatic"
         }
     },
     "envelop": {
@@ -2862,32 +2068,15 @@
         "School": "Thin-Blood Alchemy",
         "Level": 2,
         "Cost": "One Rouse Check",
-        "Duration": "One scene or until ended voluntarily",
+        "Duration": "One Scene or until ended voluntarily",
         "DicePool": "Wits + Alchemy",
         "OpposingPool": "Stamina + Survival",
         "Effect": "Create a mist that clings to a victim.",
         "AdditionalNotes": "This can only be employed on single targets one at a time.",
         "Source": "Corebook, page 285",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Melancholic, Phlegmatic"
-        }
-    },
-    "friends_list": {
-        "Id": "friends_list",
-        "Name": "Friends List",
-        "School": "Thin-Blood Alchemy",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "Intelligence + Alchemy",
-        "OpposingPool": "N/A",
-        "Effect": "See connections between Kindred and mortals",
-        "AdditionalNotes": "Stronger connections require fewer and fewer successes.",
-        "Source": "Players Guide, page 104",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Phlegmatic"
         }
     },
     "mirror_of_trust": {
@@ -2904,7 +2093,7 @@
         "Source": "Second Inquisition, page 46",
         "Prerequisite": "Second Inquisition",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Sanguine"
         }
     },
@@ -2921,25 +2110,8 @@
         "AdditionalNotes": "Fire spreading from it can be extinguished, but the supernatural source cannot.",
         "Source": "Winter's Teeth, Page 10",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Choleric"
-        }
-    },
-    "whiffits": {
-        "Id": "whiffits",
-        "Name": "Whiff-Its",
-        "School": "Thin-Blood Alchemy",
-        "Level": 2,
-        "Cost": "One Rouse Check",
-        "Duration": "Until Dawn",
-        "DicePool": "Resolve + Awareness",
-        "OpposingPool": "N/A",
-        "Effect": "Smell and track the Kindred with the highest Blood Potency",
-        "AdditionalNotes": "If multiple Kindred have the same BP, a test allows the user to distinguish between them",
-        "Source": "Gehenna War, Page 50",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Phlegmatic or Sanguine"
         }
     },
     "counterfeit_discipline": {
@@ -2953,11 +2125,7 @@
         "OpposingPool": "The same as the power channeled",
         "Effect": "Counterfeit a four-dot Discipline",
         "AdditionalNotes": "Requires a drop of vitae from a vampire of a matching clan or who possesses the Discipline.",
-        "Source": "Corebook, page 287",
-        "Amalgam": {
-            "Level": 0,
-            "School": "N/A"
-        }
+        "Source": "Corebook, page 287"
     },
     "chemicallyinduced_flashback": {
         "Id": "chemicallyinduced_flashback",
@@ -2969,13 +2137,9 @@
         "DicePool": "N/A",
         "OpposingPool": "N/A",
         "Effect": "Imbue and experience a Memorium of another vampire.",
-        "AdditionalNotes": "Must use the Fixatio method. The Thin-bloods develop this formula within the Ashfinders. Concoct Ashe is a pre-requisite.",
+        "AdditionalNotes": "Must use the Fixatio method. The Thin-bloods develop this formula within the Ashfinders.",
         "Source": "Cults of the Blood Gods, page 45",
-        "Prerequisite": "Ashfinders",
-        "Amalgam": {
-            "Level": 0,
-            "School": "N/A"
-        }
+        "Prerequisite": "Ashfinders, Concoct Ashe"
     },
     "concoct_ashe": {
         "Id": "concoct_ashe",
@@ -2989,28 +2153,7 @@
         "Effect": "Create Ashe from the remains of a vampire.",
         "AdditionalNotes": "Must use the Fixatio method. The Thin-bloods develop this formula within the Ashfinders.",
         "Source": "Cults of the Blood Gods, page 45",
-        "Prerequisite": "Ashfinders",
-        "Amalgam": {
-            "Level": 0,
-            "School": "N/A"
-        }
-    },
-    "diamond_skin": {
-        "Id": "diamond_skin",
-        "Name": "Diamond Skin",
-        "School": "Thin-Blood Alchemy",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "Until margin of Distillation roll is used up",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Reduces physical damage to the alchemist, turning Aggravated to Superficial",
-        "AdditionalNotes": "Does not affect fire, acid, sunlight or sorcery",
-        "Source": "Blood Sigils, page 76",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Melancholic"
-        }
+        "Prerequisite": "Ashfinders"
     },
     "defractionate": {
         "Id": "defractionate",
@@ -3025,7 +2168,7 @@
         "AdditionalNotes": "Each Distillation style has a unique method of tapping for this elixir.",
         "Source": "Corebook, page 286",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Melancholic, Sanguine"
         }
     },
@@ -3043,25 +2186,8 @@
         "Source": "Second Inquisition, page 47",
         "Prerequisite": "Second Inquisition",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Choleric"
-        }
-    },
-    "fireskin": {
-        "Id": "fireskin",
-        "Name": "Fireskin",
-        "School": "Thin-Blood Alchemy",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "One Scene",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Superheat your body",
-        "AdditionalNotes": "They gain +1 additional fire damage with strikes with their body. They are immune to fire but cold hurts more",
-        "Source": "Blood Sigils, page 76",
-        "Amalgam": {
-            "Level": 0,
-            "School": "N/A"
         }
     },
     "freezer_fluid": {
@@ -3078,76 +2204,8 @@
         "Source": "Second Inquisition, page 47",
         "Prerequisite": "Second Inquisition",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Melancholic, Phlegmatic"
-        }
-    },
-    "hospital_chains": {
-        "Id": "hospital_chains",
-        "Name": "Hospital Chains",
-        "School": "Thin-Blood Alchemy",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "2 days per point of margin",
-        "DicePool": "Distillation roll vs Stamina",
-        "OpposingPool": "N/A",
-        "Effect": "Prevent someone from healing",
-        "AdditionalNotes": "Critical wins last 2 days per success",
-        "Source": "Blood Sigils, page 76",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Phlegmatic"
-        }
-    },
-    "mandagloire": {
-        "Id": "mandagloire",
-        "Name": "Mandagloire",
-        "School": "Thin-Blood Alchemy",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "Three turns",
-        "DicePool": "Stamina + Alchemy",
-        "OpposingPool": "Stamina + Resolve",
-        "Effect": "Emit a gas that causes rigid paralysis in mortals and supernatural creatures.",
-        "AdditionalNotes": "For Fixatio alchemists this can be slipped into a drink or burned.",
-        "Source": "Players Guide, page 104",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Phlegmatic"
-        }
-    },
-    "martian_purity": {
-        "Id": "martian_purity",
-        "Name": "Martian Purity",
-        "School": "Thin-Blood Alchemy",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "Two rounds",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Expel blood-borne illnesses through ignited gases",
-        "AdditionalNotes": "Deals 2 Aggravated Health damage",
-        "Source": "Blood Sigils, page 77",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Choleric"
-        }
-    },
-    "mask_off": {
-        "Id": "mask_off",
-        "Name": "Mask Off",
-        "School": "Thin-Blood Alchemy",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "N/A",
-        "OpposingPool": "Stamina + Resolve",
-        "Effect": "Creates an explosion of gas that causes no damage but negates the Blush of Life",
-        "AdditionalNotes": "Those affected cannot use Blush of Life for rest of the night. The opposing pool is rolled against the Distillation pool",
-        "Source": "Blood Sigils, page 77",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Choleric,\nMelancholic"
         }
     },
     "ondemand_sunburn": {
@@ -3164,7 +2222,7 @@
         "Source": "Sabbat, page 53",
         "Prerequisite": "Sabbat",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Choleric"
         }
     },
@@ -3178,28 +2236,11 @@
         "DicePool": "Stamina + Resolve",
         "OpposingPool": "N/A",
         "Effect": "Change their form into their ideal human shape.",
-        "AdditionalNotes": "This cannot spare the Nosferatu from their bane. Errata",
+        "AdditionalNotes": "This cannot spare the Nosferatu from their bane. [Errata]",
         "Source": "Corebook, page 286",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Melancholic, Phlegmatic"
-        }
-    },
-    "rumor": {
-        "Id": "rumor",
-        "Name": "Rumor",
-        "School": "Thin-Blood Alchemy",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "Manipulation + Alchemy",
-        "OpposingPool": "Wits + Awareness",
-        "Effect": "Make a statement and convince one person to agree.",
-        "AdditionalNotes": "It lingers till something contradicts the target\u2019s agreement.",
-        "Source": "Players Guide, page 105",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Phlegmatic"
         }
     },
     "stay_the_falling_sand": {
@@ -3215,58 +2256,7 @@
         "AdditionalNotes": "Cannot be used on living creatures or kindred.",
         "Source": "Winter's Teeth, Page 10",
         "Amalgam": {
-            "Level": 0,
-            "School": "Melancholic"
-        }
-    },
-    "tank": {
-        "Id": "tank",
-        "Name": "Tank",
-        "School": "Thin-Blood Alchemy",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "Until they take damage or the scene ends",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Strengthen their resistance to damage",
-        "AdditionalNotes": "The first damage they take is reduced by five.",
-        "Source": "Players Guide, page 105",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Choleric"
-        }
-    },
-    "tlc": {
-        "Id": "tlc",
-        "Name": "TLC",
-        "School": "Thin-Blood Alchemy",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "Permanent",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Enhances the blood of animals so it slakes the same as mortal blood",
-        "AdditionalNotes": "Killing an animal cannot slake Hunger to zero",
-        "Source": "Blood Sigils, page 77",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Animal,\nCholeric"
-        }
-    },
-    "troll_the_pious": {
-        "Id": "troll_the_pious",
-        "Name": "Troll the Pious",
-        "School": "Thin-Blood Alchemy",
-        "Level": 3,
-        "Cost": "One Rouse Check",
-        "Duration": "Changes based on what it is smeared on",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Cause negatives effects to the religious",
-        "AdditionalNotes": "Gives one-dice penalty to most dice pools. Those with True Faith take a two-dice penalty instead and suffer hallucinations",
-        "Source": "Blood Sigils, page 78",
-        "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Melancholic"
         }
     },
@@ -3283,25 +2273,8 @@
         "AdditionalNotes": "Can move at running speed and carrying a human-sized mass slows to walking speed. This can only be used by the alchemist.",
         "Source": "Corebook, page 287",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Choleric, Sanguine"
-        }
-    },
-    "copycat": {
-        "Id": "copycat",
-        "Name": "Copycat",
-        "School": "Thin-Blood Alchemy",
-        "Level": 4,
-        "Cost": "One Rouse Check",
-        "Duration": "Twenty minutes, possibly up to a scene",
-        "DicePool": "N/A",
-        "OpposingPool": "Intelligence + Awareness",
-        "Effect": "Turn into an approximate copy of someone",
-        "AdditionalNotes": "Those who know the person whose appearance is borrowed can recognise the difference by rolling the Opposing pool against the Distillation roll",
-        "Source": "Blood Sigils, page 78",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Choleric,\nPhlegmatic"
         }
     },
     "discipline_channeling": {
@@ -3314,30 +2287,9 @@
         "DicePool": "N/A",
         "OpposingPool": "N/A",
         "Effect": "Imbue Ashe with Disciplines",
-        "AdditionalNotes": "Must use the Fixatio method. The Thin-bloods develop this formula within the Ashfinders. Concoct Ashe is a prerequisite.",
+        "AdditionalNotes": "Must use the Fixatio method. The Thin-bloods develop this formula within the Ashfinders.",
         "Source": "Cults of the Blood Gods, page 46",
-        "Prerequisite": "Ashfinders",
-        "Amalgam": {
-            "Level": 0,
-            "School": "N/A"
-        }
-    },
-    "halfliving_conductor": {
-        "Id": "halfliving_conductor",
-        "Name": "Half-Living Conductor",
-        "School": "Thin-Blood Alchemy",
-        "Level": 4,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene, or voluntarily ended",
-        "DicePool": "Stamina + Alchemy",
-        "OpposingPool": "N/A",
-        "Effect": "Be immune to, and redirect electrical currents",
-        "AdditionalNotes": "Using electricity to attack requires Dexterity + Alchemy. Deals 2 damage, Aggravated to mortals, Superficial to vampires",
-        "Source": "Blood Sigils, page 79",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Choleric,\nSanguine"
-        }
+        "Prerequisite": "Ashfinders, Concoct Ashe"
     },
     "hollow_leg": {
         "Id": "hollow_leg",
@@ -3352,93 +2304,8 @@
         "AdditionalNotes": "The victim must be tricked, coerced or forced into drinking this.",
         "Source": "Winter's Teeth, Page 10",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Non-Resonant Human Blood"
-        }
-    },
-    "juice_box": {
-        "Id": "juice_box",
-        "Name": "Juice Box",
-        "School": "Thin-Blood Alchemy",
-        "Level": 4,
-        "Cost": "One Rouse Check",
-        "Duration": "As target Formula",
-        "DicePool": "As target Formula",
-        "OpposingPool": "As target Formula",
-        "Effect": "Alters a Formula to be used by any vampire",
-        "AdditionalNotes": "Requires Methuselah Blood",
-        "Source": "Gehenna War, Page 51",
-        "Amalgam": {
-            "Level": 0,
-            "School": "As target Formula"
-        }
-    },
-    "red_state": {
-        "Id": "red_state",
-        "Name": "Red State",
-        "School": "Thin-Blood Alchemy",
-        "Level": 4,
-        "Cost": "One Rouse Check",
-        "Duration": "Permanent, until target imbibes a choleric Dyscrasia",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Erases memories of someone's misdeeds",
-        "AdditionalNotes": "Being told of the crime makes no sense to the target",
-        "Source": "Blood Sigils, page 79",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Sanguine,\nPhlegmatic"
-        }
-    },
-    "short_circuit": {
-        "Id": "short_circuit",
-        "Name": "Short Circuit",
-        "School": "Thin-Blood Alchemy",
-        "Level": 4,
-        "Cost": "One Rouse Check",
-        "Duration": "N/A",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Overload the batteries in electronics or electrical equipment.",
-        "AdditionalNotes": "This allows for alchemists to touch either the object itself or metal connected and short it out.",
-        "Source": "Players Guide, page 105",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Melancholic"
-        }
-    },
-    "toxic_personality": {
-        "Id": "toxic_personality",
-        "Name": "Toxic Personality",
-        "School": "Thin-Blood Alchemy",
-        "Level": 4,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "Strength/Dexterity + Alchemy",
-        "OpposingPool": "Dexterity + Alchemy",
-        "Effect": "Secrete caustic bile from their pores and orifices.",
-        "AdditionalNotes": "The alchemist may touch this without being harmed. It can either be used as a physical attack or by making another Rouse Check, spit as a ranged attack.",
-        "Source": "Players Guide, page 105",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Choleric"
-        }
-    },
-    "vitae_msg": {
-        "Id": "vitae_msg",
-        "Name": "Vitae MSG",
-        "School": "Thin-Blood Alchemy",
-        "Level": 4,
-        "Cost": "One Rouse Check",
-        "Duration": "Once applied to someone, it lasts until dawn, if they survive",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Make it hard for vampires to resist feeding off someone.",
-        "AdditionalNotes": "Ventrue feeding off someone appointed with this require 1 less Willpower if they aren't in their preferred category.",
-        "Source": "Blood Sigils, page 79",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Sanguine"
         }
     },
     "awaken_the_sleeper": {
@@ -3454,76 +2321,8 @@
         "AdditionalNotes": "Each Distillation style has a unique method of tapping for this elixir.",
         "Source": "Corebook, page 287",
         "Amalgam": {
-            "Level": 0,
+            "Level": null,
             "School": "Choleric or Sanguine"
-        }
-    },
-    "beast_mode": {
-        "Id": "beast_mode",
-        "Name": "Beast Mode",
-        "School": "Thin-Blood Alchemy",
-        "Level": 5,
-        "Cost": "One Rouse Check",
-        "Duration": "One Scene",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Gain the use of 1 Level 5 Potence, Celerity or Fortitude power",
-        "AdditionalNotes": "The alchemist must succeed on a Willpower test to avoid Frenzy when consuming this",
-        "Source": "Gehenna War, Page 51",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Choleric or Sanguine"
-        }
-    },
-    "flowering_amaranth": {
-        "Id": "flowering_amaranth",
-        "Name": "Flowering Amaranth",
-        "School": "Thin-Blood Alchemy",
-        "Level": 5,
-        "Cost": "One Rouse Check made by each participant",
-        "Duration": "Used for the Diablerie",
-        "DicePool": "Resolve + Alchemy",
-        "OpposingPool": "Willpower + Blood Potency",
-        "Effect": "Share diablerie with other thin-bloods.",
-        "AdditionalNotes": "Upon a win they gain a Discipline as if a full-blooded though they cannot level it, they do no gain generation and still lose 1 Humanity. They also gain the black-veined aura of Diablerie.",
-        "Source": "Players Guide, page 106",
-        "Amalgam": {
-            "Level": 0,
-            "School": "N/A"
-        }
-    },
-    "moment_of_clarity": {
-        "Id": "moment_of_clarity",
-        "Name": "Moment of Clarity",
-        "School": "Thin-Blood Alchemy",
-        "Level": 5,
-        "Cost": "One Rouse Check",
-        "Duration": "One scene",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Harness the power of the Beast to support them.",
-        "AdditionalNotes": "Add four dice to Mental Skill pools, Discipline Skill pools, and to Mental resistance checks when Disciplines are used on them. Immune to Messy Criticals and Frenzy.",
-        "Source": "Players Guide, page 106",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Phlegmatic"
-        }
-    },
-    "saturns_flux": {
-        "Id": "saturns_flux",
-        "Name": "Saturn's Flux",
-        "School": "Thin-Blood Alchemy",
-        "Level": 5,
-        "Cost": "One Rouse Check",
-        "Duration": "Effect kicks in one day after ingestion",
-        "DicePool": "N/A",
-        "OpposingPool": "N/A",
-        "Effect": "Break Blood-bonds",
-        "AdditionalNotes": "Removing the Blood-bond is painful but Mortals take no damage. Kindred have to take Aggravated damage to expel.",
-        "Source": "Blood Sigils, page 80",
-        "Amalgam": {
-            "Level": 0,
-            "School": "Phlegmatic"
         }
     }
 }

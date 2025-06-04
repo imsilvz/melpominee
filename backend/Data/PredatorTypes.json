@@ -9,8 +9,8 @@
     "alleycat": {
         "id": "alleycat",
         "name": "Alleycat",
-        "description": "Those who find violence to be the quickest way to get what they want might gravitate towards this hunting style. Alleycats are a vampire who feeds by brute force and outright attack and feeds from whomever they can when they can. Intimidation is a route easily taken to make their victims cower or even Dominating the victims to not report the attack or mask it as something else entirely.",
-        "rollInfo": "Strength + Brawl is to take blood by force or threat. Wits + Streetwise can be used to find criminals as if a vigilante figure.",
+        "description": "Those who find violence to be the quickest way to get what they want might gravitate towards this hunting style. Alleycats are a vampire who feeds by brute force and outright attack and feeds from whomever they can when they can. Intimidation is a route easily taken to make their victims cower or even Dominating the victims to not report the attack or mask it as something else entirely. ",
+        "rollInfo": "Strength + Brawl is to take blood by force or threat. Wits + Streetwise can be used to find criminals as if a vigilante figure. ",
         "effectList": [
             "Gain one specialty in either Intimidation (Stickups) or Brawl (Grappling)",
             "Gain one dot of either Celerity or Potence",
@@ -21,96 +21,71 @@
     "bagger": {
         "id": "bagger",
         "name": "Bagger",
-        "description": "Sometimes the best blood doesn't come from a live body. Baggers are kindred who take an approach most are unable to with their ability to consume preserved, defractionated or rancid blood through (•••) Iron Gullet, allowing them to feed from unusual sources such as blood bags or corpses. Perhaps they work in a hospital or blood bank or they might even have enough knowledge about the black market to obtain their blood. Ventrue are unable to pick this Predator type.",
-        "rollInfo": "Intelligence + Streetwise can be used to find, gain access and purchase the goods.",
+        "description": "Sometimes the best blood doesn't come from a live body. Baggers are kindred who take an approach most are unable to with their ability to consume preserved, defractionated or rancid blood through (\u2022\u2022\u2022) Iron Gullet, allowing them to feed from unusual sources such as blood bags or corpses. Perhaps they work in a hospital or blood bank or they might even have enough knowledge about the black market to obtain their blood. Ventrue are unable to pick this Predator type. ",
+        "rollInfo": "Intelligence + Streetwise can be used to find, gain access and purchase the goods. ",
         "effectList": [
             "Gain one specialty in either Larceny (Lock Picking) or Streetwise (Black Market)",
-            "Gain one dot of Blood Sorcery (Tremere and Banu Haqim only), Oblivion (Hecata and Lasombra only), or Obfuscate",
-            "Gain the Feeding Merit (•••) Iron Gullet",
-            "Gain an Enemy Flaw (••) of someone who believes this vampire owes them something or there's another reason to hunt them down"
+            "Gain one dot of Blood Sorcery (Tremere and Banu Haqim only), Oblivion (Hecata only), or Obfuscate",
+            "Gain the Feeding Merit (\u2022\u2022\u2022) Iron Gullet",
+            "Gain an Enemy Flaw (\u2022\u2022) of someone who believes this vampire owes them something or there's another reason to hunt them down"
         ]
     },
     "blood_leech": {
         "id": "blood_leech",
         "name": "Blood Leech",
-        "description": "Some Kindred might see feeding from mortals as inherently wrong or disgusting regardless of others' rationale. Blood Leech is a feeding style that is not looked upon kindly by many vampires making it risky unless the Kindred has a position of power and can keep their little secret secure. Regardless, with their rejection of mortal blood, they instead feed upon the vitae of other vampires through hunting those weaker than them, coercion, or taking Blood as payment.",
-        "rollInfo": "This Predator Type is suggested to not be abstracted down to a dice pool",
+        "description": "Some Kindred might see feeding from mortals as inherently wrong or disgusting regardless of others' rationale. Blood Leech is a feeding style that is not looked upon kindly by many vampires making it risky unless the Kindred has a position of power and can keep their little secret secure. Regardless, with their rejection of mortal blood, they instead feed upon the vitae of other vampires through hunting those weaker than them, coercion, or taking Blood as payment. ",
+        "rollInfo": "This Predator Type is suggested to not be abstracted down to a dice pool. ",
         "effectList": [
             "Gain one specialty in either Brawl (Kindred) or Stealth (Against Kindred)",
             "Gain one dot of Celerity or Protean",
             "Lose one dot of Humanity",
             "Increase blood potency by one",
-            "Gain the Dark Secret Flaw: Diablerist (••), or the Shunned Flaw (••)",
-            "Gain the Feeding Flaw: (••) Prey Exclusion (Mortals)"
+            "Gain the Dark Secret Flaw: Diablerist (\u2022\u2022), or the Shunned Flaw (\u2022\u2022)",
+            "Gain the Feeding Flaw: (\u2022\u2022) Prey Exclusion (Mortals)"
         ]
     },
     "cleaver": {
         "id": "cleaver",
         "name": "Cleaver",
-        "description": "The sweetest blood might be from those closest to them, the Cleaver takes advantage of that idea while taking blood from either their own close family and friends or even those close to someone else. Covertly stealing the blood from their victims while still maintaining ties to them. Cleavers will go to extreme lengths to keep their condition a secret from their victims but some may instead take a less than pleasant route. The Camarilla forbids the practice of taking a human family in this fashion, as it's a breach waiting to happen.",
-        "rollInfo": "Manipulation + Subterfuge is used to condition the victims, socializing with them and feeding from them without the cover being blown.",
+        "description": "The sweetest blood might be from those closest to them, the Cleaver takes advantage of that idea while taking blood from either their own close family and friends or even those close to someone else. Covertly stealing the blood from their victims while still maintaining ties to them. Cleavers will go to extreme lengths to keep their condition a secret from their victims but some may instead take a less than pleasant route. The Camarilla forbids the practice of taking a human family in this fashion, as it's a breach waiting to happen. ",
+        "rollInfo": "Manipulation + Subterfuge is used to condition the victims, socializing with them and feeding from them without the cover being blown. ",
         "effectList": [
             "Gain one specialty in either Persuasion (Gaslighting) or Subterfuge (Coverups)",
             "Gain one dot of Dominate or Animalism",
-            "Gain the Dark Secret Flaw (•) Cleaver",
-            "Gain the Herd Advantage (••)"
+            "Gain the Dark Secret Flaw (\u2022) Cleaver",
+            "Gain the Herd Advantage (\u2022\u2022)"
         ]
     },
     "consensualist": {
         "id": "consensualist",
         "name": "Consensualist",
-        "description": "Consent is a dangerous thing to gather when they're a blood-sucking monster, but Consensualists make do. They never feed against the victim's free will, instead pretending to be a representative of a charity blood drive, someone with a blood kink within the kink community, or blatantly admitting to their victims what they are and getting their permission to feed. To the Camarilla, the last method is considered a masquerade breach but perhaps to a philosophical Anarch, it might be an acceptable risk to take.",
-        "rollInfo": "Manipulation + Persuasion allows the kindred to take blood by consent, under the guide of medical work or mutual kink.",
+        "description": "Consent is a dangerous thing to gather when they're a blood-sucking monster, but Consensualists make do. They never feed against the victim's free will, instead pretending to be a representative of a charity blood drive, someone with a blood kink within the kink community, or blatantly admitting to their victims what they are and getting their permission to feed. To the Camarilla, the last method is considered a masquerade breach but perhaps to a philosophical Anarch, it might be an acceptable risk to take. ",
+        "rollInfo": "Manipulation + Persuasion allows the kindred to take blood by consent, under the guide of medical work or mutual kink. ",
         "effectList": [
             "Gain one specialty in either Medicine (Phlebotomy) or Persuasion (Vessels)",
             "Gain one dot of Auspex or Fortitude",
             "Gain one dot of Humanity",
-            "Gain the Dark Secret Flaw: (•) Masquerade Breacher",
-            "Gain the Feeding Flaw: (•) Prey Exclusion (Non-consenting)"
-        ]
-    },
-    "extortionist": {
-        "id": "extortionist",
-        "name": "Extortionist",
-        "description": "On the surface, Extortionists acquire their blood in exchange for services such as protection, security, or surveillance. Though, for as many times as the service might be genuine, there are many more times when the service has been offered from fabricated information to make the deal feel that much sweeter.",
-        "rollInfo": "Strength/Manipulation + Intimidation to feed through coercion.",
-        "effectList": [
-            "Gain one specialty in either Intimidation(Coercion) or Larceny(Security)",
-            "Gain one dot of Dominate or Potence",
-            "Spend three dots between the Contacts and Resources Backgrounds",
-            "Gain the Enemy Flaw (••) The police or a victim who escaped the character's extortion and wants revenge"
+            "Gain the Dark Secret Flaw: (\u2022) Masquerade Breacher",
+            "Gain the Feeding Flaw: (\u2022) Prey Exclusion (Non-consenting)"
         ]
     },
     "farmer": {
         "id": "farmer",
         "name": "Farmer",
-        "description": "Perhaps this vampire was once someone who worked as an activist or an aid worker, regardless of their reasoning the Farmer only feed from animals as their primary source of blood. The beast may gnaw at them with its throes of hunger, but they've successfully managed to avoid killing mortals except on the occasional bad night. Ventrue may not pick this Predator type and it cannot be taken on characters with Blood Potency 3 or higher.",
-        "rollInfo": "Composure + Animal Ken is the roll to find and catch the chosen animal.",
+        "description": "Perhaps this vampire was once someone who worked as an activist or an aid worker, regardless of their reasoning the Farmer only feed from animals as their primary source of blood. The beast may gnaw at them with its throes of hunger, but they've successfully managed to avoid killing mortals except on the occasional bad night. Ventrue may not pick this Predator type and it cannot be taken on characters with Blood Potency 3 or higher. ",
+        "rollInfo": "Composure + Animal Ken is the roll to find and catch the chosen animal. ",
         "effectList": [
             "Gain one specialty in either Animal Ken (specific animal) or Survival (Hunting)",
             "Gain one dot of Animalism or Protean",
             "Gain one dot of Humanity",
-            "Gain the Feeding Flaw: (••) Farmer"
-        ]
-    },
-    "graverobber": {
-        "id": "graverobber",
-        "name": "Graverobber",
-        "description": "Similar to Baggers these kindred understand there's no good in wasting good blood, even if others cannot consume it. Often they find themselves digging up corpses or working or mortuaries to obtain their bodies, yet regardless of what the name suggests, they prefer feeding from mourners at a gravesite or a hospital. This Predator Type often requires a haven or other connections to a church, hospital, or morgue as a way to obtain the bodies.",
-        "rollInfo": "Resolve + Medicine for sifting through the dead for a body with blood. Manipulation + Insight for moving among miserable mortals.",
-        "effectList": [
-            "Gain one in specialty either Occult (Grave Rituals) or Medicine (Cadavers)",
-            "Gain one dot of Fortitude or Oblivion",
-            "Gain the Feeding Merit (•••) Iron Gullet",
-            "Gain the Haven Advantage (•)",
-            "Gain the Herd Flaw: (••) Obvious Predator"
+            "Gain the Feeding Flaw: (\u2022\u2022) Farmer"
         ]
     },
     "osiris": {
         "id": "osiris",
         "name": "Osiris",
-        "description": "More than not, Osiris are celebrities within mortal society. Musicians, writers, priests, and even cult leaders may find an easy time finding their blood by utilizing those already around them. They tend to feed from their fans or worshippers which means they have easy access to blood, but followers tend to attract their own problems with the local authority or worse.",
-        "rollInfo": "Manipulation + Subterfuge or Intimidation + Fame are both used to feed from the adoring fans.",
+        "description": "More than not, Osiris are celebrities within mortal society. Musicians, writers, priests, and even cult leaders may find an easy time finding their blood by utilizing those already around them. They tend to feed from their fans or worshippers which means they have easy access to blood, but followers tend to attract their own problems with the local authority or worse. ",
+        "rollInfo": "Manipulation + Subterfuge or Intimidation + Fame are both used to feed from the adoring fans. ",
         "effectList": [
             "Gain one specialty in either Occult (specific tradition) or Performance (specific entertainment field)",
             "Gain one dot of Blood Sorcery (Tremere or Banu Haqim only) or Presence",
@@ -118,23 +93,11 @@
             "Spend two dots between Enemies and Mythic Flaws"
         ]
     },
-    "roadside_killer": {
-        "id": "roadside_killer",
-        "name": "Roadside Killer",
-        "description": "These Kindred never stay in one spot for too long and are always on the move, hunting those who won't be missed if they disappear alongside the road. Roadside Killers know the risk is just as worth as the reward. Perhaps this Kindred was once a truck driver themselves or maybe they met their fate alongside the road as well.",
-        "rollInfo": "Dexterity/Charisma + Drive to feed by picking up down and outs with no other options.",
-        "effectList": [
-            "Gain one in specialty either Survival (the road) or Investigation (vampire cant)",
-            "Gain one dot of Fortitude or Protean",
-            "Gain two additional dots of migrating Herd",
-            "Gain the Feeding Flaw: Prey Exclusion (locals)"
-        ]
-    },
     "sandman": {
         "id": "sandman",
         "name": "Sandman",
-        "description": "If they never wake during the feed it never happened, right? Sandman prefers to hunt on sleeping mortals than anyone else by using stealth or Disciplines to feed from their victims they are rarely caught in the act, though when they are, problems are sure to occur. Maybe they were anti-social in life or perhaps they find the route of seduction or violence too much for them and find comfort in the silence of this feeding style.",
-        "rollInfo": "Dexterity + Stealth is for casing a location, breaking in and feeding without leaving a trace.",
+        "description": "If they never wake during the feed it never happened, right? Sandman prefers to hunt on sleeping mortals than anyone else by using stealth or Disciplines to feed from their victims they are rarely caught in the act, though when they are, problems are sure to occur. Maybe they were anti-social in life or perhaps they find the route of seduction or violence too much for them and find comfort in the silence of this feeding style. ",
+        "rollInfo": "Dexterity + Stealth is for casing a location, breaking in and feeding without leaving a trace. ",
         "effectList": [
             "Gain one specialty in either Medicine (Anesthetics) or Stealth (Break-in)",
             "Gain one dot of Auspex or Obfuscate",
@@ -144,26 +107,113 @@
     "scene_queen": {
         "id": "scene_queen",
         "name": "Scene Queen",
-        "description": "Similar to Osiris these Kindred find comfort in a particular subculture rather than a wider audience. Hunting in or around a subculture they likely belonged to in their previous life, their victims adore them for their status, and those who have an inkling of what they are disbelieved. The scene itself could be anything, from street culture to high fashion, and the unifying trait is the use of those around them.",
-        "rollInfo": "Manipulation + Persuasion aids in feeding from those within the Kindred's subgroup, through conditioning and isolation to gain blood or gaslighting or forced silence.",
+        "description": "Similar to Osiris these Kindred find comfort in a particular subculture rather than a wider audience. Hunting in or around a subculture they likely belonged to in their previous life, their victims adore them for their status, and those who have an inkling of what they are disbelieved. The scene itself could be anything, from street culture to high fashion, and the unifying trait is the use of those around them. ",
+        "rollInfo": "Manipulation + Persuasion aids in feeding from those within the Kindred's subgroup, through conditioning and isolation to gain blood or gaslighting or forced silence. ",
         "effectList": [
             "Gain one specialty in either Etiquette (specific scene), Leadership (specific scene), or Streetwise (specific scene)",
             "Gain one dot of Dominate or Potence",
-            "Gain the Fame Advantage (•)",
-            "Gain the Contact Advantage (•)",
-            "Gain either the Influence Flaw: (•) Disliked (outside their subculture) or the Feeding Flaw: (•) Prey Exclusion (a different subculture than theirs)"
+            "Gain the Fame Advantage (\u2022)",
+            "Gain the Contact Advantage (\u2022)",
+            "Gain either the Influence Flaw: (\u2022) Disliked (outside their subculture) or the Feeding Flaw: (\u2022) Prey Exclusion (a different subculture than theirs)"
         ]
     },
     "siren": {
         "id": "siren",
         "name": "Siren",
-        "description": "Everyone knows that sex sells and the Siren uses this to their advantage. Almost exclusively feeding while feigning sex or sexual interest, they utilize Disciplines and seduction to lure away a possible meal. Moving through clubs and one-night stands are skills they've mastered and regardless of how sexy they feel, deep in their darkest moments, they realize at best they are problematic and at worst a serial sexual assaulter. In life, they might have been a scriptwriter, a small time actor who never reached the big screen, a well-known kinkster or even a virgin looking to make up for the lost time.",
-        "rollInfo": "Charisma + Subterfuge is how sirens feed under the guise of sexual acts.",
+        "description": "Everyone knows that sex sells and the Siren uses this to their advantage. Almost exclusively feeding while feigning sex or sexual interest, they utilize Disciplines and seduction to lure away a possible meal. Moving through clubs and one-night stands are skills they've mastered and regardless of how sexy they feel, deep in their darkest moments, they realize at best they are problematic and at worst a serial sexual assaulter. In life, they might have been a scriptwriter, a small time actor who never reached the big screen, a well-known kinkster or even a virgin looking to make up for the lost time. ",
+        "rollInfo": "Charisma + Subterfuge is how sirens feed under the guise of sexual acts. ",
         "effectList": [
             "Gain one specialty in either Persuasion (Seduction) or Subterfuge (Seduction)",
             "Gain one dot of Fortitude or Presence",
-            "Gain the Looks Merit: (••) Beautiful",
-            "Gain the Enemy Flaw (•) A spurned lover or jealous partner"
+            "Gain the Looks Merit: (\u2022\u2022) Beautiful",
+            "Gain the Enemy Flaw (\u2022) A spurned lover or jealous partner"
+        ]
+    },
+    "extortionist": {
+        "id": "extortionist",
+        "name": "Extortionist",
+        "description": "Found in Cults of the Blood God. On the surface, Extortionists acquire their blood in exchange for services such as protection, security, or surveillance. Though, for as many times as the service might be genuine, there are many more times when the service has been offered from fabricated information to make the deal feel that much sweeter.",
+        "rollInfo": "Strength/Manipulation + Intimidation to feed through coercion. ",
+        "effectList": [
+            "Gain one specialty in either Intimidation(Coercion) or Larceny(Security)",
+            "Gain one dot of Dominate or Potence",
+            "Spend three dots between the Contacts and Resources Backgrounds",
+            "Gain the Enemy Flaw (\u2022\u2022) The police or a victim who escaped the character's extortion and wants revenge"
+        ]
+    },
+    "graverobber": {
+        "id": "graverobber",
+        "name": "Graverobber",
+        "description": "Found in Cults of the Blood God. Similar to Baggers these kindred understand there's no good in wasting good blood, even if others cannot consume it. Often they find themselves digging up corpses or working or mortuaries to obtain their bodies, yet regardless of what the name suggests, they prefer feeding from mourners at a gravesite or a hospital. This Predator Type often requires a haven or other connections to a church, hospital, or morgue as a way to obtain the bodies.",
+        "rollInfo": "Resolve + Medicine for sifting through the dead for a body with blood. Manipulation + Insight for moving among miserable mortals. ",
+        "effectList": [
+            "Gain one in specialty either Occult (Grave Rituals) or Medicine (Cadavers)",
+            "Gain one dot of Fortitude or Oblivion",
+            "Gain the Feeding Merit (\u2022\u2022\u2022) Iron Gullet",
+            "Gain the Haven Advantage (\u2022)",
+            "Gain the Herd Flaw: (\u2022\u2022) Obvious Predator"
+        ]
+    },
+    "roadside_killer": {
+        "id": "roadside_killer",
+        "name": "Roadside Killer",
+        "description": "Found in Let the Streets Run Red. These Kindred never stay in one spot for too long and are always on the move, hunting those who won't be missed if they disappear alongside the road. Roadside Killers know the risk is just as worth as the reward. Perhaps this Kindred was once a truck driver themselves or maybe they met their fate alongside the road as well.",
+        "rollInfo": "Dexterity/Charisma + Drive to feed by picking up down and outs with no other options. ",
+        "effectList": [
+            "Gain one in specialty either Survival (the road) or Investigation (vampire cant)",
+            "Gain one dot of Fortitude or Protean",
+            "Gain two additional dots of migrating Herd",
+            "Gain the Feeding Flaw: Prey Exclusion (locals)"
+        ]
+    },
+    "grim_reaper": {
+        "id": "grim_reaper",
+        "name": "Grim Reaper",
+        "description": "Hunting inside hospice care facilities, assisted living homes, and other places where those who are near death reside. Grim Reapers are constantly on the move in an effort to locate new victims near the end of their lives to feed from. Hunting in this style may also earn a taste for specific diseases making them easier to identify.",
+        "rollInfo": "Intelligence + Awareness/Medicine in order to find victims.",
+        "effectList": [
+            "Gain one specialty in either Awareness (Death) or Larceny (Forgery)",
+            "Gain one dot of Auspex or Oblivion",
+            "Gain one dot of Allies or Influence associated with the medical community",
+            "Gain one dot of Humanity",
+            "Gain the Feeding Flaw: (\u2022) Prey Exclusion (Healthy Mortals)"
+        ]
+    },
+    "montero": {
+        "id": "montero",
+        "name": "Montero",
+        "description": "Montero carry on a tradition held by aristocratic Spaniards where they hunted deer and used teams to drive them into the huntsman. Retainers drive the victims towards the vampire for them to feed. This is not always done in the traditional style but in the forms of long cons, flash mobs, or gang pursuits.",
+        "rollInfo": "Intelligence + Stealth represents the expert planning of well-trained Retainers. Whereas a well-practiced plan and patient waiting is represented by Resolve + Stealth",
+        "effectList": [
+            "Gain one specialty in either Leadership (Hunting Pack) or Stealth (Stakeout)",
+            "Gain one dot of Dominate or Obfuscate",
+            "Gain two dots of Retainers",
+            "Lose one dot of Humanity"
+        ]
+    },
+    "pursuer": {
+        "id": "pursuer",
+        "name": "Pursuer",
+        "description": "For those who prefer to stalk their victim, learning their habits and routines, determining if they will cause an outcry if they disappear or not. The Pursuer strikes when the time is right and when hunger is at a perfect balance.",
+        "rollInfo": "Intelligence + Investigation to locate and find a victim no one will notice is gone. Stamina + Stealth for long stalking of unaware urban victims.",
+        "effectList": [
+            "Gain one specialty in either Investigation (Profiling) or Stealth (Shadowing)",
+            "Gain one dot of Animalism or Auspex",
+            "Gain the Merit: (\u2022) Bloodhound",
+            "Gain one dot of Contacts from the morally flexible inhabitants where the vampire primarily hunts.",
+            "Lose one dot of Humanity"
+        ]
+    },
+    "trapdoor": {
+        "id": "trapdoor",
+        "name": "Trapdoor",
+        "description": "Much like the spider, this vampire builds a nest and lures their prey inside. Be it an amusement park, an abandoned house, or an underground club, the victim comes to them. There the trapdoor might only play with their mind and terrorize them, imprison them to drain them slowly, or take a deep drink and then send them home.",
+        "rollInfo": "Charisma + Stealth for the victims that enter expecting a fun-filled night. Dexterity + Stealth to feed upon trespassers. Wits + Awareness + Haven dots is used to navigate the maze of the den itself.",
+        "effectList": [
+            "Gain one specialty in either Persuasion (Marketing) or Stealth (Ambushes or Traps)",
+            "Gain one dot of Protean or Obfuscate",
+            "Gain one dot of Haven",
+            "Gain one dot of either Retainers or Herd, or a second Haven dot."
         ]
     }
 }

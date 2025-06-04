@@ -559,8 +559,8 @@
         "AdditionalNotes": "This power can allow a Kindred to bypass the Blood Potency limit set by their generation.",
         "Source": "Corebook, page 273"
     },
-    "scorpion\u2019s_touch": {
-        "Id": "scorpion\u2019s_touch",
+    "scorpions_touch": {
+        "Id": "scorpions_touch",
         "Name": "Scorpion\u2019s Touch",
         "School": "Blood Sorcery",
         "Level": 3,
@@ -624,8 +624,8 @@
         "AdditionalNotes": "For each Rouse Check, the user can reduce the damage taken by five points.",
         "Source": "Players Guide, page 98"
     },
-    "baal\u2019s_caress": {
-        "Id": "baal\u2019s_caress",
+    "baals_caress": {
+        "Id": "baals_caress",
         "Name": "Baal\u2019s Caress",
         "School": "Blood Sorcery",
         "Level": 5,
@@ -663,8 +663,8 @@
         "AdditionalNotes": "Those outside of the Sabbat take stains upon use.",
         "Source": "Sabbat, page 50"
     },
-    "cat\u2019s_grace": {
-        "Id": "cat\u2019s_grace",
+    "cats_grace": {
+        "Id": "cats_grace",
         "Name": "Cat\u2019s Grace",
         "School": "Celerity",
         "Level": 1,
@@ -1116,8 +1116,8 @@
         "AdditionalNotes": "N/A",
         "Source": "Corebook, page 258"
     },
-    "earth\u2019s_perseverance": {
-        "Id": "earth\u2019s_perseverance",
+    "earths_perseverance": {
+        "Id": "earths_perseverance",
         "Name": "Earth\u2019s Perseverance",
         "School": "Fortitude",
         "Level": 2,
@@ -1262,8 +1262,8 @@
         "AdditionalNotes": "Each drinker must take one Rouse Checks worth.",
         "Source": "Corebook, page 259"
     },
-    "gorgon\u2019s_scales": {
-        "Id": "gorgon\u2019s_scales",
+    "gorgons_scales": {
+        "Id": "gorgons_scales",
         "Name": "Gorgon\u2019s Scales",
         "School": "Fortitude",
         "Level": 4,

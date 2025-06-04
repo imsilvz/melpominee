@@ -2,7 +2,14 @@ $text-primary: rgba(255, 255, 255, 0.87);
 $text-secondary: rgba(255, 255, 255, 0.6);
 $text-disabled: rgba(255, 255, 255, 0.38);
 
+$background-active: #aa2e25;
+
 @keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }

@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../../redux/hooks';
 import { selectClans } from '../../../redux/reducers/masterdataReducer';
+import { selectUserRole } from '../../../redux/reducers/userReducer';
 
 // types
 import { CharacterHeader } from '../../../types/Character';
 
 // local files
 import './CharacterList.scss';
+import ToggleSwitch from '../../shared/ToggleSwitch/ToggleSwitch';
 
 interface CharacterItemProps {
   character: CharacterHeader;
@@ -47,26 +49,39 @@ const CharacterItem = ({ character }: CharacterItemProps) => {
 
 const CharacterList = () => {
   const navigate = useNavigate();
+  const userRole = useAppSelector(selectUserRole);
+  const [adminMode, setAdminMode] = useState<boolean>(false);
   const [characterList, setCharacterList] = useState<CharacterHeader[] | null>(null);
-  const GetCharacterList = async () => {
-    const listRequest = await fetch('/api/vtmv5/character/');
+  const GetCharacterList = async (adminMode: boolean) => {
+    let url = '/api/vtmv5/character/';
+    if (adminMode) { url = `${url}?adminView` }
+    const listRequest = await fetch(url);
     if (listRequest.ok) {
       const listJson = await (listRequest.json() as Promise<CharacterListResponse>);
       if (listJson.success && listJson.characterList) {
+        listJson.characterList.sort((a, b) => {
+          if (a.id > b.id) {
+            return 1;
+          } else if (a.id < b.id) {
+            return -1;
+          }
+          return 0;
+        })
         setCharacterList(listJson.characterList);
       }
     }
   };
 
   useEffect(() => {
-    GetCharacterList().catch(console.error);
-  }, []);
+    GetCharacterList(adminMode).catch(console.error);
+  }, [adminMode]);
 
   return (
     <div className="characterlist-container">
       <div className="characterlist-panel">
         <div className="characterlist-header">
           <h1>Character List</h1>
+          {userRole === 'admin' && <ToggleSwitch label="Admin Mode" checked={adminMode} onSwitch={setAdminMode} />}
         </div>
         <div className="characterlist-list">
           {characterList &&

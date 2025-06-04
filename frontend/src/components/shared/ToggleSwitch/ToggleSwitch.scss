@@ -1,0 +1,68 @@
+@use "../../../global.scss" as *;
+
+.toggle-switch-container {
+    width: fit-content;
+    display: flex;
+    gap: 0.25rem;
+
+    >p {
+        display: inline;
+    }
+
+    >.toggle-switch {
+        align-self: center;
+        position: relative;
+        display: inline-block;
+        width: calc(1.6rem + 8px);
+        height: calc(0.8rem + 4px);
+
+        >input {
+            width: 0;
+            height: 0;
+        }
+
+        >.toggle-switch-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: calc(1rem + 4px);
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        >.toggle-switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 0.8rem;
+            width: 0.8rem;
+            left: 2px;
+            bottom: 2px;
+            border-radius: 50%;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        >input:checked+.toggle-switch-slider {
+            background-color: $background-active;
+        }
+
+        >input:focus+.toggle-switch-slider {
+            box-shadow: 0 0 1px $background-active;
+        }
+
+        >input:focus+.toggle-switch-slider {
+            box-shadow: 0 0 1px $background-active;
+        }
+
+        >input:checked+.toggle-switch-slider:before {
+            -webkit-transform: translateX(calc(1rem));
+            -ms-transform: translateX(calc(1rem));
+            transform: translateX(calc(1rem));
+        }
+    }
+}

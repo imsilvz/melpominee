@@ -12,6 +12,11 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
 jobs:
   docker-build-push:
     name: Melpominee.app Build & Push
@@ -77,8 +82,14 @@ jobs:
             cluster-name: ${{ vars.AZURE_CLUSTER }}
         id: login
       
-      - name: Apply Manifests
+      - name: Rollout Restart
         run: |
-          kubectl apply -f ./manifests/deploy.yaml
           kubectl rollout restart deployment melpominee-frontend --namespace=melpominee
           kubectl rollout restart deployment melpominee-backend --namespace=melpominee
+
+      - name: Deploy Manifests
+        uses: Azure/k8s-deploy@v5
+        with:
+          namespace: 'melpominee'
+          manifests: |
+            manifests

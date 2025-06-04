@@ -329,6 +329,56 @@ public class VampireV5Character : BaseCharacter
         return character.GetHeader();
     }
 
+    public static async Task<List<VampireV5Character>> GetCharacters()
+    {
+        List<VampireV5Character> charList;
+        using (var conn = DataContext.Instance.Connect())
+        {
+            conn.Open();
+            using (var trans = conn.BeginTransaction())
+            {
+                var sql =
+                @"
+                    SELECT 
+                        Id, Owner, Name, Concept, 
+                        Chronicle, Ambition, Desire, Sire, 
+                        Generation, Clan, PredatorType,
+                        Hunger, Resonance, BloodPotency,
+                        XpSpent, XpTotal
+                    FROM melpominee_characters;
+                ";
+                charList = conn.Query<VampireV5Character>(sql).ToList();
+                foreach (var character in charList)
+                {
+                    // fetch dependant objects
+                    var attributes = await VampireV5Attributes.Load(conn, trans, (int)character.Id!);
+                    var skills = await VampireV5Skills.Load(conn, trans, (int)character.Id!);
+                    var secondaryStats = await VampireV5SecondaryStats.Load(conn, trans, (int)character.Id!);
+                    var disciplines = await VampireV5Disciplines.Load(conn, trans, (int)character.Id!);
+                    var disciplinePowers = await VampireV5DisciplinePowers.Load(conn, trans, (int)character.Id!);
+                    var beliefs = await VampireV5Beliefs.Load(conn, trans, (int)character.Id!);
+                    var profile = await VampireV5Profile.Load(conn, trans, (int)character.Id!);
+                    var backgrounds = await VampireV5Backgrounds.Load(conn, trans, (int)character.Id!);
+                    var merits = await VampireV5Merits.Load(conn, trans, (int)character.Id!);
+                    var flaws = await VampireV5Flaws.Load(conn, trans, (int)character.Id!);
+
+                    // if any fail to load, keep defaults
+                    character.Attributes = attributes ?? character.Attributes;
+                    character.Skills = skills ?? character.Skills;
+                    character.SecondaryStats = secondaryStats ?? character.SecondaryStats;
+                    character.Disciplines = disciplines ?? character.Disciplines;
+                    character.DisciplinePowers = disciplinePowers ?? character.DisciplinePowers;
+                    character.Beliefs = beliefs ?? character.Beliefs;
+                    character.Profile = profile ?? character.Profile;
+                    character.Backgrounds = backgrounds ?? character.Backgrounds;
+                    character.Merits = merits ?? character.Merits;
+                    character.Flaws = flaws ?? character.Flaws;
+                }
+                return charList;
+            }
+        }
+    }
+
     public static async Task<List<VampireV5Character>> GetCharactersByUser(string email)
     {
         List<VampireV5Character> charList;

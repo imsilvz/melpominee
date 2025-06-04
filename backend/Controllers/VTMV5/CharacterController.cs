@@ -11,6 +11,7 @@ using Melpominee.app.Models.Characters.VTMV5;
 using Melpominee.app.Services.Auth;
 using Melpominee.app.Services.Characters;
 using Melpominee.app.Services.Hubs;
+using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 namespace Melpominee.app.Controllers;
 
 [Authorize]
@@ -81,7 +82,7 @@ public class CharacterController : ControllerBase
     }
 
     [HttpGet("", Name = "Get Character List")]
-    public async Task<VampireCharacterListResponse> GetList()
+    public async Task<VampireCharacterListResponse> GetList([FromQuery] bool? adminView = false)
     {
         // get email of logged in user
         User user;
@@ -99,8 +100,17 @@ public class CharacterController : ControllerBase
         user = (await _userManager.GetUser(identity.Name))!;
 
         // fetch character data
-        var charList = await VampireV5Character.GetCharactersByUser(identity.Name);
+        List<VampireV5Character>? charList;
         var headerList = new List<VampireV5Header>();
+        if (adminView == true)
+        {
+            charList = await VampireV5Character.GetCharacters();
+        }
+        else
+        {
+            charList = await VampireV5Character.GetCharactersByUser(identity.Name);
+        }
+        
         foreach (var character in charList)
         {
             headerList.Add(character.GetHeader());

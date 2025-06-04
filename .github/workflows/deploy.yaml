@@ -63,15 +63,20 @@ jobs:
           labels: ${{ steps.meta-frontend.outputs.labels }}
 
       - name: Azure Login
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_SECRET }}
 
-      - name: Authenticate with AKS
-        run: |
-          az aks install-cli
-          az aks get-credentials --resource-group ${{ vars.AZURE_GROUP }} --name ${{ vars.AZURE_CLUSTER }}
-    
+      - uses: azure/setup-kubectl@v4
+        id: install
+
+      - name: Gets K8s context
+        uses: azure/aks-set-context@v4
+        with:
+            resource-group: ${{ vars.AZURE_GROUP }}
+            cluster-name: ${{ vars.AZURE_CLUSTER }}
+        id: login
+      
       - name: Apply Manifests
         run: |
           kubectl apply -f ./manifests/deploy.yaml

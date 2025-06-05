@@ -67,21 +67,9 @@ public class CharacterController : ControllerBase
                 .GetCharacterProperty<VampireV5Character>(charId);
             if (character is not null)
             {
-                // hide owner email
-                if (user.Role != "admin")
+                if (user.Email != character.Owner)
                 {
-                    if (user.Email != character.Owner)
-                    {
-                        character.Owner = null;
-                    }
-                }
-                else
-                {
-                    var characterOwner = await _userManager.GetUser(character.Owner)!;
-                    if (!string.IsNullOrEmpty(characterOwner?.DiscordName))
-                    {
-                        character.Owner = user.DiscordName;
-                    }
+                    character.Owner = null;
                 }
 
                 return new VampireCharacterResponse
@@ -144,6 +132,14 @@ public class CharacterController : ControllerBase
                 if (!string.IsNullOrEmpty(characterOwner?.DiscordName))
                 {
                     character.Owner = characterOwner.DiscordName;
+                }
+                else
+                {
+                    // hide username if not signing in through discord
+                    if (string.IsNullOrEmpty(characterOwner?.Password))
+                    {
+                        character.Owner = null;
+                    }
                 }
             }
             headerList.Add(character.GetHeader());

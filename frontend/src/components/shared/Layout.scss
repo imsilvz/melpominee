@@ -4,6 +4,17 @@
     height: 100%;
     overflow-x: auto;
     overflow-y: scroll;
+    
+    user-select: none;
+    caret-color: transparent;
+    input {
+        caret-color: initial;
+        user-select: initial;
+    }
+    textarea {
+        caret-color: initial;
+        user-select: initial;
+    }
 }
 
 .layout-image {

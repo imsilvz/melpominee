@@ -39,6 +39,13 @@
       }
     }
     >.charactersheet-panel-split {
+      >.charactersheet-panel-split-column:nth-of-type(1) {
+        >.charactersheet-section {
+          >.charactersheet-section-header {
+            gap: 0.3rem;
+          }
+        }
+      }
       >.charactersheet-panel-split-column {
         >.charactersheet-section {
           >.charactersheet-section-header {

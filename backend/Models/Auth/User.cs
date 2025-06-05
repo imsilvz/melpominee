@@ -6,6 +6,7 @@ namespace Melpominee.app.Models.Auth;
 
 public class User {
     public string? Email { get; set; }
+    public string? DiscordName { get; set; } = "";
     [JsonIgnore]
     public string? Password { get; set; }
     public string? Role { get; set; }
@@ -13,6 +14,7 @@ public class User {
     public string? ActivationKey { get; set; }
     public DateTime? ActivationRequested { get; set; }
     public DateTime? ActivationCompleted { get; set; }
+    public DateTime? LastLogin { get; set; }
     public bool Active { get; set; }
 
     public bool CanViewCharacter(BaseCharacter? character)

@@ -29,13 +29,14 @@ public class DataContext
             var sql = @"
                 CREATE TABLE IF NOT EXISTS melpominee_users (
                     Email TEXT NOT NULL PRIMARY KEY,
+                    DiscordName TEXT DEFAULT '',
                     Password TEXT,
                     Role TEXT NOT NULL DEFAULT 'user',
                     ActivationKey TEXT,
                     ActivationRequested TIMESTAMP,
                     ActivationCompleted TIMESTAMP,
-                    Active BOOL DEFAULT false,
-                    Nickname TEXT DEFAULT ''
+                    LastLogin TIMESTAMP DEFAULT NOW(),
+                    Active BOOL DEFAULT false
                 );
                 CREATE TABLE IF NOT EXISTS melpominee_users_rescue (
                     Id BIGSERIAL NOT NULL PRIMARY KEY,

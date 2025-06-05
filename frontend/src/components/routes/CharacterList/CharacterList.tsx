@@ -11,14 +11,18 @@ import { CharacterHeader } from '../../../types/Character';
 import './CharacterList.scss';
 import ToggleSwitch from '../../shared/ToggleSwitch/ToggleSwitch';
 
+interface ExtendedCharacterHeader extends CharacterHeader {
+  owner: string;
+}
+
 interface CharacterItemProps {
-  character: CharacterHeader;
+  character: ExtendedCharacterHeader;
 }
 
 interface CharacterListResponse {
   success: boolean;
   error?: string;
-  characterList?: CharacterHeader[];
+  characterList?: ExtendedCharacterHeader[];
 }
 
 interface CharacterCreateResponse {
@@ -30,6 +34,7 @@ interface CharacterCreateResponse {
 const CharacterItem = ({ character }: CharacterItemProps) => {
   const navigate = useNavigate();
   const clanData = useAppSelector(selectClans);
+  const userRole = useAppSelector(selectUserRole);
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
@@ -44,6 +49,7 @@ const CharacterItem = ({ character }: CharacterItemProps) => {
         <h3>{(clanData && clanData[character.clan]?.name) || 'Mortal'}</h3>
       </div>
       <div className="characterlist-listitem-game">
+        <h6>{character.owner}</h6>
         <h5>{character.chronicle}</h5>
       </div>
     </div>
@@ -54,7 +60,7 @@ const CharacterList = () => {
   const navigate = useNavigate();
   const userRole = useAppSelector(selectUserRole);
   const [adminMode, setAdminMode] = useState<boolean>(false);
-  const [characterList, setCharacterList] = useState<CharacterHeader[] | null>(null);
+  const [characterList, setCharacterList] = useState<ExtendedCharacterHeader[] | null>(null);
   const GetCharacterList = async (adminMode: boolean) => {
     let url = '/api/vtmv5/character/';
     if (adminMode) { url = `${url}?adminView=true` }

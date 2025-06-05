@@ -41,8 +41,9 @@ public class UserManager
             {
                 string sql = @"
                 SELECT 
-                    email, password, role, activationkey, 
-                    activationrequested, activationcompleted, active 
+                    email, discordname, password, role, 
+                    activationkey, activationrequested, activationcompleted, 
+                    lastlogin, active 
                 FROM melpominee_users WHERE email = @Email";
                 user = await conn.QueryFirstOrDefaultAsync<User>(sql, new { Email = email });
                 if (user is null || (onlyActive && !user.Active))
@@ -58,12 +59,43 @@ public class UserManager
         return user;
     }
 
+    public async Task<bool> SaveUser(User user)
+    {
+        if (string.IsNullOrEmpty(user.Email))
+            return false;
+
+        using (var conn = DataContext.Instance.Connect())
+        {
+            string sql = @"
+            UPDATE melpominee_users
+            SET 
+                DiscordName = @DiscordName,
+                Role = @Role,
+                ActivationRequested = @ActivationRequested,
+                ActivationCompleted = @ActivationCompleted,
+                LastLogin = @LastLogin,
+                Active = @Active
+            WHERE Email = @Email;
+            ";
+            if (conn.Execute(sql, user) <= 0)
+            {
+                return false;
+            }
+        }
+
+        var cacheKey = $"melpominee:user:{user.Email}";
+        var cacheOptions = new DistributedCacheEntryOptions();
+        cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(1));
+        await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(user), cacheOptions);
+        return true;
+    }
+
     public async Task<User?> Login(string email, string password)
     {
         // validate input
-        if(string.IsNullOrEmpty(email)) 
-        { 
-            return null; 
+        if (string.IsNullOrEmpty(email))
+        {
+            return null;
         }
 
         // get user object
@@ -278,9 +310,9 @@ public class UserManager
                     var sql = 
                     @"
                         INSERT INTO melpominee_users 
-                            (email, password, role, activationkey, activationrequested)
+                            (email, discordname, password, role, activationkey, activationrequested)
                         VALUES
-                            (@Email, @Password, @Role, @ActivationKey, CURRENT_TIMESTAMP)
+                            (@Email, @DiscordName, @Password, @Role, @ActivationKey, CURRENT_TIMESTAMP)
                         ON CONFLICT(email) DO NOTHING;
                     ";
                     if (conn.Execute(sql, user) <= 0) {
@@ -345,8 +377,9 @@ public class UserManager
                     var sql =
                     @"
                         SELECT 
-                            email, password, role, activationkey, 
-                            activationrequested, activationcompleted, active
+                            email, discordname, password, role, 
+                            activationkey, activationrequested, activationcompleted, 
+                            lastlogin, active
                         FROM melpominee_users
                         WHERE email = @Email;
                     ";
@@ -375,6 +408,7 @@ public class UserManager
                     // update fields
                     user.ActivationKey = null;
                     user.ActivationCompleted = DateTime.UtcNow;
+                    user.LastLogin = DateTime.UtcNow;
                     user.Active = true;
 
                     // make db query
@@ -383,6 +417,7 @@ public class UserManager
                         UPDATE melpominee_users
                         SET ActivationKey = @ActivationKey,
                             ActivationCompleted = CURRENT_TIMESTAMP,
+                            LastLogin = CURRENT_TIMESTAMP,
                             Active = @Active
                         WHERE Email = @Email;
                     ";
@@ -404,7 +439,7 @@ public class UserManager
         return user;
     }
 
-    public async Task<User> OAuthRegister(string email)
+    public async Task<User> OAuthRegister(string email, string? username)
     {
         // quick check validity of object
         User user;
@@ -422,32 +457,38 @@ public class UserManager
                     user = new User()
                     {
                         Email = email,
+                        DiscordName = username is null ? "" : username,
                         Password = null,
                         Role = "user",
                         ActivationKey = null,
                         ActivationRequested = null,
                         ActivationCompleted = DateTime.UtcNow,
+                        LastLogin = DateTime.UtcNow,
                         Active = true
                     };
                     var sql =
                     @"
                         INSERT INTO melpominee_users
                             (
-                                email, password, role, activationkey,
-                                activationrequested, activationcompleted, active
+                                email, discordname, password, role, 
+                                activationkey, activationrequested, activationcompleted, 
+                                lastlogin, active
                             )
                         VALUES
                             (
-                                @Email, @Password, @Role, @ActivationKey,
-                                @ActivationRequested, @ActivationCompleted, @Active
+                                @Email, @DiscordName, @Password, @Role, 
+                                @ActivationKey, @ActivationRequested, @ActivationCompleted, 
+                                @LastLogin, @Active
                             )
                         ON CONFLICT(email) DO UPDATE
                         SET
+                            discordname = @DiscordName,
                             password = @Password,
                             role = @Role,
                             activationkey = @ActivationKey,
                             activationrequested = @ActivationRequested,
                             activationcompleted = @ActivationCompleted,
+                            lastlogin = @LastLogin,
                             active = @Active;
                     ";
                     conn.Execute(sql, user);

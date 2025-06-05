@@ -270,7 +270,12 @@ public class AuthController : ControllerBase
         // now we can attempt a login!
         var user = await _userManager.GetUser(userData.email, true);
         if (user is null)
-            user = await _userManager.OAuthRegister(userData.email);
+        {
+            user = await _userManager.OAuthRegister(userData.email, userData.username);
+        }
+        user.DiscordName = userData.username;
+        user.LastLogin = DateTime.UtcNow;
+        await _userManager.SaveUser(user);
             
         // create login claims
         var claims = new List<Claim>

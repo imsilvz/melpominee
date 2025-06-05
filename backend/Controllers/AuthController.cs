@@ -288,7 +288,7 @@ public class AuthController : ControllerBase
         // store it in the cookie
         await HttpContext.SignInAsync
         (
-            "Melpominee.app.Auth",
+            "Melpominee.app.Auth.V2",
             new ClaimsPrincipal
             (
                 new ClaimsIdentity

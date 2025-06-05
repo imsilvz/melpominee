@@ -9,6 +9,7 @@ const ClanList = [
   'generic',
   'banu_haqim',
   'brujah',
+  'caitiff',
   'gangrel',
   'hecata',
   'lasombra',
@@ -21,6 +22,7 @@ const ClanList = [
   'tremere',
   'tzimisce',
   'ventrue',
+  'thin_blood'
 ];
 
 const HeaderBrand = ({ clan }: HeaderBrandProps) => {

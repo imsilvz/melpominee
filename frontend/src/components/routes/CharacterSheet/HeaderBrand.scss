@@ -32,6 +32,11 @@
             max-height: 6rem;
           }
         }
+        &.thin_blood {
+          > img {
+            max-height: 6rem;
+          }
+        }
         >.charactersheet-header-brand-container {
           position: relative;
           max-width: 50%;

@@ -56,6 +56,9 @@ public class AuthController : ControllerBase
             User? user = await _userManager.Login(payload.Email, payload.Password);
             if (user is not null)
             {
+                user.LastLogin = DateTime.UtcNow;
+                await _userManager.SaveUser(user);
+                
                 // create login claims
                 var claims = new List<Claim>
                 {

@@ -9,6 +9,7 @@ import { CharacterHeader } from '../../../types/Character';
 
 // local files
 import './CharacterList.scss';
+import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
 import ToggleSwitch from '../../shared/ToggleSwitch/ToggleSwitch';
 
 interface ExtendedCharacterHeader extends CharacterHeader {
@@ -59,6 +60,7 @@ const CharacterItem = ({ character }: CharacterItemProps) => {
 const CharacterList = () => {
   const navigate = useNavigate();
   const userRole = useAppSelector(selectUserRole);
+  const [loading, setLoading] = useState<boolean>(true);
   const [adminMode, setAdminMode] = useState<boolean>(false);
   const [characterList, setCharacterList] = useState<ExtendedCharacterHeader[] | null>(null);
   const GetCharacterList = async (adminMode: boolean) => {
@@ -77,6 +79,7 @@ const CharacterList = () => {
           return 0;
         })
         setCharacterList(listJson.characterList);
+        setLoading(false);
       }
     }
   };
@@ -87,44 +90,48 @@ const CharacterList = () => {
 
   return (
     <div className="characterlist-container">
-      <div className="characterlist-panel">
-        <div className="characterlist-header">
-          <h1>Character List</h1>
-          {userRole === 'admin' && <ToggleSwitch label="View All" checked={adminMode} onSwitch={setAdminMode} />}
-        </div>
-        <div className="characterlist-list">
-          {characterList &&
-            characterList.map((character) => (
-              <CharacterItem
-                key={`characterlist-character${character.id}`}
-                character={character}
-              />
-            ))}
-          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-          <div
-            className="characterlist-additem"
-            onClick={() => {
-              (async () => {
-                const createRequest = await fetch(`/api/vtmv5/character/`, {
-                  method: 'POST',
-                  headers: {
-                    Accept: 'application/json',
-                  },
-                });
-                if (createRequest.ok) {
-                  const createJson: CharacterCreateResponse =
-                    await (createRequest.json() as Promise<CharacterCreateResponse>);
-                  if (createJson.characterId) {
-                    navigate(`/character/${createJson.characterId}/`);
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <div className="characterlist-panel">
+          <div className="characterlist-header">
+            <h1>Character List</h1>
+            {userRole === 'admin' && <ToggleSwitch label="View All" checked={adminMode} onSwitch={setAdminMode} />}
+          </div>
+          <div className="characterlist-list">
+            {characterList &&
+              characterList.map((character) => (
+                <CharacterItem
+                  key={`characterlist-character${character.id}`}
+                  character={character}
+                />
+              ))}
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+            <div
+              className="characterlist-additem"
+              onClick={() => {
+                (async () => {
+                  const createRequest = await fetch(`/api/vtmv5/character/`, {
+                    method: 'POST',
+                    headers: {
+                      Accept: 'application/json',
+                    },
+                  });
+                  if (createRequest.ok) {
+                    const createJson: CharacterCreateResponse =
+                      await (createRequest.json() as Promise<CharacterCreateResponse>);
+                    if (createJson.characterId) {
+                      navigate(`/character/${createJson.characterId}/`);
+                    }
                   }
-                }
-              })().catch(console.error);
-            }}
-          >
-            <span>Create New Character</span>
+                })().catch(console.error);
+              }}
+            >
+              <span>Create New Character</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

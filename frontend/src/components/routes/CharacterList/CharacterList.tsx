@@ -39,9 +39,12 @@ const CharacterItem = ({ character }: CharacterItemProps) => {
       <div className="characterlist-listitem-id">
         <span>#{character.id}</span>
       </div>
-      <div className="characterlist-listitem">
+      <div className="characterlist-listitem-info">
         <h2>{character.name}</h2>
         <h3>{(clanData && clanData[character.clan]?.name) || 'Mortal'}</h3>
+      </div>
+      <div className="characterlist-listitem-game">
+        <h5>{character.chronicle}</h5>
       </div>
     </div>
   );

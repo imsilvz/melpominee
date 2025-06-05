@@ -66,6 +66,16 @@
           justify-content: center;
           padding: 0 0.5rem 0 0.25rem;
         }
+
+        >.characterlist-listitem-info {
+          flex: 1;
+        }
+
+        >.characterlist-listitem-game {
+          align-self: flex-end;
+          justify-self: flex-end;
+          color: $text-disabled;
+        }
       }
 
       >.characterlist-additem {

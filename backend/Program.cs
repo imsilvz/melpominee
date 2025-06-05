@@ -64,7 +64,7 @@ builder.Services
     );
 
 // authentication details
-const string CookieScheme = "Melpominee.app.Auth";
+const string CookieScheme = "Melpominee.app.Auth.V2";
 builder.Services.AddAuthentication(CookieScheme)
     .AddCookie(CookieScheme, options =>
     {

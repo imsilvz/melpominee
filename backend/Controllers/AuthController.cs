@@ -66,7 +66,7 @@ public class AuthController : ControllerBase
                 // store it in the session
                 await HttpContext.SignInAsync
                 (
-                    "Melpominee.app.Auth",
+                    "Melpominee.app.Auth.V2",
                     new ClaimsPrincipal
                     (
                         new ClaimsIdentity

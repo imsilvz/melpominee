@@ -90,7 +90,7 @@ const CharacterList = () => {
       <div className="characterlist-panel">
         <div className="characterlist-header">
           <h1>Character List</h1>
-          {userRole === 'admin' && <ToggleSwitch label="Admin Mode" checked={adminMode} onSwitch={setAdminMode} />}
+          {userRole === 'admin' && <ToggleSwitch label="View All" checked={adminMode} onSwitch={setAdminMode} />}
         </div>
         <div className="characterlist-list">
           {characterList &&

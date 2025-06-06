@@ -7,10 +7,12 @@ import {
 
 import masterdata from './reducers/masterdataReducer';
 import user from './reducers/userReducer';
+import tooltip from './reducers/tooltipReducer';
 
 const store = configureStore({
   reducer: combineReducers({
     masterdata,
+    tooltip,
     user,
   }),
 });

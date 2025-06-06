@@ -14,6 +14,7 @@ import Login from './routes/Auth/Login';
 import ForgotPassword from './routes/Auth/ForgotPassword';
 import Register from './routes/Auth/Register';
 import RequireAuth from './shared/Auth/RequireAuth';
+import TooltipProvider from './shared/Tooltip/TooltipProvider';
 import CharacterList from './routes/CharacterList/CharacterList';
 import CharacterSheet from './routes/CharacterSheet/CharacterSheet';
 import LoadingSpinner from './shared/LoadingSpinner/LoadingSpinner';
@@ -38,31 +39,33 @@ const App = () => {
 
   return userReady ? (
     <div className="app">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route
-              index
-              element={
-                <RequireAuth>
-                  <CharacterList />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/character/:id"
-              element={
-                <RequireAuth>
-                  <CharacterSheet />
-                </RequireAuth>
-              }
-            />
-            <Route path="/login" element={<Login />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/register" element={<Register />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <TooltipProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route
+                index
+                element={
+                  <RequireAuth>
+                    <CharacterList />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/character/:id"
+                element={
+                  <RequireAuth>
+                    <CharacterSheet />
+                  </RequireAuth>
+                }
+              />
+              <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/register" element={<Register />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
     </div>
   ) : (
     <div className="layout">

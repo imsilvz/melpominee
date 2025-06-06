@@ -13,6 +13,7 @@ import { Character } from '../../../types/Character';
 // local files
 import HeaderBrand from './HeaderBrand';
 import './HeaderSection.scss';
+import Tooltip from '../../shared/Tooltip/Tooltip';
 
 interface HeaderSectionProps {
   character: Character;
@@ -118,31 +119,44 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
           <div className="charactersheet-header-row">
             <span className="charactersheet-header-row-label">Predator Type:</span>
             <span className="charactersheet-header-row-field">
-              <select
-                value={character.predatorType || ''}
-                onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-                  if (onChange) {
-                    onChange('predatorType', event.target.value);
-                  }
-                }}
-              >
-                {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                <option value="">N/A</option>
-                {predatorData &&
-                  Object.keys(predatorData).map((type) => {
-                    if (type === '') {
-                      return null;
-                    }
-                    return (
-                      <option
-                        key={`charactersheet-clanselect-option-${type}`}
-                        value={type}
-                      >
-                        {predatorData[type].name}
-                      </option>
-                    );
-                  })}
-              </select>
+              <Tooltip
+                type='predator_type'
+                typeId={character.predatorType || ''}
+                element={
+                  <select
+                    value={character.predatorType || ''}
+                    onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+                      if (onChange) {
+                        onChange('predatorType', event.target.value);
+                      }
+                    }}
+                  >
+                    {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+                    <option value="">N/A</option>
+                    {predatorData &&
+                      Object.keys(predatorData).map((type) => {
+                        if (type === '') {
+                          return null;
+                        }
+                        return (
+                          <Tooltip
+                            key={`charactersheet-clanselect-option-${type}-tooltip`}
+                            type='predator_type'
+                            typeId={type}
+                            element={
+                              <option
+                                key={`charactersheet-clanselect-option-${type}`}
+                                value={type}
+                              >
+                                {predatorData[type].name}
+                              </option>
+                            }
+                          />
+                        );
+                      })}
+                  </select>
+                }
+              />
               <span className="select-dropdown" />
             </span>
           </div>

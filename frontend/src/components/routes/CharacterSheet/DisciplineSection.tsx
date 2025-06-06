@@ -14,6 +14,7 @@ import { Character, CharacterDisciplines } from '../../../types/Character';
 import StatDots from './StatDots';
 import './DisciplineSection.scss';
 import CharacterSheetSection from './CharacterSheetSection';
+import Tooltip from '../../shared/Tooltip/Tooltip';
 
 interface PowerRowProps {
   id: string;
@@ -48,41 +49,47 @@ interface DisciplineSectionProps {
 const PowerRow = ({ id, level, school, power, onChange }: PowerRowProps) => {
   const disciplines = useAppSelector(selectDisciplines);
   return (
-    <div className="charactersheet-disciplines-power">
-      <select
-        value={power || ''}
-        disabled={
-          !Object.prototype.hasOwnProperty.call(disciplines, school) || level === 0
-        }
-        onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-          if (onChange) {
-            onChange(power, event.target.value);
-          }
-        }}
-      >
-        {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-        <option value="" />
-        {Array.from(Array(level), (_skip, i) => i).map((groupLevel) => (
-          <optgroup
-            key={`${id}-${school}-group${groupLevel}`}
-            label={`Level ${groupLevel + 1}`}
+    <Tooltip
+      type='discipline_power'
+      typeId={power}
+      element={
+        <div className="charactersheet-disciplines-power">
+          <select
+            value={power || ''}
+            disabled={
+              !Object.prototype.hasOwnProperty.call(disciplines, school) || level === 0
+            }
+            onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+              if (onChange) {
+                onChange(power, event.target.value);
+              }
+            }}
           >
-            {Object.prototype.hasOwnProperty.call(disciplines, school) &&
-              disciplines[school].powers
-                .filter((val) => val.level === groupLevel + 1)
-                .map((opt) => (
-                  <option
-                    key={`${id}-${school}-${opt.level}-option-${opt.id}`}
-                    value={opt.id}
-                  >
-                    {opt.name}
-                  </option>
-                ))}
-          </optgroup>
-        ))}
-      </select>
-      <span />
-    </div>
+            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+            <option value="" />
+            {Array.from(Array(level), (_skip, i) => i).map((groupLevel) => (
+              <optgroup
+                key={`${id}-${school}-group${groupLevel}`}
+                label={`Level ${groupLevel + 1}`}
+              >
+                {Object.prototype.hasOwnProperty.call(disciplines, school) &&
+                  disciplines[school].powers
+                    .filter((val) => val.level === groupLevel + 1)
+                    .map((opt) => (
+                      <option
+                        key={`${id}-${school}-${opt.level}-option-${opt.id}`}
+                        value={opt.id}
+                      >
+                        {opt.name}
+                      </option>
+                    ))}
+              </optgroup>
+            ))}
+          </select>
+          <span />
+        </div>
+      }
+    />
   );
 };
 
@@ -129,21 +136,23 @@ const DisciplineTile = ({
           }}
         />
       </div>
-      {Array.from(Array(5), (_skip, i) => i).map((_skipRow, rowIdx) => (
-        <PowerRow
-          id={`${id}-power${rowIdx}`}
-          key={`${id}-power${rowIdx}`}
-          level={level}
-          school={school}
-          power={powers[rowIdx] || ''}
-          onChange={(oldVal, newVal) => {
-            // discipline power has changed
-            if (onPowerChange) {
-              onPowerChange(rowIdx, oldVal, newVal);
-            }
-          }}
-        />
-      ))}
+      {Array.from(Array(5), (_skip, i) => i).map((_skipRow, rowIdx) => {
+        return (
+          <PowerRow
+            id={`${id}-power${rowIdx}`}
+            key={`${id}-power${rowIdx}`}
+            level={level}
+            school={school}
+            power={powers[rowIdx] || ''}
+            onChange={(oldVal, newVal) => {
+              // discipline power has changed
+              if (onPowerChange) {
+                onPowerChange(rowIdx, oldVal, newVal);
+              }
+            }}
+          />
+        )
+      })}
     </div>
   );
 };

@@ -12,7 +12,7 @@
         "Bane": "Blood Addiction - When the Banu Haqim slakes at least one Hunger level from another vampire, they must make a Hunger Frenzy test at difficulty 2 plus Bane Severity. If they fail, they must gorge themselves on vitae, in turn opening the door to possible Diablerie.",
         "Compulsion": "Judgement - Urged to punish a wrongdoer, the vampire must slake one Hunger from anyone that acts against their own Convictions. Failing to do so results in a three-dice penalty to all rolls until the Compulsion is satisfied or the scene ends. Should the victim be a vampire, the Bane applies.",
         "Disciplines": [
-            "Blood Sorcery",
+            "BloodSorcery",
             "Celerity",
             "Obfuscate"
         ]
@@ -142,7 +142,7 @@
         "Disciplines": [
             "Auspex",
             "Dominate",
-            "Blood Sorcery"
+            "BloodSorcery"
         ]
     },
     "tzimisce": {

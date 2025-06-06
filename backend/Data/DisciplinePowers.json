@@ -457,7 +457,7 @@
     "corrosive_vitae": {
         "Id": "corrosive_vitae",
         "Name": "Corrosive Vitae",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 1,
         "Cost": "One or more Rouse Check",
         "Duration": "N/A",
@@ -470,11 +470,11 @@
     "shape_the_sanguine_sacrament": {
         "Id": "shape_the_sanguine_sacrament",
         "Name": "Shape the Sanguine Sacrament",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 1,
         "Cost": "Free",
         "Duration": "One Scene unless deactivated",
-        "DicePool": "Manipulation + Blood Sorcery",
+        "DicePool": "Manipulation + BloodSorcery",
         "OpposingPool": "N/A",
         "Effect": "Shape blood into a shape or image. Errata",
         "AdditionalNotes": "If the user uses their vitae, it costs one Rouse Check.",
@@ -483,11 +483,11 @@
     "a_taste_for_blood": {
         "Id": "a_taste_for_blood",
         "Name": "A Taste for Blood",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 1,
         "Cost": "Free",
         "Duration": "N/A",
-        "DicePool": "Resolve + Blood Sorcery",
+        "DicePool": "Resolve + BloodSorcery",
         "OpposingPool": "N/A",
         "Effect": "Discover traits of another through their blood.",
         "AdditionalNotes": "N/A",
@@ -496,11 +496,11 @@
     "koldunic_sorcery": {
         "Id": "koldunic_sorcery",
         "Name": "Koldunic Sorcery",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 1,
         "Cost": "One Rouse Check and Aggravated Health Damage",
         "Duration": "One Scene, Can be renewed",
-        "DicePool": "Resolve + Blood Sorcery",
+        "DicePool": "Resolve + BloodSorcery",
         "OpposingPool": "Wits or Resolve + Obfuscate",
         "Effect": "Attune with and sense through an element, e.g. Water",
         "AdditionalNotes": "Can be taken multiple times to attune to other elements",
@@ -510,11 +510,11 @@
     "bloods_curse": {
         "Id": "bloods_curse",
         "Name": "Blood's Curse",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 2,
         "Cost": "One Rouse Check",
         "Duration": "Until dawn",
-        "DicePool": "Intelligence + Blood Sorcery",
+        "DicePool": "Intelligence + BloodSorcery",
         "OpposingPool": "Stamina + Occult / Fortitude",
         "Effect": "Temporary increase another vampire's Bane Severity.",
         "AdditionalNotes": "If the target is a ghoul, thinblood, or Caitiff they get a clan bane.",
@@ -523,11 +523,11 @@
     "extinguish_vitae": {
         "Id": "extinguish_vitae",
         "Name": "Extinguish Vitae",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 2,
         "Cost": "One Rouse Check",
         "Duration": "N/A",
-        "DicePool": "Intelligence + Blood Sorcery",
+        "DicePool": "Intelligence + BloodSorcery",
         "OpposingPool": "Stamina + Composure",
         "Effect": "In use, this increases another Kindred\u2019s Hunger.",
         "AdditionalNotes": "The victim can determine who used this power against them if they can see them and win an Intelligence + Occult vs Wits + Subterfuge roll.",
@@ -536,11 +536,11 @@
     "scour_secrets": {
         "Id": "scour_secrets",
         "Name": "Scour Secrets",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 2,
         "Cost": "One Rouse Check",
         "Duration": "One night or till the information is found or there\u2019s a dead-end",
-        "DicePool": "Intelligence + Blood Sorcery",
+        "DicePool": "Intelligence + BloodSorcery",
         "OpposingPool": "N/A",
         "Effect": "Pore through a large amount of content within minutes. Errata",
         "AdditionalNotes": "This power does not allow the user to parse things written in a language they cannot understand.",
@@ -549,11 +549,11 @@
     "blood_of_potency": {
         "Id": "blood_of_potency",
         "Name": "Blood of Potency",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 3,
         "Cost": "One Rouse Check",
         "Duration": "One Scene or Night",
-        "DicePool": "Resolve + Blood Sorcery",
+        "DicePool": "Resolve + BloodSorcery",
         "OpposingPool": "N/A",
         "Effect": "Increase Blood Potency temporarily.",
         "AdditionalNotes": "This power can allow a Kindred to bypass the Blood Potency limit set by their generation.",
@@ -562,11 +562,11 @@
     "scorpions_touch": {
         "Id": "scorpions_touch",
         "Name": "Scorpion\u2019s Touch",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 3,
         "Cost": "One or more Rouse Check",
         "Duration": "One Scene",
-        "DicePool": "Strength + Blood Sorcery",
+        "DicePool": "Strength + BloodSorcery",
         "OpposingPool": "Stamina + Occult/Fortitude",
         "Effect": "Change own vitae into paralyzing poison.",
         "AdditionalNotes": "A mortal who takes any damage from this will go unconscious.",
@@ -575,7 +575,7 @@
     "transitive_bond": {
         "Id": "transitive_bond",
         "Name": "Transitive Bond",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 3,
         "Cost": "One Rouse Check",
         "Duration": "N/A",
@@ -588,7 +588,7 @@
     "ripples_of_the_heart": {
         "Id": "ripples_of_the_heart",
         "Name": "Ripples of the Heart",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 3,
         "Cost": "One Rouse Check",
         "Duration": "N/A",
@@ -601,11 +601,11 @@
     "theft_of_vitae": {
         "Id": "theft_of_vitae",
         "Name": "Theft of Vitae",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 4,
         "Cost": "One Rouse Check",
         "Duration": "One feeding",
-        "DicePool": "Wits + Blood Sorcery",
+        "DicePool": "Wits + BloodSorcery",
         "OpposingPool": "Wits + Occult",
         "Effect": "Manipulate blood from a victim through the air to feed.",
         "AdditionalNotes": "When in use the victim is under the same influence as a standard Kiss.",
@@ -614,7 +614,7 @@
     "blood_aegis": {
         "Id": "blood_aegis",
         "Name": "Blood Aegis",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 4,
         "Cost": "One or more Rouse Checks",
         "Duration": "One scene or until damage is spent",
@@ -627,11 +627,11 @@
     "baals_caress": {
         "Id": "baals_caress",
         "Name": "Baal\u2019s Caress",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 5,
         "Cost": "One or more Rouse Checks",
         "Duration": "One Scene",
-        "DicePool": "Strength + Blood Sorcery",
+        "DicePool": "Strength + BloodSorcery",
         "OpposingPool": "Stamina + Occult/Fortitude",
         "Effect": "Change the user's own Vitae into an aggressive and lethal poison.",
         "AdditionalNotes": "If a mortal takes one point of damage they die instantly.",
@@ -640,11 +640,11 @@
     "cauldron_of_blood": {
         "Id": "cauldron_of_blood",
         "Name": "Cauldron of Blood",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 5,
         "Cost": "One Rouse Check, Stains",
         "Duration": "One turn",
-        "DicePool": "Resolve + Blood Sorcery",
+        "DicePool": "Resolve + BloodSorcery",
         "OpposingPool": "Composure + Occult/Fortitude",
         "Effect": "Boil the victim's blood in their body.",
         "AdditionalNotes": "If a mortal takes one point of damage they die screaming.",
@@ -653,7 +653,7 @@
     "reclamation_of_vitae": {
         "Id": "reclamation_of_vitae",
         "Name": "Reclamation of Vitae",
-        "School": "Blood Sorcery",
+        "School": "BloodSorcery",
         "Level": 5,
         "Cost": "One or more Stains",
         "Duration": "N/A",
@@ -991,7 +991,7 @@
         "Prerequisite": "Mesmerize Errata",
         "Amalgam": {
             "Level": 2,
-            "School": "Blood Sorcery \u25cf\u25cf Errata"
+            "School": "BloodSorcery \u25cf\u25cf Errata"
         }
     },
     "implant_suggestion": {
@@ -2468,11 +2468,11 @@
         "DicePool": "Strength + Protean",
         "OpposingPool": "N/A",
         "Effect": "Draw in the remains of blood and body to the vampire to clean a scene.",
-        "AdditionalNotes": "Hunger can be reduced by one per body, up to the level of their Blood Sorcery rating but cannot reduce to 0.",
+        "AdditionalNotes": "Hunger can be reduced by one per body, up to the level of their BloodSorcery rating but cannot reduce to 0.",
         "Source": "Sabbat, page 49",
         "Amalgam": {
             "Level": 2,
-            "School": "Blood Sorcery"
+            "School": "BloodSorcery"
         }
     },
     "horrid_form": {
@@ -2521,7 +2521,7 @@
         "Source": "Gehenna War, page 47",
         "Amalgam": {
             "Level": 2,
-            "School": "Blood Sorcery"
+            "School": "BloodSorcery"
         }
     },
     "the_heart_of_darkness": {

@@ -2,7 +2,7 @@ import React, { ReactNode, useState } from "react";
 
 // redux
 import { useAppSelector } from "../../../redux/hooks";
-import { selectDisciplinePowers, selectPredatorTypes } from "../../../redux/reducers/masterdataReducer";
+import { selectDisciplinePowers, selectDisciplines, selectPredatorTypes } from "../../../redux/reducers/masterdataReducer";
 import { selectTooltipId, selectTooltipType } from "../../../redux/reducers/tooltipReducer";
 
 // local imports
@@ -13,14 +13,17 @@ import { DisciplinePower } from "../../../types/Discipline";
 import { PredatorType } from '../../../types/PredatorType';
 
 const DisciplinePowerTooltip = ({ data }: { data: DisciplinePower }) => {
+  const disciplines = useAppSelector(selectDisciplines);
+  const disciplineName = disciplines.hasOwnProperty(data.school) ? disciplines[data.school].name : data.school;
+  const amalgamName = data.amalgam && disciplines.hasOwnProperty(data.amalgam?.school) ? disciplines[data.amalgam.school] : data.amalgam?.school;
   return (
     <div className="discipline-power-tooltip-inner">
       <h3>{data.name}</h3>
-      <h4>{data.school} {'●'.repeat(data.level)}{((data.amalgam?.level || 0) > 0) && (<> (Amalgam {data.amalgam?.school} {'●'.repeat(data.amalgam!.level as number)})</>)}</h4>
+      <h4>{disciplineName} {'●'.repeat(data.level)}{((data.amalgam?.level || 0) > 0) && (<> (Amalgam {amalgamName} {'●'.repeat(data.amalgam!.level as number)})</>)}</h4>
       <p>{data.effect}</p>
+      <p><b>Cost:</b> {data.cost}{data.dicePool !== 'N/A' && (<> | <b>Test:</b> {data.dicePool}{data.opposingPool !== 'N/A' && ` vs ${data.opposingPool}`}</>)} | <b>Duration:</b> {data.duration}</p>
       <h5>Additional Notes</h5>
       <p>{data.additionalNotes}</p>
-      <p><b>Cost:</b> {data.cost}{data.dicePool !== 'N/A' && (<> | <b>Test:</b> {data.dicePool}{data.opposingPool !== 'N/A' && ` vs ${data.opposingPool}`}</>)}</p>
       {data.source && (<p><b>Source:</b> {data.source}</p>)}
     </div>
   )

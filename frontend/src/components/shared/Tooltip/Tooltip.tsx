@@ -9,6 +9,7 @@ const Tooltip = ({ type, typeId, element }: { type: string, typeId: string, elem
   const dispatch = useAppDispatch();
 
   const handleMouseEnter = (event: MouseEvent) => {
+    console.log(type, typeId);
     dispatch(setTooltipData({
       tooltipType: type,
       tooltipId: typeId

@@ -15,7 +15,9 @@ import { PredatorType } from '../../../types/PredatorType';
 const DisciplinePowerTooltip = ({ data }: { data: DisciplinePower }) => {
   const disciplines = useAppSelector(selectDisciplines);
   const disciplineName = disciplines.hasOwnProperty(data.school) ? disciplines[data.school].name : data.school;
-  const amalgamName = data.amalgam && disciplines.hasOwnProperty(data.amalgam?.school) ? disciplines[data.amalgam.school] : data.amalgam?.school;
+  const amalgamName = data.amalgam && disciplines.hasOwnProperty(data.amalgam?.school) ? disciplines[data.amalgam.school].name : data.amalgam?.school;
+
+  console.log(disciplineName, amalgamName);
   return (
     <div className="discipline-power-tooltip-inner">
       <h3>{data.name}</h3>

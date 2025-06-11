@@ -33,7 +33,7 @@ const MeritFlawSection = ({
       title="Merits & Flaws"
     >
       <div className="meritflaw-group">
-        <span>Backgrounds</span>
+        <span>Advantages</span>
         <div className="meritflaw-list">
           {Array.from(Array(10), (_skip, i) => i).map((_skipRow, rowIdx) => {
             const background = Backgrounds[rowIdx];
@@ -68,11 +68,6 @@ const MeritFlawSection = ({
               </div>
             );
           })}
-        </div>
-      </div>
-      <div className="meritflaw-group">
-        <span>Merits</span>
-        <div className="meritflaw-list">
           {Array.from(Array(10), (_skip, i) => i).map((_skipRow, rowIdx) => {
             const merit = Merits[rowIdx];
             return (

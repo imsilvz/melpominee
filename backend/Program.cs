@@ -26,16 +26,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddDistributedMemoryCache();
-/*
+//builder.Services.AddDistributedMemoryCache();
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false";
 });
-*/
 
 // signalR
-/*
 builder.Services.AddSignalR()
     .AddStackExchangeRedis(
         $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false",
@@ -44,7 +41,6 @@ builder.Services.AddSignalR()
             options.Configuration.ChannelPrefix = "Melpominee";
         }
     );
-*/
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromHours(24);
@@ -55,7 +51,6 @@ builder.Services.AddSession(options =>
 builder.Services.AddSingleton<ConnectionService>();
 
 // add data protection
-/*
 var redis = ConnectionMultiplexer
     .Connect($"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false");
 builder.Services
@@ -68,7 +63,6 @@ builder.Services
             ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
         }
     );
-*/
 
 // authentication details
 const string CookieScheme = "Melpominee.app.Auth.V2";
@@ -120,7 +114,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
-//app.MapHub<CharacterHub>("/vtmv5/watch");
+app.MapHub<CharacterHub>("/vtmv5/watch");
 app.MapControllers();
 
 app.Run();

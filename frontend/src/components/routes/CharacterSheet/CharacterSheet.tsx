@@ -47,7 +47,6 @@ const CharacterSheet = () => {
   const [currCharacter, setCurrCharacter] = useState<Character | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  /*
   useEffect(() => {
     if (id !== undefined) {
       const conn = new signalR.HubConnectionBuilder()
@@ -271,7 +270,6 @@ const CharacterSheet = () => {
       connectionRef.current?.stop().catch(console.error);
     };
   }, [id]);
-  */
 
   useEffect(() => {
     // on id change, try to update the character

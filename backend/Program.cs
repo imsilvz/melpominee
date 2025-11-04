@@ -117,7 +117,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
-app.MapHub<CharacterHub>("/vtmv5/watch");
+//app.MapHub<CharacterHub>("/vtmv5/watch");
 app.MapControllers();
 
 app.Run();

@@ -26,10 +26,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+/*
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false";
 });
+*/
 
 // signalR
 /*

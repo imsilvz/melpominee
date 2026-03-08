@@ -1,35 +1,69 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState } from 'react';
 
 // redux
-import { useAppSelector } from "../../../redux/hooks";
-import { selectDisciplinePowers, selectDisciplines, selectPredatorTypes } from "../../../redux/reducers/masterdataReducer";
-import { selectTooltipId, selectTooltipType } from "../../../redux/reducers/tooltipReducer";
+import { useAppSelector } from '../../../redux/hooks';
+import {
+  selectDisciplinePowers,
+  selectDisciplines,
+  selectPredatorTypes,
+} from '../../../redux/reducers/masterdataReducer';
+import {
+  selectTooltipId,
+  selectTooltipType,
+} from '../../../redux/reducers/tooltipReducer';
 
 // local imports
 import './TooltipProvider.scss';
 
 // types
-import { DisciplinePower } from "../../../types/Discipline";
+import { DisciplinePower } from '../../../types/Discipline';
 import { PredatorType } from '../../../types/PredatorType';
 
 const DisciplinePowerTooltip = ({ data }: { data: DisciplinePower }) => {
   const disciplines = useAppSelector(selectDisciplines);
-  const disciplineName = disciplines.hasOwnProperty(data.school) ? disciplines[data.school].name : data.school;
-  const amalgamName = data.amalgam && disciplines.hasOwnProperty(data.amalgam?.school) ? disciplines[data.amalgam.school].name : data.amalgam?.school;
+  const disciplineName = disciplines.hasOwnProperty(data.school)
+    ? disciplines[data.school].name
+    : data.school;
+  const amalgamName =
+    data.amalgam && disciplines.hasOwnProperty(data.amalgam?.school)
+      ? disciplines[data.amalgam.school].name
+      : data.amalgam?.school;
 
   console.log(disciplineName, amalgamName);
   return (
     <div className="discipline-power-tooltip-inner">
       <h3>{data.name}</h3>
-      <h4>{disciplineName} {'●'.repeat(data.level)}{((data.amalgam?.level || 0) > 0) && (<> (Amalgam {amalgamName} {'●'.repeat(data.amalgam!.level as number)})</>)}</h4>
+      <h4>
+        {disciplineName} {'●'.repeat(data.level)}
+        {(data.amalgam?.level || 0) > 0 && (
+          <>
+            {' '}
+            (Amalgam {amalgamName} {'●'.repeat(data.amalgam!.level as number)})
+          </>
+        )}
+      </h4>
       <p>{data.effect}</p>
-      <p><b>Cost:</b> {data.cost}{data.dicePool !== 'N/A' && (<> | <b>Test:</b> {data.dicePool}{data.opposingPool !== 'N/A' && ` vs ${data.opposingPool}`}</>)} | <b>Duration:</b> {data.duration}</p>
+      <p>
+        <b>Cost:</b> {data.cost}
+        {data.dicePool !== 'N/A' && (
+          <>
+            {' '}
+            | <b>Test:</b> {data.dicePool}
+            {data.opposingPool !== 'N/A' && ` vs ${data.opposingPool}`}
+          </>
+        )}{' '}
+        | <b>Duration:</b> {data.duration}
+      </p>
       <h5>Additional Notes</h5>
       <p>{data.additionalNotes}</p>
-      {data.source && (<p><b>Source:</b> {data.source}</p>)}
+      {data.source && (
+        <p>
+          <b>Source:</b> {data.source}
+        </p>
+      )}
     </div>
-  )
-}
+  );
+};
 
 const PredatorTypeTooltip = ({ data }: { data: PredatorType }) => {
   return (
@@ -42,8 +76,8 @@ const PredatorTypeTooltip = ({ data }: { data: PredatorType }) => {
         ))}
       </ul>
     </div>
-  )
-}
+  );
+};
 
 const TooltipProvider = ({ children }: { children: ReactNode }) => {
   const tooltipType = useAppSelector(selectTooltipType);
@@ -79,6 +113,6 @@ const TooltipProvider = ({ children }: { children: ReactNode }) => {
         </div>
       )}
     </>
-  )
-}
+  );
+};
 export default TooltipProvider;

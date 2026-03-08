@@ -21,7 +21,7 @@ permissions:
 jobs:
   docker-build-push:
     name: Melpominee.app Build & Push
-    runs-on: melpominee-runner
+    runs-on: arc-melpominee
     
     steps:
       - uses: actions/checkout@v4
@@ -52,7 +52,7 @@ jobs:
         with:
           context: .
           push: true
-          file: ./backend/Dockerfile
+          file: ./src/backend/Dockerfile
           tags: ${{ steps.meta-backend.outputs.tags }}
           labels: ${{ steps.meta-backend.outputs.labels }}
           
@@ -61,13 +61,13 @@ jobs:
         with:
           context: .
           push: true
-          file: ./frontend/Dockerfile
+          file: ./src/frontend/Dockerfile
           tags: ${{ steps.meta-frontend.outputs.tags }}
           labels: ${{ steps.meta-frontend.outputs.labels }}
 
       - name: Setup Azure CLI
         run: |
-          curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
         
       - name: Azure Login
         uses: azure/login@v2
@@ -92,7 +92,7 @@ jobs:
           action: 'deploy'
           manifests: |
             manifests/deploy.yaml
-            manifests/ingress.yaml
+            manifests/httproute.yaml
           namespace: 'melpominee'
 
       - name: Rollout Restart

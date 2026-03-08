@@ -1,6 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import path from 'path';
-
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -14,17 +12,16 @@ export default defineConfig({
       }
     }
   },
-  root: path.resolve(__dirname, 'frontend'),
   plugins: [react()],
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
-        //target: 'https://melpominee.app/',
+        //target: 'http://localhost:5000',
+        target: 'https://melpominee.app/',
         xfwd: true,
-        //changeOrigin: true,
+        changeOrigin: true,
         secure: false,
-        rewrite: (subdir) => subdir.replace(/^\/api/, ''),
+        //rewrite: (subdir) => subdir.replace(/^\/api/, ''),
         ws: true, // even if true, websocket proxy doesn't work.
       },
     },

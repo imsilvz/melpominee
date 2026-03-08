@@ -7,12 +7,14 @@
 
   <ItemGroup>
     <Content Remove="*" />
-    <Content Remove="backend\obj\Debug\**\*" />
-    <Compile Remove="backend\obj\Debug\**\*" />
+    <Content Remove="obj\Debug\**\*" />
+    <Compile Remove="obj\Debug\**\*" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="backend\Data\*.json" />
+    <EmbeddedResource Include="Data\*.json">
+      <LogicalName>Melpominee.app.backend.Data.%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

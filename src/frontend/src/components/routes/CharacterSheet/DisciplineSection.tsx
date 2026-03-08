@@ -50,14 +50,15 @@ const PowerRow = ({ id, level, school, power, onChange }: PowerRowProps) => {
   const disciplines = useAppSelector(selectDisciplines);
   return (
     <Tooltip
-      type='discipline_power'
+      type="discipline_power"
       typeId={power}
       element={
         <div className="charactersheet-disciplines-power">
           <select
             value={power || ''}
             disabled={
-              !Object.prototype.hasOwnProperty.call(disciplines, school) || level === 0
+              !Object.prototype.hasOwnProperty.call(disciplines, school) ||
+              level === 0
             }
             onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
               if (onChange) {
@@ -151,7 +152,7 @@ const DisciplineTile = ({
               }
             }}
           />
-        )
+        );
       })}
     </div>
   );

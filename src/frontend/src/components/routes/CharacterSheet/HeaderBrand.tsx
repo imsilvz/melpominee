@@ -22,7 +22,7 @@ const ClanList = [
   'tremere',
   'tzimisce',
   'ventrue',
-  'thin_blood'
+  'thin_blood',
 ];
 
 const HeaderBrand = ({ clan }: HeaderBrandProps) => {

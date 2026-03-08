@@ -5,10 +5,10 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 COPY . /src
 WORKDIR /src
 RUN ls
-RUN dotnet build "Melpominee.app.csproj" -c Release -o /app/build
+RUN dotnet build "src/backend/Melpominee.app.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Melpominee.app.csproj" -c Release -o /app/publish
+RUN dotnet publish "src/backend/Melpominee.app.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

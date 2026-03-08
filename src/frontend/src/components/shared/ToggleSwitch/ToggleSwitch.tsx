@@ -10,12 +10,15 @@ interface ToggleSwitchProps {
 
 const ToggleSwitch = ({ label, checked, onSwitch }: ToggleSwitchProps) => {
   return (
-    <div className="toggle-switch-container" onClick={async (event) => {
-      event.preventDefault();
-      if (onSwitch !== undefined) {
-        onSwitch(!!!checked);
-      }
-    }}>
+    <div
+      className="toggle-switch-container"
+      onClick={async (event) => {
+        event.preventDefault();
+        if (onSwitch !== undefined) {
+          onSwitch(!checked);
+        }
+      }}
+    >
       <p>{label}</p>
       <label className="toggle-switch">
         <input readOnly type="checkbox" checked={checked} />
@@ -23,5 +26,5 @@ const ToggleSwitch = ({ label, checked, onSwitch }: ToggleSwitchProps) => {
       </label>
     </div>
   );
-}
+};
 export default ToggleSwitch;

@@ -461,9 +461,15 @@ $RECYCLE.BIN/
 secrets/**/*
 
 ##
+## Claude
+##
+.claude/
+.mcp.json
+
+##
 ## Frontend Output
 ##
-frontend/dist/**/*
+src/frontend/dist/**/*
 
 ##
 ## Backend Output

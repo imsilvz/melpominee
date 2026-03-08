@@ -29,7 +29,7 @@ spec:
             memory: 256Mi
             cpu: 250m
       imagePullSecrets:
-      - name: dockerconfigjson-github-com
+      - name: github-pat
 ---
 apiVersion: v1
 kind: Service
@@ -43,6 +43,16 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: melpominee
+  namespace: melpominee
+  annotations:
+    azure.workload.identity/client-id: "703ef771-2404-4cb2-ad06-a1dc2d383cff"
+  labels:
+    azure.workload.identity/use: "true"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -60,19 +70,46 @@ spec:
     metadata:
       labels:
         app: melpominee-backend
+        azure.workload.identity/use: "true"
     spec:
+      serviceAccountName: melpominee
       volumes:
+        - name: secrets-store
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: melpominee-secrets
         - name: secret-volume
           projected:
             sources:
               - secret:
                   name: melpominee-discord
+                  optional: true
               - secret:
                   name: melpominee-email
+                  optional: true
               - secret:
                   name: melpominee-postgres
+                  optional: true
               - secret:
                   name: melpominee-redis
+                  optional: true
+      initContainers:
+        - name: init-secrets
+          image: busybox:1.36
+          command: ["sh", "-c", "echo 'Secrets mounted'"]
+          volumeMounts:
+            - name: secrets-store
+              mountPath: /mnt/secrets-store
+              readOnly: true
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
       containers:
       - name: backend
         image: ghcr.io/imsilvz/melpominee-backend:master
@@ -91,7 +128,7 @@ spec:
           mountPath: "/etc/melpominee/secrets"
           readOnly: true
       imagePullSecrets:
-      - name: dockerconfigjson-github-com
+      - name: github-pat
 ---
 apiVersion: v1
 kind: Service

@@ -120,7 +120,7 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
             <span className="charactersheet-header-row-label">Predator Type:</span>
             <span className="charactersheet-header-row-field">
               <Tooltip
-                type='predator_type'
+                type="predator_type"
                 typeId={character.predatorType || ''}
                 element={
                   <select
@@ -141,7 +141,7 @@ const HeaderSection = ({ character, onChange }: HeaderSectionProps) => {
                         return (
                           <Tooltip
                             key={`charactersheet-clanselect-option-${type}-tooltip`}
-                            type='predator_type'
+                            type="predator_type"
                             typeId={type}
                             element={
                               <option

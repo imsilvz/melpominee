@@ -62,10 +62,14 @@ const CharacterList = () => {
   const userRole = useAppSelector(selectUserRole);
   const [loading, setLoading] = useState<boolean>(true);
   const [adminMode, setAdminMode] = useState<boolean>(false);
-  const [characterList, setCharacterList] = useState<ExtendedCharacterHeader[] | null>(null);
+  const [characterList, setCharacterList] = useState<
+    ExtendedCharacterHeader[] | null
+  >(null);
   const GetCharacterList = async (adminMode: boolean) => {
     let url = '/api/vtmv5/character/';
-    if (adminMode) { url = `${url}?adminView=true` }
+    if (adminMode) {
+      url = `${url}?adminView=true`;
+    }
     const listRequest = await fetch(url);
     if (listRequest.ok) {
       const listJson = await (listRequest.json() as Promise<CharacterListResponse>);
@@ -73,11 +77,12 @@ const CharacterList = () => {
         listJson.characterList.sort((a, b) => {
           if (a.id > b.id) {
             return 1;
-          } else if (a.id < b.id) {
+          }
+          if (a.id < b.id) {
             return -1;
           }
           return 0;
-        })
+        });
         setCharacterList(listJson.characterList);
         setLoading(false);
       }
@@ -96,7 +101,13 @@ const CharacterList = () => {
         <div className="characterlist-panel">
           <div className="characterlist-header">
             <h1>Character List</h1>
-            {userRole === 'admin' && <ToggleSwitch label="View All" checked={adminMode} onSwitch={setAdminMode} />}
+            {userRole === 'admin' && (
+              <ToggleSwitch
+                label="View All"
+                checked={adminMode}
+                onSwitch={setAdminMode}
+              />
+            )}
           </div>
           <div className="characterlist-list">
             {characterList &&

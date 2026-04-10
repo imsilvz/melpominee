@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { validatePassword } from '../../../util/auth';
 import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
 import './Register.scss';
 
@@ -54,6 +55,15 @@ const Register = () => {
               setLoading(false);
               setRegistrationError(
                 'Your password must match your confirm password!',
+              );
+              return;
+            }
+
+            // validate password strength
+            if (!validatePassword(passwordRef.current?.value || '')) {
+              setLoading(false);
+              setRegistrationError(
+                'Your password must be at least 12 characters long.',
               );
               return;
             }

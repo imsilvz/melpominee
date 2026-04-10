@@ -11,9 +11,12 @@ namespace Melpominee.app.Services.Auth;
 
 public class UserManager
 {
-    private static int _saltSize = 128 / 8;
-    private static int _iterCount = 10000;
-    private static int _passwordBytes = 512 / 8;
+    private const int SaltSize = 128 / 8;
+    private const int PasswordBytes = 512 / 8;
+    private const byte HashVersionLegacy = 0x02;
+    private const byte HashVersionCurrent = 0x03;
+    private const int LegacyIterCount = 10000;
+    private const int CurrentIterCount = 600000;
 
     private readonly IDistributedCache _cache;
     public UserManager(IDistributedCache cache) 
@@ -107,8 +110,17 @@ public class UserManager
         }
 
         // check password
-        if (VerifyPassword(user.Password, password))
-        {
+        if (VerifyPassword(user.Password, password)) {
+            // rehash if using legacy iteration count
+            if (NeedsRehash(user.Password)) {
+                user.Password = HashPassword(password);
+                using (var rehashConn = DataContext.Instance.Connect()) {
+                    rehashConn.Open();
+                    rehashConn.Execute(
+                        "UPDATE melpominee_users SET password = @Password WHERE email = @Email;",
+                        new { user.Password, user.Email });
+                }
+            }
             // login successful!
             return user;
         }
@@ -193,11 +205,12 @@ public class UserManager
     public async Task<bool> FinishResetPassword(string email, string key, string password)
     {
         // quick check validity of object
-        if (string.IsNullOrEmpty(email) || 
-            string.IsNullOrEmpty(key) || 
-            string.IsNullOrEmpty(password)) 
-        { 
-            return false; 
+        if (string.IsNullOrEmpty(email) ||
+            string.IsNullOrEmpty(key) ||
+            string.IsNullOrEmpty(password) ||
+            password.Length < 12)
+        {
+            return false;
         }
 
         // handle database actions
@@ -278,9 +291,12 @@ public class UserManager
     {
         // quick check validity of object
         User? user = null;
-        if(string.IsNullOrEmpty(email)) 
-        { 
-            return user; 
+        if(string.IsNullOrEmpty(email))
+        {
+            return user;
+        }
+        if (string.IsNullOrEmpty(password) || password.Length < 12) {
+            return user;
         }
         
         // generate confirmation key
@@ -300,7 +316,7 @@ public class UserManager
                     Email = email, 
                     Password = HashPassword(password), 
                     Role = "user",
-                    ActivationKey = activationKey,
+                    ActivationKey = HashPassword(activationKey),
                     ActivationRequested = DateTime.UtcNow,
                 };
 
@@ -399,7 +415,7 @@ public class UserManager
                     }
 
                     // compare activation key and querystring
-                    if (key != user.ActivationKey)
+                    if (!VerifyPassword(user.ActivationKey, key))
                     {
                         trans.Rollback();
                         return null;
@@ -507,7 +523,7 @@ public class UserManager
 
     public static string HashPassword(string password)
     {
-        byte[] salt = RandomNumberGenerator.GetBytes(_saltSize);
+        byte[] salt = RandomNumberGenerator.GetBytes(SaltSize);
         return HashPassword(salt, password);
     }
 
@@ -517,12 +533,12 @@ public class UserManager
             password: password,
             salt: salt,
             prf: KeyDerivationPrf.HMACSHA512,
-            iterationCount: _iterCount,
-            numBytesRequested: _passwordBytes
+            iterationCount: CurrentIterCount,
+            numBytesRequested: PasswordBytes
         );
         
         byte[] outputBytes = new byte[1 + salt.Length + hashedBytes.Length];
-        outputBytes[0] = 0x02;
+        outputBytes[0] = HashVersionCurrent;
         Buffer.BlockCopy(hashedBytes, 0, outputBytes, 1, hashedBytes.Length);
         Buffer.BlockCopy(salt, 0, outputBytes, 1 + hashedBytes.Length, salt.Length);
 
@@ -530,17 +546,35 @@ public class UserManager
         return hashedPassword;
     }
 
-    public static bool VerifyPassword(string? hashed, string? password)
-    {
-        if (string.IsNullOrEmpty(hashed) || string.IsNullOrEmpty(password))
-        {
-            // bad inputs, just return false
+    public static bool VerifyPassword(string? hashed, string? password) {
+        if (string.IsNullOrEmpty(hashed) || string.IsNullOrEmpty(password)) {
             return false;
         }
         byte[] hashedBytes = Convert.FromBase64String(hashed);
-        byte[] salt = new byte[_saltSize];
-        Buffer.BlockCopy(hashedBytes, 1 + _passwordBytes, salt, 0, _saltSize);
-        string newHashedPassword = HashPassword(salt, password);
-        return hashed == newHashedPassword;
+        byte version = hashedBytes[0];
+        int iterations = version switch {
+            HashVersionCurrent => CurrentIterCount,
+            _ => LegacyIterCount,
+        };
+        byte[] salt = new byte[SaltSize];
+        Buffer.BlockCopy(hashedBytes, 1 + PasswordBytes, salt, 0, SaltSize);
+        byte[] computedHash = KeyDerivation.Pbkdf2(
+            password: password,
+            salt: salt,
+            prf: KeyDerivationPrf.HMACSHA512,
+            iterationCount: iterations,
+            numBytesRequested: PasswordBytes
+        );
+        return CryptographicOperations.FixedTimeEquals(
+            hashedBytes.AsSpan(1, PasswordBytes),
+            computedHash.AsSpan());
+    }
+
+    public static bool NeedsRehash(string? hashed) {
+        if (string.IsNullOrEmpty(hashed)) {
+            return false;
+        }
+        byte[] hashedBytes = Convert.FromBase64String(hashed);
+        return hashedBytes[0] != HashVersionCurrent;
     }
 }

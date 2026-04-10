@@ -11,36 +11,60 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 
-// Load Secrets
-SecretManager.Instance.LoadSecret("discord-oauth");
-SecretManager.Instance.LoadSecret("pg-credentials");
-SecretManager.Instance.LoadSecret("redis-credentials");
-SecretManager.Instance.LoadSecret("mail-secrets");
-
-// Create Initial Data Schema
-Directory.CreateDirectory("data");
-DataContext.Instance.Initalize();
+// Load Secrets and Initialize Database (skip in test environment)
+if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Testing")
+{
+    SecretManager.Instance.LoadSecret("discord-oauth");
+    SecretManager.Instance.LoadSecret("pg-credentials");
+    SecretManager.Instance.LoadSecret("redis-credentials");
+    SecretManager.Instance.LoadSecret("mail-secrets");
+    Directory.CreateDirectory("data");
+    DataContext.Instance.Initalize();
+}
 
 // API Application Builder
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-//builder.Services.AddDistributedMemoryCache();
-builder.Services.AddStackExchangeRedisCache(options =>
+if (!builder.Environment.IsEnvironment("Testing"))
 {
-    options.Configuration = $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false";
-});
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false";
+    });
 
-// signalR
-builder.Services.AddSignalR()
-    .AddStackExchangeRedis(
-        $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false",
-        options =>
-        {
-            options.Configuration.ChannelPrefix = "Melpominee";
-        }
-    );
+    // signalR
+    builder.Services.AddSignalR()
+        .AddStackExchangeRedis(
+            $"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false",
+            options =>
+            {
+                options.Configuration.ChannelPrefix = "Melpominee";
+            }
+        );
+
+    // add data protection
+    var redis = ConnectionMultiplexer
+        .Connect($"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false");
+    builder.Services
+        .AddDataProtection()
+        .PersistKeysToStackExchangeRedis(redis, "DataProtectionKeys")
+        .UseCryptographicAlgorithms(
+            new AuthenticatedEncryptorConfiguration
+            {
+                EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+                ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+            }
+        );
+}
+else
+{
+    builder.Services.AddDistributedMemoryCache();
+    builder.Services.AddSignalR();
+    builder.Services.AddDataProtection();
+}
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromHours(24);
@@ -49,20 +73,6 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 builder.Services.AddSingleton<ConnectionService>();
-
-// add data protection
-var redis = ConnectionMultiplexer
-    .Connect($"{SecretManager.Instance.GetSecret("redis_host")}:{SecretManager.Instance.GetSecret("redis_port")},abortConnect=false");
-builder.Services
-    .AddDataProtection()
-    .PersistKeysToStackExchangeRedis(redis, "DataProtectionKeys")
-    .UseCryptographicAlgorithms(
-        new AuthenticatedEncryptorConfiguration
-        {
-            EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
-            ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
-        }
-    );
 
 // authentication details
 const string CookieScheme = "Melpominee.app.Auth.V2";
@@ -84,11 +94,13 @@ builder.Services.AddAuthentication(CookieScheme)
         };
         options.ExpireTimeSpan = TimeSpan.FromHours(24);
         options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
     });
 
 // authorization handlers
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<IAuthorizationHandler, CanViewCharacterHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, CanViewCharacterHandler>();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("CanViewCharacter", policy =>
@@ -97,6 +109,7 @@ builder.Services.AddAuthorization(options =>
 
 // additional services
 builder.Services.AddScoped<CharacterService>();
+builder.Services.AddScoped<CharacterCommandDispatcher>();
 builder.Services.AddScoped<UserManager>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -118,3 +131,5 @@ app.MapHub<CharacterHub>("/vtmv5/watch");
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }

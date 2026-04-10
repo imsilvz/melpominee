@@ -1,12 +1,6 @@
 using Melpominee.app.Models.Characters.VTMV5;
 namespace Melpominee.app.Models.Web.VTMV5;
 
-public class CharacterUpdateWrapper<ICharacterUpdate>
-{
-    public string? UpdateId { get; set; }
-    public ICharacterUpdate? UpdateData { get; set; }
-}
-
 public class VampireCharacterResponse
 {
     public bool Success { get; set; } = false;
@@ -26,13 +20,6 @@ public class VampireCharacterCreateResponse
     public bool Success { get; set; }
     public string? Error { get; set; }
     public int? CharacterId { get; set; }
-}
-
-public class VampireHeaderResponse
-{
-    public bool Success { get; set; }
-    public string? Error { get; set; }
-    public VampireV5Header? Character { get; set; }
 }
 
 public class VampireAttributesResponse

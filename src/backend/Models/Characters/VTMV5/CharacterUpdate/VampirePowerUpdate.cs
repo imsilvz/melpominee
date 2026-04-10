@@ -34,7 +34,8 @@ public class VampirePowersUpdate : ICharacterUpdate
             // convert back to powers list
             var addItems = new List<object>();
             var removeItems = new List<object>();
-            foreach (var powerId in PowerIds)
+            foreach (var powerId in PowerIds.Where(
+                p => !string.IsNullOrEmpty(p.PowerId)))
             {
                 if (powerId.Remove)
                 {

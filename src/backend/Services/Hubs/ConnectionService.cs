@@ -60,7 +60,7 @@ public class ConnectionService
     public void OnDisconnect(IHubContext<CharacterHub, ICharacterClient> hub, string identifier, string connectionId)
     {
         ConnectionMap.TryRemove(
-            new KeyValuePair<string, string>(identifier, connectionId)
+            new KeyValuePair<string, string>(connectionId, identifier)
         );
         ConcurrentDictionary<string, bool>? connectionMap;
         if(UserMap.TryGetValue(identifier, out connectionMap))

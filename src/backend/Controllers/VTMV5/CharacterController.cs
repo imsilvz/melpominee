@@ -1,7 +1,5 @@
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.AspNetCore.SignalR;
 using Melpominee.app.Hubs.VTMV5;
 using Melpominee.app.Hubs.Clients.VTMV5;
@@ -10,7 +8,6 @@ using Melpominee.app.Models.Web.VTMV5;
 using Melpominee.app.Models.Characters.VTMV5;
 using Melpominee.app.Services.Auth;
 using Melpominee.app.Services.Characters;
-using Melpominee.app.Services.Hubs;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 namespace Melpominee.app.Controllers;
 
@@ -21,24 +18,21 @@ namespace Melpominee.app.Controllers;
 public class CharacterController : ControllerBase
 {
     private readonly ILogger<CharacterController> _logger;
-    private readonly IDistributedCache _cache;
-    private readonly ConnectionService _connectionHelper;
     private readonly IHubContext<CharacterHub, ICharacterClient> _characterHub;
     private readonly CharacterService _characterService;
+    private readonly CharacterCommandDispatcher _dispatcher;
     private readonly UserManager _userManager;
     public CharacterController(
         ILogger<CharacterController> logger,
-        IDistributedCache cache,
-        ConnectionService connectionHelper,
         IHubContext<CharacterHub, ICharacterClient> characterHub,
         CharacterService characterService,
+        CharacterCommandDispatcher dispatcher,
         UserManager userManager)
     {
         _logger = logger;
-        _cache = cache;
         _characterHub = characterHub;
-        _connectionHelper = connectionHelper;
         _characterService = characterService;
+        _dispatcher = dispatcher;
         _userManager = userManager;
     }
 
@@ -107,15 +101,20 @@ public class CharacterController : ControllerBase
         // fetch character data
         List<VampireV5Character>? charList;
         var headerList = new List<VampireV5Header>();
-        if (adminView == true)
-        {
-            charList = await VampireV5Character.GetCharacters();
+        if (adminView == true) {
+          if (user.Role != "admin") {
+            return new VampireCharacterListResponse {
+              Success = false,
+              Error = "forbidden"
+            };
+          }
+          charList = await VampireV5Character.GetCharacters();
         }
         else
         {
             charList = await VampireV5Character.GetCharactersByUser(identity.Name);
         }
-        
+
         foreach (var character in charList)
         {
             // hide owner email
@@ -155,54 +154,66 @@ public class CharacterController : ControllerBase
 
     [Authorize(Policy = "CanViewCharacter")]
     [HttpPut("{charId:int}", Name = "Update Character")]
-    public async Task<VampireHeaderResponse> Update(int charId, [FromBody] CharacterUpdateWrapper<VampireCharacterUpdate> update)
-    {
-        // get email of logged in user
-        User user;
-        var identity = HttpContext.User.Identity;
-        if (identity is null ||
-            !identity.IsAuthenticated ||
-            identity.Name is null)
-        {
-            return new VampireHeaderResponse()
-            {
-                Error = "auth_error"
+    public async Task<CharacterCommandResponse> UpdateCommands(
+        int charId,
+        [FromBody] CharacterCommandRequest request) {
+        if (request.Commands is null || request.Commands.Count == 0) {
+            return new CharacterCommandResponse {
+                Success = false,
+                Error = "missing_commands"
             };
         }
-        user = (await _userManager.GetUser(identity.Name))!;
 
-        if (update.UpdateData is null)
-        {
-            return new VampireHeaderResponse
-            {
+        if (request.Commands.Count > 20) {
+            return new CharacterCommandResponse {
                 Success = false,
-                Error = "missing_payload"
+                Error = "too_many_commands"
+            };
+        }
+
+        if (charId <= 0) {
+            return new CharacterCommandResponse {
+                Success = false,
+                Error = "invalid_character_id"
+            };
+        }
+
+        var character = await _characterService
+            .GetCharacterProperty<VampireV5Character>(charId);
+        if (character is null) {
+            return new CharacterCommandResponse {
+                Success = false,
+                Error = "not_found"
             };
         }
 
         DateTime startTime = DateTime.UtcNow;
-        VampireV5Character? character;
-        if (charId > 0)
-        {
-            character = await _characterService
-                .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null)
-            {
-                await update.UpdateData.Apply(character!, _cache);
-                _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnHeaderUpdate(charId, update.UpdateId, startTime, update.UpdateData);
-                return new VampireHeaderResponse
-                {
-                    Success = (character is not null),
-                    Character = character!.GetHeader()
-                };
-            }
+        List<CharacterCommand> applied;
+        try {
+            applied = await _dispatcher
+                .ApplyCommands(character, request.Commands);
+        } catch (ArgumentException ex) {
+            _logger.LogWarning(ex,
+                "Command dispatch failed for character {CharId}",
+                charId);
+            return new CharacterCommandResponse {
+                Success = false,
+                Error = "invalid_command"
+            };
         }
-        return new VampireHeaderResponse
-        {
-            Success = false,
-            Error = "not_found"
-        };
+
+        // Broadcast new unified event
+        _ = _characterHub.Clients
+            .Group($"character_{charId}")
+            .OnCharacterUpdate(
+                charId, request.UpdateId, startTime, applied)
+            .ContinueWith(
+                t => _logger.LogError(t.Exception,
+                    "SignalR broadcast failed for character {CharId}",
+                    charId),
+                TaskContinuationOptions.OnlyOnFaulted);
+
+        return new CharacterCommandResponse { Success = true };
     }
 
     [HttpPost("", Name = "Create Character")]
@@ -275,58 +286,6 @@ public class CharacterController : ControllerBase
     }
 
     [Authorize(Policy = "CanViewCharacter")]
-    [HttpPut("attributes/{charId:int}", Name = "Update Character Attributes")]
-    public async Task<VampireAttributesResponse> UpdateAttributes(int charId, [FromBody] CharacterUpdateWrapper<VampireAttributeUpdate> update)
-    {
-        // get email of logged in user
-        User user;
-        var identity = HttpContext.User.Identity;
-        if (identity is null ||
-            !identity.IsAuthenticated ||
-            identity.Name is null)
-        {
-            return new VampireAttributesResponse()
-            {
-                Error = "auth_error"
-            };
-        }
-        user = (await _userManager.GetUser(identity.Name))!;
-
-        if (update.UpdateData is null)
-        {
-            return new VampireAttributesResponse
-            {
-                Success = false,
-                Error = "missing_payload"
-            };
-        }
-
-        DateTime startTime = DateTime.UtcNow;
-        VampireV5Character? character;
-        if (charId > 0)
-        {
-            character = await _characterService
-                .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null)
-            {
-                await update.UpdateData.Apply(character!, _cache);
-                _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnAttributeUpdate(charId, update.UpdateId, startTime, update.UpdateData);
-                return new VampireAttributesResponse
-                {
-                    Success = true,
-                    Attributes = character!.Attributes
-                };
-            }
-        }
-        return new VampireAttributesResponse
-        {
-            Success = false,
-            Error = "not_found"
-        };
-    }
-
-    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("skills/{charId:int}", Name = "Get Character Skills")]
     public async Task<VampireSkillsResponse> GetSkills(int charId)
     {
@@ -356,59 +315,6 @@ public class CharacterController : ControllerBase
                 {
                     Success = true,
                     Skills = skills,
-                };
-            }
-        }
-        return new VampireSkillsResponse
-        {
-            Success = false,
-            Error = "not_found"
-        };
-    }
-
-    [Authorize(Policy = "CanViewCharacter")]
-    [HttpPut("skills/{charId:int}", Name = "Update Character Skills")]
-    public async Task<VampireSkillsResponse> UpdateSkills(int charId, [FromBody] CharacterUpdateWrapper<VampireSkillUpdate> update)
-    {
-        // get email of logged in user
-        User user;
-        var identity = HttpContext.User.Identity;
-        if (identity is null ||
-            !identity.IsAuthenticated ||
-            identity.Name is null)
-        {
-            return new VampireSkillsResponse()
-            {
-                Success = false,
-                Error = "auth_error"
-            };
-        }
-        user = (await _userManager.GetUser(identity.Name))!;
-
-        if (update.UpdateData is null)
-        {
-            return new VampireSkillsResponse
-            {
-                Success = false,
-                Error = "missing_payload"
-            };
-        }
-
-        DateTime startTime = DateTime.UtcNow;
-        VampireV5Character? character;
-        if (charId > 0)
-        {
-            character = await _characterService
-                .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null)
-            {
-                await update.UpdateData.Apply(character!, _cache);
-                _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnSkillUpdate(charId, update.UpdateId, startTime, update.UpdateData);
-                return new VampireSkillsResponse
-                {
-                    Success = true,
-                    Skills = character!.Skills
                 };
             }
         }
@@ -461,59 +367,6 @@ public class CharacterController : ControllerBase
     }
 
     [Authorize(Policy = "CanViewCharacter")]
-    [HttpPut("stats/{charId:int}", Name = "Update Character Stats")]
-    public async Task<VampireStatResponse> UpdateSecondaryStats(int charId, [FromBody] CharacterUpdateWrapper<VampireStatsUpdate> update)
-    {
-        // get email of logged in user
-        User user;
-        var identity = HttpContext.User.Identity;
-        if (identity is null ||
-            !identity.IsAuthenticated ||
-            identity.Name is null)
-        {
-            return new VampireStatResponse()
-            {
-                Success = false,
-                Error = "auth_error"
-            };
-        }
-        user = (await _userManager.GetUser(identity.Name))!;
-
-        if (update.UpdateData is null)
-        {
-            return new VampireStatResponse
-            {
-                Success = false,
-                Error = "missing_payload"
-            };
-        }
-
-        DateTime startTime = DateTime.UtcNow;
-        VampireV5Character? character;
-        if (charId > 0)
-        {
-            character = await _characterService
-                .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null)
-            {
-                await update.UpdateData.Apply(character!, _cache);
-                _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnSecondaryUpdate(charId, update.UpdateId, startTime, update.UpdateData);
-                return new VampireStatResponse
-                {
-                    Success = true,
-                    Stats = character!.SecondaryStats
-                };
-            }
-        }
-        return new VampireStatResponse
-        {
-            Success = false,
-            Error = "not_found"
-        };
-    }
-
-    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("disciplines/{charId:int}", Name = "Get Character Disciplines")]
     public async Task<VampireDisciplinesResponse> GetDisciplines(int charId)
     {
@@ -543,59 +396,6 @@ public class CharacterController : ControllerBase
                 {
                     Success = true,
                     Disciplines = disciplines,
-                };
-            }
-        }
-        return new VampireDisciplinesResponse
-        {
-            Success = false,
-            Error = "not_found"
-        };
-    }
-
-    [Authorize(Policy = "CanViewCharacter")]
-    [HttpPut("disciplines/{charId:int}", Name = "Update Character Disciplines")]
-    public async Task<VampireDisciplinesResponse> UpdateDisciplines(int charId, [FromBody] CharacterUpdateWrapper<VampireDisciplineUpdate> update)
-    {
-        // get email of logged in user
-        User user;
-        var identity = HttpContext.User.Identity;
-        if (identity is null ||
-            !identity.IsAuthenticated ||
-            identity.Name is null)
-        {
-            return new VampireDisciplinesResponse()
-            {
-                Success = false,
-                Error = "auth_error"
-            };
-        }
-        user = (await _userManager.GetUser(identity.Name))!;
-
-        if (update.UpdateData is null)
-        {
-            return new VampireDisciplinesResponse
-            {
-                Success = false,
-                Error = "missing_payload"
-            };
-        }
-
-        DateTime startTime = DateTime.UtcNow;
-        VampireV5Character? character;
-        if (charId > 0)
-        {
-            character = await _characterService
-                .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null)
-            {
-                await update.UpdateData.Apply(character!, _cache);
-                _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnDisciplineUpdate(charId, update.UpdateId, startTime, update.UpdateData);
-                return new VampireDisciplinesResponse
-                {
-                    Success = true,
-                    Disciplines = character!.Disciplines
                 };
             }
         }
@@ -647,59 +447,6 @@ public class CharacterController : ControllerBase
     }
 
     [Authorize(Policy = "CanViewCharacter")]
-    [HttpPut("powers/{charId:int}", Name = "Update Character Powers")]
-    public async Task<VampirePowersResponse> UpdatePowers(int charId, [FromBody] CharacterUpdateWrapper<VampirePowersUpdate> update)
-    {
-        // get email of logged in user
-        User user;
-        var identity = HttpContext.User.Identity;
-        if (identity is null ||
-            !identity.IsAuthenticated ||
-            identity.Name is null)
-        {
-            return new VampirePowersResponse()
-            {
-                Success = false,
-                Error = "auth_error"
-            };
-        }
-        user = (await _userManager.GetUser(identity.Name))!;
-
-        if (update.UpdateData is null)
-        {
-            return new VampirePowersResponse
-            {
-                Success = false,
-                Error = "missing_payload"
-            };
-        }
-
-        DateTime startTime = DateTime.UtcNow;
-        VampireV5Character? character;
-        if (charId > 0)
-        {
-            character = await _characterService
-                .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null)
-            {
-                await update.UpdateData.Apply(character!, _cache);
-                _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnPowersUpdate(charId, update.UpdateId, startTime, update.UpdateData);
-                return new VampirePowersResponse
-                {
-                    Success = true,
-                    Powers = character!.DisciplinePowers.GetIdList()
-                };
-            }
-        }
-        return new VampirePowersResponse
-        {
-            Success = false,
-            Error = "not_found"
-        };
-    }
-
-    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("beliefs/{charId:int}", Name = "Get Character Beliefs")]
     public async Task<VampireBeliefsResponse> GetBeliefs(int charId)
     {
@@ -729,59 +476,6 @@ public class CharacterController : ControllerBase
                 {
                     Success = true,
                     Beliefs = beliefs,
-                };
-            }
-        }
-        return new VampireBeliefsResponse
-        {
-            Success = false,
-            Error = "not_found"
-        };
-    }
-
-    [Authorize(Policy = "CanViewCharacter")]
-    [HttpPut("beliefs/{charId:int}", Name = "Update Character Beliefs")]
-    public async Task<VampireBeliefsResponse> UpdateBeliefs(int charId, [FromBody] CharacterUpdateWrapper<VampireBeliefsUpdate> update)
-    {
-        // get email of logged in user
-        User user;
-        var identity = HttpContext.User.Identity;
-        if (identity is null ||
-            !identity.IsAuthenticated ||
-            identity.Name is null)
-        {
-            return new VampireBeliefsResponse()
-            {
-                Success = false,
-                Error = "auth_error"
-            };
-        }
-        user = (await _userManager.GetUser(identity.Name))!;
-
-        if (update.UpdateData is null)
-        {
-            return new VampireBeliefsResponse
-            {
-                Success = false,
-                Error = "missing_payload"
-            };
-        }
-
-        DateTime startTime = DateTime.UtcNow;
-        VampireV5Character? character;
-        if (charId > 0)
-        {
-            character = await _characterService
-                .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null)
-            {
-                await update.UpdateData.Apply(character!, _cache);
-                _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnBeliefsupdate(charId, update.UpdateId, startTime, update.UpdateData);
-                return new VampireBeliefsResponse
-                {
-                    Success = true,
-                    Beliefs = character!.Beliefs,
                 };
             }
         }
@@ -833,59 +527,6 @@ public class CharacterController : ControllerBase
     }
 
     [Authorize(Policy = "CanViewCharacter")]
-    [HttpPut("backgrounds/{charId:int}", Name = "Update Character Backgrounds")]
-    public async Task<VampireBackgroundMeritFlawResponse> UpdateBackgrounds(int charId, [FromBody] CharacterUpdateWrapper<VampireBackgroundMeritFlawUpdate> update)
-    {
-        // get email of logged in user
-        User user;
-        var identity = HttpContext.User.Identity;
-        if (identity is null ||
-            !identity.IsAuthenticated ||
-            identity.Name is null)
-        {
-            return new VampireBackgroundMeritFlawResponse()
-            {
-                Success = false,
-                Error = "auth_error"
-            };
-        }
-        user = (await _userManager.GetUser(identity.Name))!;
-
-        if (update.UpdateData is null)
-        {
-            return new VampireBackgroundMeritFlawResponse
-            {
-                Success = false,
-                Error = "missing_payload"
-            };
-        }
-
-        DateTime startTime = DateTime.UtcNow;
-        VampireV5Character? character;
-        if (charId > 0)
-        {
-            character = await _characterService
-                .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null)
-            {
-                await update.UpdateData.Apply(character!, _cache);
-                _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnBackgroundMeritFlawUpdate(charId, update.UpdateId, startTime, update.UpdateData);
-                return new VampireBackgroundMeritFlawResponse
-                {
-                    Success = true,
-                    Backgrounds = character!.Backgrounds,
-                };
-            }
-        }
-        return new VampireBackgroundMeritFlawResponse
-        {
-            Success = false,
-            Error = "not_found"
-        };
-    }
-
-    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("merits/{charId:int}", Name = "Get Character Merits")]
     public async Task<VampireBackgroundMeritFlawResponse> GetMerits(int charId)
     {
@@ -915,59 +556,6 @@ public class CharacterController : ControllerBase
                 {
                     Success = true,
                     Merits = merits,
-                };
-            }
-        }
-        return new VampireBackgroundMeritFlawResponse
-        {
-            Success = false,
-            Error = "not_found"
-        };
-    }
-
-    [Authorize(Policy = "CanViewCharacter")]
-    [HttpPut("merits/{charId:int}", Name = "Update Character Merits")]
-    public async Task<VampireBackgroundMeritFlawResponse> UpdateMerits(int charId, [FromBody] CharacterUpdateWrapper<VampireBackgroundMeritFlawUpdate> update)
-    {
-        // get email of logged in user
-        User user;
-        var identity = HttpContext.User.Identity;
-        if (identity is null ||
-            !identity.IsAuthenticated ||
-            identity.Name is null)
-        {
-            return new VampireBackgroundMeritFlawResponse()
-            {
-                Success = false,
-                Error = "auth_error"
-            };
-        }
-        user = (await _userManager.GetUser(identity.Name))!;
-
-        if (update.UpdateData is null)
-        {
-            return new VampireBackgroundMeritFlawResponse
-            {
-                Success = false,
-                Error = "missing_payload"
-            };
-        }
-
-        DateTime startTime = DateTime.UtcNow;
-        VampireV5Character? character;
-        if (charId > 0)
-        {
-            character = await _characterService
-                .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null)
-            {
-                await update.UpdateData.Apply(character!, _cache);
-                _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnBackgroundMeritFlawUpdate(charId, update.UpdateId, startTime, update.UpdateData);
-                return new VampireBackgroundMeritFlawResponse
-                {
-                    Success = true,
-                    Merits = character!.Merits,
                 };
             }
         }
@@ -1019,59 +607,6 @@ public class CharacterController : ControllerBase
     }
 
     [Authorize(Policy = "CanViewCharacter")]
-    [HttpPut("flaws/{charId:int}", Name = "Update Character Flaws")]
-    public async Task<VampireBackgroundMeritFlawResponse> UpdateFlaws(int charId, [FromBody] CharacterUpdateWrapper<VampireBackgroundMeritFlawUpdate> update)
-    {
-        // get email of logged in user
-        User user;
-        var identity = HttpContext.User.Identity;
-        if (identity is null ||
-            !identity.IsAuthenticated ||
-            identity.Name is null)
-        {
-            return new VampireBackgroundMeritFlawResponse()
-            {
-                Success = false,
-                Error = "auth_error"
-            };
-        }
-        user = (await _userManager.GetUser(identity.Name))!;
-
-        if (update.UpdateData is null)
-        {
-            return new VampireBackgroundMeritFlawResponse
-            {
-                Success = false,
-                Error = "missing_payload"
-            };
-        }
-
-        DateTime startTime = DateTime.UtcNow;
-        VampireV5Character? character;
-        if (charId > 0)
-        {
-            character = await _characterService
-                .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null)
-            {
-                await update.UpdateData.Apply(character!, _cache);
-                _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnBackgroundMeritFlawUpdate(charId, update.UpdateId, startTime, update.UpdateData);
-                return new VampireBackgroundMeritFlawResponse
-                {
-                    Success = true,
-                    Flaws = character!.Flaws,
-                };
-            }
-        }
-        return new VampireBackgroundMeritFlawResponse
-        {
-            Success = false,
-            Error = "not_found"
-        };
-    }
-
-    [Authorize(Policy = "CanViewCharacter")]
     [HttpGet("profile/{charId:int}", Name = "Get Character Profile")]
     public async Task<VampireProfileResponse> GetProfile(int charId)
     {
@@ -1101,59 +636,6 @@ public class CharacterController : ControllerBase
                 {
                     Success = true,
                     Profile = profile,
-                };
-            }
-        }
-        return new VampireProfileResponse
-        {
-            Success = false,
-            Error = "not_found"
-        };
-    }
-
-    [Authorize(Policy = "CanViewCharacter")]
-    [HttpPut("profile/{charId:int}", Name = "Update Character Profile")]
-    public async Task<VampireProfileResponse> UpdateProfile(int charId, [FromBody] CharacterUpdateWrapper<VampireProfileUpdate> update)
-    {
-        // get email of logged in user
-        User user;
-        var identity = HttpContext.User.Identity;
-        if (identity is null ||
-            !identity.IsAuthenticated ||
-            identity.Name is null)
-        {
-            return new VampireProfileResponse()
-            {
-                Success = false,
-                Error = "auth_error"
-            };
-        }
-        user = (await _userManager.GetUser(identity.Name))!;
-
-        if (update.UpdateData is null)
-        {
-            return new VampireProfileResponse
-            {
-                Success = false,
-                Error = "missing_payload"
-            };
-        }
-
-        DateTime startTime = DateTime.UtcNow;
-        VampireV5Character? character;
-        if (charId > 0)
-        {
-            character = await _characterService
-                .GetCharacterProperty<VampireV5Character>(charId);
-            if (character is not null)
-            {
-                await update.UpdateData.Apply(character!, _cache);
-                _ = _characterHub.Clients.Group($"character_{charId}")
-                    .OnProfileUpdate(charId, update.UpdateId, startTime, update.UpdateData);
-                return new VampireProfileResponse
-                {
-                    Success = true,
-                    Profile = character!.Profile,
                 };
             }
         }

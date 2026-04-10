@@ -51,6 +51,8 @@ public class VampireStatUpdate
             statObject.AggravatedDamage = (int)AggravatedDamage;
         }
 
+        if (updList.Count == 0) { return; }
+
         var sql =
         @$"
             UPDATE melpominee_character_secondary

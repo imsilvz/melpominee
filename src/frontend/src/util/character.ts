@@ -1,6 +1,6 @@
 import { Character } from '../types/Character';
 
-interface UpdateOptions {
+export interface UpdateOptions {
   apiPayload?: object;
   debounceOptions?: {
     enable: boolean;
@@ -8,6 +8,24 @@ interface UpdateOptions {
   };
   property?: string;
   updateHandler?: (char: Character | null, payload: object) => Character | null;
+}
+
+export type CharacterCommandTypeString =
+  | 'header'
+  | 'attributes'
+  | 'skills'
+  | 'stats'
+  | 'disciplines'
+  | 'powers'
+  | 'beliefs'
+  | 'backgrounds'
+  | 'merits'
+  | 'flaws'
+  | 'profile';
+
+export interface CharacterCommandType {
+  type: CharacterCommandTypeString;
+  data: object;
 }
 
 interface UpdateResponse {
@@ -71,9 +89,8 @@ export const cleanUpdate = <T extends object>(obj: T): unknown => {
 
 const UpdateQueue = new Map<number, string[]>();
 const handleUpdateAsync = async (
-  endpoint: string,
   charId: number,
-  payload: object,
+  commands: CharacterCommandType[],
 ) => {
   // create update ID
   const updateId = crypto.randomUUID();
@@ -87,7 +104,7 @@ const handleUpdateAsync = async (
   }
 
   // make request
-  const result = await fetch(endpoint, {
+  const result = await fetch(`/api/vtmv5/character/${charId}/`, {
     method: 'PUT',
     headers: {
       Accept: 'application/json',
@@ -95,7 +112,7 @@ const handleUpdateAsync = async (
     },
     body: JSON.stringify({
       updateId,
-      updateData: payload,
+      commands,
     }),
   });
   if (result.ok) {
@@ -122,15 +139,14 @@ const getDebounceKey = (item: object): string => {
 
 const DebounceMap = new Map<string, ReturnType<typeof setTimeout>>();
 export const handleUpdate = (
-  endpoint: string | null,
   charId: number,
   updateId: string | null,
-  payload: object,
+  command: CharacterCommandType,
   updateFunc: (value: React.SetStateAction<Character | null>) => void,
   opts?: UpdateOptions,
 ) => {
-  // if the payload is null, there is nothing to update
-  if (!payload) {
+  // if the command is null, there is nothing to update
+  if (!command || !command.data) {
     return;
   }
   // if an updateId is attached,
@@ -140,8 +156,7 @@ export const handleUpdate = (
     return;
   }
   // clean update object of null and undefined
-  const update = cleanUpdate(payload) as object;
-  console.log(payload, update);
+  const update = cleanUpdate(command.data) as object;
   if (opts?.updateHandler) {
     // run custom update function if available
     updateFunc(
@@ -149,7 +164,7 @@ export const handleUpdate = (
         (char &&
           char.id === charId &&
           opts.updateHandler &&
-          opts.updateHandler(char, payload)) ||
+          opts.updateHandler(char, update)) ||
         char,
     );
   } else {
@@ -177,12 +192,11 @@ export const handleUpdate = (
       );
     }
   }
-  if (endpoint) {
-    // send network request
+  if (updateId === null) {
+    // send network request (local change, not from SignalR)
+    const networkData = opts?.apiPayload || update;
     if (opts?.debounceOptions?.enable) {
-      const debounceKey = `${opts?.property || 'character'}-${getDebounceKey(
-        update,
-      )}`;
+      const debounceKey = `${command.type}-${getDebounceKey(update)}`;
       if (DebounceMap.has(debounceKey)) {
         // clear previous timer and hold updates
         clearTimeout(DebounceMap.get(debounceKey));
@@ -192,13 +206,13 @@ export const handleUpdate = (
         debounceKey,
         setTimeout(() => {
           DebounceMap.delete(debounceKey);
-          handleUpdateAsync(endpoint, charId, opts?.apiPayload || payload).catch(
-            console.error,
-          );
+          handleUpdateAsync(charId, [
+            { type: command.type, data: networkData },
+          ]).catch(console.error);
         }, opts?.debounceOptions?.delay || 0),
       );
     } else {
-      handleUpdateAsync(endpoint, charId, opts?.apiPayload || payload).catch(
+      handleUpdateAsync(charId, [{ type: command.type, data: networkData }]).catch(
         console.error,
       );
     }

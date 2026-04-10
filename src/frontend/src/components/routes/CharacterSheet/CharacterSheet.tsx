@@ -1,24 +1,18 @@
 import * as signalR from '@microsoft/signalr';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { cleanUpdate, handleUpdate } from '../../../util/character';
+import { handleUpdate } from '../../../util/character';
+import type {
+  CharacterCommandTypeString,
+  UpdateOptions,
+} from '../../../util/character';
 
 // redux
 import { useAppSelector } from '../../../redux/hooks';
 import { selectDisciplinePowers } from '../../../redux/reducers/masterdataReducer';
 
 // types
-import {
-  Character,
-  CharacterAttributes,
-  CharacterBeliefs,
-  CharacterDisciplines,
-  CharacterHeader,
-  CharacterProfile,
-  CharacterSecondaryStats,
-  CharacterSkills,
-  MeritBackgroundFlaw,
-} from '../../../types/Character';
+import type { Character } from '../../../types/Character';
 
 // local files
 import LoadingSpinner from '../../shared/LoadingSpinner/LoadingSpinner';
@@ -39,6 +33,48 @@ interface APICharacterSheetResponse {
   character?: Character;
 }
 
+const getCommandUpdateOpts = (type: string): UpdateOptions => {
+  switch (type) {
+    case 'powers':
+      return {
+        updateHandler: (char, payload) => {
+          if (!char) return char;
+          let powers = [...char.disciplinePowers];
+          const { powerIds } = payload as {
+            powerIds: { powerId: string; remove: boolean }[];
+          };
+          powerIds.forEach(({ powerId, remove }) => {
+            if (remove) {
+              powers = powers.filter((val) => val !== powerId);
+            } else {
+              powers.push(powerId);
+            }
+          });
+          return { ...char, disciplinePowers: powers };
+        },
+      };
+    case 'attributes':
+      return { property: 'attributes' };
+    case 'skills':
+      return { property: 'skills' };
+    case 'stats':
+      return { property: 'secondaryStats' };
+    case 'disciplines':
+      return { property: 'disciplines' };
+    case 'beliefs':
+      return { property: 'beliefs' };
+    case 'profile':
+      return { property: 'profile' };
+    // backgrounds, merits, and flaws merge at root level because
+    // the data shape includes the field name: { backgrounds: { 0: {...} } }
+    case 'backgrounds':
+    case 'merits':
+    case 'flaws':
+    default:
+      return {};
+  }
+};
+
 const CharacterSheet = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -55,200 +91,27 @@ const CharacterSheet = () => {
         .configureLogging(signalR.LogLevel.Critical)
         .build();
 
-      conn.on('WatcherUpdate', (charId: number, watchers: string[]) => {
-        console.log(charId, watchers);
+      conn.on('WatcherUpdate', () => {
+        // watchers list received; no action needed
       });
 
       conn.on(
-        'onHeaderUpdate',
+        'onCharacterUpdate',
         (
           charId: number,
           updateId: string | null,
           timestamp: string,
-          update: CharacterHeader,
+          commands: { type: CharacterCommandTypeString; data: object }[],
         ) => {
-          const cleaned = cleanUpdate(update) as CharacterHeader;
-          console.log(updateId, timestamp, `Header update for ${charId}`, cleaned);
-          handleUpdate(null, charId, updateId, cleaned, setCurrCharacter);
-        },
-      );
-
-      conn.on(
-        'onAttributeUpdate',
-        (
-          charId: number,
-          updateId: string | null,
-          timestamp: string,
-          update: CharacterAttributes,
-        ) => {
-          const cleaned = cleanUpdate(update) as CharacterAttributes;
-          console.log(
-            updateId,
-            timestamp,
-            `Attribute update for ${charId}`,
-            cleaned,
-          );
-          handleUpdate(null, charId, updateId, cleaned, setCurrCharacter, {
-            property: 'attributes',
-          });
-        },
-      );
-
-      conn.on(
-        'onSkillUpdate',
-        (
-          charId: number,
-          updateId: string | null,
-          timestamp: string,
-          update: CharacterSkills,
-        ) => {
-          const cleaned = cleanUpdate(update) as CharacterSkills;
-          console.log(updateId, timestamp, `Skill update for ${charId}`, cleaned);
-          handleUpdate(null, charId, updateId, cleaned, setCurrCharacter, {
-            property: 'skills',
-          });
-        },
-      );
-
-      conn.on(
-        'onSecondaryUpdate',
-        (
-          charId: number,
-          updateId: string | null,
-          timestamp: string,
-          update: CharacterSecondaryStats,
-        ) => {
-          const cleaned = cleanUpdate(update) as CharacterSecondaryStats;
-          console.log(
-            updateId,
-            timestamp,
-            `Secondary Stat update for ${charId}`,
-            cleaned,
-          );
-          handleUpdate(null, charId, updateId, cleaned, setCurrCharacter, {
-            property: 'secondaryStats',
-          });
-        },
-      );
-
-      conn.on(
-        'onDisciplineUpdate',
-        (
-          charId: number,
-          updateId: string | null,
-          timestamp: string,
-          update: { school: string; score: number },
-        ) => {
-          const cleaned = cleanUpdate(update) as CharacterDisciplines;
-          console.log(
-            updateId,
-            timestamp,
-            `Discipline update for ${charId}`,
-            cleaned,
-          );
-          handleUpdate(null, charId, updateId, cleaned, setCurrCharacter, {
-            property: 'disciplines',
-          });
-        },
-      );
-
-      conn.on(
-        'onPowersUpdate',
-        (
-          charId: number,
-          updateId: string | null,
-          timestamp: string,
-          update: {
-            powerIds: {
-              powerId: string;
-              remove: boolean;
-            }[];
-          },
-        ) => {
-          const cleaned = cleanUpdate(update) as CharacterDisciplines;
-          console.log(updateId, timestamp, `Powers update for ${charId}`, cleaned);
-          handleUpdate(null, charId, updateId, cleaned, setCurrCharacter, {
-            updateHandler: (char, payload) => {
-              if (!char) {
-                return char;
-              }
-              // build update
-              let powers = [...char.disciplinePowers];
-              const { powerIds } = payload as {
-                powerIds: {
-                  powerId: string;
-                  remove: boolean;
-                }[];
-              };
-              powerIds.forEach(({ powerId, remove }) => {
-                if (remove) {
-                  powers = powers.filter((val) => val !== powerId);
-                } else {
-                  powers.push(powerId);
-                }
-              });
-              console.log(char.disciplinePowers, powers);
-              return {
-                ...char,
-                disciplinePowers: powers,
-              };
-            },
-          });
-        },
-      );
-
-      conn.on(
-        'onBeliefsUpdate',
-        (
-          charId: number,
-          updateId: string | null,
-          timestamp: string,
-          update: CharacterBeliefs,
-        ) => {
-          const cleaned = cleanUpdate(update) as CharacterBeliefs;
-          console.log(updateId, timestamp, `Beliefs update for ${charId}`, cleaned);
-          handleUpdate(null, charId, updateId, cleaned, setCurrCharacter, {
-            property: 'beliefs',
-          });
-        },
-      );
-
-      conn.on(
-        'onBackgroundMeritFlawUpdate',
-        (
-          charId: number,
-          updateId: string | null,
-          timestamp: string,
-          update: {
-            backgrounds: {
-              [key: number]: MeritBackgroundFlaw;
-            };
-            merits: {
-              [key: number]: MeritBackgroundFlaw;
-            };
-            flaws: {
-              [key: number]: MeritBackgroundFlaw;
-            };
-          },
-        ) => {
-          const cleaned = cleanUpdate(update) as Character;
-          console.log(updateId, timestamp, `BMF update for ${charId}`, cleaned);
-          handleUpdate(null, charId, updateId, cleaned, setCurrCharacter);
-        },
-      );
-
-      conn.on(
-        'onProfileUpdate',
-        (
-          charId: number,
-          updateId: string | null,
-          timestamp: string,
-          update: CharacterProfile,
-        ) => {
-          const cleaned = cleanUpdate(update) as CharacterProfile;
-          console.log(updateId, timestamp, `Profile update for ${charId}`, cleaned);
-          handleUpdate(null, charId, updateId, cleaned, setCurrCharacter, {
-            property: 'profile',
+          commands.forEach((cmd) => {
+            const opts = getCommandUpdateOpts(cmd.type);
+            handleUpdate(
+              charId,
+              updateId,
+              { type: cmd.type, data: cmd.data },
+              setCurrCharacter,
+              opts,
+            );
           });
         },
       );
@@ -292,7 +155,6 @@ const CharacterSheet = () => {
         }
       }
     };
-    // setup header text debounce
     fetchCharacter().catch(console.error);
   }, [navigate, id]);
 
@@ -323,10 +185,9 @@ const CharacterSheet = () => {
                 character={currCharacter}
                 onChange={(field, value) =>
                   handleUpdate(
-                    `/api/vtmv5/character/${currCharacter.id}/`,
                     currCharacter.id,
                     null,
-                    { [field]: value },
+                    { type: 'header', data: { [field]: value } },
                     setCurrCharacter,
                     {
                       debounceOptions: {
@@ -341,10 +202,9 @@ const CharacterSheet = () => {
                 attributes={currCharacter.attributes}
                 onChange={(attribute, value) =>
                   handleUpdate(
-                    `/api/vtmv5/character/attributes/${currCharacter.id}/`,
                     currCharacter.id,
                     null,
-                    { [attribute]: value },
+                    { type: 'attributes', data: { [attribute]: value } },
                     setCurrCharacter,
                     {
                       property: 'attributes',
@@ -356,10 +216,9 @@ const CharacterSheet = () => {
                 skills={currCharacter.skills}
                 onChange={(skill, value) =>
                   handleUpdate(
-                    `/api/vtmv5/character/skills/${currCharacter.id}/`,
                     currCharacter.id,
                     null,
-                    { [skill]: value },
+                    { type: 'skills', data: { [skill]: value } },
                     setCurrCharacter,
                     {
                       property: 'skills',
@@ -375,19 +234,17 @@ const CharacterSheet = () => {
                 character={currCharacter}
                 onChangeHeaderField={(field, value) =>
                   handleUpdate(
-                    `/api/vtmv5/character/${currCharacter.id}/`,
                     currCharacter.id,
                     null,
-                    { [field]: value },
+                    { type: 'header', data: { [field]: value } },
                     setCurrCharacter,
                   )
                 }
                 onChangeSecondaryStat={(field, value) =>
                   handleUpdate(
-                    `/api/vtmv5/character/stats/${currCharacter.id}/`,
                     currCharacter.id,
                     null,
-                    { [field]: value },
+                    { type: 'stats', data: { [field]: value } },
                     setCurrCharacter,
                     {
                       property: 'secondaryStats',
@@ -405,10 +262,9 @@ const CharacterSheet = () => {
                 powers={currCharacter.disciplinePowers}
                 onLevelChange={(school, oldVal, newVal) =>
                   handleUpdate(
-                    `/api/vtmv5/character/disciplines/${currCharacter.id}/`,
                     currCharacter.id,
                     null,
-                    { [school]: newVal },
+                    { type: 'disciplines', data: { [school]: newVal } },
                     setCurrCharacter,
                     {
                       property: 'disciplines',
@@ -417,8 +273,7 @@ const CharacterSheet = () => {
                 }
                 onPowerChange={(oldVal, newVal, schoolChange) => {
                   if (schoolChange) {
-                    // entire discipline changed
-                    console.log(oldVal, newVal, schoolChange);
+                    // entire discipline changed — not yet implemented
                   } else {
                     // single ability changed
                     let newPowers = [...currCharacter.disciplinePowers];
@@ -449,14 +304,13 @@ const CharacterSheet = () => {
                       return 0;
                     });
                     handleUpdate(
-                      `/api/vtmv5/character/powers/${currCharacter.id}/`,
                       currCharacter.id,
                       null,
-                      { disciplinePowers: newPowers },
+                      { type: 'powers', data: { disciplinePowers: newPowers } },
                       setCurrCharacter,
                       {
                         apiPayload: {
-                          PowerIds: changeData,
+                          powerIds: changeData,
                         },
                       },
                     );
@@ -467,10 +321,9 @@ const CharacterSheet = () => {
                 beliefs={currCharacter.beliefs}
                 onChange={(field, value) =>
                   handleUpdate(
-                    `/api/vtmv5/character/beliefs/${currCharacter.id}/`,
                     currCharacter.id,
                     null,
-                    { [field]: value },
+                    { type: 'beliefs', data: { [field]: value } },
                     setCurrCharacter,
                     {
                       property: 'beliefs',
@@ -490,13 +343,11 @@ const CharacterSheet = () => {
                     Flaws={currCharacter.flaws}
                     onChange={(field, value) =>
                       handleUpdate(
-                        `/api/vtmv5/character/${field}/${currCharacter.id}/`,
                         currCharacter.id,
                         null,
                         {
-                          [field]: {
-                            [value.sortOrder]: value,
-                          },
+                          type: field as CharacterCommandTypeString,
+                          data: { [field]: { [value.sortOrder]: value } },
                         },
                         setCurrCharacter,
                         {
@@ -517,10 +368,9 @@ const CharacterSheet = () => {
                     XpTotal={currCharacter.xpTotal}
                     onChange={(field, value) =>
                       handleUpdate(
-                        `/api/vtmv5/character/${currCharacter.id}/`,
                         currCharacter.id,
                         null,
-                        { [field]: value },
+                        { type: 'header', data: { [field]: value } },
                         setCurrCharacter,
                       )
                     }
@@ -529,10 +379,9 @@ const CharacterSheet = () => {
                     profile={currCharacter.profile}
                     onChange={(field, value) =>
                       handleUpdate(
-                        `/api/vtmv5/character/profile/${currCharacter.id}/`,
                         currCharacter.id,
                         null,
-                        { [field]: value },
+                        { type: 'profile', data: { [field]: value } },
                         setCurrCharacter,
                         {
                           property: 'profile',

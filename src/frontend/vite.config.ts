@@ -16,13 +16,10 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        //target: 'http://localhost:5000',
-        target: 'https://melpominee.app/',
+        target: process.env.VITE_API_TARGET || 'http://localhost:5000',
         xfwd: true,
         changeOrigin: true,
-        secure: false,
-        //rewrite: (subdir) => subdir.replace(/^\/api/, ''),
-        ws: true, // even if true, websocket proxy doesn't work.
+        ws: true,
       },
     },
   },

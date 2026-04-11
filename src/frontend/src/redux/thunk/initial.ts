@@ -1,6 +1,5 @@
 // Redux Imports
-import { AnyAction } from 'redux';
-import { ThunkAction } from 'redux-thunk';
+import { AnyAction, ThunkAction } from '@reduxjs/toolkit';
 
 // State Imports
 import { RootState } from '../store';

@@ -10,7 +10,7 @@
     "preview": "npm run preview --prefix src/frontend",
     "format": "npm run format --prefix src/frontend",
     "lint": "npm run lint --prefix src/frontend",
-    "prepare": "husky install",
+    "prepare": "husky",
     "deploy": "sudo docker compose down && sudo docker compose pull && sudo docker compose up -d && sudo systemctl reload nginx"
   },
   "repository": {
@@ -24,8 +24,8 @@
   },
   "homepage": "https://github.com/slivz/melpominee#readme",
   "devDependencies": {
-    "husky": "^8.0.3",
-    "lint-staged": "^13.3.0"
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

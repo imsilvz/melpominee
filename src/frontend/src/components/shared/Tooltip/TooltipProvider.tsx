@@ -21,11 +21,15 @@ import { PredatorType } from '../../../types/PredatorType';
 
 const DisciplinePowerTooltip = ({ data }: { data: DisciplinePower }) => {
   const disciplines = useAppSelector(selectDisciplines);
-  const disciplineName = disciplines.hasOwnProperty(data.school)
+  const disciplineName = Object.prototype.hasOwnProperty.call(
+    disciplines,
+    data.school,
+  )
     ? disciplines[data.school].name
     : data.school;
   const amalgamName =
-    data.amalgam && disciplines.hasOwnProperty(data.amalgam?.school)
+    data.amalgam &&
+    Object.prototype.hasOwnProperty.call(disciplines, data.amalgam?.school)
       ? disciplines[data.amalgam.school].name
       : data.amalgam?.school;
 
@@ -89,11 +93,11 @@ const TooltipProvider = ({ children }: { children: ReactNode }) => {
   if (tooltipId) {
     if (tooltipType === 'predator_type') {
       console.log(predatorTypes);
-      if (predatorTypes.hasOwnProperty(tooltipId)) {
+      if (Object.prototype.hasOwnProperty.call(predatorTypes, tooltipId)) {
         tooltipData = predatorTypes[tooltipId];
       }
     } else if (tooltipType === 'discipline_power') {
-      if (disciplinePowers.hasOwnProperty(tooltipId)) {
+      if (Object.prototype.hasOwnProperty.call(disciplinePowers, tooltipId)) {
         tooltipData = disciplinePowers[tooltipId];
       }
     }

@@ -1,1 +1,1 @@
-export interface CharacterUpdateResponse {}
+export type CharacterUpdateResponse = Record<string, never>;

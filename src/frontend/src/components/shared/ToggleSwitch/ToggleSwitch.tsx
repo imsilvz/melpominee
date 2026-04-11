@@ -1,6 +1,5 @@
 import React from 'react';
 import './ToggleSwitch.scss';
-import { current } from '@reduxjs/toolkit';
 
 interface ToggleSwitchProps {
   label: string;
@@ -9,18 +8,28 @@ interface ToggleSwitchProps {
 }
 
 const ToggleSwitch = ({ label, checked, onSwitch }: ToggleSwitchProps) => {
+  const handleToggle = (event: React.MouseEvent | React.KeyboardEvent) => {
+    event.preventDefault();
+    if (onSwitch !== undefined) {
+      onSwitch(!checked);
+    }
+  };
+
   return (
     <div
       className="toggle-switch-container"
-      onClick={async (event) => {
-        event.preventDefault();
-        if (onSwitch !== undefined) {
-          onSwitch(!checked);
+      role="button"
+      tabIndex={0}
+      onClick={handleToggle}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          handleToggle(event);
         }
       }}
     >
       <p>{label}</p>
-      <label className="toggle-switch">
+      {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+      <label className="toggle-switch" aria-label={label}>
         <input readOnly type="checkbox" checked={checked} />
         <span className="toggle-switch-slider" />
       </label>

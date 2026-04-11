@@ -1,7 +1,7 @@
-FROM nginx AS base
+FROM nginx:1.27 AS base
 WORKDIR /app
 
-FROM node:lts AS build
+FROM node:22 AS build
 COPY . /src
 WORKDIR /src
 RUN npm i --prefix src/frontend

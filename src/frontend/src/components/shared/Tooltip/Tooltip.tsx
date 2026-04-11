@@ -55,6 +55,6 @@ const Tooltip = ({
   }, [ref.current, type, typeId]);
 
   const childElement = React.cloneElement(element, { ref });
-  return <>{childElement}</>;
+  return childElement;
 };
 export default Tooltip;

@@ -1,6 +1,5 @@
 // Redux Imports
-import { AnyAction } from 'redux';
-import { ThunkAction } from 'redux-thunk';
+import { AnyAction, ThunkAction } from '@reduxjs/toolkit';
 import { BloodPotency } from '../../types/BloodPotency';
 
 // Type Imports

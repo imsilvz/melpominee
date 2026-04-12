@@ -5,12 +5,14 @@ import {
   ThunkAction,
 } from '@reduxjs/toolkit';
 
+import connection from './reducers/connectionReducer';
 import masterdata from './reducers/masterdataReducer';
 import user from './reducers/userReducer';
 import tooltip from './reducers/tooltipReducer';
 
 const store = configureStore({
   reducer: combineReducers({
+    connection,
     masterdata,
     tooltip,
     user,

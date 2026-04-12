@@ -199,11 +199,23 @@ public class VampireV5Character : BaseCharacter
 
     public static async Task<VampireV5Character?> Load(int id, CharacterService? characterService = null)
     {
-        // make connection
+        // make connection. When called via CharacterService (the auth hot
+        // path), route through DataContext.ConnectAsync so this call sits
+        // behind the StartupReadiness TCS gate during cold start. Legacy
+        // callers without a service reference fall back to the sync path.
         VampireV5Character? user;
-        using (var conn = DataContext.Instance.Connect())
+        IDbConnection conn;
+        if (characterService is not null)
         {
+            conn = await characterService.DataContext.ConnectAsync();
+        }
+        else
+        {
+            conn = DataContext.Instance.Connect();
             conn.Open();
+        }
+        using (conn)
+        {
             using (var trans = conn.BeginTransaction())
             {
                 var sql =

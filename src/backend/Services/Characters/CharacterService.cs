@@ -2,15 +2,22 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Caching.Distributed;
 using Melpominee.app.Models.Characters;
+using Melpominee.app.Services.Database;
 namespace Melpominee.app.Services.Characters;
 
 public class CharacterService
 {
     private readonly IDistributedCache _cache;
-    public CharacterService(IDistributedCache cache)
+    private readonly DataContext _dataContext;
+    public CharacterService(IDistributedCache cache, DataContext dataContext)
     {
         _cache = cache;
+        _dataContext = dataContext;
     }
+
+    // Exposed to model-layer static Load methods so they can reach the
+    // async-gated ConnectAsync path without a second ctor parameter.
+    internal DataContext DataContext => _dataContext;
 
     public bool SaveCharacterProperty<T>(int charId, T property)
     {

@@ -1,0 +1,22 @@
+apiVersion: http.keda.sh/v1alpha1
+kind: HTTPScaledObject
+metadata:
+  name: melpominee-backend
+  namespace: melpominee
+spec:
+  hosts:
+    - melpominee.app
+  pathPrefixes:
+    - /api/
+  scaleTargetRef:
+    name: melpominee-backend
+    service: melpominee-backend
+    port: 80
+  scaledownPeriod: 1800
+  replicas:
+    min: 0
+    max: 3
+  scalingMetric:
+    requestRate:
+      targetValue: 10
+      window: 1m

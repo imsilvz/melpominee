@@ -108,4 +108,19 @@ public class ConnectionService
     {
         return ConnectionMap[connId];
     }
+
+    /// <summary>
+    /// Polls <see cref="ConnectionMap"/> until it is empty or the timeout
+    /// expires. Used by <c>GracefulShutdownService.StopAsync</c> to wait for
+    /// connected SignalR clients to finish reconnecting elsewhere before the
+    /// pod terminates.
+    /// </summary>
+    public async Task DrainAsync(TimeSpan timeout, CancellationToken ct = default)
+    {
+        var deadline = DateTimeOffset.UtcNow + timeout;
+        while (ConnectionMap.Count > 0 && DateTimeOffset.UtcNow < deadline && !ct.IsCancellationRequested)
+        {
+            await Task.Delay(500, ct);
+        }
+    }
 }

@@ -225,6 +225,8 @@ public class AuthController : ControllerBase
             parameters.Add("response_type", "code");
             parameters.Add("client_id", SecretManager.Instance.GetSecret("discord_clientid"));
             parameters.Add("scope", DISCORD_SCOPES);
+            // NOTE: depends on the gateway preserving the /api prefix. A future gateway
+            // re-topology would need to re-audit this hardcoded path.
             parameters.Add("redirect_uri", $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/auth/oauth/discord");
             parameters.Add("prompt", "none");
             uriBuilder.Query = parameters.ToString();
@@ -238,6 +240,8 @@ public class AuthController : ControllerBase
         tokenRequestContent.Add("client_secret", SecretManager.Instance.GetSecret("discord_clientsecret"));
         tokenRequestContent.Add("grant_type", "authorization_code");
         tokenRequestContent.Add("code", code);
+        // NOTE: depends on the gateway preserving the /api prefix. A future gateway
+        // re-topology would need to re-audit this hardcoded path.
         tokenRequestContent.Add("redirect_uri", $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/auth/oauth/discord");
         var tokenRequest = new HttpRequestMessage(HttpMethod.Post, DISCORD_TOKEN_URL)
         {

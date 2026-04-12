@@ -12,7 +12,7 @@ spec:
     name: melpominee-frontend
     service: melpominee-frontend
     port: 80
-    scaledownPeriod: 300
+  scaledownPeriod: 300
   replicas:
     min: 0
     max: 3

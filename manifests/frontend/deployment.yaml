@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: melpominee-frontend
+  namespace: melpominee
+  labels:
+    app: melpominee-frontend
+spec:
+  selector:
+    matchLabels:
+      app: melpominee-frontend
+  template:
+    metadata:
+      labels:
+        app: melpominee-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ghcr.io/imsilvz/melpominee-frontend:master
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        startupProbe:
+          httpGet:
+            path: /
+            port: 80
+          failureThreshold: 3
+          periodSeconds: 1
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 5
+          timeoutSeconds: 2
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 250m
+          limits:
+            memory: 256Mi
+            cpu: 250m
+      imagePullSecrets:
+      - name: github-pat

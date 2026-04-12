@@ -1,0 +1,21 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: melpominee-gateway
+  namespace: melpominee
+  annotations:
+    cert-manager.io/cluster-issuer: cluster-issuer
+spec:
+  gatewayClassName: eg
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: melpominee.app
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: melpominee-cert
+      allowedRoutes:
+        namespaces:
+          from: Same

@@ -86,16 +86,39 @@ jobs:
             cluster-name: ${{ vars.AZURE_CLUSTER }}
         id: login
 
-      - name: Deploy Manifests
+      - name: Deploy Backend
         uses: Azure/k8s-deploy@v5
         with:
           action: 'deploy'
           manifests: |
-            manifests/deploy.yaml
-            manifests/httproute.yaml
+            manifests/backend/serviceaccount.yaml
+            manifests/backend/deployment.yaml
+            manifests/backend/service.yaml
           namespace: 'melpominee'
+
+      - name: Deploy Frontend
+        uses: Azure/k8s-deploy@v5
+        with:
+          action: 'deploy'
+          manifests: |
+            manifests/frontend/deployment.yaml
+            manifests/frontend/service.yaml
+            manifests/frontend/httpscaledobject.yaml
+          namespace: 'melpominee'
+
+      - name: Deploy Gateway
+        uses: Azure/k8s-deploy@v5
+        with:
+          action: 'deploy'
+          manifests: |
+            manifests/gateway/gateway.yaml
+            manifests/gateway/httproute.yaml
+          namespace: 'melpominee'
+
+      - name: Deploy KEDA ReferenceGrant
+        run: |
+          kubectl apply -f manifests/frontend/referencegrant.yaml
 
       - name: Rollout Restart
         run: |
-          kubectl rollout restart deployment melpominee-frontend --namespace=melpominee
           kubectl rollout restart deployment melpominee-backend --namespace=melpominee

@@ -5,7 +5,7 @@ A Vampire: The Masquerade V5 character sheet application with real-time multi-us
 ## Features
 
 - Create and manage VTM V5 characters (attributes, skills, disciplines, merits/flaws, beliefs, profile)
-- Real-time collaboration — multiple users can view and edit a character sheet simultaneously via SignalR
+- Real-time collaboration: multiple users can view and edit a character sheet simultaneously via SignalR
 - Cookie-based authentication with email/password registration, password reset, and Discord OAuth2
 - VTM V5 masterdata (clans, disciplines, predator types, blood potency, resonances) served from embedded JSON
 - Redis-backed distributed caching and SignalR backplane for multi-instance deployments
@@ -16,7 +16,7 @@ A Vampire: The Masquerade V5 character sheet application with real-time multi-us
 | Layer | Technology |
 |-------|-----------|
 | Backend | ASP.NET Core (.NET 9), Dapper, Npgsql (PostgreSQL), StackExchange.Redis, SignalR |
-| Frontend | React 18, TypeScript 4.9, Vite 4, Redux Toolkit v1, SCSS |
+| Frontend | React 18, TypeScript `^5.8.3`, Vite `^5.4.19`, Redux Toolkit v1, SCSS |
 | Infrastructure | Docker Compose, Traefik, Kubernetes (Azure AKS), Envoy Gateway, GitHub Actions |
 | Container Registry | GHCR (GitHub Container Registry) |
 
@@ -63,7 +63,7 @@ Starts Traefik (port 8010; dashboard on 8005), frontend, backend, PostgreSQL, Re
 docker compose up -d
 ```
 
-Note: Docker Compose uses Traefik with `/backend` and `/frontend` path prefixes (e.g., `http://localhost:8010/backend/vtmv5/character`), unlike production which uses `/api`.
+Docker Compose uses Traefik with `/backend` and `/frontend` path prefixes (e.g., `http://localhost:8010/backend/vtmv5/character`), unlike production which uses `/api`.
 
 ### Secrets
 
@@ -76,7 +76,7 @@ The backend loads secrets from `/etc/melpominee/secrets/` (Docker/Kubernetes) or
 | `discord-oauth.json` | `discord_clientid`, `discord_clientsecret` |
 | `mail-secrets.json` | `mail_host`, `mail_address`, `mail_password` |
 
-Docker Compose also requires `pg-password.txt` (plain-text PostgreSQL superuser password, used by the `database` container only — not loaded by the backend application). Note that `docker-compose.yaml` references secret files at `/secrets/` (absolute host path) — adjust these paths for your environment.
+Docker Compose also requires `pg-password.txt` (plain-text PostgreSQL superuser password, used by the `database` container only, not loaded by the backend application). `docker-compose.yaml` references secret files at `/secrets/` (absolute host path); adjust these paths for your environment.
 
 ## Project Structure
 
@@ -90,14 +90,19 @@ melpominee/
 │   │   ├── Services/             # Database, auth, character, mail services
 │   │   ├── Hubs/                 # SignalR hub for real-time updates
 │   │   ├── Data/                 # Embedded JSON masterdata resources
-│   │   └── Program.cs            # Entry point, DI, middleware pipeline
+│   │   ├── Program.cs            # Entry point, DI, middleware pipeline
+│   │   └── Dockerfile            # Multi-stage build (SDK → ASP.NET runtime)
 │   └── frontend/                 # React 18 SPA
 │       └── src/
 │           ├── assets/           # Static assets (images, fonts)
 │           ├── components/       # Route and shared components
 │           ├── redux/            # Redux Toolkit store, slices, thunks
 │           ├── types/            # TypeScript type declarations
-│           └── util/             # Helpers and utilities
+│           ├── util/             # Helpers and utilities
+│           ├── index.tsx         # Entry point
+│           ├── global.scss       # Global design tokens and base styles
+│           ├── index.scss        # Root stylesheet
+│           └── vite-env.d.ts     # Vite environment type declarations
 ├── manifests/                    # Kubernetes deployment + HTTPRoute
 ├── secrets/                      # Local dev secrets (gitignored)
 ├── docker-compose.yaml           # Full-stack local orchestration
@@ -114,10 +119,10 @@ Browser
           ├── /api/*  (strip prefix) → Backend (ASP.NET Core)
           │                ├── PostgreSQL (character data, users)
           │                └── Redis (cache + SignalR backplane)
-          └── /*      → Frontend (React 18 SPA via nginx)
+          └── /*      → KEDA HTTP interceptor proxy → Frontend (React 18 SPA via nginx)
 ```
 
-The Envoy Gateway strips the `/api` prefix before forwarding requests to the backend. SignalR WebSocket connections route through `/api/vtmv5/watch` to the `CharacterHub`, which uses a Redis backplane to broadcast updates across all backend instances. The frontend connects via the SignalR client and receives granular update events for each character sheet section.
+The Envoy Gateway strips the `/api` prefix before forwarding requests to the backend. SignalR WebSocket connections route through `/api/vtmv5/watch` to the `CharacterHub`, which uses a Redis backplane to broadcast updates across all backend instances. The frontend connects via the SignalR client and receives `OnCharacterUpdate` events carrying a list of applied commands.
 
 See [DESIGN.md](DESIGN.md) for the full architecture document.
 
@@ -126,7 +131,7 @@ See [DESIGN.md](DESIGN.md) for the full architecture document.
 | Area | Prefix | Description |
 |------|--------|-------------|
 | Auth | `/auth` | `GET /auth` returns current user; other routes use `/{action}` segments (login, register, etc.) |
-| Characters | `/vtmv5/character` | CRUD for characters and their sections (attributes, skills, disciplines, etc.) |
+| Characters | `/vtmv5/character` | CRUD for characters; `PUT /vtmv5/character/{charId}` dispatches a batch of commands via `CharacterCommandDispatcher`; section GET endpoints return individual sections |
 | Masterdata | `/vtmv5/masterdata/{action}` | Static VTM V5 reference data (clans, disciplines, predator types) |
 | Real-time | `/vtmv5/watch` | SignalR hub for live character sheet updates |
 

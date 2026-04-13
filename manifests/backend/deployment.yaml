@@ -56,7 +56,7 @@ spec:
               memory: 32Mi
       containers:
       - name: backend
-        image: ghcr.io/imsilvz/melpominee-backend:master
+        image: __ACR_LOGIN_SERVER__/melpominee-backend:master
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -93,5 +93,3 @@ spec:
         - name: secret-volume
           mountPath: "/etc/melpominee/secrets"
           readOnly: true
-      imagePullSecrets:
-      - name: github-pat

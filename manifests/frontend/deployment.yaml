@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: ghcr.io/imsilvz/melpominee-frontend:master
+        image: __ACR_LOGIN_SERVER__/melpominee-frontend:master
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -39,5 +39,3 @@ spec:
           limits:
             memory: 256Mi
             cpu: 250m
-      imagePullSecrets:
-      - name: github-pat

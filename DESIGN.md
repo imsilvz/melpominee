@@ -27,7 +27,7 @@ Melpominee is a Vampire: The Masquerade V5 character sheet web application with 
 | Bundler | Vite `^5.4.19` |
 | State management | Redux Toolkit v1 + redux-thunk |
 | Styling | SCSS (custom, no Tailwind) |
-| Container registry | GHCR (GitHub Container Registry) |
+| Container registry | ACR (Azure Container Registry) |
 | Orchestration | Kubernetes (Azure AKS) + Envoy Gateway |
 
 ---
@@ -38,16 +38,17 @@ Melpominee is a Vampire: The Masquerade V5 character sheet web application with 
 Browser
   └── HTTPS :443
       └── Envoy Gateway (HTTPRoute: melpominee.app)
-          ├── /api/*  ──(strip /api prefix)──► Backend Pod (ASP.NET Core :8080)
-          │                                        ├── PostgreSQL (12 tables)
-          │                                        └── Redis (cache + SignalR backplane)
-          └── /*      ──────────────────────────► Frontend Pod (nginx :80)
-                                                      └── React 18 SPA (index.html)
+          └── /*  ──────────────────────────────────► KEDA HTTP interceptor proxy
+                                                          ├── /api/*  ──► Backend Pod (ASP.NET Core :8080)
+                                                          │                   ├── PostgreSQL (12 tables)
+                                                          │                   └── Redis (cache + SignalR backplane)
+                                                          └── /*      ──► Frontend Pod (nginx :80)
+                                                                              └── React 18 SPA (index.html)
 ```
 
-WebSocket (SignalR): Browser → `/api/vtmv5/watch` → `CharacterHub` → Redis backplane → All backend pods → All subscribed clients
+WebSocket (SignalR): Browser → `/api/vtmv5/watch` → KEDA interceptor → `CharacterHub` → Redis backplane → All backend pods → All subscribed clients
 
-The `/api` prefix exists only at the gateway layer. The backend receives requests with the prefix stripped; controllers define routes without it (e.g., `vtmv5/character/{id}`).
+The HTTPRoute has a single rule: all traffic routes to the KEDA HTTP interceptor proxy. The interceptor performs longest-prefix matching between the backend HTTPScaledObject (`pathPrefixes: ["/api/"]`) and the frontend HTTPScaledObject (`pathPrefixes: ["/"]`), forwarding to the appropriate service and waking a scaled-to-zero deployment on demand. The backend consumes the `/api` base path via `app.UsePathBase("/api")` in `Program.cs`; controllers define routes without it (e.g., `vtmv5/character/{id}`).
 
 **Status**: Implemented.
 
@@ -92,7 +93,7 @@ Session middleware runs after auth because session state is secondary to identit
 
 ### Controllers & Routes
 
-All routes listed below are relative to the backend process root. The Envoy gateway strips the `/api` prefix before forwarding.
+All routes listed below are relative to the backend process root (`/api` via `UsePathBase`). In production, requests arrive at the backend already carrying the `/api` prefix; `UsePathBase` absorbs it so controllers see paths rooted at `/`.
 
 **AuthController** (`src/backend/Controllers/AuthController.cs`), route: `[Route("[controller]/[action]")]`
 
@@ -175,8 +176,11 @@ Serves static game rules data from in-memory dictionaries populated at startup f
 |-------|---------|
 | `WatcherUpdate` | `charId: int, watchers: List<string>` |
 | `OnCharacterUpdate` | `charId: int, updateId: string?, timestamp: DateTime, commands: List<CharacterCommand>` |
+| `ServerShuttingDown` | (none) |
 
 `OnCharacterUpdate` carries the full list of commands applied by a single `PUT /vtmv5/character/{charId}` call. Clients use `updateId` to skip updates they generated locally (deduplication).
+
+`ServerShuttingDown` is broadcast by `GracefulShutdownService` (`src/backend/Services/Startup/GracefulShutdownService.cs`) during pod termination. The service: (1) flips the readiness probe to draining (503) so the pod is removed from active endpoints, (2) waits 5 seconds for kube-proxy and the gateway to drain in-flight traffic, (3) broadcasts `ServerShuttingDown` so connected clients begin their own reconnect backoff before the WebSocket is force-closed, and (4) polls the connection map for up to 20 seconds. `terminationGracePeriodSeconds: 40` on the Deployment gives the full drain sequence time to complete.
 
 **Redis backplane**: channel prefix `"Melpominee"`, configured in `src/backend/Program.cs`. The backplane ensures that a client connected to pod A receives broadcasts fired from pod B, enabling horizontal scaling.
 
@@ -539,7 +543,7 @@ Backend pod specifics:
 
 | Resource | Details |
 |----------|---------|
-| Deployment | `ghcr.io/imsilvz/melpominee-frontend:master`; nginx :80; 256Mi/250m resources |
+| Deployment | SHA-pinned ACR image; nginx :80; 256Mi/250m resources; startup/readiness probes on `/` |
 | Service | ClusterIP; port 80 → targetPort 80 |
 | HTTPScaledObject | KEDA HTTP add-on scales the frontend Deployment based on incoming HTTP request rate |
 
@@ -548,10 +552,9 @@ Backend pod specifics:
 | Resource | Details |
 |----------|---------|
 | Gateway | `melpominee-gateway`; class `eg` (Envoy Gateway); HTTPS :443; cert-manager TLS (`cluster-issuer`); hostname `melpominee.app` |
-| HTTPRoute rule 1 | `PathPrefix: /api/` → URL rewrite (`ReplacePrefixMatch: /`) → `melpominee-backend:80` |
-| HTTPRoute rule 2 | `PathPrefix: /` → `keda-add-ons-http-interceptor-proxy` in the `keda` namespace, port 8080 |
+| HTTPRoute | Single rule: `PathPrefix: /` → `keda-add-ons-http-interceptor-proxy` in the `keda` namespace, port 8080 |
 
-Rule 1 strips the `/api` prefix so backend controllers receive requests rooted at `/`. Rule 2 routes all other traffic through the KEDA HTTP interceptor proxy, which forwards to the frontend service and triggers scale-from-zero when replicas are at zero.
+All traffic routes to the KEDA HTTP interceptor proxy. The interceptor performs longest-prefix matching between the two HTTPScaledObjects: `/api/` routes to the backend, `/` routes to the frontend. The backend uses `app.UsePathBase("/api")` in `Program.cs` to serve controllers under that prefix; no prefix stripping occurs at the gateway.
 
 **Status**: Implemented.
 

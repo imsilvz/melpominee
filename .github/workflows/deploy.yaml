@@ -41,13 +41,19 @@ jobs:
         id: meta-backend
         uses: docker/metadata-action@v4
         with:
-          images: ${{ vars.ACR_LOGIN_SERVER }}/melpominee-backend
+          images: ${{ vars.ACR_LOGIN_SERVER }}/melpominee/backend
+          tags: |
+            type=sha,prefix=sha-,format=short
+            type=raw,value=latest
 
       - name: Extract metadata (tags, labels) for Frontend
         id: meta-frontend
         uses: docker/metadata-action@v4
         with:
-          images: ${{ vars.ACR_LOGIN_SERVER }}/melpominee-frontend
+          images: ${{ vars.ACR_LOGIN_SERVER }}/melpominee/frontend
+          tags: |
+            type=sha,prefix=sha-,format=short
+            type=raw,value=latest
 
       - name: Build & Push Backend
         uses: docker/build-push-action@v4
@@ -77,9 +83,12 @@ jobs:
             cluster-name: ${{ vars.AZURE_CLUSTER }}
         id: login
 
-      - name: Substitute ACR login server in manifests
+      - name: Substitute ACR login server and image tag in manifests
         run: |
-          sed -i "s|__ACR_LOGIN_SERVER__|${{ vars.ACR_LOGIN_SERVER }}|g" \
+          TAG="sha-${GITHUB_SHA::7}"
+          sed -i \
+            -e "s|__ACR_LOGIN_SERVER__|${{ vars.ACR_LOGIN_SERVER }}|g" \
+            -e "s|__IMAGE_TAG__|${TAG}|g" \
             manifests/backend/deployment.yaml \
             manifests/frontend/deployment.yaml
 

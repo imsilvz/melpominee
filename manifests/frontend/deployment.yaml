@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: __ACR_LOGIN_SERVER__/melpominee-frontend:master
+        image: __ACR_LOGIN_SERVER__/melpominee/frontend:__IMAGE_TAG__
         imagePullPolicy: Always
         ports:
         - containerPort: 80

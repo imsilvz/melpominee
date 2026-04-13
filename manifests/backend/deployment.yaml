@@ -43,15 +43,14 @@ spec:
           httpGet:
             path: /api/health/startup
             port: 8080
-          initialDelaySeconds: 2
-          periodSeconds: 2
-          failureThreshold: 20
+          periodSeconds: 1
+          failureThreshold: 30
           timeoutSeconds: 1
         readinessProbe:
           httpGet:
             path: /api/health/ready
             port: 8080
-          periodSeconds: 5
+          periodSeconds: 1
           failureThreshold: 3
           timeoutSeconds: 2
         livenessProbe:

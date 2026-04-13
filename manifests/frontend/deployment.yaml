@@ -20,17 +20,31 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 80
-        startupProbe:
+        # No startupProbe / readinessProbe: nginx binds in <50ms and the KEDA
+        # HTTP interceptor retries on connection-refused, so the brief race
+        # between container Started and nginx-bound is harmless. Removing the
+        # probes saves the 1s probe-period floor on cold start.
+        # The postStart hook fires a fire-and-forget warm-up against the
+        # backend via the KEDA interceptor so backend scale-up runs in
+        # parallel with frontend startup instead of waiting for the React app
+        # to make its first /api/ call.
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - sh
+                - -c
+                - |
+                  nohup wget -q --timeout=20 --tries=1 -O /dev/null \
+                    --header='Host: melpominee.app' \
+                    http://keda-add-ons-http-interceptor-proxy.keda.svc.cluster.local:8080/api/health/ready \
+                    >/dev/null 2>&1 &
+                  exit 0
+        livenessProbe:
           httpGet:
             path: /
             port: 80
-          failureThreshold: 3
-          periodSeconds: 1
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 80
-          periodSeconds: 5
+          periodSeconds: 30
           timeoutSeconds: 2
         resources:
           requests:

@@ -20,11 +20,11 @@ Melpominee is a Vampire: The Masquerade V5 character sheet web application with 
 | Layer | Technology |
 |-------|-----------|
 | Backend framework | ASP.NET Core (.NET 9) |
-| Data access | Dapper + Npgsql (PostgreSQL) — no Entity Framework |
+| Data access | Dapper + Npgsql (PostgreSQL, no Entity Framework) |
 | Caching / pub-sub | StackExchange.Redis |
 | Real-time | ASP.NET Core SignalR (Redis backplane) |
 | Frontend framework | React 18 + TypeScript |
-| Bundler | Vite 4 |
+| Bundler | Vite `^5.4.19` |
 | State management | Redux Toolkit v1 + redux-thunk |
 | Styling | SCSS (custom, no Tailwind) |
 | Container registry | GHCR (GitHub Container Registry) |
@@ -70,22 +70,31 @@ Session middleware runs after auth because session state is secondary to identit
 
 ### Service Registrations
 
+**DI-registered services** (wired in `Program.cs`):
+
 | Service | Lifetime | File |
 |---------|----------|------|
-| `DataContext` | Singleton (lazy via `Lazy<T>`) | `src/backend/Services/Database/DataContext.cs` |
-| `SecretManager` | Singleton | `src/backend/Services/SecretManager.cs` |
-| `MailService` | Singleton | `src/backend/Services/MailService.cs` |
 | `ConnectionService` | Singleton | `src/backend/Services/Hubs/ConnectionService.cs` |
+| `CanViewCharacterHandler` | Scoped | `src/backend/Authorization/CanViewCharacter.cs` |
 | `CharacterService` | Scoped | `src/backend/Services/Characters/CharacterService.cs` |
+| `CharacterCommandDispatcher` | Scoped | `src/backend/Services/Characters/CharacterCommandDispatcher.cs` |
 | `UserManager` | Scoped | `src/backend/Services/Auth/UserManager.cs` |
 
-`ConnectionService` is singleton because it holds shared in-memory state (connection and group maps) that must survive across requests and SignalR hub calls. `CharacterService` and `UserManager` are scoped because they hold per-request `IDistributedCache` dependencies.
+`ConnectionService` is singleton because it holds shared in-memory state (connection and group maps) that must survive across requests and SignalR hub calls. `CharacterService`, `CharacterCommandDispatcher`, and `UserManager` are scoped because they hold per-request `IDistributedCache` dependencies.
+
+**Lazy singletons (accessed via `.Instance`, not DI):**
+
+| Service | File | Notes |
+|---------|------|-------|
+| `DataContext` | `src/backend/Services/Database/DataContext.cs` | Manages Npgsql connections; runs schema init via `Initalize()` on startup |
+| `SecretManager` | `src/backend/Services/SecretManager.cs` | Reads Docker secrets from `/run/secrets/` |
+| `MailService` | `src/backend/Services/MailService.cs` | SMTP client wrapping `mail_host`, `mail_address`, `mail_password` secrets |
 
 ### Controllers & Routes
 
 All routes listed below are relative to the backend process root. The Envoy gateway strips the `/api` prefix before forwarding.
 
-**AuthController** (`src/backend/Controllers/AuthController.cs`) — `[Route("[controller]/[action]")]`
+**AuthController** (`src/backend/Controllers/AuthController.cs`), route: `[Route("[controller]/[action]")]`
 
 | HTTP | Route | Auth | Purpose |
 |------|-------|------|---------|
@@ -98,36 +107,28 @@ All routes listed below are relative to the backend process root. The Envoy gate
 | GET | `/auth/register/confirmation` | None | Activate account via email link; redirects to login |
 | GET | `/auth/oauth/discord` | None | Discord OAuth2 flow (redirect or callback with `?code=`) |
 
-**CharacterController** (`src/backend/Controllers/VTMV5/CharacterController.cs`) — `[Route("vtmv5/[controller]")]`, all `[Authorize]`
+**CharacterController** (`src/backend/Controllers/VTMV5/CharacterController.cs`), route: `[Route("vtmv5/[controller]")]`, all `[Authorize]`
 
 | HTTP | Route | Policy | Purpose |
 |------|-------|--------|---------|
 | GET | `/vtmv5/character/{charId}` | `CanViewCharacter` | Get single character (full) |
-| GET | `/vtmv5/character` | `[Authorize]` | List characters for current user; `?adminView=true` lists all |
+| GET | `/vtmv5/character` | `[Authorize]` | List characters for current user; `?adminView=true` lists all (admin only) |
 | POST | `/vtmv5/character` | `[Authorize]` | Create new character |
-| PUT | `/vtmv5/character/{charId}` | `CanViewCharacter` | Update character header; fires `OnHeaderUpdate` |
+| PUT | `/vtmv5/character/{charId}` | `CanViewCharacter` | Dispatch a batch of character commands via `CharacterCommandDispatcher.ApplyCommands`; broadcasts `OnCharacterUpdate` to the SignalR group |
 | GET | `/vtmv5/character/attributes/{charId}` | `CanViewCharacter` | Get attributes |
-| PUT | `/vtmv5/character/attributes/{charId}` | `CanViewCharacter` | Update attributes; fires `OnAttributeUpdate` |
 | GET | `/vtmv5/character/skills/{charId}` | `CanViewCharacter` | Get skills |
-| PUT | `/vtmv5/character/skills/{charId}` | `CanViewCharacter` | Update skills; fires `OnSkillUpdate` |
 | GET | `/vtmv5/character/stats/{charId}` | `CanViewCharacter` | Get secondary stats |
-| PUT | `/vtmv5/character/stats/{charId}` | `CanViewCharacter` | Update secondary stats; fires `OnSecondaryUpdate` |
 | GET | `/vtmv5/character/disciplines/{charId}` | `CanViewCharacter` | Get disciplines |
-| PUT | `/vtmv5/character/disciplines/{charId}` | `CanViewCharacter` | Update disciplines; fires `OnDisciplineUpdate` |
 | GET | `/vtmv5/character/powers/{charId}` | `CanViewCharacter` | Get discipline powers |
-| PUT | `/vtmv5/character/powers/{charId}` | `CanViewCharacter` | Update discipline powers; fires `OnPowersUpdate` |
 | GET | `/vtmv5/character/beliefs/{charId}` | `CanViewCharacter` | Get beliefs |
-| PUT | `/vtmv5/character/beliefs/{charId}` | `CanViewCharacter` | Update beliefs; fires `OnBeliefsupdate` |
 | GET | `/vtmv5/character/backgrounds/{charId}` | `CanViewCharacter` | Get backgrounds |
-| PUT | `/vtmv5/character/backgrounds/{charId}` | `CanViewCharacter` | Update backgrounds; fires `OnBackgroundMeritFlawUpdate` |
 | GET | `/vtmv5/character/merits/{charId}` | `CanViewCharacter` | Get merits |
-| PUT | `/vtmv5/character/merits/{charId}` | `CanViewCharacter` | Update merits; fires `OnBackgroundMeritFlawUpdate` |
 | GET | `/vtmv5/character/flaws/{charId}` | `CanViewCharacter` | Get flaws |
-| PUT | `/vtmv5/character/flaws/{charId}` | `CanViewCharacter` | Update flaws; fires `OnBackgroundMeritFlawUpdate` |
 | GET | `/vtmv5/character/profile/{charId}` | `CanViewCharacter` | Get profile/biography |
-| PUT | `/vtmv5/character/profile/{charId}` | `CanViewCharacter` | Update profile; fires `OnProfileUpdate` |
 
-**MasterdataController** (`src/backend/Controllers/VTMV5/MasterdataController.cs`) — `[Route("vtmv5/[controller]/[action]")]`, all `[Authorize]`
+The single `PUT /vtmv5/character/{charId}` accepts a `CharacterCommandRequest` (body: `{ updateId, commands: [...] }`). The controller validates command count (1-20), delegates to `CharacterCommandDispatcher.ApplyCommands`, then fires the SignalR broadcast using `ContinueWith(OnlyOnFaulted)` to log broadcast errors without blocking the HTTP response. Per-section PUT endpoints do not exist.
+
+**MasterdataController** (`src/backend/Controllers/VTMV5/MasterdataController.cs`), route: `[Route("vtmv5/[controller]/[action]")]`, all `[Authorize]`
 
 Serves static game rules data from in-memory dictionaries populated at startup from embedded JSON resources. No database dependency.
 
@@ -150,7 +151,7 @@ Serves static game rules data from in-memory dictionaries populated at startup f
 
 - **Cookie scheme**: `"Melpominee.app.Auth.V2"`, 24-hour sliding expiration, HttpOnly. Unauthorized requests return 401; forbidden requests return 403 (redirect events suppressed).
 - **Claims**: `ClaimTypes.NameIdentifier` = email address, `ClaimTypes.Role` = `"user"` or `"admin"`.
-- **Custom policy — `CanViewCharacter`** (`src/backend/Authorization/CanViewCharacter.cs`): succeeds if the authenticated user's email matches the character's `Owner` field, or if the user has the `"admin"` role. Loads character from cache or database to perform the ownership check.
+- **Custom policy `CanViewCharacter`** (`src/backend/Authorization/CanViewCharacter.cs`): succeeds if the authenticated user's email matches the character's `Owner` field, or if the user has the `"admin"` role. Loads character from cache or database to perform the ownership check.
 - **Password hashing**: PBKDF2-HMACSHA512, 10,000 iterations, 128-bit salt (random per hash), 512-bit output. Output byte layout: `[0x02][512-bit hash][128-bit salt]`, Base64-encoded. The version byte (`0x02`) enables future algorithm migration.
 - **Session**: `Melpominee.app.Session` cookie, 24-hour idle timeout, HttpOnly, essential. Used only for session clearing on login/logout; identity state lives in the auth cookie.
 
@@ -160,7 +161,7 @@ Serves static game rules data from in-memory dictionaries populated at startup f
 
 **File**: `src/backend/Hubs/VTMV5/CharacterHub.cs`
 **Hub endpoint**: `/vtmv5/watch` (accessible via browser at `/api/vtmv5/watch` through the gateway)
-**Authorization**: `[Authorize]` — unauthenticated connections are rejected before the hub is reached.
+**Authorization**: `[Authorize]`. Unauthenticated connections are rejected before the hub is reached.
 
 **Server methods (client → server):**
 
@@ -173,15 +174,9 @@ Serves static game rules data from in-memory dictionaries populated at startup f
 | Event | Payload |
 |-------|---------|
 | `WatcherUpdate` | `charId: int, watchers: List<string>` |
-| `OnHeaderUpdate` | `charId, updateId, timestamp, VampireCharacterUpdate` |
-| `OnAttributeUpdate` | `charId, updateId, timestamp, VampireAttributeUpdate` |
-| `OnSkillUpdate` | `charId, updateId, timestamp, VampireSkillUpdate` |
-| `OnSecondaryUpdate` | `charId, updateId, timestamp, VampireStatsUpdate` |
-| `OnDisciplineUpdate` | `charId, updateId, timestamp, VampireDisciplineUpdate` |
-| `OnPowersUpdate` | `charId, updateId, timestamp, VampirePowersUpdate` |
-| `OnBeliefsupdate` | `charId, updateId, timestamp, VampireBeliefsUpdate` *(note: lowercase 'u' — see improvement #18)* |
-| `OnBackgroundMeritFlawUpdate` | `charId, updateId, timestamp, VampireBackgroundMeritFlawUpdate` |
-| `OnProfileUpdate` | `charId, updateId, timestamp, VampireProfileUpdate` |
+| `OnCharacterUpdate` | `charId: int, updateId: string?, timestamp: DateTime, commands: List<CharacterCommand>` |
+
+`OnCharacterUpdate` carries the full list of commands applied by a single `PUT /vtmv5/character/{charId}` call. Clients use `updateId` to skip updates they generated locally (deduplication).
 
 **Redis backplane**: channel prefix `"Melpominee"`, configured in `src/backend/Program.cs`. The backplane ensures that a client connected to pod A receives broadcasts fired from pod B, enabling horizontal scaling.
 
@@ -217,15 +212,48 @@ character = await (Task<T?>)loadMethod.Invoke(null, methodArgs)!;
 
 Cache check precedes the `Load` invocation. On a cache miss, the loaded object is written back to Redis with a 1-minute sliding TTL. Cache key format: `melpominee:character:{charId}:{TypeName}`.
 
-`SaveCharacterProperty<T>()` is a stub — it always returns `true` and is never called. (See improvement #11.)
+`SaveCharacterProperty<T>()` is a stub that always returns `true` and is never called. (See improvement #11.)
 
 **Status**: Implemented.
 
 ### Character Update Flow
 
-**Directory**: `src/backend/Models/Characters/VTMV5/CharacterUpdate/`
+**Entry point**: `PUT /vtmv5/character/{charId}` in `CharacterController`
 
-Nine update classes, one per character section:
+**Request model**: `CharacterCommandRequest` (in `src/backend/Models/Web/VTMV5/CharacterCommand.cs`)
+
+```
+CharacterCommandRequest
+  updateId: string?
+  commands: List<CharacterCommand>   (1–20 entries per request)
+```
+
+**Dispatcher**: `CharacterCommandDispatcher.ApplyCommands` (`src/backend/Services/Characters/CharacterCommandDispatcher.cs`):
+
+1. Receives the character and command list from the controller
+2. Iterates commands; each command identifies a section and carries the field values to apply
+3. For each command, the corresponding update class in `src/backend/Models/Characters/VTMV5/CharacterUpdate/` applies the change:
+   - Opens a PostgreSQL connection and begins a transaction
+   - Uses reflection to enumerate non-null properties and build parameterized Dapper upsert statements
+   - Executes the UPDATE within the transaction
+   - Refreshes the domain object from the database within the same transaction
+   - Commits; awaits `Task.WhenAll(cache.RemoveAsync(...))` for the character and section cache keys
+4. Returns the list of applied commands
+
+**Broadcast**: After `ApplyCommands` returns, the controller fires:
+
+```csharp
+_ = _characterHub.Clients
+    .Group($"character_{charId}")
+    .OnCharacterUpdate(charId, request.UpdateId, startTime, applied)
+    .ContinueWith(
+        t => _logger.LogError(t.Exception, "SignalR broadcast failed for character {CharId}", charId),
+        TaskContinuationOptions.OnlyOnFaulted);
+```
+
+The broadcast task is discarded (`_ =`) so the HTTP response does not block on SignalR delivery. Faults are captured by the `ContinueWith` continuation and logged as errors rather than being swallowed silently.
+
+**Update classes** in `src/backend/Models/Characters/VTMV5/CharacterUpdate/`:
 
 | Class | Section |
 |-------|---------|
@@ -238,17 +266,6 @@ Nine update classes, one per character section:
 | `VampireBeliefsUpdate` | Beliefs |
 | `VampireBackgroundMeritFlawUpdate` | Backgrounds, merits, flaws |
 | `VampireProfileUpdate` | Profile/biography |
-
-Each `Apply(character, cache)` method:
-
-1. Opens a PostgreSQL connection and begins a transaction
-2. Uses reflection to enumerate non-null properties and builds parameterized Dapper upsert statements
-3. Executes the UPDATE within the transaction
-4. Refreshes the domain object from the database within the same transaction (ensures the returned object reflects the committed state)
-5. Commits the transaction
-6. Awaits `Task.WhenAll(cache.RemoveAsync(...))` for the character and section cache keys
-
-The controller then broadcasts the update to the SignalR group and returns the updated data.
 
 **Status**: Implemented.
 
@@ -265,7 +282,7 @@ All user lifecycle operations use explicit database transactions. Redis is used 
 | `Login` | Loads user bypassing cache; verifies PBKDF2 hash |
 | `BeginResetPassword` | Generates random token, stores hashed form in `melpominee_users_rescue`, sends email |
 | `FinishResetPassword` | Verifies hashed token, updates password within transaction, nulls rescue key |
-| `Register` | Creates user with activation key (plaintext — see improvement #8), sends activation email |
+| `Register` | Creates user with activation key stored plaintext (see improvement #8), sends activation email |
 | `RegistrationFinish` | Validates activation key (plain string compare), activates account |
 | `OAuthRegister` | Creates or upserts user for Discord OAuth flow; skips password and activation |
 | `HashPassword` | PBKDF2-HMACSHA512 with random salt |
@@ -279,7 +296,7 @@ All user lifecycle operations use explicit database transactions. Redis is used 
 
 ### PostgreSQL Schema
 
-Schema created via `CREATE TABLE IF NOT EXISTS` at application startup (`DataContext.Initalize()`). Schema changes require manual SQL — no migration tooling is used. All character section tables cascade-delete from their parent character row via foreign key constraints.
+Schema created via `CREATE TABLE IF NOT EXISTS` at application startup (`DataContext.Initalize()`). Schema changes require manual SQL; no migration tooling is used. All character section tables cascade-delete from their parent character row via foreign key constraints.
 
 | Table | Primary Key | Notes |
 |-------|-------------|-------|
@@ -331,15 +348,15 @@ There is no separate `Disciplines.json`. The discipline list endpoint (`/vtmv5/m
 
 ```
 RootState
-├── user: UserState         — email, role, ready
-├── masterdata: MasterdataState — bloodPotencies, clans, disciplines, disciplinePowers, predatorTypes, resonances, loaded
-└── tooltip: TooltipState   — tooltipType, tooltipId
+├── user: UserState         (email, role, ready)
+├── masterdata: MasterdataState (bloodPotencies, clans, disciplines, disciplinePowers, predatorTypes, resonances, loaded)
+└── tooltip: TooltipState   (tooltipType, tooltipId)
 ```
 
 | Reducer file | Slice name | Note |
 |---|---|---|
 | `src/frontend/src/redux/reducers/userReducer.ts` | `user` | `createSlice` name `'user'` |
-| `src/frontend/src/redux/reducers/masterdataReducer.ts` | `user` | `createSlice` name is `'user'` (bug — see improvement #20) |
+| `src/frontend/src/redux/reducers/masterdataReducer.ts` | `user` | `createSlice` name is `'user'` (bug, see improvement #19) |
 | `src/frontend/src/redux/reducers/tooltipReducer.ts` | `tooltip` | |
 
 Thunks: `src/frontend/src/redux/thunk/initial.ts` (`initialThunk`), `src/frontend/src/redux/thunk/masterdata.ts` (`masterdataThunk`).
@@ -396,8 +413,8 @@ If `initialThunk` fails, `setUserdata` is never dispatched, `userReady` stays `f
 **File**: `src/frontend/src/components/routes/CharacterSheet/CharacterSheet.tsx`
 
 - `HubConnectionBuilder` → `/api/vtmv5/watch`, `withAutomaticReconnect()`
-- Built and started in `useEffect([id])` — stops and rebuilds whenever the character ID route parameter changes
-- 10 event handlers registered per connection (matching the `ICharacterClient` interface events)
+- Built and started in `useEffect([id])`; stops and rebuilds whenever the character ID route parameter changes
+- 2 event handlers registered per connection (`WatcherUpdate` and `OnCharacterUpdate`)
 - Updates routed through `handleUpdate()` in `src/frontend/src/util/character.ts`
 
 **Deduplication**: `UpdateQueue: Map<charId, string[]>` holds the last 50 update IDs sent by this client. When a SignalR event arrives, `handleUpdate` checks the queue and skips the update if the `updateId` matches a locally-generated one (preventing echo application).
@@ -459,7 +476,7 @@ Full round-trip for a character attribute update:
       iv.  Refreshes character.Attributes from DB within same transaction
       v.   Commits transaction
       vi.  Awaits Task.WhenAll(cache.RemoveAsync(charKey), cache.RemoveAsync(propKey))
-   d. Discards broadcast Task (fire-and-forget — see improvement #1):
+   d. Discards broadcast Task (fire-and-forget, see improvement #1):
       _ = hub.Clients.Group("character_{id}").OnAttributeUpdate(...)
    e. Returns 200 with updated attributes
 
@@ -479,7 +496,7 @@ The broadcast happens after `Apply()` returns but the `Task` is discarded, so th
 
 ### Docker Compose
 
-**File**: `docker-compose.yaml` — local and self-hosted deployment.
+**File**: `docker-compose.yaml` (local and self-hosted deployment).
 
 | Service | Image | Purpose |
 |---------|-------|---------|
@@ -498,31 +515,42 @@ Secrets loaded from `./secrets/*.json` files on the host.
 
 **Production deployment on Azure AKS.**
 
-**`manifests/deploy.yaml`:**
+Manifest directories:
+- `manifests/backend/`: `deployment.yaml`, `service.yaml`, `serviceaccount.yaml`
+- `manifests/frontend/`: `deployment.yaml`, `service.yaml`, `httpscaledobject.yaml`, `referencegrant.yaml`
+- `manifests/gateway/`: `gateway.yaml`, `httproute.yaml`
+
+**Backend** (`manifests/backend/`):
 
 | Resource | Details |
 |----------|---------|
-| Frontend Deployment | 1 replica; `ghcr.io/imsilvz/melpominee-frontend:master`; nginx :80; 256Mi/250m resources |
-| Frontend Service | ClusterIP; port 80 → targetPort 80 |
-| Backend Deployment | 1 replica; `ghcr.io/imsilvz/melpominee-backend:master`; :8080; 256Mi/250m resources |
-| Backend Service | ClusterIP; port 80 → targetPort 8080 |
+| Deployment | 1 replica; `ghcr.io/imsilvz/melpominee-backend:master`; :8080; 256Mi/250m resources |
+| Service | ClusterIP; port 80 → targetPort 8080 |
 | ServiceAccount | `melpominee`; annotated with Azure Workload Identity client ID |
 
 Backend pod specifics:
 - `serviceAccountName: melpominee` binds Azure Workload Identity
 - Init container (`busybox:1.36`) validates the CSI secrets-store volume mounts before the main container starts
 - CSI driver mounts secrets from Azure Key Vault via `melpominee-secrets` SecretProviderClass
-- Projected volume aggregates four Kubernetes secrets (discord, email, postgres, redis), all marked `optional: true`, mounted at `/etc/melpominee/secrets`
+- Projected volume aggregates four Kubernetes secrets (`melpominee-discord`, `melpominee-email`, `melpominee-postgres`, `melpominee-redis`), all marked `optional: true`, mounted at `/etc/melpominee/secrets`
 
-**`manifests/httproute.yaml`:**
+**Frontend** (`manifests/frontend/`):
+
+| Resource | Details |
+|----------|---------|
+| Deployment | `ghcr.io/imsilvz/melpominee-frontend:master`; nginx :80; 256Mi/250m resources |
+| Service | ClusterIP; port 80 → targetPort 80 |
+| HTTPScaledObject | KEDA HTTP add-on scales the frontend Deployment based on incoming HTTP request rate |
+
+**Gateway** (`manifests/gateway/`):
 
 | Resource | Details |
 |----------|---------|
 | Gateway | `melpominee-gateway`; class `eg` (Envoy Gateway); HTTPS :443; cert-manager TLS (`cluster-issuer`); hostname `melpominee.app` |
 | HTTPRoute rule 1 | `PathPrefix: /api/` → URL rewrite (`ReplacePrefixMatch: /`) → `melpominee-backend:80` |
-| HTTPRoute rule 2 | `PathPrefix: /` → `melpominee-frontend:80` |
+| HTTPRoute rule 2 | `PathPrefix: /` → `keda-add-ons-http-interceptor-proxy` in the `keda` namespace, port 8080 |
 
-The URL rewrite on rule 1 strips the `/api` prefix so backend controllers receive requests rooted at `/`.
+Rule 1 strips the `/api` prefix so backend controllers receive requests rooted at `/`. Rule 2 routes all other traffic through the KEDA HTTP interceptor proxy, which forwards to the frontend service and triggers scale-from-zero when replicas are at zero.
 
 **Status**: Implemented.
 
@@ -552,23 +580,28 @@ Steps:
 
 #### 1. Fire-and-Forget SignalR Broadcasts
 
-**File**: `src/backend/Controllers/VTMV5/CharacterController.cs` (all 11 PUT handlers)
+**File**: `src/backend/Controllers/VTMV5/CharacterController.cs`
 
-All SignalR broadcasts use the `_ =` discard pattern:
+The SignalR broadcast uses the `_ =` discard pattern with a `ContinueWith(OnlyOnFaulted)` continuation to log errors:
 
 ```csharp
-_ = _characterHub.Clients.Group($"character_{charId}").OnHeaderUpdate(...);
+_ = _characterHub.Clients
+    .Group($"character_{charId}")
+    .OnCharacterUpdate(charId, request.UpdateId, startTime, applied)
+    .ContinueWith(
+        t => _logger.LogError(t.Exception, "SignalR broadcast failed for character {CharId}", charId),
+        TaskContinuationOptions.OnlyOnFaulted);
 ```
 
-The returned `Task` is discarded, so broadcast failures are silent and unobservable. Additionally, the HTTP response returns before the broadcast completes — a client can receive a 200 OK and re-fetch from a cache entry that has already been invalidated but before other clients have received the update.
+Broadcast faults are now observable via the error log. The HTTP response still returns before the broadcast completes, so a client can receive a 200 OK before other clients have received the SignalR event.
 
-**Recommendation**: Await each broadcast call before returning the HTTP response.
+**Recommendation**: Await the broadcast call before returning the HTTP response to ensure delivery ordering relative to the response.
 
 #### 2. Cache Invalidation Timing Race
 
 **Files**: `src/backend/Models/Characters/VTMV5/CharacterUpdate/*.cs` (all 9 `Apply` methods)
 
-The transaction commits, and then `Task.WhenAll(cache.RemoveAsync(...))` is awaited within `Apply()` before returning to the controller. The race window is between `trans.Commit()` and the completion of the `await Task.WhenAll(...)` call. Any client that fetches character data during this narrow window hits PostgreSQL (cache miss) and gets the new data — this is actually safe. The real risk is that a client hitting the cache during this window gets stale pre-commit data.
+The transaction commits, and then `Task.WhenAll(cache.RemoveAsync(...))` is awaited within `Apply()` before returning to the controller. The race window is between `trans.Commit()` and the completion of the `await Task.WhenAll(...)` call. Any client that fetches character data during this narrow window hits PostgreSQL (cache miss) and gets the new data, which is safe. The real risk is that a client hitting the cache during this window gets stale pre-commit data.
 
 The more significant risk is item #1: because the broadcast is fire-and-forget, other clients may not receive the SignalR event at all if the broadcast task faults.
 
@@ -597,25 +630,9 @@ foreach (var groupId in groups) { ... }
 
 #### 5. AdminView Authorization Bypass
 
-**File**: `src/backend/Controllers/VTMV5/CharacterController.cs` — `GetList()` method
+**File**: `src/backend/Controllers/VTMV5/CharacterController.cs`, `GetList()` method
 
-Any authenticated user (not only admins) can pass `?adminView=true` and receive all character records:
-
-```csharp
-if (adminView == true)
-{
-    charList = await VampireV5Character.GetCharacters(); // all characters
-}
-```
-
-Owner emails are masked for non-admin callers, but character names, clans, concepts, and all other header fields are fully exposed.
-
-**Recommendation**: Gate the admin path on the user's actual role:
-
-```csharp
-bool showAdminView = adminView == true && user.Role == "admin";
-if (showAdminView) { ... }
-```
+**Status**: Resolved. The controller now checks `user.Role != "admin"` at line 104-110 and returns an error response for non-admin callers before fetching all characters.
 
 ---
 
@@ -625,13 +642,13 @@ if (showAdminView) { ... }
 
 **File**: `src/backend/Services/Auth/UserManager.cs`
 
-`Services.MailService.Instance.SendMail(...)` is called without `await` and the return value is not checked in both `BeginResetPassword` and `Register`. Failed sends are silent — users attempting registration or password reset receive a success response but no email.
+`Services.MailService.Instance.SendMail(...)` is called without `await` and the return value is not checked in both `BeginResetPassword` and `Register`. Failed sends are silent. Users attempting registration or password reset receive a success response but no email.
 
 **Recommendation**: Make `SendMail` async, await it, and surface send failures as error responses to the calling controller.
 
 #### 7. HttpClient Created Per Request Without Disposal
 
-**File**: `src/backend/Controllers/AuthController.cs` — `DiscordOAuth` method
+**File**: `src/backend/Controllers/AuthController.cs`, `DiscordOAuth` method
 
 `new HttpClient()` is instantiated on each OAuth callback and never disposed. This exhausts socket descriptors under concurrent load.
 
@@ -639,7 +656,7 @@ if (showAdminView) { ... }
 
 #### 8. Registration Activation Key Stored Plaintext
 
-**File**: `src/backend/Services/Auth/UserManager.cs` — `Register()` and `RegistrationFinish()`
+**File**: `src/backend/Services/Auth/UserManager.cs`, `Register()` and `RegistrationFinish()`
 
 Password reset tokens are stored as PBKDF2 hashes. Registration activation keys are stored in plaintext in `melpominee_users.ActivationKey` and compared with plain string equality:
 
@@ -657,7 +674,7 @@ A database breach exposes all pending activation keys, allowing an attacker to a
 
 Character attribute scores, skill ratings, discipline levels, and secondary stat values are persisted without server-side range validation. A client can store arbitrary integers.
 
-**Recommendation**: Add range checks before calling `Apply()` — for example, attribute scores must be 1–5, Humanity 0–10, Hunger 0–5.
+**Recommendation**: Add range checks before calling `Apply()`. For example, attribute scores must be 1-5, Humanity 0-10, Hunger 0-5.
 
 #### 10. Transaction Isolation Level Not Specified
 
@@ -686,7 +703,7 @@ This method always returns `true`, is never called by any controller or service,
 
 **File**: `src/frontend/src/components/routes/CharacterSheet/CharacterSheet.tsx`
 
-Two `useEffect` hooks race on mount: one builds and starts the SignalR connection, the other fetches the initial character state via HTTP. SignalR events that arrive before the HTTP fetch completes are applied to `setCurrCharacter` with `char.id === charId` guard — if `currCharacter` is still `null` at that point, the guard fails and the update is silently dropped.
+Two `useEffect` hooks race on mount: one builds and starts the SignalR connection, the other fetches the initial character state via HTTP. SignalR events that arrive before the HTTP fetch completes are applied to `setCurrCharacter` with a `char.id === charId` guard. If `currCharacter` is still `null` at that point, the guard fails and the update is silently dropped.
 
 **Recommendation**: Buffer incoming SignalR events until the initial HTTP fetch completes, then replay them against the fetched state.
 
@@ -712,7 +729,7 @@ When a component that opened a tooltip unmounts while the tooltip is visible, th
 
 #### 15. Cache Stampede on User Cache Miss
 
-**File**: `src/backend/Services/Auth/UserManager.cs` — `GetUser()`
+**File**: `src/backend/Services/Auth/UserManager.cs`, `GetUser()`
 
 Multiple concurrent requests for the same user arriving after cache expiry all miss the cache simultaneously and issue parallel PostgreSQL queries.
 
@@ -730,15 +747,7 @@ No structured log events record who modified which character, when authorization
 
 **Recommendation**: Add `ILogger<T>` structured logging to character PUT handlers (recording user, character ID, and section) and to auth failure paths.
 
-#### 18. Event Name Typo in SignalR Hub Interface
-
-**File**: `src/backend/Hubs/Clients/VTMV5/ICharacterClient.cs`
-
-`ICharacterClient` declares `OnBeliefsupdate` (lowercase `u`) instead of `OnBeliefsUpdate`, inconsistent with every other event in the interface. The frontend registers the handler as `onBeliefsUpdate` (capital `U`). Because SignalR method name matching is case-insensitive on the hub side but the frontend `conn.on(...)` registration is case-sensitive, the frontend handler registered as `'onBeliefsUpdate'` will not fire from a server-side call to `OnBeliefsupdate`.
-
-**Recommendation**: Rename to `OnBeliefsUpdate` in `ICharacterClient.cs`. The frontend handler registration string must be updated in `CharacterSheet.tsx` to match. This requires a coordinated backend and frontend change.
-
-#### 19. Hardcoded Discord OAuth URLs
+#### 18. Hardcoded Discord OAuth URLs
 
 **File**: `src/backend/Controllers/AuthController.cs`
 
@@ -751,7 +760,7 @@ private const string DISCORD_API_URL = "https://discord.com/api/v10";
 
 **Recommendation**: Move to `appsettings.json` under a `Discord:AuthorizeUrl`, `Discord:TokenUrl`, and `Discord:ApiUrl` configuration section, bound via the options pattern.
 
-#### 20. masterdataSlice Incorrectly Named `userSlice`
+#### 19. masterdataSlice Incorrectly Named `userSlice`
 
 **File**: `src/frontend/src/redux/reducers/masterdataReducer.ts`
 
@@ -772,5 +781,5 @@ Both `userReducer.ts` and `masterdataReducer.ts` export a variable named `userSl
 
 ## Out of Scope
 
-- **Frontend layout changes** — The visual layout of the character sheet and all other pages is stable and intentionally excluded from improvements.
-- **Test coverage** — Adding unit, integration, or end-to-end tests is a separate workstream and not addressed here.
+- **Frontend layout changes**: The visual layout of the character sheet and all other pages is stable and intentionally excluded from improvements.
+- **Test coverage**: Adding unit, integration, or end-to-end tests is a separate workstream and not addressed here.

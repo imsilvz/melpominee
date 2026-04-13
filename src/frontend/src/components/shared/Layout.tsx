@@ -6,6 +6,7 @@ import { useAppSelector } from '../../redux/hooks';
 import { selectUserEmail } from '../../redux/reducers/userReducer';
 
 // local files
+import ConnectionStatus from './ConnectionStatus/ConnectionStatus';
 import './Layout.scss';
 
 const Layout = () => {
@@ -13,6 +14,7 @@ const Layout = () => {
   return (
     <div className="layout">
       {(!userEmail || userEmail === '') && <div />}
+      <ConnectionStatus />
       <Outlet />
     </div>
   );

@@ -6,7 +6,6 @@ metadata:
   labels:
     app: melpominee-backend
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: melpominee-backend
@@ -17,6 +16,7 @@ spec:
         azure.workload.identity/use: "true"
     spec:
       serviceAccountName: melpominee
+      terminationGracePeriodSeconds: 40
       volumes:
         - name: secrets-store
           csi:
@@ -56,20 +56,40 @@ spec:
               memory: 32Mi
       containers:
       - name: backend
-        image: ghcr.io/imsilvz/melpominee-backend:master
+        image: __ACR_LOGIN_SERVER__/melpominee-backend:master
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
+        startupProbe:
+          httpGet:
+            path: /api/health/startup
+            port: 8080
+          initialDelaySeconds: 2
+          periodSeconds: 2
+          failureThreshold: 20
+          timeoutSeconds: 1
+        readinessProbe:
+          httpGet:
+            path: /api/health/ready
+            port: 8080
+          periodSeconds: 5
+          failureThreshold: 3
+          timeoutSeconds: 2
+        livenessProbe:
+          httpGet:
+            path: /api/health/live
+            port: 8080
+          periodSeconds: 10
+          failureThreshold: 3
+          timeoutSeconds: 2
         resources:
           requests:
-            memory: 256Mi
-            cpu: 250m
+            memory: 384Mi
+            cpu: 200m
           limits:
-            memory: 256Mi
-            cpu: 250m
+            memory: 512Mi
+            cpu: 1000m
         volumeMounts:
         - name: secret-volume
           mountPath: "/etc/melpominee/secrets"
           readOnly: true
-      imagePullSecrets:
-      - name: github-pat

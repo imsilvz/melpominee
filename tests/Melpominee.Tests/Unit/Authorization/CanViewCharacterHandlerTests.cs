@@ -10,6 +10,7 @@ using Melpominee.app.Models.Auth;
 using Melpominee.app.Models.Characters.VTMV5;
 using Melpominee.app.Services.Auth;
 using Melpominee.app.Services.Characters;
+using Melpominee.app.Services.Database;
 using Shouldly;
 namespace Melpominee.Tests.Unit.Authorization;
 
@@ -23,8 +24,8 @@ public class CanViewCharacterHandlerTests : IAsyncLifetime
     {
         _cache = new MemoryDistributedCache(
             Options.Create(new MemoryDistributedCacheOptions()));
-        _userManager = new UserManager(_cache);
-        _characterService = new CharacterService(_cache);
+        _userManager = new UserManager(_cache, DataContext.Instance);
+        _characterService = new CharacterService(_cache, DataContext.Instance);
     }
 
     public async Task InitializeAsync()

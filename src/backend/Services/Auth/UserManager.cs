@@ -19,9 +19,11 @@ public class UserManager
     private const int CurrentIterCount = 600000;
 
     private readonly IDistributedCache _cache;
-    public UserManager(IDistributedCache cache) 
+    private readonly DataContext _dataContext;
+    public UserManager(IDistributedCache cache, DataContext dataContext)
     {
         _cache = cache;
+        _dataContext = dataContext;
     }
 
     public async Task<User?> GetUser(string? email, bool onlyActive = true, bool cached = true)
@@ -40,13 +42,13 @@ public class UserManager
         }
         else
         {
-            using (var conn = DataContext.Instance.Connect())
+            await using (var conn = await _dataContext.ConnectAsync())
             {
                 string sql = @"
-                SELECT 
-                    email, discordname, password, role, 
-                    activationkey, activationrequested, activationcompleted, 
-                    lastlogin, active 
+                SELECT
+                    email, discordname, password, role,
+                    activationkey, activationrequested, activationcompleted,
+                    lastlogin, active
                 FROM melpominee_users WHERE email = @Email";
                 user = await conn.QueryFirstOrDefaultAsync<User>(sql, new { Email = email });
                 if (user is null || (onlyActive && !user.Active))
@@ -67,11 +69,11 @@ public class UserManager
         if (string.IsNullOrEmpty(user.Email))
             return false;
 
-        using (var conn = DataContext.Instance.Connect())
+        await using (var conn = await _dataContext.ConnectAsync())
         {
             string sql = @"
             UPDATE melpominee_users
-            SET 
+            SET
                 DiscordName = @DiscordName,
                 Role = @Role,
                 ActivationRequested = @ActivationRequested,
@@ -80,7 +82,7 @@ public class UserManager
                 Active = @Active
             WHERE Email = @Email;
             ";
-            if (conn.Execute(sql, user) <= 0)
+            if (await conn.ExecuteAsync(sql, user) <= 0)
             {
                 return false;
             }
@@ -114,9 +116,9 @@ public class UserManager
             // rehash if using legacy iteration count
             if (NeedsRehash(user.Password)) {
                 user.Password = HashPassword(password);
-                using (var rehashConn = DataContext.Instance.Connect()) {
-                    rehashConn.Open();
-                    rehashConn.Execute(
+                await using (var rehashConn = await _dataContext.ConnectAsync())
+                {
+                    await rehashConn.ExecuteAsync(
                         "UPDATE melpominee_users SET password = @Password WHERE email = @Email;",
                         new { user.Password, user.Email });
                 }
@@ -140,10 +142,9 @@ public class UserManager
         string rescueKey = Convert.ToBase64String(confirmKeyBytes);
 
         var cacheKey = $"melpominee:user:{email}";
-        using (var conn = DataContext.Instance.Connect())
+        await using (var conn = await _dataContext.ConnectAsync())
         {
-            conn.Open();
-            using (var trans = conn.BeginTransaction())
+            await using (var trans = await conn.BeginTransactionAsync())
             {
                 try
                 {
@@ -154,22 +155,22 @@ public class UserManager
                         VALUES
                             (@Email, @RescueKey, CURRENT_TIMESTAMP);
                     ";
-                    if (conn.Execute(sql, new { Email = email, RescueKey = HashPassword(rescueKey) }) <= 0)
+                    if (await conn.ExecuteAsync(sql, new { Email = email, RescueKey = HashPassword(rescueKey) }, trans) <= 0)
                     {
-                        trans.Rollback();
+                        await trans.RollbackAsync();
                         return false;
                     }
-                    trans.Commit();
+                    await trans.CommitAsync();
                 }
-                catch(NpgsqlException)
+                catch (NpgsqlException)
                 {
                     // foreign key failed, this user does not exist!
-                    trans.Rollback();
+                    await trans.RollbackAsync();
                     return false;
                 }
-                catch(Exception)
+                catch (Exception)
                 {
-                    trans.Rollback();
+                    await trans.RollbackAsync();
                     throw;
                 }
             }
@@ -215,10 +216,9 @@ public class UserManager
 
         // handle database actions
         var cacheKey = $"melpominee:user:{email}";
-        using (var conn = DataContext.Instance.Connect())
+        await using (var conn = await _dataContext.ConnectAsync())
         {
-            conn.Open();
-            using (var trans = conn.BeginTransaction())
+            await using (var trans = await conn.BeginTransactionAsync())
             {
                 try
                 {
@@ -232,21 +232,21 @@ public class UserManager
                         WHERE header.Email = @Email
                         ORDER BY rescue.RescueRequested DESC;
                     ";
-                    var rescueData = conn.QueryFirstOrDefault<UserRescue>(sql, new { Email = email });
+                    var rescueData = await conn.QueryFirstOrDefaultAsync<UserRescue>(sql, new { Email = email }, trans);
                     if (rescueData is null)
                     {
-                        trans.Rollback();
+                        await trans.RollbackAsync();
                         return false;
                     }
 
                     // check if this key does not exist or has already been used
                     // then check if attached key matches. if not,
                     // return false and rollback any changes
-                    if (string.IsNullOrEmpty(rescueData.RescueKey) || 
+                    if (string.IsNullOrEmpty(rescueData.RescueKey) ||
                         (rescueData.RescueCompleted is not null) ||
                         !VerifyPassword(rescueData.RescueKey, key))
                     {
-                        trans.Rollback();
+                        await trans.RollbackAsync();
                         return false;
                     }
 
@@ -264,21 +264,21 @@ public class UserManager
                             RescueCompleted = CURRENT_TIMESTAMP
                         WHERE Id = @Id;
                     ";
-                    if (conn.Execute(sql, 
+                    if (await conn.ExecuteAsync(sql,
                         new {
-                            Id=rescueData.Id, 
-                            Email=rescueData.Email, 
-                            Password=HashPassword(password)
-                        }) < 2)
+                            Id = rescueData.Id,
+                            Email = rescueData.Email,
+                            Password = HashPassword(password)
+                        }, trans) < 2)
                     {
-                        trans.Rollback();
+                        await trans.RollbackAsync();
                         return false;
                     }
-                    trans.Commit();
+                    await trans.CommitAsync();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
-                    trans.Rollback();
+                    await trans.RollbackAsync();
                     throw;
                 }
                 await _cache.RemoveAsync(cacheKey);
@@ -305,16 +305,15 @@ public class UserManager
 
         // create new entry
         var cacheKey = $"melpominee:user:{email}";
-        using (var conn = DataContext.Instance.Connect())
+        await using (var conn = await _dataContext.ConnectAsync())
         {
-            conn.Open();
-            using(var transaction = conn.BeginTransaction())
+            await using (var transaction = await conn.BeginTransactionAsync())
             {
                 // create user object
                 user = new User
                 {
-                    Email = email, 
-                    Password = HashPassword(password), 
+                    Email = email,
+                    Password = HashPassword(password),
                     Role = "user",
                     ActivationKey = HashPassword(activationKey),
                     ActivationRequested = DateTime.UtcNow,
@@ -323,23 +322,24 @@ public class UserManager
                 try
                 {
                     // sync database
-                    var sql = 
+                    var sql =
                     @"
-                        INSERT INTO melpominee_users 
+                        INSERT INTO melpominee_users
                             (email, discordname, password, role, activationkey, activationrequested)
                         VALUES
                             (@Email, @DiscordName, @Password, @Role, @ActivationKey, CURRENT_TIMESTAMP)
                         ON CONFLICT(email) DO NOTHING;
                     ";
-                    if (conn.Execute(sql, user) <= 0) {
-                        transaction.Rollback();
+                    if (await conn.ExecuteAsync(sql, user, transaction) <= 0)
+                    {
+                        await transaction.RollbackAsync();
                         return user;
                     }
-                    transaction.Commit();
+                    await transaction.CommitAsync();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
                     throw;
                 }
             }
@@ -347,6 +347,9 @@ public class UserManager
         await _cache.RemoveAsync(cacheKey);
         
         // send email
+        // NOTE: the {origin}/api/auth/register/confirmation link below depends on
+        // the gateway preserving the /api prefix. A future gateway re-topology
+        // would need to re-audit this hardcoded path.
         Services.MailService.Instance.SendMail(
             email,
             "Melpominee.app: Account Activation",
@@ -382,42 +385,41 @@ public class UserManager
         }
 
         var cacheKey = $"melpominee:user:{email}";
-        using (var conn = DataContext.Instance.Connect())
+        await using (var conn = await _dataContext.ConnectAsync())
         {
-            conn.Open();
-            using (var trans = conn.BeginTransaction())
+            await using (var trans = await conn.BeginTransactionAsync())
             {
                 try
                 {
                     // fetch user object
                     var sql =
                     @"
-                        SELECT 
-                            email, discordname, password, role, 
-                            activationkey, activationrequested, activationcompleted, 
+                        SELECT
+                            email, discordname, password, role,
+                            activationkey, activationrequested, activationcompleted,
                             lastlogin, active
                         FROM melpominee_users
                         WHERE email = @Email;
                     ";
-                    user = conn.QuerySingleOrDefault<User>(
+                    user = await conn.QuerySingleOrDefaultAsync<User>(
                         sql, new {
                             Email = email
-                        }
+                        }, trans
                     );
 
                     // validate returned results
-                    if (user is null || 
-                        string.IsNullOrEmpty(user.Password) || 
+                    if (user is null ||
+                        string.IsNullOrEmpty(user.Password) ||
                         string.IsNullOrEmpty(user.ActivationKey))
                     {
-                        trans.Rollback();
+                        await trans.RollbackAsync();
                         return null;
                     }
 
                     // compare activation key and querystring
                     if (!VerifyPassword(user.ActivationKey, key))
                     {
-                        trans.Rollback();
+                        await trans.RollbackAsync();
                         return null;
                     }
 
@@ -437,16 +439,16 @@ public class UserManager
                             Active = @Active
                         WHERE Email = @Email;
                     ";
-                    if (conn.Execute(sql, user) <= 0)
+                    if (await conn.ExecuteAsync(sql, user, trans) <= 0)
                     {
-                        trans.Rollback();
+                        await trans.RollbackAsync();
                         return null;
                     }
-                    trans.Commit();
+                    await trans.CommitAsync();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
-                    trans.Rollback();
+                    await trans.RollbackAsync();
                     throw;
                 }
             }
@@ -463,10 +465,9 @@ public class UserManager
             throw new ArgumentException("UserManager.OAuthRegister called with bad email address!");
         
         var cacheKey = $"melpominee:user:{email}";
-        using (var conn = DataContext.Instance.Connect())
+        await using (var conn = await _dataContext.ConnectAsync())
         {
-            conn.Open();
-            using (var trans = conn.BeginTransaction())
+            await using (var trans = await conn.BeginTransactionAsync())
             {
                 try
                 {
@@ -486,14 +487,14 @@ public class UserManager
                     @"
                         INSERT INTO melpominee_users
                             (
-                                email, discordname, password, role, 
-                                activationkey, activationrequested, activationcompleted, 
+                                email, discordname, password, role,
+                                activationkey, activationrequested, activationcompleted,
                                 lastlogin, active
                             )
                         VALUES
                             (
-                                @Email, @DiscordName, @Password, @Role, 
-                                @ActivationKey, @ActivationRequested, @ActivationCompleted, 
+                                @Email, @DiscordName, @Password, @Role,
+                                @ActivationKey, @ActivationRequested, @ActivationCompleted,
                                 @LastLogin, @Active
                             )
                         ON CONFLICT(email) DO UPDATE
@@ -507,12 +508,12 @@ public class UserManager
                             lastlogin = @LastLogin,
                             active = @Active;
                     ";
-                    conn.Execute(sql, user);
-                    trans.Commit();
+                    await conn.ExecuteAsync(sql, user, trans);
+                    await trans.CommitAsync();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
-                    trans.Rollback();
+                    await trans.RollbackAsync();
                     throw;
                 }
             }

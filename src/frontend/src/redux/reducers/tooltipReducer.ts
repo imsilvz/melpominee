@@ -1,21 +1,21 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 
-export interface UserState {
+export interface TooltipState {
   tooltipType: string;
   tooltipId: string;
 }
 
-const initialState: UserState = {
+const initialState: TooltipState = {
   tooltipType: '',
   tooltipId: '',
 };
 
 export const tooltipSlice = createSlice({
-  name: 'user',
+  name: 'tooltip',
   initialState,
   reducers: {
-    setTooltipData: (state, action: PayloadAction<UserState>) => {
+    setTooltipData: (state, action: PayloadAction<TooltipState>) => {
       state.tooltipType = action.payload.tooltipType;
       state.tooltipId = action.payload.tooltipId;
     },

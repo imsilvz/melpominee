@@ -54,8 +54,8 @@ const initialState: MasterdataState = {
   loaded: false,
 };
 
-export const userSlice = createSlice({
-  name: 'user',
+export const masterdataSlice = createSlice({
+  name: 'masterdata',
   initialState,
   reducers: {
     setBloodPotencies: (state, action: PayloadAction<BloodPotencyMasterdata>) => {
@@ -105,7 +105,7 @@ export const {
   setPredatorTypes,
   setResonances,
   setMasterdataLoaded,
-} = userSlice.actions;
+} = masterdataSlice.actions;
 export const selectBloodPotencies = (state: RootState) =>
   state.masterdata.bloodPotencies;
 export const selectClans = (state: RootState) => state.masterdata.clans;
@@ -116,4 +116,4 @@ export const selectPredatorTypes = (state: RootState) =>
   state.masterdata.predatorTypes;
 export const selectResonances = (state: RootState) => state.masterdata.resonances;
 export const selectMasterdataLoaded = (state: RootState) => state.masterdata.loaded;
-export default userSlice.reducer;
+export default masterdataSlice.reducer;

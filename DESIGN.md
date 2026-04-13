@@ -516,7 +516,7 @@ Secrets loaded from `./secrets/*.json` files on the host.
 **Production deployment on Azure AKS.**
 
 Manifest directories:
-- `manifests/backend/`: `deployment.yaml`, `service.yaml`, `serviceaccount.yaml`
+- `manifests/backend/`: `deployment.yaml`, `httpscaledobject.yaml`, `service.yaml`, `serviceaccount.yaml`
 - `manifests/frontend/`: `deployment.yaml`, `service.yaml`, `httpscaledobject.yaml`, `referencegrant.yaml`
 - `manifests/gateway/`: `gateway.yaml`, `httproute.yaml`
 
@@ -524,9 +524,10 @@ Manifest directories:
 
 | Resource | Details |
 |----------|---------|
-| Deployment | 1 replica; `ghcr.io/imsilvz/melpominee-backend:master`; :8080; 256Mi/250m resources |
+| Deployment | SHA-pinned ACR image; :8080; 384-512Mi / 200-1000m CPU; startup/readiness/liveness probes on `/api/health/{startup,ready,live}`; `terminationGracePeriodSeconds: 40` |
 | Service | ClusterIP; port 80 → targetPort 8080 |
 | ServiceAccount | `melpominee`; annotated with Azure Workload Identity client ID |
+| HTTPScaledObject | KEDA HTTP add-on scales the backend Deployment based on `/api/` request rate. `min=0, max=3, scaledownPeriod=1800s (30min)`, `requestRate target=10 window=1m` |
 
 Backend pod specifics:
 - `serviceAccountName: melpominee` binds Azure Workload Identity
@@ -561,12 +562,15 @@ Rule 1 strips the `/api` prefix so backend controllers receive requests rooted a
 **Runner**: Self-hosted (`arc-melpominee`)
 
 Steps:
-1. Login to GHCR
-2. Build and push backend Docker image (multi-stage: .NET SDK build → ASP.NET runtime)
-3. Build and push frontend Docker image (multi-stage: Node build → nginx)
-4. Azure login via Workload Identity (OIDC)
-5. Deploy manifests via `Azure/k8s-deploy@v5` to `melpominee` namespace
-6. Rollout restart both deployments (forces re-pull of `:master` tag)
+1. Azure login via Workload Identity (OIDC), then `az acr login` against the configured ACR
+2. Build and push backend Docker image to ACR (multi-stage: .NET SDK build → ASP.NET runtime); tagged `sha-${GITHUB_SHA::7}` and `latest`
+3. Build and push frontend Docker image to ACR (multi-stage: Node build → nginx); tagged `sha-${GITHUB_SHA::7}` and `latest`
+4. `aks-set-context` to the target cluster
+5. `sed`-substitute `__ACR_LOGIN_SERVER__` and `__IMAGE_TAG__` in `manifests/backend/deployment.yaml` and `manifests/frontend/deployment.yaml`
+6. Deploy backend, frontend, and gateway manifests via `Azure/k8s-deploy@v5` to the `melpominee` namespace. Backend bundle includes the HTTPScaledObject
+7. `kubectl apply` the KEDA `ReferenceGrant` (HTTPRoute in `melpominee` → Service in `keda`)
+
+Because Deployment images are SHA-pinned, every push produces a new spec and `k8s-deploy` rolls the Deployment automatically — no explicit rollout restart is needed, and avoiding one is load-bearing for scale-to-zero (a forced restart would wake a sleeping backend on every deploy).
 
 **Status**: Implemented.
 

@@ -100,6 +100,7 @@ jobs:
             manifests/backend/serviceaccount.yaml
             manifests/backend/deployment.yaml
             manifests/backend/service.yaml
+            manifests/backend/httpscaledobject.yaml
           namespace: 'melpominee'
 
       - name: Deploy Frontend
@@ -124,7 +125,3 @@ jobs:
       - name: Deploy KEDA ReferenceGrant
         run: |
           kubectl apply -f manifests/frontend/referencegrant.yaml
-
-      - name: Rollout Restart
-        run: |
-          kubectl rollout restart deployment melpominee-backend --namespace=melpominee

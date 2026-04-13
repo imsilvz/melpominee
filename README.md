@@ -139,7 +139,7 @@ Prefixes are relative to the backend service root. In production, the gateway ex
 
 ## Deployment
 
-GitHub Actions CI/CD builds and pushes Docker images to GHCR on push to `master` or `v*` tags, then applies manifests to Azure AKS and triggers a rollout restart to pick up new images. The pipeline runs on a self-hosted ARC runner (`arc-melpominee`). Production uses Envoy Gateway for ingress routing. Kubernetes manifests are in `manifests/`. See `docker-compose.yaml` for the local Docker Compose setup.
+GitHub Actions CI/CD builds and pushes SHA-pinned Docker images to Azure Container Registry on push to `master` or `v*` tags, then applies manifests to Azure AKS. Deployments roll automatically on each commit because the image tag changes. The pipeline runs on a self-hosted ARC runner (`arc-melpominee`). Production uses Envoy Gateway for ingress with the KEDA HTTP add-on in front of both the backend and frontend Deployments for request-based autoscaling, including scale-to-zero. Kubernetes manifests are in `manifests/`. See `docker-compose.yaml` for the local Docker Compose setup.
 
 ## License
 

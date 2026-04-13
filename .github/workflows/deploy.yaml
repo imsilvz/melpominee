@@ -35,7 +35,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: ACR Login
-        run: az acr login -n silvzacr
+        run: az acr login -n ${{ vars.ACR_LOGIN_SERVER }} -g ${{ vars.AZURE_GROUP }}
 
       - name: Extract metadata (tags, labels) for Backend
         id: meta-backend

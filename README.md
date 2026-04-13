@@ -18,7 +18,7 @@ A Vampire: The Masquerade V5 character sheet application with real-time multi-us
 | Backend | ASP.NET Core (.NET 9), Dapper, Npgsql (PostgreSQL), StackExchange.Redis, SignalR |
 | Frontend | React 18, TypeScript `^5.8.3`, Vite `^5.4.19`, Redux Toolkit v1, SCSS |
 | Infrastructure | Docker Compose, Traefik, Kubernetes (Azure AKS), Envoy Gateway, GitHub Actions |
-| Container Registry | GHCR (GitHub Container Registry) |
+| Container Registry | ACR (Azure Container Registry) |
 
 ## Getting Started
 
@@ -116,13 +116,14 @@ melpominee/
 Browser
   └── HTTPS :443
       └── Envoy Gateway (melpominee.app)
-          ├── /api/*  (strip prefix) → Backend (ASP.NET Core)
-          │                ├── PostgreSQL (character data, users)
-          │                └── Redis (cache + SignalR backplane)
-          └── /*      → KEDA HTTP interceptor proxy → Frontend (React 18 SPA via nginx)
+          └── /*  → KEDA HTTP interceptor proxy
+                        ├── /api/*  → Backend (ASP.NET Core)
+                        │                ├── PostgreSQL (character data, users)
+                        │                └── Redis (cache + SignalR backplane)
+                        └── /*      → Frontend (React 18 SPA via nginx)
 ```
 
-The Envoy Gateway strips the `/api` prefix before forwarding requests to the backend. SignalR WebSocket connections route through `/api/vtmv5/watch` to the `CharacterHub`, which uses a Redis backplane to broadcast updates across all backend instances. The frontend connects via the SignalR client and receives `OnCharacterUpdate` events carrying a list of applied commands.
+All traffic routes through the KEDA HTTP interceptor proxy, which performs longest-prefix matching between the backend (`/api/`) and frontend (`/`) HTTPScaledObjects and wakes scaled-to-zero pods on demand. The backend uses `UsePathBase("/api")` middleware to serve controllers under that prefix; no prefix stripping occurs at the gateway. SignalR WebSocket connections route through `/api/vtmv5/watch` to the `CharacterHub`, which uses a Redis backplane to broadcast updates across all backend instances. The frontend connects via the SignalR client and receives `OnCharacterUpdate` events carrying a list of applied commands.
 
 See [DESIGN.md](DESIGN.md) for the full architecture document.
 

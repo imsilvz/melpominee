@@ -44,7 +44,6 @@ jobs:
           images: ${{ vars.ACR_LOGIN_SERVER }}/melpominee/backend
           tags: |
             type=sha,prefix=sha-,format=short
-            type=raw,value=latest
 
       - name: Extract metadata (tags, labels) for Frontend
         id: meta-frontend
@@ -53,7 +52,6 @@ jobs:
           images: ${{ vars.ACR_LOGIN_SERVER }}/melpominee/frontend
           tags: |
             type=sha,prefix=sha-,format=short
-            type=raw,value=latest
 
       - name: Build & Push Backend
         uses: docker/build-push-action@v4
